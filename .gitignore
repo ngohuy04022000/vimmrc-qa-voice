@@ -1,0 +1,29 @@
+# dữ liệu (dataset gated, tải bằng: hf download uitnlp/vimmrc2.0 --repo-type dataset --local-dir data)
+data/
+
+# checkpoint / output huấn luyện
+vimmrc-*/
+*.pt
+*.pth
+*.bin
+*.safetensors
+wandb/
+
+# audio
+*.wav
+*.mp3
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# env / secrets
+.env
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store

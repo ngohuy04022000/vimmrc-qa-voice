@@ -76,3 +76,13 @@ Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC
 - [ ] Chọn base model tiếng Việt để fine-tune MRC.
 - [ ] Chọn nhà cung cấp/thư viện STT & TTS tiếng Việt.
 - [ ] Thiết kế API kết nối các module (STT → MRC → TTS).
+
+## 7. Phân công
+
+| Thành viên | Công việc | Thư mục |
+|---|---|---|
+| Huỳnh Công Lương | Speech-to-Text (STT) | `speech-to-text_Luong/` |
+| Trương Hoàng Duy | Text-to-Speech (TTS) | `text-to-speech_Duy/` |
+| Ngô Trí Huy | Retrieval model | `retrieval-model_Huy/` |
+| Ngô Trí Huy | MRC model (fine-tune ViMMRC 2.0) | `mrc-model_Huy/` |
+| Huỳnh Công Lương | Giao diện web (mic + speaker) | `web-interface_Luong/` |

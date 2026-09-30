@@ -98,29 +98,49 @@ def test_gtts_fallback():
     print("=> [PASS] gTTS Engine hoạt động tốt!\n")
 
 
-def test_vimmrc_sample_answers():
+def test_vits_engine():
     print("=" * 60)
-    print("4. KIỂM THỬ CÂU TRẢ LỜI MẪU CHO PIPELINE ViMMRC Q&A")
+    print("4. KIỂM THỬ MÔ HÌNH END-TO-END VITS (FACEBOOK/MMS-TTS-VIE)")
     print("=" * 60)
 
     output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
-    sample_mrc_output = (
-        "**Đáp án đúng là:** (B). Hồ Gươm nằm ở trung tâm thủ đô Hà Nội, "
+    file_vits = os.path.join(output_dir, "test_vits.wav")
+
+    text = "Mô hình VITS chuyển đổi văn bản trực tiếp thành dạng sóng âm thanh."
+    t0 = time.time()
+    res_vits = synthesize(text, output_path=file_vits, engine="vits")
+    t_vits = time.time() - t0
+    size_vits = os.path.getsize(res_vits)
+    print(f"[OK] VITS Engine   : {res_vits} ({size_vits} bytes) - Thời gian: {t_vits:.2f}s")
+
+    assert size_vits > 0, "File VITS audio sinh ra không được rỗng"
+    print("=> [PASS] VITS Engine hoạt động tốt!\n")
+
+
+def test_sample_answers():
+    print("=" * 60)
+    print("5. KIỂM THỬ TỔNG HỢP CÂU TRẢ LỜI MẪU")
+    print("=" * 60)
+
+    output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
+    sample_text = (
+        "**Đáp án:** (B). Hồ Gươm nằm ở trung tâm thủ đô Hà Nội, "
         "gắn liền với truyền thuyết vua Lê Lợi trả gươm báu vào thế kỷ 15."
     )
 
-    out_file = os.path.join(output_dir, "test_vimmrc_answer.mp3")
-    res = synthesize(sample_mrc_output, output_path=out_file, voice="vi-VN-HoaiMyNeural")
-    print(f"Input MRC : {sample_mrc_output}")
+    out_file = os.path.join(output_dir, "test_sample_answer.mp3")
+    res = synthesize(sample_text, output_path=out_file, engine="edge", voice="vi-VN-HoaiMyNeural")
+    print(f"Input text : {sample_text}")
     print(f"[OK] Audio sinh ra: {res} ({os.path.getsize(res)} bytes)")
-    print("=> [PASS] Giả lập luồng MRC -> TTS hoàn thành xuất sắc!\n")
+    print("=> [PASS] Tổng hợp câu trả lời hoàn thành xuất sắc!\n")
 
 
 if __name__ == "__main__":
     test_normalizer()
+    test_vits_engine()
     test_edge_tts()
     test_gtts_fallback()
-    test_vimmrc_sample_answers()
+    test_sample_answers()
     print("=" * 60)
     print("TẤT CẢ CÁC BƯỚC KIỂM THỬ ĐÃ THÀNH CÔNG RỰC RỠ!")
     print("=" * 60)

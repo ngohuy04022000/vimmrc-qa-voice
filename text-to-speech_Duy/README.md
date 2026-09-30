@@ -1,112 +1,157 @@
-# Module Text-to-Speech (TTS) - ViMMRC Voice Q&A
+# Hệ Thống Text-to-Speech (TTS) Tiếng Việt
 
-Người phụ trách: **Trương Hoàng Duy** (`text-to-speech_Duy/`)
-
-Module nhận văn bản đầu ra từ mô hình đọc hiểu MRC (`mrc-model_Huy`), thực hiện tiền xử lý chuẩn hóa văn bản tiếng Việt và chuyển đổi thành giọng nói chất lượng cao để giao diện web (`web-interface_Luong`) phát lại cho người dùng.
+Tài liệu hướng dẫn và mã nguồn triển khai hệ thống chuyển đổi văn bản thành giọng nói (Text-to-Speech) tiếng Việt, tập trung nghiên cứu chuyên sâu kiến trúc học sâu State-of-the-Art **VITS (Variational Inference for End-to-End Text-to-Speech)** cùng các giải pháp phụ trợ.
 
 ---
 
-## 1. Tính năng nổi bật
+## 1. Tổng Quan Kiến Trúc VITS
 
-- **Chất lượng giọng đọc nơ-ron tự nhiên:** Tích hợp `Edge-TTS` với giọng nữ (`vi-VN-HoaiMyNeural`) và giọng nam (`vi-VN-NamMinhNeural`).
-- **Cơ chế dự phòng (Fallback):** Tự động chuyển sang `gTTS` nếu gặp sự cố mạng.
-- **Tiền xử lý & Chuẩn hóa tiếng Việt (Text Normalization):**
-  - Xóa định dạng Markdown (`**in đậm**`, `*in nghiêng*`, liên kết...).
-  - Chuẩn hóa các đáp án trắc nghiệm ViMMRC: `(A)`, `(B)`, `(C)`, `(D)`, `A.`, `B.` $\rightarrow$ *"Đáp án A: ..."*.
-  - Đọc ngày tháng: `02/09/1945` $\rightarrow$ *"ngày 2 tháng 9 năm một nghìn chín trăm bốn mươi lăm"*.
-  - Đọc số nguyên, số hàng nghìn (`500.000`), số thập phân (`99.5%` $\rightarrow$ *"chín mươi chín phẩy năm phần trăm"*).
-  - Đọc đơn vị đo lường: `km/h`, `kg`, `km`, `m²`, `°C`, `VND`, `USD`...
-- **Tuân thủ CONVENTIONS.md của nhóm:** Cung cấp hàm chuẩn `synthesize(text, ...)` trả về file âm thanh.
+Khác với các hệ thống TTS truyền thống chia làm 2 giai đoạn độc lập (Acoustic Model sinh Mel-spectrogram + Vocoder sinh sóng âm), **VITS** là kiến trúc **Fully End-to-End** thực sự:
+- Ánh xạ trực tiếp từ chuỗi ký tự / âm vị (Phonemes) sang sóng âm thời gian thực (Raw Waveform).
+- Loại bỏ hoàn toàn lỗi tích lũy miền (Acoustic-Vocoder Domain Mismatch).
+- Tích hợp 4 kỹ thuật học sâu cốt lõi: **Variational Autoencoder (VAE)**, **Normalizing Flows**, **Monotonic Alignment Search (MAS)** và **Huấn luyện đối nghịch (GAN)**.
+
+### Sơ đồ luồng xử lý bên trong mô hình:
+
+```
+[Văn bản tiếng Việt]
+        │
+        ▼
+[1. Text Normalizer] ──> Chuẩn hóa số, ngày tháng, ký hiệu, viết tắt
+        │
+        ▼
+[2. Tokenizer / Phonemizer] ──> Chuỗi Token IDs
+        │
+        ▼
+[3. Text Encoder] ──> Trích xuất h_text & Phân phối tiên nghiệm N(μ_0, σ_0)
+        │
+        ├─────────────────────────────┐
+        ▼                             ▼
+[4. Duration Predictor (SDP)]    [5. Length Regulator]
+(Dự đoán thời lượng âm vị)    (Mở rộng μ, σ theo thời gian)
+        │                             │
+        └─────────────────────────────┤
+                                      ▼
+                        [6. Normalizing Flows]
+                        (Biến đổi không gian tiềm ẩn z)
+                                      │
+                                      ▼
+                        [7. HiFi-GAN Waveform Generator]
+                        (Upsampling 256x + Multi-Receptive Field Fusion)
+                                      │
+                                      ▼
+                        [Sóng âm Raw Waveform y(t) (16 kHz)]
+```
+
+> Chi tiết phân rã toán học và các hàm mất mát của từng khối được trình bày đầy đủ tại: **[`VITS_ARCHITECTURE.md`](VITS_ARCHITECTURE.md)**.
 
 ---
 
-## 2. Cài đặt
+## 2. Các Thành Phần Mã Nguồn
 
-Cài đặt các thư viện phụ thuộc:
+| File | Vai trò |
+|---|---|
+| [`vits_decomposed.py`](vits_decomposed.py) | **Mô hình VITS phân rã:** Cho phép bóc tách và trích xuất từng tensor trung gian ($h_{text}$, $\mu_0$, độ dài từng âm vị, vector $z$, waveform). |
+| [`VITS_ARCHITECTURE.md`](VITS_ARCHITECTURE.md) | **Tài liệu học thuật chuyên sâu:** Giải thích chi tiết nguyên lý VAE, Flows, MAS, HiFi-GAN và các hàm Loss. |
+| [`normalizer.py`](normalizer.py) | **Bộ chuẩn hóa văn bản tiếng Việt (Text Normalizer):** Xử lý số, ngày tháng, phần trăm, tiền tệ, các ký hiệu viết tắt. |
+| [`tts_engine.py`](tts_engine.py) | **Quản lý đa Engine:** Hỗ trợ `vits` (mô hình Deep Learning chạy offline), `edge` (Cloud Neural TTS), `gtts` (dự phòng). |
+| [`synthesize.py`](synthesize.py) | **Entrypoint thực thi chuẩn:** Cung cấp hàm `synthesize(...)` và giao diện dòng lệnh CLI. |
+| [`test_tts.py`](test_tts.py) | **Bộ kiểm thử toàn diện:** Kiểm tra tính đúng đắn của chuẩn hóa và các engine tổng hợp. |
+| [`01_tts_exploration.ipynb`](01_tts_exploration.ipynb) | **Notebook thực nghiệm:** Trực quan hóa tensor, nghe thử âm thanh, đo đạc thời gian xử lý (RTF). |
+
+---
+
+## 3. Cài Đặt Môi Trường
+
+Cài đặt các thư viện cần thiết:
 
 ```bash
 pip install -r requirements.txt
 ```
 
 Nội dung `requirements.txt`:
-- `edge-tts`: Bộ tổng hợp giọng nói nơ-ron Microsoft Edge.
-- `gTTS`: Google Translate TTS (fallback engine).
-- `soundfile`: Xử lý định dạng audio.
-- `pydub`: Hỗ trợ xử lý và chuyển đổi file âm thanh.
+```text
+transformers>=4.40.0
+torch>=2.0.0
+soundfile>=0.12.0
+edge-tts>=7.0.0
+gTTS>=2.5.0
+pydub>=0.25.1
+```
 
 ---
 
-## 3. Hướng dẫn sử dụng cho các thành viên khác
+## 4. Hướng Dẫn Sử Dụng
 
-### Dành cho Lương (`web-interface_Luong`) & Huy (`mrc-model_Huy`):
-
-Chỉ cần import hàm `synthesize`:
+### 4.1. Sử dụng hàm tổng hợp nhanh (`synthesize`)
 
 ```python
-import sys
-import os
-
-# Thêm đường dẫn thư mục TTS nếu cần
-sys.path.append(os.path.abspath("text-to-speech_Duy"))
-
 from synthesize import synthesize
 
-# Ví dụ 1: Tổng hợp câu trả lời từ MRC (tự động lưu vào outputs/)
-audio_path = synthesize("Đáp án đúng là: (B) Thủ đô của Việt Nam là Hà Nội.")
-print("File audio sẵn sàng phát:", audio_path)
+# 1. Chạy với mô hình End-to-End VITS chạy offline trên máy (mặc định)
+audio_file = synthesize(
+    text="Thủ đô của Việt Nam là Hà Nội.",
+    output_path="outputs/vits_output.wav",
+    engine="vits"
+)
+print("File âm thanh đã tạo:", audio_file)
 
-# Ví dụ 2: Chỉ định đường dẫn lưu file cụ thể và chọn giọng nam
-audio_path = synthesize(
-    text="Chiến thắng diễn ra ngày 07/05/1954 tại Điện Biên Phủ.",
-    output_path="static/audio/answer.mp3",
-    voice="vi-VN-NamMinhNeural" # hoặc "nam", "female"
+# 2. Chạy với Edge-TTS (khi cần giọng đọc nơ-ron qua đám mây)
+audio_file_edge = synthesize(
+    text="Nhiệt độ hôm nay là 28°C.",
+    output_path="outputs/edge_output.mp3",
+    engine="edge",
+    voice="vi-VN-HoaiMyNeural"
 )
 ```
 
----
+### 4.2. Phân rã và bóc tách từng tensor bên trong VITS
 
-## 4. Chạy qua Command Line (CLI)
+Để quan sát từng bước tính toán bên trong mô hình VITS:
 
-Bạn có thể chạy thử trực tiếp từ dòng lệnh:
+```python
+from vits_decomposed import VITSDecomposedTTS, print_decomposition_report
+
+# Khởi tạo mô hình
+vits = VITSDecomposedTTS(model_id="facebook/mms-tts-vie")
+
+# Chạy phân rã suy luận
+report = vits.decompose_inference(
+    text="Chiến thắng Điện Biên Phủ ngày 07/05/1954.",
+    output_path="outputs/decomposed.wav",
+    speaking_rate=1.0  # Điều chỉnh tốc độ nói: > 1.0 (nhanh), < 1.0 (chậm)
+)
+
+# In báo cáo các tensor trung gian
+print_decomposition_report(report)
+
+# Truy xuất các tensor phục vụ nghiên cứu
+print("Kích thước Text Encoder:", report.encoder_hidden_shape)
+print("Số khung hình (Frames)  :", report.total_frames)
+print("Thời lượng từng ký tự   :", report.durations_ms[:5])
+```
+
+### 4.3. Chạy từ dòng lệnh (CLI)
 
 ```bash
-# Đọc câu cơ bản
-python synthesize.py -t "Xin chào bạn, tôi là trợ lý ảo ViMMRC." -o outputs/hello.mp3
+# Tổng hợp bằng VITS offline
+python synthesize.py -t "Học máy và xử lý ngôn ngữ tự nhiên tiếng Việt." -e vits -o output.wav
 
-# Chọn giọng nam Nam Minh
-python synthesize.py -t "Đáp án C: Nhiệt độ hôm nay là 32°C." -v vi-VN-NamMinhNeural
-
-# Điều chỉnh tốc độ nói (+10%)
-python synthesize.py -t "Nội dung cần đọc nhanh hơn một chút." --rate "+10%"
+# Chạy báo cáo phân rã VITS
+python vits_decomposed.py
 ```
 
 ---
 
-## 5. Chạy kiểm thử (Testing)
+## 5. Kết Quả Kiểm Thử (Testing)
 
-Chạy script kiểm thử toàn diện:
+Chạy bộ kiểm thử để xác thực toàn bộ pipeline:
 
 ```bash
 python test_tts.py
 ```
 
-Script sẽ tự động kiểm tra:
-1. Độ chính xác của bộ chuẩn hóa tiếng Việt (Text Normalizer).
-2. Hoạt động của Edge-TTS với 2 giọng Hoài My & Nam Minh.
-3. Hoạt động của bộ fallback gTTS.
-4. Giả lập luồng trả lời hoàn chỉnh từ văn bản ViMMRC ra âm thanh.
-
----
-
-## 6. Cấu trúc thư mục
-
-```text
-text-to-speech_Duy/
-├── README.md                  # Tài liệu hướng dẫn sử dụng module
-├── requirements.txt           # Danh sách thư viện cần cài đặt
-├── normalizer.py              # Xử lý số, ngày tháng, nhãn trắc nghiệm tiếng Việt
-├── tts_engine.py              # Core engines: BaseTTSEngine, EdgeTTSEngine, GTTSEngine
-├── synthesize.py              # Entrypoint chuẩn hàm synthesize(...)
-├── test_tts.py                # Bộ test case & benchmark
-└── 01_tts_exploration.ipynb   # Notebook nghiên cứu, so sánh mô hình
-```
+Bộ kiểm thử thực hiện xác minh:
+1. Độ chính xác của bộ chuyển đổi số thành chữ và các quy tắc ngày tháng tiếng Việt.
+2. Quá trình tổng hợp âm thanh không bị rỗng và đúng định dạng tần số lấy mẫu.
+3. Cơ chế chuyển đổi linh hoạt giữa mô hình Local (VITS) và Cloud (Edge-TTS, gTTS).

@@ -124,12 +124,41 @@ class GTTSEngine(BaseTTSEngine):
         return os.path.abspath(output_path)
 
 
+class VITSEngine(BaseTTSEngine):
+    """Mô hình End-to-End VITS chạy offline trên máy (facebook/mms-tts-vie)."""
+
+    _instance = None
+
+    def __init__(self, model_id: str = "facebook/mms-tts-vie"):
+        from vits_decomposed import VITSDecomposedTTS
+        self.model_id = model_id
+        self._vits = VITSDecomposedTTS(model_id=model_id)
+
+    def synthesize(
+        self,
+        text: str,
+        output_path: str,
+        speaking_rate: float = 1.0,
+        noise_scale: float = 0.667,
+        **kwargs,
+    ) -> str:
+        return self._vits.synthesize(
+            text=text,
+            output_path=output_path,
+            normalize=False,  # Chuẩn hóa đã được xử lý ở entrypoint synthesize
+            speaking_rate=speaking_rate,
+            noise_scale=noise_scale,
+        )
+
+
 def get_tts_engine(name: str = "edge") -> BaseTTSEngine:
     """Factory lấy TTS Engine tương ứng."""
     name_clean = name.strip().lower()
-    if name_clean in ("edge", "edge-tts", "edgetts"):
+    if name_clean in ("vits", "mms", "local", "mms-tts"):
+        return VITSEngine()
+    elif name_clean in ("edge", "edge-tts", "edgetts"):
         return EdgeTTSEngine()
     elif name_clean in ("gtts", "google"):
         return GTTSEngine()
     else:
-        raise ValueError(f"Không hỗ trợ engine: '{name}'. Các lựa chọn: 'edge', 'gtts'")
+        raise ValueError(f"Không hỗ trợ engine: '{name}'. Các lựa chọn: 'vits', 'edge', 'gtts'")

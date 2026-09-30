@@ -1,0 +1,218 @@
+<main class="app-shell">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark">V</span>
+      <span><strong>VietRead Voice</strong><small>Đọc hiểu bằng giọng nói</small></span>
+    </div>
+
+    <nav aria-label="Điều hướng chính">
+      <button class="nav-item" [class.active]="activeView() === 'chat'" type="button" (click)="setView('chat')"><span>▣</span><b>Hỏi đáp đọc hiểu</b></button>
+      <button class="nav-item" [class.active]="activeView() === 'library'" type="button" (click)="setView('library')"><span>▤</span><b>Thư viện đoạn văn</b></button>
+      <button class="nav-item" [class.active]="activeView() === 'history'" type="button" (click)="setView('history')"><span>◷</span><b>Lịch sử học tập</b></button>
+      <button class="nav-item" [class.active]="activeView() === 'report'" type="button" (click)="setView('report')"><span>▥</span><b>Báo cáo kết quả</b></button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="cap">◇</span>
+      <span><strong>VietRead Voice</strong><small>AI for Better Learning</small></span>
+    </div>
+  </aside>
+
+  @if (activeView() === 'chat') {
+  <section class="conversation" id="chat">
+    <header class="topbar">
+      <span class="topbar-icon">◌</span>
+      <div><h1>Hỏi đáp đọc hiểu</h1><p>Đặt câu hỏi bằng giọng nói hoặc văn bản, AI sẽ giúp bạn đọc hiểu chính xác.</p></div>
+      <span class="learning">⌁ Học tập tốt hơn mỗi ngày</span>
+    </header>
+
+    <section class="chat" #chatLog>
+      @if (messages().length === 0) {
+        <div class="welcome">
+          <span class="welcome-mark">V</span>
+          <p>Xin chào! Hãy chọn một đoạn văn, sau đó đặt câu hỏi bằng giọng nói hoặc văn bản.</p>
+          <div class="starter-grid">
+            <button type="button" (click)="typedQuestion = 'Nội dung chính của đoạn văn là gì?'">Nội dung chính là gì?</button>
+            <button type="button" (click)="typedQuestion = 'Ý nghĩa của đoạn văn này là gì?'">Giải thích ý nghĩa</button>
+          </div>
+        </div>
+      }
+      @for (msg of messages(); track msg.id) {
+        @if (msg.role === 'user') {
+          <article class="user-message">
+            @if (msg.audioUrl) { <span class="voice-badge">▥</span> }
+            <p>{{ msg.text }}</p>
+          </article>
+        } @else {
+          <article class="answer-row">
+            <span class="assistant-avatar">V</span>
+            <div class="answer-card">
+              <span class="answer-label">Câu trả lời</span>
+              <p class="answer-text">{{ msg.text }}</p>
+              @if (msg.passage) {
+                <blockquote>
+                  <strong>Bằng chứng từ đoạn văn</strong>
+                  <span>{{ msg.passage.text }}</span>
+                </blockquote>
+              }
+              @if (msg.audioUrl) {
+                <div class="audio-bar">
+                  <button type="button" (click)="replay(msg.audioUrl)" aria-label="Phát câu trả lời">▶</button>
+                  <span class="waveform">▂▅▃▇▆▂▅▇▃▆▂▇▅▃▁▅▆▂</span>
+                  <small>Nghe câu trả lời</small>
+                </div>
+              }
+            </div>
+          </article>
+        }
+      }
+    </section>
+
+    @if (error()) {
+      <div class="error" role="alert"><strong>Không thể xử lý:</strong> {{ error() }}</div>
+    }
+
+    <footer class="composer">
+      <form class="typed" (ngSubmit)="sendTyped()">
+        <span class="input-mic">♬</span>
+        <input name="question" [(ngModel)]="typedQuestion" [disabled]="busy || step() === 'recording'" placeholder="Nhấn Thu âm để nói câu hỏi của bạn, hoặc nhập văn bản..." />
+        <button class="send" type="submit" [disabled]="busy || !typedQuestion.trim()"><span>➤</span> Gửi</button>
+      </form>
+      <button type="button" class="mic" [class.recording]="step() === 'recording'" [disabled]="busy" (click)="toggleRecording()" [attr.aria-label]="step() === 'recording' ? 'Dừng thu âm' : 'Bắt đầu thu âm'">
+        <span>{{ step() === 'recording' ? '■' : '♬' }}</span><small>{{ step() === 'recording' ? 'Dừng' : 'Thu âm' }}</small>
+      </button>
+    </footer>
+    <p class="mobile-status">{{ stepLabels[step()] }}</p>
+  </section>
+
+  <aside class="insights">
+    <section class="tool-panel pipeline-panel">
+      <header><span class="panel-icon">AI</span><div><h2>Quy trình xử lý của AI</h2><p>Từ giọng nói đến câu trả lời</p></div></header>
+      <ol class="pipeline">
+        @for (item of flowSteps; track item.key; let index = $index) {
+          <li [class]="flowState(item.key)">
+            <span class="step-number">{{ index + 1 }}</span>
+            <span class="step-icon">{{ item.icon }}</span>
+            <span class="step-copy"><strong>{{ index + 1 }}. {{ item.name }}</strong><small>{{ item.description }}</small></span>
+            <span class="step-result">{{ flowState(item.key) === 'done' ? '✓' : flowState(item.key) === 'active' ? '•••' : '' }}</span>
+          </li>
+        }
+      </ol>
+      <p class="processing-status"><span [class.live]="step() !== 'idle'">●</span> {{ stepLabels[step()] }}</p>
+    </section>
+
+    <section class="tool-panel passage-panel" id="passage">
+      <header><span class="panel-icon">▤</span><div><h2>Đoạn văn ngữ cảnh</h2><p>Dán văn bản hoặc để AI tự truy xuất</p></div></header>
+      <textarea rows="7" [(ngModel)]="passageInput" placeholder="Dán đoạn văn cần đọc hiểu vào đây..."></textarea>
+      @if (latestPassage(); as passage) {
+        <div class="selected-passage">
+          <strong>Đoạn văn được chọn</strong>
+          @if (passage.score !== undefined) { <span class="score">{{ (passage.score * 100).toFixed(0) }}%</span> }
+          <p>{{ passage.text }}</p>
+        </div>
+      } @else {
+        <p class="passage-hint">Để trống để hệ thống tự tìm đoạn văn phù hợp nhất.</p>
+      }
+    </section>
+  </aside>
+  } @else {
+    <section class="page-view">
+      @if (activeView() === 'library') {
+        <header class="page-header">
+          <div><span class="eyebrow">THƯ VIỆN HỌC TẬP</span><h1>Thư viện đoạn văn</h1><p>Chọn ngữ liệu có sẵn hoặc thêm đoạn văn của riêng bạn để bắt đầu hỏi đáp.</p></div>
+          <span class="page-count">{{ libraryPassages.length }} đoạn văn</span>
+        </header>
+
+        <div class="page-content library-view">
+          <label class="search-box"><span>⌕</span><input [(ngModel)]="librarySearch" placeholder="Tìm theo tiêu đề, chủ đề hoặc nội dung..." /></label>
+          <div class="passage-grid">
+            @for (passage of filteredPassages(); track passage.id) {
+              <article class="passage-card">
+                <div class="card-meta"><span>{{ passage.category }}</span><small>{{ passage.level }}</small></div>
+                <h2>{{ passage.title }}</h2>
+                <p>{{ passage.text }}</p>
+                <button type="button" (click)="usePassage(passage)">Đọc hiểu đoạn này <span>→</span></button>
+              </article>
+            } @empty {
+              <div class="empty-state"><span>⌕</span><h2>Không tìm thấy đoạn văn</h2><p>Thử một từ khóa khác hoặc thêm đoạn văn của bạn.</p></div>
+            }
+          </div>
+
+          <section class="custom-passage">
+            <div><span class="panel-icon">＋</span><h2>Đoạn văn của bạn</h2><p>Dán nội dung bất kỳ để đặt câu hỏi ngay.</p></div>
+            <textarea rows="6" [(ngModel)]="passageInput" placeholder="Nhập hoặc dán đoạn văn tại đây..."></textarea>
+            <button type="button" [disabled]="!passageInput.trim()" (click)="useCustomPassage()">Sử dụng đoạn văn</button>
+          </section>
+        </div>
+      }
+
+      @if (activeView() === 'history') {
+        <header class="page-header">
+          <div><span class="eyebrow">HOẠT ĐỘNG GẦN ĐÂY</span><h1>Lịch sử học tập</h1><p>Xem lại câu hỏi, câu trả lời và đoạn văn đã sử dụng trong phiên này.</p></div>
+          <button class="secondary-action danger" type="button" [disabled]="learningSessions().length === 0" (click)="clearHistory()">Xóa lịch sử</button>
+        </header>
+
+        <div class="page-content history-view">
+          @for (session of learningSessions(); track session.id; let index = $index) {
+            <article class="history-card">
+              <div class="history-index">{{ learningSessions().length - index }}</div>
+              <div class="history-main">
+                <div class="history-meta"><span>{{ session.question.audioUrl ? 'Câu hỏi giọng nói' : 'Câu hỏi văn bản' }}</span><small>#{{ session.id }}</small></div>
+                <h2>{{ session.question.text }}</h2>
+                @if (session.answer) {
+                  <p>{{ session.answer.text }}</p>
+                  <div class="history-actions">
+                    @if (session.answer.audioUrl) { <button type="button" (click)="replay(session.answer.audioUrl)">▶ Nghe lại</button> }
+                    @if (session.answer.passage) { <button type="button" (click)="usePassage(session.answer.passage)">Mở đoạn văn</button> }
+                  </div>
+                } @else {
+                  <p class="pending-answer">Câu hỏi chưa có câu trả lời.</p>
+                }
+              </div>
+            </article>
+          } @empty {
+            <div class="empty-state history-empty"><span>◷</span><h2>Chưa có lịch sử học tập</h2><p>Các câu hỏi và câu trả lời trong phiên sẽ xuất hiện tại đây.</p><button type="button" (click)="setView('chat')">Đặt câu hỏi đầu tiên</button></div>
+          }
+        </div>
+      }
+
+      @if (activeView() === 'report') {
+        <header class="page-header">
+          <div><span class="eyebrow">TỔNG QUAN HỌC TẬP</span><h1>Báo cáo kết quả</h1><p>Theo dõi hoạt động hỏi đáp và mức độ sử dụng trợ lý đọc hiểu.</p></div>
+          <span class="page-count">Phiên hiện tại</span>
+        </header>
+
+        <div class="page-content report-view">
+          <section class="metric-grid">
+            <article><span class="metric-icon blue">?</span><small>Tổng câu hỏi</small><strong>{{ reportMetrics().questions }}</strong><p>Câu hỏi đã gửi</p></article>
+            <article><span class="metric-icon green">✓</span><small>Đã trả lời</small><strong>{{ reportMetrics().answered }}</strong><p>Phản hồi hoàn tất</p></article>
+            <article><span class="metric-icon pink">♬</span><small>Hỏi bằng giọng nói</small><strong>{{ reportMetrics().voiceQuestions }}</strong><p>Được nhận dạng bởi Whisper</p></article>
+            <article><span class="metric-icon amber">▤</span><small>Đoạn văn đã học</small><strong>{{ reportMetrics().passages }}</strong><p>Ngữ cảnh khác nhau</p></article>
+          </section>
+
+          <section class="report-panels">
+            <article class="activity-panel">
+              <div class="section-heading"><div><h2>Hoạt động trong phiên</h2><p>Tiến độ xử lý câu hỏi của bạn</p></div><span>{{ reportMetrics().answered }}/{{ reportMetrics().questions }}</span></div>
+              <div class="progress-track"><span [style.width.%]="reportMetrics().questions ? reportMetrics().answered / reportMetrics().questions * 100 : 0"></span></div>
+              <div class="report-breakdown"><span><i class="dot green"></i>Hoàn thành <b>{{ reportMetrics().answered }}</b></span><span><i class="dot blue"></i>Đang chờ <b>{{ reportMetrics().questions - reportMetrics().answered }}</b></span></div>
+            </article>
+            <article class="skills-panel">
+              <div class="section-heading"><div><h2>Kỹ năng đã luyện tập</h2><p>Các hình thức tương tác trong phiên</p></div></div>
+              <ul>
+                <li><span>Nhận dạng giọng nói</span><b>{{ reportMetrics().voiceQuestions }} lượt</b></li>
+                <li><span>Đọc hiểu ngữ cảnh</span><b>{{ reportMetrics().answered }} lượt</b></li>
+                <li><span>Khám phá đoạn văn</span><b>{{ reportMetrics().passages }} bài</b></li>
+              </ul>
+            </article>
+          </section>
+
+          @if (reportMetrics().questions === 0) {
+            <div class="report-tip"><span>◎</span><div><strong>Bắt đầu tạo báo cáo của bạn</strong><p>Đặt câu hỏi bằng văn bản hoặc giọng nói, dữ liệu học tập sẽ được cập nhật tự động.</p></div><button type="button" (click)="setView('chat')">Bắt đầu học</button></div>
+          }
+        </div>
+      }
+    </section>
+  }
+
+  <audio #player hidden></audio>
+</main>

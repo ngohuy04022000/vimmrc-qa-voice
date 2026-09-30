@@ -14,11 +14,19 @@ import tempfile
 import time
 from typing import Optional
 
-# Cho phép import module nội bộ ngay cả khi gọi từ thư mục khác
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Cho phép import module từ cả thư mục gốc và thư mục src/
+_current_dir = os.path.dirname(os.path.abspath(__file__))
+_src_dir = os.path.join(_current_dir, "src")
+for _p in (_current_dir, _src_dir):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
-from normalizer import normalize_vietnamese_text
-from tts_engine import BaseTTSEngine, get_tts_engine
+try:
+    from src.normalizer import normalize_vietnamese_text
+    from src.tts_engine import BaseTTSEngine, get_tts_engine
+except ImportError:
+    from normalizer import normalize_vietnamese_text
+    from tts_engine import BaseTTSEngine, get_tts_engine
 
 logger = logging.getLogger(__name__)
 

@@ -130,7 +130,10 @@ class VITSEngine(BaseTTSEngine):
     _instance = None
 
     def __init__(self, model_id: str = "facebook/mms-tts-vie"):
-        from vits_decomposed import VITSDecomposedTTS
+        try:
+            from .vits_decomposed import VITSDecomposedTTS
+        except ImportError:
+            from vits_decomposed import VITSDecomposedTTS
         self.model_id = model_id
         self._vits = VITSDecomposedTTS(model_id=model_id)
 

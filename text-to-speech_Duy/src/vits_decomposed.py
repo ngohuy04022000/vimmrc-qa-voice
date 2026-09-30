@@ -17,9 +17,11 @@ import soundfile as sf
 import torch
 from transformers import VitsModel, VitsTokenizer
 
-# Đảm bảo import được module tiền xử lý cùng thư mục
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from normalizer import normalize_vietnamese_text
+# Đảm bảo import được module tiền xử lý cùng thư mục hoặc package
+try:
+    from .normalizer import normalize_vietnamese_text
+except ImportError:
+    from normalizer import normalize_vietnamese_text
 
 
 @dataclass
@@ -98,7 +100,8 @@ class VITSDecomposedTTS:
         waveform = output.waveform[0].cpu().float().numpy()
 
         if output_path is None:
-            output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
+            root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            output_dir = os.path.join(root_dir, "outputs")
             os.makedirs(output_dir, exist_ok=True)
             output_path = os.path.join(output_dir, f"vits_{int(time.time() * 1000)}.wav")
         else:
@@ -262,6 +265,7 @@ def print_decomposition_report(res: DecomposedVITSOutput):
 if __name__ == "__main__":
     vits = VITSDecomposedTTS()
     sample_text = "Thủ đô của Việt Nam là Hà Nội."
-    output_audio = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs", "demo_vits_decomposed.wav")
+    root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    output_audio = os.path.join(root_dir, "outputs", "demo_vits_decomposed.wav")
     report = vits.decompose_inference(sample_text, output_path=output_audio)
     print_decomposition_report(report)

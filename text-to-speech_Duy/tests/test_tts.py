@@ -8,12 +8,17 @@ import os
 import sys
 import time
 
-# Thêm đường dẫn module hiện tại vào sys.path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Thêm đường dẫn thư mục gốc và thư mục src vào sys.path
+_test_dir = os.path.dirname(os.path.abspath(__file__))
+_root_dir = os.path.dirname(_test_dir)
+_src_dir = os.path.join(_root_dir, "src")
+for _p in (_root_dir, _src_dir, _test_dir):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
-from normalizer import normalize_vietnamese_text
+from src.normalizer import normalize_vietnamese_text
 from synthesize import synthesize
-from tts_engine import EdgeTTSEngine, GTTSEngine
+from src.tts_engine import EdgeTTSEngine, GTTSEngine
 
 
 def test_normalizer():
@@ -54,7 +59,7 @@ def test_edge_tts():
     print("2. KIỂM THỬ EDGE-TTS (GIỌNG NỮ HOÀI MY & GIỌNG NAM NAM MINH)")
     print("=" * 60)
 
-    output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
+    output_dir = os.path.join(_root_dir, "outputs")
     os.makedirs(output_dir, exist_ok=True)
 
     text_female = "Xin chào, tôi là Hoài My, trợ lý giọng nói đọc hiểu văn bản tiếng Việt."
@@ -84,7 +89,7 @@ def test_gtts_fallback():
     print("3. KIỂM THỬ GTTS (FALLBACK ENGINE)")
     print("=" * 60)
 
-    output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
+    output_dir = os.path.join(_root_dir, "outputs")
     file_gtts = os.path.join(output_dir, "test_gtts.mp3")
 
     text = "Đây là âm thanh được tạo từ công cụ Google Translate TTS dự phòng."
@@ -103,7 +108,7 @@ def test_vits_engine():
     print("4. KIỂM THỬ MÔ HÌNH END-TO-END VITS (FACEBOOK/MMS-TTS-VIE)")
     print("=" * 60)
 
-    output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
+    output_dir = os.path.join(_root_dir, "outputs")
     file_vits = os.path.join(output_dir, "test_vits.wav")
 
     text = "Mô hình VITS chuyển đổi văn bản trực tiếp thành dạng sóng âm thanh."
@@ -122,7 +127,7 @@ def test_sample_answers():
     print("5. KIỂM THỬ TỔNG HỢP CÂU TRẢ LỜI MẪU")
     print("=" * 60)
 
-    output_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "outputs")
+    output_dir = os.path.join(_root_dir, "outputs")
     sample_text = (
         "**Đáp án:** (B). Hồ Gươm nằm ở trung tâm thủ đô Hà Nội, "
         "gắn liền với truyền thuyết vua Lê Lợi trả gươm báu vào thế kỷ 15."

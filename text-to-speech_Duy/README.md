@@ -43,21 +43,41 @@ Khác với các hệ thống TTS truyền thống chia làm 2 giai đoạn đ�
                         [Sóng âm Raw Waveform y(t) (16 kHz)]
 ```
 
-> Chi tiết phân rã toán học và các hàm mất mát của từng khối được trình bày đầy đủ tại: **[`VITS_ARCHITECTURE.md`](VITS_ARCHITECTURE.md)**.
+> Chi tiết phân rã toán học và các hàm mất mát của từng khối được trình bày đầy đủ tại: **[`docs/vits-architecture.md`](docs/vits-architecture.md)**.
 
 ---
 
-## 2. Các Thành Phần Mã Nguồn
+## 2. Cấu Trúc Thư Mục & Các Thành Phần
 
-| File | Vai trò |
-|---|---|
-| [`vits_decomposed.py`](vits_decomposed.py) | **Mô hình VITS phân rã:** Cho phép bóc tách và trích xuất từng tensor trung gian ($h_{text}$, $\mu_0$, độ dài từng âm vị, vector $z$, waveform). |
-| [`VITS_ARCHITECTURE.md`](VITS_ARCHITECTURE.md) | **Tài liệu học thuật chuyên sâu:** Giải thích chi tiết nguyên lý VAE, Flows, MAS, HiFi-GAN và các hàm Loss. |
-| [`normalizer.py`](normalizer.py) | **Bộ chuẩn hóa văn bản tiếng Việt (Text Normalizer):** Xử lý số, ngày tháng, phần trăm, tiền tệ, các ký hiệu viết tắt. |
-| [`tts_engine.py`](tts_engine.py) | **Quản lý đa Engine:** Hỗ trợ `vits` (mô hình Deep Learning chạy offline), `edge` (Cloud Neural TTS), `gtts` (dự phòng). |
-| [`synthesize.py`](synthesize.py) | **Entrypoint thực thi chuẩn:** Cung cấp hàm `synthesize(...)` và giao diện dòng lệnh CLI. |
-| [`test_tts.py`](test_tts.py) | **Bộ kiểm thử toàn diện:** Kiểm tra tính đúng đắn của chuẩn hóa và các engine tổng hợp. |
-| [`01_tts_exploration.ipynb`](01_tts_exploration.ipynb) | **Notebook thực nghiệm:** Trực quan hóa tensor, nghe thử âm thanh, đo đạc thời gian xử lý (RTF). |
+```text
+text-to-speech_Duy/
+├── docs/                        # Tài liệu nghiên cứu chuyên sâu
+│   └── vits-architecture.md     # Phân rã lý thuyết toán học & kiến trúc VITS
+├── notebooks/                   # Notebook thực nghiệm & trực quan hóa
+│   └── 01_tts_exploration.ipynb
+├── src/                         # Gói mã nguồn cốt lõi
+│   ├── __init__.py
+│   ├── normalizer.py            # Tiền xử lý & chuẩn hóa tiếng Việt
+│   ├── tts_engine.py            # Các Engine (VITS, Edge-TTS, gTTS)
+│   └── vits_decomposed.py       # Phân rã mô hình VITS (tensor extraction)
+├── tests/                       # Bộ kiểm thử toàn diện
+│   ├── __init__.py
+│   └── test_tts.py
+├── outputs/                     # File âm thanh sinh ra (đã được .gitignore)
+├── requirements.txt             # Thư viện phụ thuộc
+├── synthesize.py                # Entrypoint chính (CLI & API gọi nhanh)
+└── README.md                    # Tài liệu tổng quan
+```
+
+| Thành phần | Đường dẫn | Vai trò |
+|---|---|---|
+| **VITS Decomposed** | [`src/vits_decomposed.py`](src/vits_decomposed.py) | Bóc tách và trích xuất từng tensor trung gian ($h_{text}$, $\mu_0$, duration, vector $z$, waveform). |
+| **Lý thuyết VITS** | [`docs/vits-architecture.md`](docs/vits-architecture.md) | Tài liệu học thuật chuyên sâu: VAE, Flows, MAS, HiFi-GAN và các hàm Loss. |
+| **Text Normalizer** | [`src/normalizer.py`](src/normalizer.py) | Xử lý số, ngày tháng, phần trăm, tiền tệ, các ký hiệu viết tắt tiếng Việt. |
+| **TTS Engines** | [`src/tts_engine.py`](src/tts_engine.py) | Quản lý đa Engine: `vits` (Local Deep Learning), `edge` (Cloud Neural), `gtts` (dự phòng). |
+| **Entrypoint** | [`synthesize.py`](synthesize.py) | Cung cấp hàm `synthesize(...)` và giao diện dòng lệnh CLI. |
+| **Testing** | [`tests/test_tts.py`](tests/test_tts.py) | Bộ kiểm thử toàn diện cho Normalizer và các engine tổng hợp. |
+| **Notebook** | [`notebooks/01_tts_exploration.ipynb`](notebooks/01_tts_exploration.ipynb) | Trực quan hóa tensor, vẽ phổ sóng âm, đo đạc benchmark (RTF). |
 
 ---
 
@@ -110,7 +130,7 @@ audio_file_edge = synthesize(
 Để quan sát từng bước tính toán bên trong mô hình VITS:
 
 ```python
-from vits_decomposed import VITSDecomposedTTS, print_decomposition_report
+from src.vits_decomposed import VITSDecomposedTTS, print_decomposition_report
 
 # Khởi tạo mô hình
 vits = VITSDecomposedTTS(model_id="facebook/mms-tts-vie")
@@ -138,7 +158,7 @@ print("Thời lượng từng ký tự   :", report.durations_ms[:5])
 python synthesize.py -t "Học máy và xử lý ngôn ngữ tự nhiên tiếng Việt." -e vits -o output.wav
 
 # Chạy báo cáo phân rã VITS
-python vits_decomposed.py
+python src/vits_decomposed.py
 ```
 
 ---
@@ -148,7 +168,7 @@ python vits_decomposed.py
 Chạy bộ kiểm thử để xác thực toàn bộ pipeline:
 
 ```bash
-python test_tts.py
+python tests/test_tts.py
 ```
 
 Bộ kiểm thử thực hiện xác minh:

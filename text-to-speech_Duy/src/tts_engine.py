@@ -169,11 +169,11 @@ class MatchaEngine(BaseTTSEngine):
         return path
 
 
-def get_tts_engine(name: str = "edge") -> BaseTTSEngine:
+def get_tts_engine(name: str = "edge", checkpoint_path: Optional[str] = None) -> BaseTTSEngine:
     """Factory lấy TTS Engine tương ứng."""
     name_clean = name.strip().lower()
     if name_clean in ("matcha", "matcha-tts", "flowmatching"):
-        return MatchaEngine()
+        return MatchaEngine(checkpoint_path=checkpoint_path)
     elif name_clean in ("vits", "mms", "local", "mms-tts"):
         return VITSEngine()
     elif name_clean in ("edge", "edge-tts", "edgetts"):

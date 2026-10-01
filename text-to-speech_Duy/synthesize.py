@@ -14,6 +14,12 @@ import tempfile
 import time
 from typing import Optional
 
+# Thiết lập mã hóa UTF-8 cho console Windows
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
 # Cho phép import module từ cả thư mục gốc và thư mục src/
 _current_dir = os.path.dirname(os.path.abspath(__file__))
 _src_dir = os.path.join(_current_dir, "src")

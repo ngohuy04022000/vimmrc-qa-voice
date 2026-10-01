@@ -142,5 +142,5 @@ Dưới đây là các công trình khoa học nền tảng định hình cơ s�
    *"VIVOS: A free Vietnamese speech corpus for speech recognition and synthesis"*.  
    **AILab, University of Science, VNU-HCM**.  
    *Đóng góp:* Tập dữ liệu chuẩn học thuật tiếng Việt với 15 giờ ghi âm phát âm chuẩn xác, cung cấp ground-truth cho huấn luyện và kiểm thử đối sánh.  
-   *Liên kết:* [AILab VIVOS Corpus](https://ailab.hcmus.edu.vn/vivos)
+   *Liên kết chính thức:* [Zenodo DOI 10.5281/zenodo.7068130](https://doi.org/10.5281/zenodo.7068130) | [Hugging Face AILAB-VNUHCM/vivos](https://huggingface.co/datasets/AILAB-VNUHCM/vivos)
 

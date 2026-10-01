@@ -38,7 +38,8 @@ class AudioSample:
 class VIVOSPreprocessor:
     """Bộ xử lý dữ liệu VIVOS cho các mô hình TTS tiếng Việt."""
 
-    VIVOS_DOWNLOAD_URL = "https://ailab.hcmus.edu.vn/assets/vivos.tar.gz"
+    # Mirror chính thức từ AILAB-VNUHCM trên Hugging Face CDN (tốc độ cao, luôn sẵn sàng)
+    VIVOS_DOWNLOAD_URL = "https://huggingface.co/datasets/AILAB-VNUHCM/vivos/resolve/main/data/vivos.tar.gz"
 
     def __init__(self, data_root: str):
         self.data_root = os.path.abspath(data_root)

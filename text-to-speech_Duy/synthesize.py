@@ -65,7 +65,7 @@ def synthesize(
         current_dir = os.path.dirname(os.path.abspath(__file__))
         output_dir = os.path.join(current_dir, "outputs")
         os.makedirs(output_dir, exist_ok=True)
-        ext = ".wav" if engine == "vits" else ".mp3"
+        ext = ".wav" if engine in ("vits", "matcha") else ".mp3"
         filename = f"tts_{int(time.time() * 1000)}{ext}"
         output_path = os.path.join(output_dir, filename)
     else:
@@ -97,7 +97,7 @@ def main():
     parser.add_argument("-t", "--text", required=True, help="Văn bản tiếng Việt cần đọc")
     parser.add_argument("-o", "--output", default=None, help="Đường dẫn file lưu audio đầu ra")
     parser.add_argument("-v", "--voice", default="vi-VN-HoaiMyNeural", help="Giọng đọc Edge: vi-VN-HoaiMyNeural (nữ) hoặc vi-VN-NamMinhNeural (nam)")
-    parser.add_argument("-e", "--engine", default="vits", choices=["vits", "edge", "gtts"], help="Engine sử dụng: 'vits' (mô hình Deep Learning offline), 'edge', 'gtts'")
+    parser.add_argument("-e", "--engine", default="matcha", choices=["matcha", "vits", "edge", "gtts"], help="Engine sử dụng: 'matcha' (Flow Matching 2024), 'vits', 'edge', 'gtts'")
     parser.add_argument("--no-norm", action="store_true", help="Tắt tính năng chuẩn hóa văn bản")
     parser.add_argument("--rate", default="+0%", help="Tốc độ nói (vd: +10%%, -5%%)")
 

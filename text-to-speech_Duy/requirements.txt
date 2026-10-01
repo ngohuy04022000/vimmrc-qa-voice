@@ -1,6 +1,13 @@
 transformers>=4.40.0
 torch>=2.0.0
 soundfile>=0.12.0
+scipy>=1.10.0
 edge-tts>=7.0.0
 gTTS>=2.5.0
 pydub>=0.25.1
+
+# Thư viện phục vụ nghiên cứu thực nghiệm học thuật (Khuyến nghị cho Colab/Cloud):
+# matcha-tts>=0.0.7
+# pymcd>=0.2.0
+# datasets>=2.18.0
+# accelerate>=0.28.0

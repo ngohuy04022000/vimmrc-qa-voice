@@ -154,14 +154,31 @@ class VITSEngine(BaseTTSEngine):
         )
 
 
+class MatchaEngine(BaseTTSEngine):
+    """Mô hình Optimal-Transport Conditional Flow Matching (Matcha-TTS, ICASSP 2024)."""
+
+    def __init__(self, checkpoint_path: Optional[str] = None):
+        try:
+            from .matcha_engine import MatchaTTSEngine
+        except ImportError:
+            from matcha_engine import MatchaTTSEngine
+        self._engine = MatchaTTSEngine(checkpoint_path=checkpoint_path)
+
+    def synthesize(self, text: str, output_path: str, **kwargs) -> str:
+        path, _ = self._engine.synthesize(text=text, output_path=output_path, normalize=False)
+        return path
+
+
 def get_tts_engine(name: str = "edge") -> BaseTTSEngine:
     """Factory lấy TTS Engine tương ứng."""
     name_clean = name.strip().lower()
-    if name_clean in ("vits", "mms", "local", "mms-tts"):
+    if name_clean in ("matcha", "matcha-tts", "flowmatching"):
+        return MatchaEngine()
+    elif name_clean in ("vits", "mms", "local", "mms-tts"):
         return VITSEngine()
     elif name_clean in ("edge", "edge-tts", "edgetts"):
         return EdgeTTSEngine()
     elif name_clean in ("gtts", "google"):
         return GTTSEngine()
     else:
-        raise ValueError(f"Không hỗ trợ engine: '{name}'. Các lựa chọn: 'vits', 'edge', 'gtts'")
+        raise ValueError(f"Không hỗ trợ engine: '{name}'. Các lựa chọn: 'matcha', 'vits', 'edge', 'gtts'")

@@ -41,12 +41,16 @@ class MatchaTTSEngine:
 
         try:
             from matcha.cli import load_matcha
-            print("[Matcha-TTS] Đang nạp mô hình Matcha-TTS từ thư viện chính thức...")
-            self.model = load_matcha("matcha_ljspeech", device=self.device)
+            if self.checkpoint_path and os.path.exists(self.checkpoint_path):
+                print(f"[Matcha-TTS] Đang nạp trọng số mô hình tự huấn luyện: {self.checkpoint_path}")
+                self.model = load_matcha(self.checkpoint_path, device=self.device)
+            else:
+                print("[Matcha-TTS] Đang nạp mô hình Matcha-TTS cơ sở...")
+                self.model = load_matcha("matcha_ljspeech", device=self.device)
             self._is_loaded = True
             print("[Matcha-TTS] Nạp mô hình thành công!")
         except Exception as e:
-            print(f"[Matcha-TTS] Thông báo: Chưa tải checkpoint Matcha-TTS chuyên biệt: {e}")
+            print(f"[Matcha-TTS] Thông báo: Chưa nạp được checkpoint Matcha-TTS chuyên biệt: {e}")
             self._is_loaded = False
 
     def synthesize(

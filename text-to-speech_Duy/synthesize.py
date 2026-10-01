@@ -35,7 +35,8 @@ def synthesize(
     text: str,
     output_path: Optional[str] = None,
     voice: str = "vi-VN-HoaiMyNeural",
-    engine: str = "edge",
+    engine: str = "matcha",
+    checkpoint_path: Optional[str] = None,
     normalize: bool = True,
     rate: str = "+0%",
     pitch: str = "+0Hz",
@@ -46,7 +47,8 @@ def synthesize(
         text: Chuỗi văn bản cần đọc (ví dụ câu trả lời từ mô hình MRC).
         output_path: Đường dẫn lưu file âm thanh. Nếu None, tự sinh file tại thư mục outputs/.
         voice: Giọng đọc ('vi-VN-HoaiMyNeural', 'vi-VN-NamMinhNeural', 'nu', 'nam').
-        engine: Công cụ tổng hợp ('edge' hoặc 'gtts'). Mặc định là 'edge'.
+        engine: Công cụ tổng hợp ('matcha', 'vits', 'edge', 'gtts'). Mặc định là 'matcha'.
+        checkpoint_path: Đường dẫn đến file trọng số mô hình đã huấn luyện (.pt).
         normalize: Tự động chuẩn hóa số, ngày tháng, nhãn trắc nghiệm trước khi đọc.
         rate: Tốc độ đọc (ví dụ: '+0%', '+10%', '-10%').
         pitch: Cao độ giọng (ví dụ: '+0Hz', '+5Hz').
@@ -75,7 +77,7 @@ def synthesize(
 
     # 3. Tổng hợp giọng nói qua Engine
     try:
-        tts_service: BaseTTSEngine = get_tts_engine(engine)
+        tts_service: BaseTTSEngine = get_tts_engine(engine, checkpoint_path=checkpoint_path)
         result_path = tts_service.synthesize(
             text=processed_text,
             output_path=output_path,
@@ -98,6 +100,7 @@ def main():
     parser.add_argument("-o", "--output", default=None, help="Đường dẫn file lưu audio đầu ra")
     parser.add_argument("-v", "--voice", default="vi-VN-HoaiMyNeural", help="Giọng đọc Edge: vi-VN-HoaiMyNeural (nữ) hoặc vi-VN-NamMinhNeural (nam)")
     parser.add_argument("-e", "--engine", default="matcha", choices=["matcha", "vits", "edge", "gtts"], help="Engine sử dụng: 'matcha' (Flow Matching 2024), 'vits', 'edge', 'gtts'")
+    parser.add_argument("-c", "--checkpoint", default=None, help="Đường dẫn file trọng số tự huấn luyện (.pt)")
     parser.add_argument("--no-norm", action="store_true", help="Tắt tính năng chuẩn hóa văn bản")
     parser.add_argument("--rate", default="+0%", help="Tốc độ nói (vd: +10%%, -5%%)")
 
@@ -107,6 +110,7 @@ def main():
         output_path=args.output,
         voice=args.voice,
         engine=args.engine,
+        checkpoint_path=args.checkpoint,
         normalize=not args.no_norm,
         rate=args.rate,
     )

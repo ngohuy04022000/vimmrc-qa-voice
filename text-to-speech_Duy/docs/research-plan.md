@@ -77,16 +77,16 @@ Gần đây (2024–2026), sự ra đời của **Conditional Flow Matching (CFM
 
 ---
 
-## 4. Kế Hoạch & Tiến Độ Thực Hiện (Roadmap)
+## 4. Kế Hoạch & Tiến Độ Thực Hiện Rút Gọn (2 Tuần Sprint)
 
-| Tuần | Nội dung công việc cụ thể | Sản phẩm đầu ra (Deliverables) |
+| Thời gian | Giai đoạn & Công việc cụ thể | Sản phẩm đầu ra (Deliverables) |
 |:---:|---|---|
-| **Tuần 1** | • Rà soát tổng quan tài liệu (Matcha-TTS, Flow Matching, VIVOS).<br>• Tải và viết mã nguồn tiền xử lý tập dữ liệu VIVOS. | Module `vivos_preprocessor.py`, dữ liệu Train/Val/Test. |
-| **Tuần 2** | • Thiết lập Baseline Matcha-TTS nguyên bản.<br>• Viết bộ công cụ đo lường thực nghiệm (`evaluator.py`). | Baseline hoạt động, script đo MCD và F0 RMSE. |
-| **Tuần 3** | • Thiết kế mô-đun Tone-Aware Embedding và cải tiến kiến trúc cho tiếng Việt.<br>• Hoàn thiện notebook huấn luyện trên Google Colab / Kaggle. | Mã nguồn mô hình đề xuất, `02_train_matcha_colab.ipynb`. |
-| **Tuần 4** | • Chạy huấn luyện (Training/Fine-tuning) trên Cloud GPU.<br>• Theo dõi loss và lưu trữ các checkpoints tốt nhất. | File trọng số checkpoint tối ưu (`best_model.pt`). |
-| **Tuần 5** | • Chạy sinh âm thanh trên tập Test set cho cả Baseline và Mô hình đề xuất.<br>• Đo đạc số liệu định lượng (MCD, F0, RTF) và làm khảo sát MOS. | Bảng số liệu đối sánh thực nghiệm đầy đủ. |
-| **Tuần 6** | • Viết các chương luận văn / báo cáo học thuật.<br>• Tích hợp mô hình tốt nhất vào entrypoint `synthesize.py`. | Báo cáo hoàn chỉnh, hệ thống demo hoạt động hoàn hảo. |
+| **Ngày 1 – 2** | • Chuẩn bị và phân chia tập dữ liệu VIVOS (Train 90%, Val 5%, Test 5%).<br>• Chạy kiểm thử pipeline tiền xử lý `src/vivos_preprocessor.py`. | 3 file manifest chuẩn (`train`, `val`, `test`). |
+| **Ngày 3 – 4** | • Thiết lập Baseline Matcha-TTS nguyên bản (ICASSP 2024).<br>• Sinh âm thanh mẫu Baseline và chuẩn bị bộ đo `src/evaluator.py`. | Mẫu âm thanh Baseline, script đo MCD/F0 sẵn sàng. |
+| **Ngày 5 – 7** | • Mở `notebooks/02_train_matcha_colab.ipynb` trên Google Colab (GPU T4).<br>• Chạy huấn luyện/fine-tuning trên dữ liệu tiếng Việt, lưu checkpoint tự động lên Google Drive. | Checkpoint mô hình tối ưu: `best_model.pt`. |
+| **Ngày 8 – 9** | • Tải `best_model.pt` từ Google Drive về thư mục `checkpoints/` local.<br>• Chạy suy luận (Inference) trên máy cá nhân cho toàn bộ tập Test set. | 2 thư mục âm thanh kiểm thử: `baseline_test/` và `proposed_test/`. |
+| **Ngày 10 – 11** | • Chạy `src/evaluator.py` đo định lượng: MCD (dB), F0 RMSE (Hz), RTF.<br>• Làm Google Form khảo sát cảm thụ âm thanh MOS (15–20 người đánh giá). | Bảng số liệu thực nghiệm đối kháng hoàn chỉnh. |
+| **Ngày 12 – 14** | • Đưa bảng số liệu, phổ âm và kết quả vào báo cáo / slide luận văn.<br>• Đóng gói tích hợp vào entrypoint `synthesize.py`. | Báo cáo hoàn chỉnh nộp Thầy & Demo hoạt động mượt mà. |
 
 ---
 

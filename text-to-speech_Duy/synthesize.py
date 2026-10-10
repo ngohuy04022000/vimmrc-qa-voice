@@ -12,7 +12,7 @@ import os
 import sys
 import tempfile
 import time
-from typing import Optional
+from typing import Dict, Optional, Tuple
 
 # Thiết lập mã hóa UTF-8 cho console Windows
 if hasattr(sys.stdout, "reconfigure"):
@@ -36,6 +36,17 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+# Engine đã khởi tạo, dùng lại giữa các lần gọi để không phải nạp lại mô hình (vài giây mỗi lần)
+_ENGINE_CACHE: Dict[Tuple[str, Optional[str]], BaseTTSEngine] = {}
+
+
+def _get_engine(engine: str, checkpoint_path: Optional[str] = None) -> BaseTTSEngine:
+    """Lấy engine từ bộ nhớ đệm, khởi tạo ở lần gọi đầu tiên."""
+    key = (engine.strip().lower(), checkpoint_path)
+    if key not in _ENGINE_CACHE:
+        _ENGINE_CACHE[key] = get_tts_engine(engine, checkpoint_path=checkpoint_path)
+    return _ENGINE_CACHE[key]
+
 
 def synthesize(
     text: str,
@@ -46,6 +57,7 @@ def synthesize(
     normalize: bool = True,
     rate: str = "+0%",
     pitch: str = "+0Hz",
+    speaker_id: Optional[int] = None,
 ) -> str:
     """Chuyển đổi văn bản tiếng Việt thành giọng nói (audio file).
 
@@ -58,6 +70,8 @@ def synthesize(
         normalize: Tự động chuẩn hóa số, ngày tháng, nhãn trắc nghiệm trước khi đọc.
         rate: Tốc độ đọc (ví dụ: '+0%', '+10%', '-10%').
         pitch: Cao độ giọng (ví dụ: '+0Hz', '+5Hz').
+        speaker_id: Chỉ số người nói của checkpoint Matcha đa giọng (VIVOS: 0 - 64). None: chọn giọng
+            mặc định theo giới tính suy ra từ `voice`. Các engine khác bỏ qua tham số này.
 
     Returns:
         Đường dẫn tuyệt đối (str) tới file âm thanh đã được tạo.
@@ -83,28 +97,34 @@ def synthesize(
 
     # 3. Tổng hợp giọng nói qua Engine
     try:
-        tts_service: BaseTTSEngine = get_tts_engine(engine, checkpoint_path=checkpoint_path)
+        tts_service = _get_engine(engine, checkpoint_path)
         result_path = tts_service.synthesize(
             text=processed_text,
             output_path=output_path,
             voice=voice,
             rate=rate,
             pitch=pitch,
+            speaker_id=speaker_id,
         )
         return result_path
     except Exception as e:
         logger.warning("Lỗi khi tổng hợp bằng engine '%s': %s. Thử fallback sang gTTS...", engine, e)
         if engine != "gtts":
-            fallback_service = get_tts_engine("gtts")
-            return fallback_service.synthesize(text=processed_text, output_path=output_path)
+            # gTTS luôn sinh dữ liệu MP3 -> đổi đuôi file để định dạng khớp nội dung
+            fallback_path = os.path.splitext(output_path)[0] + ".mp3"
+            fallback_service = _get_engine("gtts")
+            return fallback_service.synthesize(text=processed_text, output_path=fallback_path)
         raise e
 
 
 def main():
+    """Giao diện dòng lệnh: đọc tham số, gọi synthesize() và in đường dẫn file audio."""
     parser = argparse.ArgumentParser(description="Vietnamese Text-to-Speech (TTS) synthesizer CLI")
     parser.add_argument("-t", "--text", required=True, help="Văn bản tiếng Việt cần đọc")
     parser.add_argument("-o", "--output", default=None, help="Đường dẫn file lưu audio đầu ra")
-    parser.add_argument("-v", "--voice", default="vi-VN-HoaiMyNeural", help="Giọng đọc Edge: vi-VN-HoaiMyNeural (nữ) hoặc vi-VN-NamMinhNeural (nam)")
+    parser.add_argument("-v", "--voice", default="vi-VN-HoaiMyNeural", help="Giọng đọc: 'nu' / 'nam' (Matcha chọn giọng VIVOS mặc định theo giới tính), "
+                        "hoặc tên giọng Edge vi-VN-HoaiMyNeural / vi-VN-NamMinhNeural")
+    parser.add_argument("-s", "--speaker-id", type=int, default=None, help="Chỉ số người nói Matcha (VIVOS: 0 - 64)")
     parser.add_argument("-e", "--engine", default="matcha", choices=["matcha", "vits", "edge", "gtts"], help="Engine sử dụng: 'matcha' (Flow Matching 2024), 'vits', 'edge', 'gtts'")
     parser.add_argument("-c", "--checkpoint", default=None, help="Đường dẫn file trọng số tự huấn luyện (.pt)")
     parser.add_argument("--no-norm", action="store_true", help="Tắt tính năng chuẩn hóa văn bản")
@@ -119,6 +139,7 @@ def main():
         checkpoint_path=args.checkpoint,
         normalize=not args.no_norm,
         rate=args.rate,
+        speaker_id=args.speaker_id,
     )
     print(f"[OK] File audio đã được lưu tại: {audio_path}")
 

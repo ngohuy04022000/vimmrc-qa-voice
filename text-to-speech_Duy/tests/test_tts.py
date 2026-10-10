@@ -69,13 +69,13 @@ def test_edge_tts():
     file_male = os.path.join(output_dir, "test_namminh.mp3")
 
     t0 = time.time()
-    res_female = synthesize(text_female, output_path=file_female, voice="vi-VN-HoaiMyNeural")
+    res_female = synthesize(text_female, output_path=file_female, engine="edge", voice="vi-VN-HoaiMyNeural")
     t_female = time.time() - t0
     size_female = os.path.getsize(res_female)
     print(f"[OK] Hoài My (Nữ) : {res_female} ({size_female} bytes) - Thời gian: {t_female:.2f}s")
 
     t0 = time.time()
-    res_male = synthesize(text_male, output_path=file_male, voice="vi-VN-NamMinhNeural")
+    res_male = synthesize(text_male, output_path=file_male, engine="edge", voice="vi-VN-NamMinhNeural")
     t_male = time.time() - t0
     size_male = os.path.getsize(res_male)
     print(f"[OK] Nam Minh (Nam): {res_male} ({size_male} bytes) - Thời gian: {t_male:.2f}s")
@@ -122,9 +122,28 @@ def test_vits_engine():
     print("=> [PASS] VITS Engine hoạt động tốt!\n")
 
 
+def test_matcha_engine():
+    print("=" * 60)
+    print("5. KIỂM THỬ MÔ HÌNH MATCHA-TTS FLOW MATCHING TỰ HUẤN LUYỆN")
+    print("=" * 60)
+
+    output_dir = os.path.join(_root_dir, "outputs")
+    file_matcha = os.path.join(output_dir, "test_matcha.wav")
+
+    text = "Mô hình Matcha-TTS sử dụng giải thuật Flow Matching tối ưu."
+    t0 = time.time()
+    res_matcha = synthesize(text, output_path=file_matcha, engine="matcha")
+    t_matcha = time.time() - t0
+    size_matcha = os.path.getsize(res_matcha)
+    print(f"[OK] Matcha Engine : {res_matcha} ({size_matcha} bytes) - Thời gian: {t_matcha:.2f}s")
+
+    assert size_matcha > 0, "File Matcha audio sinh ra không được rỗng"
+    print("=> [PASS] Matcha-TTS Engine hoạt động xuất sắc!\n")
+
+
 def test_sample_answers():
     print("=" * 60)
-    print("5. KIỂM THỬ TỔNG HỢP CÂU TRẢ LỜI MẪU")
+    print("6. KIỂM THỬ TỔNG HỢP CÂU TRẢ LỜI MẪU")
     print("=" * 60)
 
     output_dir = os.path.join(_root_dir, "outputs")
@@ -143,9 +162,11 @@ def test_sample_answers():
 if __name__ == "__main__":
     test_normalizer()
     test_vits_engine()
+    test_matcha_engine()
     test_edge_tts()
     test_gtts_fallback()
     test_sample_answers()
     print("=" * 60)
     print("TẤT CẢ CÁC BƯỚC KIỂM THỬ ĐÃ THÀNH CÔNG RỰC RỠ!")
     print("=" * 60)
+

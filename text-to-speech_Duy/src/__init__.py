@@ -1,6 +1,7 @@
-"""Gói mã nguồn lõi cho hệ thống Text-to-Speech (TTS)."""
+"""Gói mã nguồn lõi của phân hệ Text-to-Speech tiếng Việt (Matcha-TTS, VITS, Edge-TTS, gTTS)."""
 
 from .evaluator import (
+    calculate_cer,
     calculate_f0_rmse,
     calculate_mcd,
     calculate_rtf,
@@ -26,6 +27,7 @@ __all__ = [
     "VIVOSPreprocessor",
     "AudioSample",
     "calculate_mcd",
+    "calculate_cer",
     "calculate_f0_rmse",
     "calculate_rtf",
     "generate_benchmark_markdown_table",

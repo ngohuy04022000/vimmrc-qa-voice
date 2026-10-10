@@ -1,12 +1,17 @@
-"""Module các TTS Engine (Edge-TTS, gTTS).
+"""Module các TTS Engine dùng chung một giao diện `BaseTTSEngine.synthesize(text, output_path, **kwargs)`.
 
-Cung cấp lớp cơ sở BaseTTSEngine và các triển khai cụ thể:
-- EdgeTTSEngine: Giọng đọc nơ-ron tự nhiên của Microsoft Edge (vi-VN-HoaiMyNeural, vi-VN-NamMinhNeural).
-- GTTSEngine: Giọng đọc Google Translate TTS (dùng làm dự phòng).
+Các triển khai:
+- MatchaEngine: Matcha-TTS (Optimal-Transport Conditional Flow Matching) tự huấn luyện, chạy cục bộ.
+- VITSEngine: VITS end-to-end pretrained facebook/mms-tts-vie, chạy cục bộ (baseline).
+- EdgeTTSEngine: giọng nơ-ron Microsoft Edge (vi-VN-HoaiMyNeural, vi-VN-NamMinhNeural), cần mạng.
+- GTTSEngine: Google Translate TTS, dùng làm dự phòng khi engine khác lỗi.
+
+Dùng `get_tts_engine(name)` để khởi tạo engine theo tên.
 """
 
 import asyncio
 import os
+import time
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
@@ -34,6 +39,7 @@ class EdgeTTSEngine(BaseTTSEngine):
 
     DEFAULT_VOICE = "vi-VN-HoaiMyNeural"  # Giọng nữ
     MALE_VOICE = "vi-VN-NamMinhNeural"   # Giọng nam
+    MAX_RETRIES = 3                      # số lần thử khi dịch vụ Edge lỗi tạm thời
 
     SUPPORTED_VOICES = {
         "nu": "vi-VN-HoaiMyNeural",
@@ -45,6 +51,7 @@ class EdgeTTSEngine(BaseTTSEngine):
     }
 
     def __init__(self, default_voice: str = DEFAULT_VOICE):
+        """Khởi tạo engine với giọng mặc định (tên đầy đủ hoặc bí danh 'nu' / 'nam' / 'female' / 'male')."""
         self.default_voice = self.SUPPORTED_VOICES.get(default_voice, self.DEFAULT_VOICE)
 
     async def _async_synthesize(
@@ -56,6 +63,7 @@ class EdgeTTSEngine(BaseTTSEngine):
         pitch: str = "+0Hz",
         volume: str = "+0%",
     ) -> str:
+        """Gọi dịch vụ Edge-TTS (bất đồng bộ) và lưu kết quả MP3 ra `output_path`."""
         import edge_tts
 
         selected_voice = self.SUPPORTED_VOICES.get(voice, self.default_voice) if voice else self.default_voice
@@ -81,7 +89,36 @@ class EdgeTTSEngine(BaseTTSEngine):
         volume: str = "+0%",
         **kwargs,
     ) -> str:
-        """Chạy tổng hợp âm thanh đồng bộ (sync wrapper cho async edge_tts)."""
+        """Tổng hợp đồng bộ (bọc hàm async của edge_tts) và lưu MP3 ra `output_path`.
+
+        Dịch vụ Edge thỉnh thoảng trả về lỗi tạm thời (ví dụ `NoAudioReceived`), nên mỗi yêu cầu được
+        thử lại tối đa `MAX_RETRIES` lần, lần sau chờ lâu hơn lần trước.
+
+        Args:
+            text: Văn bản đã chuẩn hóa.
+            output_path: Đường dẫn file .mp3 đầu ra.
+            voice: Tên giọng hoặc bí danh ('nu', 'nam'); None dùng giọng mặc định.
+            rate: Tốc độ đọc tương đối, ví dụ '+10%'.
+            pitch: Cao độ tương đối, ví dụ '+5Hz'.
+            volume: Âm lượng tương đối, ví dụ '+0%'.
+            **kwargs: Tham số của engine khác (speaker_id, ...), bị bỏ qua.
+
+        Returns:
+            Đường dẫn tuyệt đối tới file âm thanh.
+        """
+        for attempt in range(1, self.MAX_RETRIES + 1):
+            try:
+                return self._run(
+                    self._async_synthesize(text, output_path, voice=voice, rate=rate, pitch=pitch, volume=volume)
+                )
+            except Exception:
+                if attempt == self.MAX_RETRIES:
+                    raise
+                time.sleep(attempt)
+
+    @staticmethod
+    def _run(coro):
+        """Chạy coroutine cả khi đã có event loop đang chạy (Jupyter Notebook) lẫn khi chưa có."""
         try:
             loop = asyncio.get_event_loop()
         except RuntimeError:
@@ -89,16 +126,11 @@ class EdgeTTSEngine(BaseTTSEngine):
             asyncio.set_event_loop(loop)
 
         if loop.is_running():
-            # Trong môi trường đã có event loop (như Jupyter Notebook)
             import nest_asyncio
+
             nest_asyncio.apply()
-            return loop.run_until_complete(
-                self._async_synthesize(text, output_path, voice=voice, rate=rate, pitch=pitch, volume=volume)
-            )
-        else:
-            return asyncio.run(
-                self._async_synthesize(text, output_path, voice=voice, rate=rate, pitch=pitch, volume=volume)
-            )
+            return loop.run_until_complete(coro)
+        return asyncio.run(coro)
 
     @classmethod
     async def list_vietnamese_voices(cls) -> List[Dict[str, str]]:
@@ -112,10 +144,15 @@ class GTTSEngine(BaseTTSEngine):
     """TTS Engine dự phòng sử dụng Google Translate TTS."""
 
     def __init__(self, lang: str = "vi", slow: bool = False):
+        """Khởi tạo với mã ngôn ngữ của Google Translate TTS và tùy chọn đọc chậm."""
         self.lang = lang
         self.slow = slow
 
     def synthesize(self, text: str, output_path: str, **kwargs) -> str:
+        """Tổng hợp qua Google Translate TTS (cần mạng) và lưu dữ liệu MP3 ra `output_path`.
+
+        Các tham số giọng/tốc độ trong `kwargs` bị bỏ qua vì gTTS chỉ có một giọng.
+        """
         from gtts import gTTS
 
         os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
@@ -130,6 +167,7 @@ class VITSEngine(BaseTTSEngine):
     _instance = None
 
     def __init__(self, model_id: str = "facebook/mms-tts-vie"):
+        """Nạp mô hình VITS từ Hugging Face Hub (tải về bộ đệm ở lần chạy đầu)."""
         try:
             from .vits_decomposed import VITSDecomposedTTS
         except ImportError:
@@ -145,6 +183,18 @@ class VITSEngine(BaseTTSEngine):
         noise_scale: float = 0.667,
         **kwargs,
     ) -> str:
+        """Tổng hợp bằng VITS và lưu WAV 16 kHz.
+
+        Args:
+            text: Văn bản đã chuẩn hóa.
+            output_path: Đường dẫn file .wav đầu ra.
+            speaking_rate: Hệ số tốc độ đọc (> 1.0 là nhanh hơn).
+            noise_scale: Độ ngẫu nhiên của biến tiềm ẩn (ảnh hưởng ngữ điệu).
+            **kwargs: Tham số của engine khác (voice, rate, ...), bị bỏ qua.
+
+        Returns:
+            Đường dẫn tuyệt đối tới file âm thanh.
+        """
         return self._vits.synthesize(
             text=text,
             output_path=output_path,
@@ -158,6 +208,7 @@ class MatchaEngine(BaseTTSEngine):
     """Mô hình Optimal-Transport Conditional Flow Matching (Matcha-TTS, ICASSP 2024)."""
 
     def __init__(self, checkpoint_path: Optional[str] = None):
+        """Khởi tạo Matcha-TTS; None: tự chọn checkpoint trong checkpoints/ (ưu tiên matcha_vi_v2.pt)."""
         try:
             from .matcha_engine import MatchaTTSEngine
         except ImportError:
@@ -165,12 +216,42 @@ class MatchaEngine(BaseTTSEngine):
         self._engine = MatchaTTSEngine(checkpoint_path=checkpoint_path)
 
     def synthesize(self, text: str, output_path: str, **kwargs) -> str:
-        path, _ = self._engine.synthesize(text=text, output_path=output_path, normalize=False)
+        """Tổng hợp bằng Matcha-TTS và lưu WAV 22.05 kHz.
+
+        Args:
+            text: Văn bản đã chuẩn hóa.
+            output_path: Đường dẫn file .wav đầu ra.
+            **kwargs: `voice` ('nu' / 'nam' / tên giọng Edge, để chọn giọng VIVOS theo giới tính),
+                `speaker_id` (chỉ số người nói, ưu tiên hơn `voice`), `rate` (dạng '+10%').
+
+        Returns:
+            Đường dẫn tuyệt đối tới file âm thanh.
+        """
+        rate = str(kwargs.get("rate", "+0%")).strip().rstrip("%") or "0"
+        path, _ = self._engine.synthesize(
+            text=text,
+            output_path=output_path,
+            normalize=False,
+            voice=kwargs.get("voice"),
+            speaker_id=kwargs.get("speaker_id"),
+            speaking_rate=1.0 + float(rate) / 100.0,
+        )
         return path
 
 
 def get_tts_engine(name: str = "edge", checkpoint_path: Optional[str] = None) -> BaseTTSEngine:
-    """Factory lấy TTS Engine tương ứng."""
+    """Khởi tạo TTS Engine theo tên.
+
+    Args:
+        name: 'matcha' (hoặc 'matcha-tts', 'flowmatching'), 'vits' ('mms', 'local'), 'edge', 'gtts' ('google').
+        checkpoint_path: File trọng số cho Matcha-TTS; các engine khác bỏ qua.
+
+    Returns:
+        Đối tượng engine tương ứng.
+
+    Raises:
+        ValueError: Tên engine không được hỗ trợ.
+    """
     name_clean = name.strip().lower()
     if name_clean in ("matcha", "matcha-tts", "flowmatching"):
         return MatchaEngine(checkpoint_path=checkpoint_path)

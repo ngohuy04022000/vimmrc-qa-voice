@@ -1,18 +1,20 @@
 """Whisper STT server: POST /api/stt (multipart 'file') -> {"text": "..."}.
 
-Run: uvicorn stt_server:app --port 8001
+Run standalone with: uvicorn stt_server:app --port 8001
+For the full application, use scripts.api_server on port 8000.
 """
 import os
 import tempfile
 
 from fastapi import FastAPI, HTTPException, UploadFile
+from starlette.concurrency import run_in_threadpool
 from faster_whisper import WhisperModel
 
 MODEL_SIZE = os.getenv("WHISPER_MODEL", "small")
 DEVICE = os.getenv("WHISPER_DEVICE", "auto")
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024
 
-app = FastAPI(title="speech-to-text")
+app = FastAPI(title="ViMMRC Voice Q&A API")
 model = WhisperModel(MODEL_SIZE, device=DEVICE, compute_type="auto")
 
 
@@ -33,6 +35,6 @@ async def stt(file: UploadFile) -> dict:
         tmp.write(data)
         tmp_path = tmp.name
     try:
-        return {"text": transcribe(tmp_path)}
+        return {"text": await run_in_threadpool(transcribe, tmp_path)}
     finally:
         os.remove(tmp_path)

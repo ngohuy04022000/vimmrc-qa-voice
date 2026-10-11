@@ -1,0 +1,284 @@
+{
+  "protocol": {
+    "seed": 42,
+    "train_query_limit": 800,
+    "train_articles": 482,
+    "dev_articles": 70,
+    "selection": "max train Recall@1, then MRR@5, then Recall@5; first candidate breaks ties",
+    "dev_use": "single frozen-winner comparison; no test split"
+  },
+  "baseline_config": {
+    "k1": 1.5,
+    "b": 0.75,
+    "query_stopwords": false,
+    "bigram_boost": 0.0
+  },
+  "train_candidates": [
+    {
+      "config": {
+        "k1": 0.9,
+        "b": 0.4,
+        "query_stopwords": false,
+        "bigram_boost": 0.0
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.44125,
+        "recall@5": 0.56125,
+        "mrr@5": 0.48760416666666645,
+        "query_seconds": 0.2521
+      }
+    },
+    {
+      "config": {
+        "k1": 0.9,
+        "b": 0.75,
+        "query_stopwords": false,
+        "bigram_boost": 0.0
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.495,
+        "recall@5": 0.645,
+        "mrr@5": 0.5539166666666663,
+        "query_seconds": 0.2548
+      }
+    },
+    {
+      "config": {
+        "k1": 0.9,
+        "b": 1.0,
+        "query_stopwords": false,
+        "bigram_boost": 0.0
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.53875,
+        "recall@5": 0.6675,
+        "mrr@5": 0.5895416666666663,
+        "query_seconds": 0.2486
+      }
+    },
+    {
+      "config": {
+        "k1": 1.5,
+        "b": 0.4,
+        "query_stopwords": false,
+        "bigram_boost": 0.0
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.46625,
+        "recall@5": 0.58875,
+        "mrr@5": 0.5131249999999998,
+        "query_seconds": 0.247
+      }
+    },
+    {
+      "config": {
+        "k1": 1.5,
+        "b": 0.75,
+        "query_stopwords": false,
+        "bigram_boost": 0.0
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.5325,
+        "recall@5": 0.67375,
+        "mrr@5": 0.5893541666666663,
+        "query_seconds": 0.251
+      }
+    },
+    {
+      "config": {
+        "k1": 1.5,
+        "b": 1.0,
+        "query_stopwords": false,
+        "bigram_boost": 0.0
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.56125,
+        "recall@5": 0.68625,
+        "mrr@5": 0.612145833333333,
+        "query_seconds": 0.24
+      }
+    },
+    {
+      "config": {
+        "k1": 2.1,
+        "b": 0.4,
+        "query_stopwords": false,
+        "bigram_boost": 0.0
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.47375,
+        "recall@5": 0.60375,
+        "mrr@5": 0.5251249999999998,
+        "query_seconds": 0.2512
+      }
+    },
+    {
+      "config": {
+        "k1": 2.1,
+        "b": 0.75,
+        "query_stopwords": false,
+        "bigram_boost": 0.0
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.5525,
+        "recall@5": 0.6775,
+        "mrr@5": 0.6034583333333331,
+        "query_seconds": 0.2483
+      }
+    },
+    {
+      "config": {
+        "k1": 2.1,
+        "b": 1.0,
+        "query_stopwords": false,
+        "bigram_boost": 0.0
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.57375,
+        "recall@5": 0.7025,
+        "mrr@5": 0.6247708333333329,
+        "query_seconds": 0.2698
+      }
+    },
+    {
+      "config": {
+        "k1": 2.1,
+        "b": 1.0,
+        "query_stopwords": false,
+        "bigram_boost": 0.4
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.6275,
+        "recall@5": 0.74,
+        "mrr@5": 0.6738749999999999,
+        "query_seconds": 0.3028
+      }
+    },
+    {
+      "config": {
+        "k1": 2.1,
+        "b": 1.0,
+        "query_stopwords": false,
+        "bigram_boost": 0.8
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.62625,
+        "recall@5": 0.74875,
+        "mrr@5": 0.6765416666666664,
+        "query_seconds": 0.3009
+      }
+    },
+    {
+      "config": {
+        "k1": 2.1,
+        "b": 1.0,
+        "query_stopwords": false,
+        "bigram_boost": 1.2
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.615,
+        "recall@5": 0.7525,
+        "mrr@5": 0.6696874999999995,
+        "query_seconds": 0.306
+      }
+    },
+    {
+      "config": {
+        "k1": 2.1,
+        "b": 1.0,
+        "query_stopwords": true,
+        "bigram_boost": 0.4
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.64125,
+        "recall@5": 0.75625,
+        "mrr@5": 0.6864583333333332,
+        "query_seconds": 0.223
+      }
+    },
+    {
+      "config": {
+        "k1": 2.1,
+        "b": 1.0,
+        "query_stopwords": true,
+        "bigram_boost": 0.8
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.635,
+        "recall@5": 0.75625,
+        "mrr@5": 0.6854791666666665,
+        "query_seconds": 0.1918
+      }
+    },
+    {
+      "config": {
+        "k1": 2.1,
+        "b": 1.0,
+        "query_stopwords": true,
+        "bigram_boost": 1.2
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.625,
+        "recall@5": 0.75875,
+        "mrr@5": 0.678333333333333,
+        "query_seconds": 0.1896
+      }
+    },
+    {
+      "config": {
+        "k1": 2.1,
+        "b": 1.0,
+        "query_stopwords": true,
+        "bigram_boost": 0.0
+      },
+      "train": {
+        "queries": 800,
+        "recall@1": 0.5925,
+        "recall@5": 0.7175,
+        "mrr@5": 0.6415833333333328,
+        "query_seconds": 0.1647
+      }
+    }
+  ],
+  "train_winner_config": {
+    "k1": 2.1,
+    "b": 1.0,
+    "query_stopwords": true,
+    "bigram_boost": 0.4
+  },
+  "dev_baseline": {
+    "queries": 564,
+    "recall@1": 0.7145390070921985,
+    "recall@5": 0.8368794326241135,
+    "mrr@5": 0.7623522458628839,
+    "query_seconds": 0.0264
+  },
+  "dev_winner": {
+    "queries": 564,
+    "recall@1": 0.774822695035461,
+    "recall@5": 0.8652482269503546,
+    "mrr@5": 0.8122931442080377,
+    "query_seconds": 0.0253
+  },
+  "speed_check_train": {
+    "queries": 200,
+    "scan_seconds": 0.142,
+    "postings_seconds": 0.0518,
+    "speedup": 2.74
+  }
+}

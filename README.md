@@ -2,7 +2,43 @@
 
 Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC 2.0](https://huggingface.co/datasets/uitnlp/vimmrc2.0), mở rộng thêm khả năng **giao tiếp bằng giọng nói**: Speech-to-Text (STT) đầu vào và Text-to-Speech (TTS) đầu ra.
 
-> Lưu ý: đây chỉ là tài liệu thiết kế/sơ đồ kiến trúc, chưa triển khai code.
+## Chạy hệ thống tích hợp
+
+Backend FastAPI phục vụ STT, BM25 retrieval, MRC và TTS qua cùng cổng `8000`. Từ thư mục gốc:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements-api.txt
+python -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000
+```
+
+Lần chạy đầu, `faster-whisper` tải mô hình Whisper. Có thể chọn kích thước khác bằng biến môi trường `WHISPER_MODEL` (mặc định `small`) và thiết bị bằng `WHISPER_DEVICE` (mặc định `auto`). TTS mặc định dùng Edge TTS tiếng Việt, cần kết nối mạng; đặt `TTS_ENGINE=gtts` để chọn dự phòng Google TTS.
+
+Mặc định hệ thống chạy với kho hai đoạn văn mẫu và `LexicalBaselineClient` để minh họa kết nối. Đây không phải checkpoint MRC đã huấn luyện và chất lượng trả lời còn hạn chế. Để dùng dữ liệu/các mô hình đã chuẩn bị, đặt `QA_INDEX` tới index JSON đã tạo bởi `Retriever.save()` và `MRC_CHECKPOINT` tới checkpoint ViT5 đã fine-tune trước khi chạy backend. Dữ liệu ViMMRC, checkpoint, và âm thanh không được commit lên Git.
+
+Trong terminal thứ hai:
+
+```powershell
+cd web-interface_Luong
+npm ci
+npm start
+```
+
+Mở URL Angular hiển thị trong terminal (mặc định `http://localhost:4200`). Proxy chuyển toàn bộ `/api/*` về backend ở cổng `8000`. Endpoint `/api/health` cho biết backend đang ở chế độ demo hay đã cấu hình index/checkpoint.
+
+> Phần của Huy đã có Retrieval BM25, mã/notebook MRC và demo ghép nối độc lập. Xem [hướng dẫn bàn giao](docs/huy-handover.md). Huấn luyện ViT5 đầy đủ vẫn cần chạy để tạo checkpoint; demo hiện dùng baseline có ghi nhãn rõ ràng.
+
+## Chạy phần của Huy
+
+```powershell
+python -X utf8 scripts/qa_pipeline.py --demo
+```
+
+- [Notebook Retrieval](retrieval-model_Huy/01_bm25_retrieval.ipynb)
+- [Notebook MRC](mrc-model_Huy/01_vimmrc_training.ipynb)
+- [Notebook tích hợp](notebooks/03_integration_demo.ipynb)
+- [Quy trình và hợp đồng ghép nối](docs/huy-handover.md)
 
 ## 1. Mục tiêu
 
@@ -70,12 +106,15 @@ Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC
 | TTS                | Text → Audio                                | FPT.AI TTS, Google TTS, Coqui TTS, VAIS   |
 | Giao diện          | Ghi âm & phát audio                         | Web app (mic + speaker)                   |
 
-## 6. Bước tiếp theo (chưa triển khai)
+## 6. Tiến độ
 
-- [ ] Tải và khảo sát dataset ViMMRC 2.0.
-- [ ] Chọn base model tiếng Việt để fine-tune MRC.
+- [x] Tải và kiểm tra schema, số lượng, cách chia dữ liệu ViMMRC 2.0.
+- [x] Chuẩn bị Retrieval BM25, notebook và đo baseline trên dev.
+- [x] Chuẩn bị mã fine-tune ViT5 và API MRC độc lập.
+- [ ] Hoàn tất huấn luyện GPU và đánh giá checkpoint ViT5.
 - [ ] Chọn nhà cung cấp/thư viện STT & TTS tiếng Việt.
-- [ ] Thiết kế API kết nối các module (STT → MRC → TTS).
+- [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và demo ghép nối.
+- [ ] Ghép STT, TTS và giao diện với checkpoint cuối cùng.
 
 ## 7. Phân công
 

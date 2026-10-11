@@ -45,6 +45,7 @@ class EncodedExamples:
             text_target=row["answer"], truncation=True, max_length=self.max_target_tokens,
         )
         inputs["labels"] = labels["input_ids"]
+        inputs.pop("token_type_ids", None)
         return inputs
 
 

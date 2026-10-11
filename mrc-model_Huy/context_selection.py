@@ -61,5 +61,7 @@ def select_context(question, passage, tokenizer, max_input_tokens=512, strategy=
 
 def encode_input(question, passage, tokenizer, max_input_tokens=512, strategy="head", **kwargs):
     context = select_context(question, passage, tokenizer, max_input_tokens, strategy)
-    return tokenizer(build_input(question, context), truncation=True,
-                     max_length=max_input_tokens, **kwargs)
+    encoded = tokenizer(build_input(question, context), truncation=True,
+                        max_length=max_input_tokens, **kwargs)
+    encoded.pop("token_type_ids", None)
+    return encoded

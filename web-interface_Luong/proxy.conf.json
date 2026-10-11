@@ -1,6 +1,3 @@
 {
-  "/api/stt": { "target": "http://localhost:8001", "secure": false },
-  "/api/retrieve": { "target": "http://localhost:8002", "secure": false },
-  "/api/answer": { "target": "http://localhost:8003", "secure": false },
-  "/api/tts": { "target": "http://localhost:8004", "secure": false }
+  "/api": { "target": "http://localhost:8000", "secure": false }
 }

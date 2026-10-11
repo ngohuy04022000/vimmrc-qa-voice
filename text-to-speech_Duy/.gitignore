@@ -1,0 +1,17 @@
+# Phân hệ text-to-speech_Duy: bổ sung cho .gitignore ở gốc repo (đã bỏ qua *.pt, *.wav, *.mp3, __pycache__/)
+
+# Âm thanh sinh ra khi chạy thử / benchmark (giữ lại thư mục rỗng)
+outputs/*
+!outputs/.gitkeep
+
+# Trọng số mô hình nặng: tải theo checkpoints/README.md
+checkpoints/*.pt
+checkpoints/*.ckpt
+checkpoints/hifigan_*
+
+# Mã nguồn Matcha-TTS clone từ GitHub (có .git riêng): cài lại bằng scripts/setup_matcha.py
+Matcha-TTS/
+
+# Cache Python / pytest
+__pycache__/
+.pytest_cache/

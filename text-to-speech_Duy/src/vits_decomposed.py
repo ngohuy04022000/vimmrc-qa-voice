@@ -96,11 +96,9 @@ class VITSDecomposedTTS:
         inputs = self.tokenizer(clean_text, return_tensors="pt").to(self.device)
 
         with torch.no_grad():
-            output = self.model(
-                **inputs,
-                speaking_rate=speaking_rate,
-                noise_scale=noise_scale,
-            )
+            self.model.speaking_rate = speaking_rate
+            self.model.noise_scale = noise_scale
+            output = self.model(**inputs)
 
         waveform = output.waveform[0].cpu().float().numpy()
 
@@ -169,9 +167,9 @@ class VITSDecomposedTTS:
             # BƯỚC 3 & 4: DURATION PREDICTOR & LATENT EXPANSION (INFERENCE)
             # ==========================================================
             # Gọi forward đầy đủ để lấy waveform và ma trận căn chỉnh
+            self.model.speaking_rate = speaking_rate
             model_out = self.model(
                 input_ids=input_ids,
-                speaking_rate=speaking_rate,
                 output_attentions=True,
             )
             waveform = model_out.waveform[0].cpu().float().numpy()

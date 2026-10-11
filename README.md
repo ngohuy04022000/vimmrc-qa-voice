@@ -4,7 +4,9 @@ Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC
 
 ## Chạy hệ thống tích hợp
 
-Backend FastAPI phục vụ STT, BM25 retrieval, MRC và TTS qua cùng cổng `8000`. Từ thư mục gốc:
+Backend FastAPI phục vụ STT (Whisper), BM25 retrieval (trên toàn bộ 552 bài đọc ViMMRC), MRC (ViT5 sinh câu trả lời hoặc ChoiceRanker trắc nghiệm 4 đáp án), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
+
+Từ thư mục gốc:
 
 ```powershell
 python -m venv .venv
@@ -13,26 +15,38 @@ python -m pip install -r requirements-api.txt
 python -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000
 ```
 
-Lần chạy đầu, `faster-whisper` tải mô hình Whisper. Có thể chọn kích thước khác bằng biến môi trường `WHISPER_MODEL` (mặc định `small`) và thiết bị bằng `WHISPER_DEVICE` (mặc định `auto`). TTS mặc định dùng Edge TTS tiếng Việt, cần kết nối mạng; đặt `TTS_ENGINE=gtts` để chọn dự phòng Google TTS.
+- Hệ thống tự động nhận diện kho bài đọc ViMMRC tại `data/vimmrc_index.json` (hoặc biến `QA_INDEX`).
+- Tự động nạp mô hình trắc nghiệm `ChoiceRanker` đã huấn luyện tại `mrc-model_Huy/checkpoints/choice_ranker` khi có tùy chọn A-D.
+- Hỗ trợ mô hình đọc hiểu sinh ViT5 qua biến môi trường `MRC_CHECKPOINT`.
+- Phân hệ TTS tự động chuẩn hóa văn bản tiếng Việt (nhãn trắc nghiệm, số, ngày tháng), hỗ trợ đa engine (`matcha`, `vits`, `edge`, `gtts`) với cơ chế tự động chuyển dự phòng thông minh (fallback).
+- Giao diện web Angular đã được build sẵn tại `web-interface_Luong/dist/` và được phục vụ trực tiếp tại `http://127.0.0.1:8000/`.
 
-Mặc định hệ thống chạy với kho hai đoạn văn mẫu và `LexicalBaselineClient` để minh họa kết nối. Đây không phải checkpoint MRC đã huấn luyện và chất lượng trả lời còn hạn chế. Để dùng dữ liệu/các mô hình đã chuẩn bị, đặt `QA_INDEX` tới index JSON đã tạo bởi `Retriever.save()` và `MRC_CHECKPOINT` tới checkpoint ViT5 đã fine-tune trước khi chạy backend. Dữ liệu ViMMRC, checkpoint, và âm thanh không được commit lên Git.
-
-Trong terminal thứ hai:
+Để chạy chế độ phát triển Frontend (với hot-reload qua proxy):
 
 ```powershell
 cd web-interface_Luong
-npm ci
+npm install
 npm start
 ```
 
-Mở URL Angular hiển thị trong terminal (mặc định `http://localhost:4200`). Proxy chuyển toàn bộ `/api/*` về backend ở cổng `8000`. Endpoint `/api/health` cho biết backend đang ở chế độ demo hay đã cấu hình index/checkpoint.
+Mở trình duyệt tại `http://localhost:4200`.
 
-> Phần của Huy đã có Retrieval BM25, mã/notebook MRC và demo ghép nối độc lập. Xem [hướng dẫn bàn giao](docs/huy-handover.md). Huấn luyện ViT5 đầy đủ vẫn cần chạy để tạo checkpoint; demo hiện dùng baseline có ghi nhãn rõ ràng.
-
-## Chạy phần của Huy
+## Kiểm thử toàn diện hệ thống
 
 ```powershell
-python -X utf8 scripts/qa_pipeline.py --demo
+python -m pytest -v
+```
+
+Hệ thống bao gồm 49+ bài kiểm thử tự động phủ khắp các phân hệ STT, Retrieval, Context Selection, MRC (ViT5 & ChoiceRanker), TTS (Normalizer, VITS, Matcha, Edge, gTTS) và FastAPI End-to-End.
+
+## Chạy CLI Pipeline đầu-cuối
+
+```powershell
+# Chạy trắc nghiệm với ChoiceRanker đã huấn luyện + tổng hợp giọng nói
+python -X utf8 scripts/qa_pipeline.py --index data/vimmrc_index.json --choice-model mrc-model_Huy/checkpoints/choice_ranker --question "Thủ đô của Việt Nam là gì?" --options "Huế" "Hà Nội" "Đà Nẵng" "Cần Thơ" --tts
+
+# Chạy demo offline
+python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đâu?"
 ```
 
 - [Notebook Retrieval](retrieval-model_Huy/01_bm25_retrieval.ipynb)
@@ -108,13 +122,15 @@ python -X utf8 scripts/qa_pipeline.py --demo
 
 ## 6. Tiến độ
 
-- [x] Tải và kiểm tra schema, số lượng, cách chia dữ liệu ViMMRC 2.0.
-- [x] Chuẩn bị Retrieval BM25, notebook và đo baseline trên dev.
+- [x] Tải và kiểm tra schema, số lượng, cách chia dữ liệu ViMMRC 2.0 (482 train / 70 dev / 147 test).
+- [x] Chuẩn bị Retrieval BM25, lập chỉ mục toàn bộ bài đọc (`data/vimmrc_index.json`).
 - [x] Chuẩn bị mã fine-tune ViT5 và API MRC độc lập.
-- [ ] Hoàn tất huấn luyện GPU và đánh giá checkpoint ViT5.
-- [ ] Chọn nhà cung cấp/thư viện STT & TTS tiếng Việt.
-- [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và demo ghép nối.
-- [ ] Ghép STT, TTS và giao diện với checkpoint cuối cùng.
+- [x] Huấn luyện và đánh giá mô hình phân loại trắc nghiệm `ChoiceRanker` (đạt 51.95% accuracy trên dev).
+- [x] Tích hợp STT tiếng Việt (Faster-Whisper với bộ đệm lazy-load).
+- [x] Triển khai hệ thống TTS đa engine tiếng Việt (Matcha-TTS, VITS MMS, Edge-TTS, gTTS) có tự động fallback và chuẩn hóa văn bản.
+- [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và pipeline đầu-cuối CLI.
+- [x] Ghép toàn diện STT, Retrieval, MRC, TTS và giao diện web Angular vào API Server FastAPI thống nhất.
+- [x] Tự động hóa bộ kiểm thử tích hợp (49 test cases kiểm thử tự động toàn diện).
 
 ## 7. Phân công
 

@@ -10,15 +10,28 @@ from fastapi import FastAPI, HTTPException, UploadFile
 from starlette.concurrency import run_in_threadpool
 from faster_whisper import WhisperModel
 
+from threading import Lock
+
 MODEL_SIZE = os.getenv("WHISPER_MODEL", "small")
 DEVICE = os.getenv("WHISPER_DEVICE", "auto")
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024
 
 app = FastAPI(title="ViMMRC Voice Q&A API")
-model = WhisperModel(MODEL_SIZE, device=DEVICE, compute_type="auto")
+_model_lock = Lock()
+_whisper_model: WhisperModel | None = None
+
+
+def get_whisper_model() -> WhisperModel:
+    global _whisper_model
+    if _whisper_model is None:
+        with _model_lock:
+            if _whisper_model is None:
+                _whisper_model = WhisperModel(MODEL_SIZE, device=DEVICE, compute_type="auto")
+    return _whisper_model
 
 
 def transcribe(audio_path: str) -> str:
+    model = get_whisper_model()
     segments, _ = model.transcribe(audio_path, language="vi", vad_filter=True)
     return " ".join(seg.text.strip() for seg in segments).strip()
 

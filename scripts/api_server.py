@@ -1,5 +1,12 @@
 """Unified FastAPI backend for the ViMMRC voice Q&A web application.
 
+Integrates:
+- STT: Faster-Whisper (speech-to-text_Luong)
+- Retrieval: BM25 Retriever over ViMMRC 2.0 articles (retrieval-model_Huy)
+- MRC: ViT5 generator or ChoiceRanker classifier (mrc-model_Huy)
+- TTS: Multi-engine Vietnamese synthesis with normalizer (text-to-speech_Duy)
+- Web UI: Angular static assets mounted directly when built (web-interface_Luong)
+
 Run from the repository root with ``uvicorn scripts.api_server:app --port 8000``.
 """
 from __future__ import annotations
@@ -7,6 +14,7 @@ from __future__ import annotations
 import os
 import sys
 import tempfile
+import time
 from pathlib import Path
 from threading import Lock
 
@@ -14,19 +22,28 @@ from fastapi import HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, field_validator
 from starlette.background import BackgroundTask
+from starlette.staticfiles import StaticFiles
 
 ROOT = Path(__file__).resolve().parents[1]
 for folder in (
     "retrieval-model_Huy",
     "mrc-model_Huy",
     "speech-to-text_Luong",
+    "text-to-speech_Duy",
     "text-to-speech_Duy/src",
 ):
-    sys.path.insert(0, str(ROOT / folder))
+    path_str = str(ROOT / folder)
+    if path_str not in sys.path:
+        sys.path.insert(0, path_str)
 
 from retrieval_client import Retriever
 from mrc_client import LexicalBaselineClient, MRCClient
-from tts_engine import get_tts_engine
+try:
+    from choice_ranker import ChoiceRanker
+except ImportError:
+    ChoiceRanker = None
+
+from synthesize import synthesize as tts_synthesize
 import stt_server
 
 app = stt_server.app
@@ -35,7 +52,7 @@ app.title = "ViMMRC Voice Q&A API"
 _service_lock = Lock()
 _retriever: Retriever | None = None
 _reader = None
-_tts_engine = None
+_choice_ranker = None
 
 DEMO_PASSAGES = [
     {
@@ -65,6 +82,7 @@ class RetrieveRequest(BaseModel):
 class AnswerRequest(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
     passage: str = Field(min_length=1, max_length=100_000)
+    options: list[str] | None = None
 
     @field_validator("question", "passage")
     @classmethod
@@ -77,6 +95,9 @@ class AnswerRequest(BaseModel):
 
 class TTSRequest(BaseModel):
     text: str = Field(min_length=1, max_length=5000)
+    engine: str | None = None
+    voice: str | None = None
+    rate: str = "+0%"
 
     @field_validator("text")
     @classmethod
@@ -87,52 +108,59 @@ class TTSRequest(BaseModel):
         return value
 
 
-def get_qa_services() -> tuple[Retriever, object]:
-    """Load the index and reader once, using a clearly identified demo fallback."""
-    global _retriever, _reader
+def get_qa_services() -> tuple[Retriever, object, object | None]:
+    """Load index, reader, and optional choice ranker with fallbacks."""
+    global _retriever, _reader, _choice_ranker
     if _retriever is not None and _reader is not None:
-        return _retriever, _reader
+        return _retriever, _reader, _choice_ranker
 
     with _service_lock:
         if _retriever is None:
             index_path = os.getenv("QA_INDEX")
-            _retriever = (
-                Retriever.load(index_path)
-                if index_path
-                else Retriever(DEMO_PASSAGES)
-            )
+            default_index = ROOT / "data" / "vimmrc_index.json"
+            if index_path and Path(index_path).exists():
+                _retriever = Retriever.load(index_path)
+            elif default_index.exists():
+                _retriever = Retriever.load(str(default_index))
+            else:
+                _retriever = Retriever(DEMO_PASSAGES)
+
         if _reader is None:
             checkpoint = os.getenv("MRC_CHECKPOINT")
             _reader = MRCClient(checkpoint) if checkpoint else LexicalBaselineClient()
-    return _retriever, _reader
 
-
-def get_speech_engine():
-    global _tts_engine
-    if _tts_engine is None:
-        with _service_lock:
-            if _tts_engine is None:
-                engine_name = os.getenv("TTS_ENGINE", "edge")
+        if _choice_ranker is None and ChoiceRanker is not None:
+            ranker_dir = Path(os.getenv("CHOICE_RANKER_CHECKPOINT", ROOT / "mrc-model_Huy" / "checkpoints" / "choice_ranker"))
+            if ranker_dir.exists() and (ranker_dir / "ranker.joblib").exists():
                 try:
-                    _tts_engine = get_tts_engine(engine_name)
-                except ValueError as exc:
-                    raise HTTPException(status_code=503, detail=str(exc)) from exc
-    return _tts_engine
+                    _choice_ranker = ChoiceRanker.load(str(ranker_dir))
+                except Exception as exc:
+                    print(f"[Warning] Could not load ChoiceRanker: {exc}")
+
+    return _retriever, _reader, _choice_ranker
 
 
 @app.get("/api/health")
 def health() -> dict:
+    retriever, reader, choice_ranker = get_qa_services()
+    index_source = "custom_index" if os.getenv("QA_INDEX") else (
+        "vimmrc_corpus" if (ROOT / "data" / "vimmrc_index.json").exists() else "demo_corpus"
+    )
+    dist_browser = ROOT / "web-interface_Luong" / "dist" / "web-interface" / "browser"
     return {
         "status": "ok",
-        "retrieval": "configured" if os.getenv("QA_INDEX") else "demo_corpus",
-        "reader": "trained" if os.getenv("MRC_CHECKPOINT") else "lexical_baseline",
+        "retrieval": index_source,
+        "retrieval_passages": len(retriever.corpus) if hasattr(retriever, "corpus") else 0,
+        "reader": "trained_vit5" if os.getenv("MRC_CHECKPOINT") else "lexical_baseline",
+        "choice_ranker": "trained_ranker" if choice_ranker is not None else "none",
         "tts_engine": os.getenv("TTS_ENGINE", "edge"),
+        "frontend_served": dist_browser.exists() and (dist_browser / "index.html").exists(),
     }
 
 
 @app.post("/api/retrieve")
 def retrieve(request: RetrieveRequest) -> dict:
-    retriever, _ = get_qa_services()
+    retriever, _, _ = get_qa_services()
     hits = retriever.search(request.question, top_k=request.top_k)
     return {
         "passages": [
@@ -148,24 +176,56 @@ def retrieve(request: RetrieveRequest) -> dict:
 
 @app.post("/api/answer")
 def answer(request: AnswerRequest) -> dict:
-    _, reader = get_qa_services()
+    _, reader, choice_ranker = get_qa_services()
+
+    # If 4 options are provided and ChoiceRanker is available, use it
+    if request.options and len(request.options) == 4 and choice_ranker is not None:
+        try:
+            choice = choice_ranker.predict(request.question, request.passage, request.options)
+            return {
+                "answer": choice["answer"],
+                "choice_label": choice["label"],
+                "choice_scores": choice["scores"],
+            }
+        except Exception as exc:
+            print(f"[Warning] ChoiceRanker prediction failed: {exc}, falling back to reader.")
+
     return {"answer": reader.answer_question(request.question, request.passage)}
 
 
 @app.post("/api/tts")
-def synthesize(request: TTSRequest) -> FileResponse:
-    engine = get_speech_engine()
-    temp = tempfile.NamedTemporaryFile(suffix=".mp3", delete=False)
-    output_path = temp.name
-    temp.close()
+def synthesize_endpoint(request: TTSRequest) -> FileResponse:
+    engine_name = request.engine or os.getenv("TTS_ENGINE", "edge")
+    voice_name = request.voice or os.getenv("TTS_VOICE", "vi-VN-HoaiMyNeural")
+    temp_dir = tempfile.gettempdir()
+    ext = ".wav" if engine_name in ("matcha", "vits") else ".mp3"
+    target_path = os.path.join(temp_dir, f"vimmrc_tts_{int(time.time() * 1000)}{ext}")
+
     try:
-        engine.synthesize(request.text.strip(), output_path)
+        actual_path = tts_synthesize(
+            text=request.text.strip(),
+            output_path=target_path,
+            voice=voice_name,
+            engine=engine_name,
+            rate=request.rate,
+        )
     except Exception as exc:
-        Path(output_path).unlink(missing_ok=True)
+        Path(target_path).unlink(missing_ok=True)
         raise HTTPException(status_code=502, detail=f"TTS synthesis failed: {exc}") from exc
+
+    is_wav = str(actual_path).lower().endswith(".wav")
+    media_type = "audio/wav" if is_wav else "audio/mpeg"
+    filename = "answer.wav" if is_wav else "answer.mp3"
+
     return FileResponse(
-        output_path,
-        media_type="audio/mpeg",
-        filename="answer.mp3",
-        background=BackgroundTask(Path(output_path).unlink, missing_ok=True),
+        actual_path,
+        media_type=media_type,
+        filename=filename,
+        background=BackgroundTask(Path(actual_path).unlink, missing_ok=True),
     )
+
+
+# Mount static Angular web client if built
+dist_browser = ROOT / "web-interface_Luong" / "dist" / "web-interface" / "browser"
+if dist_browser.exists() and (dist_browser / "index.html").exists():
+    app.mount("/", StaticFiles(directory=str(dist_browser), html=True), name="static_frontend")

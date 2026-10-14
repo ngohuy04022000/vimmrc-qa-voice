@@ -11,6 +11,6 @@ Chạy `python benchmark_retrieval.py` trong `retrieval-model_Huy/` để tái l
 
 Cấu hình cũ là `k1=1.5, b=0.75, query_stopwords=False, bigram_boost=0.0`. Cấu hình được chọn là `k1=2.1, b=1.0, query_stopwords=True, bigram_boost=0.4`. Điểm bigram thưởng nhẹ các cặp từ đứng cạnh nhau; danh sách stopword chỉ tác động lên unigram trong câu hỏi. Các đoạn văn được giữ nguyên.
 
-Chỉ số dev cải thiện nên `Retriever(passages)` hiện dùng cấu hình được chọn. `BASELINE_CONFIG` và `OPTIMIZED_CONFIG` cho phép tái lập hai cấu hình tường minh. `Retriever.load()` vẫn dùng tham số BM25 cũ khi mở index JSON cũ chưa lưu các trường mới.
+Chỉ số dev cải thiện nên `Retriever(passages)` hiện dùng cấu hình được chọn. `BASELINE_CONFIG` và `OPTIMIZED_CONFIG` cho phép tái lập hai cấu hình tường minh. `Retriever.load()` cũng mặc định về cấu hình được chọn khi JSON thiếu trường BM25, khớp với `Retriever(passages)`.
 
 Kiểm tra hiệu suất dùng 200 câu hỏi train: quét toàn bộ corpus với document frequency tính sẵn mất 0.1420 giây, truy vấn bằng postings 0.0518 giây (nhanh 2.74 lần); hai cách cho cùng top-5 trên 200 câu. Số đo thời gian phụ thuộc máy. Đây là bài toán truy xuất **closed corpus**: bài đọc đích đã nằm trong tập ứng viên. Với bài đọc vắng khỏi index, không thể truy xuất ID đích; cần xem `corpus_coverage` khi đánh giá các tập khác nhau.

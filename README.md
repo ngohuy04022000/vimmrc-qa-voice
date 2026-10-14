@@ -2,6 +2,8 @@
 
 Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC 2.0](https://huggingface.co/datasets/uitnlp/vimmrc2.0), mở rộng thêm khả năng **giao tiếp bằng giọng nói**: Speech-to-Text (STT) đầu vào và Text-to-Speech (TTS) đầu ra.
 
+> Trạng thái từng module, API contract thật và các bẫy đã biết: xem [STATUS.md](STATUS.md). Quy ước đặt tên/git: [CONVENTIONS.md](CONVENTIONS.md).
+
 ## Chạy hệ thống tích hợp
 
 Backend FastAPI phục vụ STT (Whisper), BM25 retrieval (trên toàn bộ 552 bài đọc ViMMRC), MRC (ViT5 sinh câu trả lời hoặc ChoiceRanker trắc nghiệm 4 đáp án), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
@@ -20,6 +22,23 @@ python -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000
 - Hỗ trợ mô hình đọc hiểu sinh ViT5 qua biến môi trường `MRC_CHECKPOINT`.
 - Phân hệ TTS tự động chuẩn hóa văn bản tiếng Việt (nhãn trắc nghiệm, số, ngày tháng), hỗ trợ đa engine (`matcha`, `vits`, `edge`, `gtts`) với cơ chế tự động chuyển dự phòng thông minh (fallback).
 - Giao diện web Angular đã được build sẵn tại `web-interface_Luong/dist/` và được phục vụ trực tiếp tại `http://127.0.0.1:8000/`.
+
+## Chạy nhanh bằng Docker & Docker Compose
+
+Dự án đã có cấu hình Multi-stage Dockerfile (tự động build frontend Angular và backend Python) cùng Docker Compose:
+
+```powershell
+# Khởi động container ở chế độ background
+docker compose up -d --build
+
+# Xem log hoạt động
+docker logs -f vimmrc-qa-voice
+
+# Dừng container
+docker compose down
+```
+
+Truy cập ứng dụng tại `http://localhost:8090/`. Giao diện Angular và toàn bộ API backend đã sẵn sàng hoạt động.
 
 Để chạy chế độ phát triển Frontend (với hot-reload qua proxy):
 

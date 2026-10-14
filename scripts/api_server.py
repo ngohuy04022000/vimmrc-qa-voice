@@ -150,7 +150,7 @@ def health() -> dict:
     return {
         "status": "ok",
         "retrieval": index_source,
-        "retrieval_passages": len(retriever.corpus) if hasattr(retriever, "corpus") else 0,
+        "retrieval_passages": len(retriever.passages),
         "reader": "trained_vit5" if os.getenv("MRC_CHECKPOINT") else "lexical_baseline",
         "choice_ranker": "trained_ranker" if choice_ranker is not None else "none",
         "tts_engine": os.getenv("TTS_ENGINE", "edge"),

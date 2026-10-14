@@ -132,6 +132,7 @@ class Retriever:
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
         if not isinstance(payload, dict) or "passages" not in payload:
             raise ValueError("index JSON must contain passages")
-        return cls(payload["passages"], k1=payload.get("k1", 1.5), b=payload.get("b", 0.75),
-                   query_stopwords=payload.get("query_stopwords", False),
-                   bigram_boost=payload.get("bigram_boost", 0.0))
+        return cls(payload["passages"], k1=payload.get("k1", OPTIMIZED_CONFIG["k1"]),
+                   b=payload.get("b", OPTIMIZED_CONFIG["b"]),
+                   query_stopwords=payload.get("query_stopwords", OPTIMIZED_CONFIG["query_stopwords"]),
+                   bigram_boost=payload.get("bigram_boost", OPTIMIZED_CONFIG["bigram_boost"]))

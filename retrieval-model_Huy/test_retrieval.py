@@ -56,13 +56,26 @@ class RetrieverTests(unittest.TestCase):
     def test_stopword_only_query_falls_back_to_original_terms(self):
         self.assertTrue(Retriever([{"id": "x", "passage": "Nó là ai?"}]).search("là"))
 
-    def test_load_legacy_index_retains_baseline(self):
+    def test_load_legacy_index_defaults_to_optimized_config(self):
+        # Index JSON cũ chỉ lưu k1/b, thiếu query_stopwords/bigram_boost: các trường thiếu
+        # phải lấy mặc định từ OPTIMIZED_CONFIG (khớp với Retriever(passages)), không phải
+        # baseline cũ, để load() và khởi tạo mới không lặng lẽ cho kết quả khác nhau.
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "old_index.json"
             path.write_text(json.dumps({"passages": self.passages, "k1": 1.5, "b": 0.75}), encoding="utf-8")
             loaded = Retriever.load(path)
+            self.assertEqual(
+                (loaded.k1, loaded.b, loaded.query_stopwords, loaded.bigram_boost),
+                (1.5, 0.75, OPTIMIZED_CONFIG["query_stopwords"], OPTIMIZED_CONFIG["bigram_boost"]),
+            )
+
+    def test_load_index_missing_all_bm25_fields_uses_optimized_config(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "bare_index.json"
+            path.write_text(json.dumps({"passages": self.passages}), encoding="utf-8")
+            loaded = Retriever.load(path)
             self.assertEqual((loaded.k1, loaded.b, loaded.query_stopwords, loaded.bigram_boost),
-                             tuple(BASELINE_CONFIG.values()))
+                             tuple(OPTIMIZED_CONFIG.values()))
 
     def test_invalid_input(self):
         with self.assertRaises(ValueError):

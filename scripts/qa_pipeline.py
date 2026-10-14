@@ -35,6 +35,11 @@ class QAPipeline:
             return {"question": question, "answer": "Không tìm thấy đoạn văn phù hợp.",
                     "passage_id": None, "passage": "", "retrieval_score": 0.0}
         hit = hits[0]
+        if options is not None and not hasattr(self.reader, "predict"):
+            raise TypeError(
+                f"{type(self.reader).__name__} has no predict(question, passage, options); "
+                "multiple-choice mode requires a ChoiceRanker reader"
+            )
         choice = self.reader.predict(question, hit["passage"], options) if options is not None else None
         return {"question": question,
                 "answer": choice["answer"] if choice is not None else self.reader.answer_question(question, hit["passage"]),

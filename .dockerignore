@@ -1,0 +1,12 @@
+.git/
+.gitignore
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.log
+web-interface_Luong/node_modules/
+web-interface_Luong/.angular/
+text-to-speech_Duy/outputs/
+text-to-speech_Duy/Matcha-TTS/

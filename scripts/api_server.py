@@ -153,7 +153,7 @@ def health() -> dict:
         "retrieval_passages": len(retriever.passages),
         "reader": "trained_vit5" if os.getenv("MRC_CHECKPOINT") else "lexical_baseline",
         "choice_ranker": "trained_ranker" if choice_ranker is not None else "none",
-        "tts_engine": os.getenv("TTS_ENGINE", "edge"),
+        "tts_engine": os.getenv("TTS_ENGINE", "matcha"),
         "frontend_served": dist_browser.exists() and (dist_browser / "index.html").exists(),
     }
 
@@ -206,8 +206,8 @@ def answer(request: AnswerRequest) -> dict:
 
 @app.post("/api/tts")
 def synthesize_endpoint(request: TTSRequest) -> FileResponse:
-    engine_name = request.engine or os.getenv("TTS_ENGINE", "edge")
-    voice_name = request.voice or os.getenv("TTS_VOICE", "vi-VN-HoaiMyNeural")
+    engine_name = request.engine or os.getenv("TTS_ENGINE", "matcha")
+    voice_name = request.voice or os.getenv("TTS_VOICE", "nu")
     temp_dir = tempfile.gettempdir()
     ext = ".wav" if engine_name in ("matcha", "vits") else ".mp3"
     target_path = os.path.join(temp_dir, f"vimmrc_tts_{int(time.time() * 1000)}{ext}")

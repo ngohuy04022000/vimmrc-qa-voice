@@ -223,9 +223,12 @@ python src/evaluator.py             # tự kiểm tra các hàm đo trên tín h
 
 ---
 
-## 9. Tài Liệu Liên Quan
+## 9. Tài Liệu Nghiên Cứu & Báo Cáo Kỹ Thuật
 
-- [`docs/matcha-architecture.md`](docs/matcha-architecture.md): Conditional Flow Matching, OT path, kiến trúc mạng, thích nghi tiếng Việt.
-- [`docs/research-plan.md`](docs/research-plan.md): phương pháp luận, dữ liệu, tiêu chí đánh giá, kết quả thực nghiệm.
-- [`docs/vits-architecture.md`](docs/vits-architecture.md): lý thuyết VITS (baseline).
+Toàn bộ tài liệu được sắp xếp theo thứ tự đọc chuẩn tại thư mục [`docs/`](docs/README.md):
+- [`docs/1_tong_quan_va_khac_biet_cai_tien.md`](docs/1_tong_quan_va_khac_biet_cai_tien.md): Đặt vấn đề, vị trí TTS & 4 đóng góp kỹ thuật cốt lõi so với các bài báo hiện nay.
+- [`docs/2_co_so_toan_va_kien_truc_matcha.md`](docs/2_co_so_toan_va_kien_truc_matcha.md): Toán học Conditional Flow Matching (OT-CFM), Euler ODE solver & kiến trúc mạng Matcha-TTS.
+- [`docs/3_thich_nghi_tieng_viet_tone_decoupling.md`](docs/3_thich_nghi_tieng_viet_tone_decoupling.md): Kỹ thuật tách thanh điệu (Tone Decoupling, `vi_tone_v2`), chuẩn hóa văn bản & hậu xử lý.
+- [`docs/4_quy_trinh_huan_luyen_va_vocoder_hifigan.md`](docs/4_quy_trinh_huan_luyen_va_vocoder_hifigan.md): Pipeline Colab, chọn snapshot bằng PhoWhisper CER & Teacher-Forced Vocoder Fine-Tuning.
+- [`docs/5_mo_hinh_doi_sanh_vits_baseline.md`](docs/5_mo_hinh_doi_sanh_vits_baseline.md): Bóc tách mô hình nền VITS MMS và thực nghiệm so sánh định lượng.
 - Quy ước chung của dự án: [`../CONVENTIONS.md`](../CONVENTIONS.md).

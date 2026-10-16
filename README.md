@@ -2,7 +2,76 @@
 
 Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC 2.0](https://huggingface.co/datasets/uitnlp/vimmrc2.0), mở rộng thêm khả năng **giao tiếp bằng giọng nói**: Speech-to-Text (STT) đầu vào và Text-to-Speech (TTS) đầu ra.
 
-> Lưu ý: đây chỉ là tài liệu thiết kế/sơ đồ kiến trúc, chưa triển khai code.
+> Trạng thái từng module, API contract thật và các bẫy đã biết: xem [STATUS.md](STATUS.md). Quy ước đặt tên/git: [CONVENTIONS.md](CONVENTIONS.md).
+
+## Chạy hệ thống tích hợp
+
+Backend FastAPI phục vụ STT (Whisper), BM25 retrieval (trên toàn bộ 552 bài đọc ViMMRC), MRC (ViT5 sinh câu trả lời hoặc ChoiceRanker trắc nghiệm 4 đáp án), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
+
+Từ thư mục gốc:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements-api.txt
+python -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000
+```
+
+- Hệ thống tự động nhận diện kho bài đọc ViMMRC tại `data/vimmrc_index.json` (hoặc biến `QA_INDEX`).
+- Tự động nạp mô hình trắc nghiệm `ChoiceRanker` đã huấn luyện tại `mrc-model_Huy/checkpoints/choice_ranker` khi có tùy chọn A-D.
+- Hỗ trợ mô hình đọc hiểu sinh ViT5 qua biến môi trường `MRC_CHECKPOINT`.
+- Phân hệ TTS tự động chuẩn hóa văn bản tiếng Việt (nhãn trắc nghiệm, số, ngày tháng), hỗ trợ đa engine (`matcha`, `vits`, `edge`, `gtts`) với cơ chế tự động chuyển dự phòng thông minh (fallback).
+- Giao diện web Angular đã được build sẵn tại `web-interface_Luong/dist/` và được phục vụ trực tiếp tại `http://127.0.0.1:8000/`.
+
+## Chạy nhanh bằng Docker & Docker Compose
+
+Dự án đã có cấu hình Multi-stage Dockerfile (tự động build frontend Angular và backend Python) cùng Docker Compose:
+
+```powershell
+# Khởi động container ở chế độ background
+docker compose up -d --build
+
+# Xem log hoạt động
+docker logs -f vimmrc-qa-voice
+
+# Dừng container
+docker compose down
+```
+
+Truy cập ứng dụng tại `http://localhost:8090/`. Giao diện Angular và toàn bộ API backend đã sẵn sàng hoạt động.
+
+Để chạy chế độ phát triển Frontend (với hot-reload qua proxy):
+
+```powershell
+cd web-interface_Luong
+npm install
+npm start
+```
+
+Mở trình duyệt tại `http://localhost:4200`.
+
+## Kiểm thử toàn diện hệ thống
+
+```powershell
+python -m pytest -v
+```
+
+Hệ thống bao gồm 49+ bài kiểm thử tự động phủ khắp các phân hệ STT, Retrieval, Context Selection, MRC (ViT5 & ChoiceRanker), TTS (Normalizer, VITS, Matcha, Edge, gTTS) và FastAPI End-to-End.
+
+## Chạy CLI Pipeline đầu-cuối
+
+```powershell
+# Chạy trắc nghiệm với ChoiceRanker đã huấn luyện + tổng hợp giọng nói
+python -X utf8 scripts/qa_pipeline.py --index data/vimmrc_index.json --choice-model mrc-model_Huy/checkpoints/choice_ranker --question "Thủ đô của Việt Nam là gì?" --options "Huế" "Hà Nội" "Đà Nẵng" "Cần Thơ" --tts
+
+# Chạy demo offline
+python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đâu?"
+```
+
+- [Notebook Retrieval](retrieval-model_Huy/01_bm25_retrieval.ipynb)
+- [Notebook MRC](mrc-model_Huy/01_vimmrc_training.ipynb)
+- [Notebook tích hợp](notebooks/03_integration_demo.ipynb)
+- [Quy trình và hợp đồng ghép nối](docs/huy-handover.md)
 
 ## 1. Mục tiêu
 
@@ -70,12 +139,17 @@ Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC
 | TTS                | Text → Audio                                | FPT.AI TTS, Google TTS, Coqui TTS, VAIS   |
 | Giao diện          | Ghi âm & phát audio                         | Web app (mic + speaker)                   |
 
-## 6. Bước tiếp theo (chưa triển khai)
+## 6. Tiến độ
 
-- [ ] Tải và khảo sát dataset ViMMRC 2.0.
-- [ ] Chọn base model tiếng Việt để fine-tune MRC.
-- [ ] Chọn nhà cung cấp/thư viện STT & TTS tiếng Việt.
-- [ ] Thiết kế API kết nối các module (STT → MRC → TTS).
+- [x] Tải và kiểm tra schema, số lượng, cách chia dữ liệu ViMMRC 2.0 (482 train / 70 dev / 147 test).
+- [x] Chuẩn bị Retrieval BM25, lập chỉ mục toàn bộ bài đọc (`data/vimmrc_index.json`).
+- [x] Chuẩn bị mã fine-tune ViT5 và API MRC độc lập.
+- [x] Huấn luyện và đánh giá mô hình phân loại trắc nghiệm `ChoiceRanker` (đạt 51.95% accuracy trên dev).
+- [x] Tích hợp STT tiếng Việt (Faster-Whisper với bộ đệm lazy-load).
+- [x] Triển khai hệ thống TTS đa engine tiếng Việt (Matcha-TTS, VITS MMS, Edge-TTS, gTTS) có tự động fallback và chuẩn hóa văn bản.
+- [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và pipeline đầu-cuối CLI.
+- [x] Ghép toàn diện STT, Retrieval, MRC, TTS và giao diện web Angular vào API Server FastAPI thống nhất.
+- [x] Tự động hóa bộ kiểm thử tích hợp (49 test cases kiểm thử tự động toàn diện).
 
 ## 7. Phân công
 

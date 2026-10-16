@@ -1,0 +1,19 @@
+{
+  "questions": 564,
+  "over_budget_inputs": 211,
+  "answer_text_present_in_full_passage": 123,
+  "max_input_tokens": 512,
+  "tokenizer": "VietAI/vit5-base",
+  "dataset_sha256": "3558441fe9654914d8f07100a0551456d5a24f3d243eaf7049ef88f649cf761d",
+  "strategies": {
+    "head": {
+      "answer_text_visible": 115,
+      "total_encoded_tokens": 217997
+    },
+    "question_chunks": {
+      "answer_text_visible": 124,
+      "total_encoded_tokens": 212074
+    }
+  },
+  "limitation": "Exact answer-text visibility in input is a diagnostic proxy, not answer accuracy. Some answers are abstractive. Selector never sees targets; no model inference was run."
+}

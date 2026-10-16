@@ -1,0 +1,6 @@
+accelerate>=1.0,<2
+numpy>=1.24,<3
+safetensors>=0.4
+sentencepiece>=0.2
+torch>=2.2
+transformers>=4.40.0,<4.58  # khớp dải version với text-to-speech_Duy/requirements.txt và requirements-api.txt

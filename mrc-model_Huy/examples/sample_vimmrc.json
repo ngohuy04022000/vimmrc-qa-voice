@@ -1,0 +1,11 @@
+[
+  {
+    "article": "Hà Nội là thủ đô của Việt Nam. Thành phố nằm ở miền Bắc.",
+    "questions": ["Thủ đô của Việt Nam là gì?", "Hà Nội nằm ở miền nào?"],
+    "options": [
+      ["Đà Nẵng", "Hà Nội", "Huế", "Cần Thơ"],
+      ["miền Nam", "miền Trung", "miền Bắc", "miền Tây"]
+    ],
+    "answers": ["B", "C"]
+  }
+]

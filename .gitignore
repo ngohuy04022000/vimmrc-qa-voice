@@ -3,6 +3,7 @@ data/
 
 # checkpoint / output huấn luyện
 vimmrc-*/
+speech-to-text_Luong/models/
 *.pt
 *.pth
 *.bin

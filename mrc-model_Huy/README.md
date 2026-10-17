@@ -35,6 +35,12 @@ python train.py --data-dir ../data/combined --output-dir checkpoints/vit5-combin
 domain rộng hơn — số liệu cũ (dev/test 100% ViMMRC) và số liệu mới không nằm trên cùng một thước đo.
 `--seed` (mặc định 42) quyết định cách xáo trộn và chia article; giữ cố định để tái lập được đúng 3 split.
 
+Kết quả lần fine-tune đầu (ViT5-base, 3 epoch, batch 1 × gradient accumulation 16, seed 42) trên
+27.164 câu hỏi (21.733 train / 2.715 dev / 2.716 test, chia theo passage): **Exact Match 41,05%, token F1
+66,02%** trên test. Checkpoint tại `checkpoints/vit5-combined/` (không commit, tự chạy lại để tái tạo).
+Còn khiêm tốn vì chưa tăng epoch hoặc dò hyperparameter; `train.py` tự chọn checkpoint tốt nhất theo
+Exact Match trên dev (`load_best_model_at_end`), không phải checkpoint cuối cùng.
+
 ## Chạy demo offline và kiểm tra dữ liệu
 
 Trong thư mục này:
@@ -58,14 +64,21 @@ Mặc định: `VietAI/vit5-base`, seed 42, ba epoch, batch 1, tích lũy gradie
 
 Đánh giá gồm Exact Match và token F1 sau chuẩn hóa chữ thường, dấu câu và khoảng trắng. `choice_accuracy` là phép ghép **heuristic**: chọn lựa chọn có token F1 cao nhất so với câu sinh, rồi kiểm tra nhãn A–D. Nếu mọi lựa chọn đều có điểm 0, dự đoán được tính là sai; khi hòa điểm dương, lựa chọn xuất hiện trước thắng. Đây là cách đánh giá thêm cho bài toán trắc nghiệm, không phải điểm xác suất của mô hình cho từng lựa chọn. API thực tế vẫn trả lời tự do khi không có danh sách lựa chọn.
 
-Passage dài hơn 512 token sẽ bị cắt, nên thông tin cần thiết ở cuối bài có thể mất. Đây là giới hạn quan trọng khi diễn giải kết quả. Chưa có checkpoint huấn luyện trong repository, vì vậy chưa có số liệu test của ViT5 để báo cáo.
+Passage dài hơn 512 token sẽ bị cắt, nên thông tin cần thiết ở cuối bài có thể mất. Đây là giới hạn quan trọng khi diễn giải kết quả.
+
+Để train trên bộ dữ liệu đã mở rộng (ViMMRC + UIT-ViQuAD2.0, xem mục trên), đổi `--data-dir`:
+
+```powershell
+python build_combined_dataset.py --out-dir ../data/combined
+python train.py --data-dir ../data/combined --output-dir checkpoints/vit5-combined
+```
 
 ## Tích hợp
 
 ```python
 from mrc_client import MRCClient, LexicalBaselineClient
 
-client = MRCClient("checkpoints/vit5-vimmrc")  # chỉ sau khi fine-tune
+client = MRCClient("checkpoints/vit5-combined")  # chỉ sau khi fine-tune xong
 answer = client.answer_question("Thủ đô của Việt Nam là gì?", "Hà Nội là thủ đô của Việt Nam.")
 
 demo = LexicalBaselineClient()  # chỉ để thử pipeline offline

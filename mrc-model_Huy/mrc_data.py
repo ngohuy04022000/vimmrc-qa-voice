@@ -20,18 +20,49 @@ def load_articles(path: str | Path) -> list[dict]:
 
 
 def flatten_articles(articles: list[dict]) -> list[dict]:
-    """One row per question; target is correct option text, never its letter."""
+    """One row per question; target is correct option text, never its letter.
+
+    Two article shapes are accepted:
+    - ViMMRC multiple-choice: has "options" (4 choices/question) and "answers" (A-D).
+      Row gets "options" and "answer_letter" in addition to "answer".
+    - Free-form extractive (e.g. UIT-ViQuAD2.0): has "answer_texts" (list of accepted
+      answer strings per question) instead of "options"/"answers". Row has no
+      "options"/"answer_letter"; ChoiceRanker and choice_accuracy skip these rows.
+    """
     examples = []
     for article_index, article in enumerate(articles):
         if not isinstance(article, dict):
             raise ValueError(f"article {article_index}: expected object")
         passage = article.get("article")
         questions = article.get("questions")
-        options = article.get("options")
-        answers = article.get("answers")
         if not isinstance(passage, str) or not passage.strip():
             raise ValueError(f"article {article_index}: missing article text")
-        if any(not isinstance(x, list) for x in (questions, options, answers)):
+        if not isinstance(questions, list):
+            raise ValueError(f"article {article_index}: questions must be a list")
+
+        if "answer_texts" in article:
+            answer_texts = article.get("answer_texts")
+            if not isinstance(answer_texts, list) or len(answer_texts) != len(questions):
+                raise ValueError(f"article {article_index}: answer_texts must match questions length")
+            for question_index, (question, candidates) in enumerate(zip(questions, answer_texts)):
+                location = f"article {article_index}, question {question_index}"
+                if not isinstance(question, str) or not question.strip():
+                    raise ValueError(f"{location}: missing question")
+                if not isinstance(candidates, list) or not candidates or any(
+                    not isinstance(candidate, str) or not candidate.strip() for candidate in candidates
+                ):
+                    raise ValueError(f"{location}: expected at least one nonempty answer_texts string")
+                examples.append({
+                    "id": f"{article_index}:{question_index}",
+                    "passage": passage.strip(),
+                    "question": question.strip(),
+                    "answer": candidates[0].strip(),
+                })
+            continue
+
+        options = article.get("options")
+        answers = article.get("answers")
+        if any(not isinstance(x, list) for x in (options, answers)):
             raise ValueError(f"article {article_index}: questions/options/answers must be lists")
         if not (len(questions) == len(options) == len(answers)):
             raise ValueError(f"article {article_index}: question/option/answer lengths differ")

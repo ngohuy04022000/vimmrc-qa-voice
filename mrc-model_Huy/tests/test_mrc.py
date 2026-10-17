@@ -59,6 +59,37 @@ def test_baseline_is_available_without_model():
         MRCClient(ROOT / "missing-checkpoint")
 
 
+def test_flatten_articles_accepts_free_form_answer_texts():
+    """UIT-ViQuAD2.0-shaped article: no options/answers, has answer_texts per question."""
+    article = {
+        "article": "Hà Nội là thủ đô của Việt Nam.",
+        "questions": ["Thủ đô của Việt Nam là gì?"],
+        "answer_texts": [["Hà Nội", "hà nội"]],
+    }
+    examples = flatten_articles([article])
+    assert examples == [{
+        "id": "0:0", "passage": "Hà Nội là thủ đô của Việt Nam.",
+        "question": "Thủ đô của Việt Nam là gì?", "answer": "Hà Nội",
+    }]
+    assert "options" not in examples[0] and "answer_letter" not in examples[0]
+
+
+def test_flatten_articles_rejects_empty_answer_texts():
+    article = {"article": "x" * 10, "questions": ["q?"], "answer_texts": [[]]}
+    with pytest.raises(ValueError, match="answer_texts"):
+        flatten_articles([article])
+
+
+def test_evaluate_predictions_skips_choice_accuracy_when_any_row_has_no_options():
+    """Mixed ViMMRC + free-form rows: choice_accuracy only applies when ALL rows have options."""
+    mcq_examples = load_examples(ROOT / "examples" / "sample_vimmrc.json")
+    free_form_row = {"id": "x", "passage": "p", "question": "q", "answer": "a"}
+    mixed = mcq_examples + [free_form_row]
+    result = evaluate_predictions([row["answer"] for row in mixed], mixed)
+    assert "choice_accuracy" not in result
+    assert result["exact_match"] == 1.0
+
+
 def test_real_splits_have_no_article_leakage():
     data = ROOT.parent / "data"
     if not all((data / f"{name}_vimmrc.json").exists() for name in ("train", "dev", "test")):

@@ -1,0 +1,62 @@
+{
+  "dataset": "NhutP/VietSpeech",
+  "base_model": "openai/whisper-small",
+  "split_strategy": "fixed_20h_validation_test_with_expanded_normalized_transcription_disjoint_train",
+  "speaker_disjoint": false,
+  "splits": {
+    "train": {
+      "samples": 41212,
+      "hours": 46.0005,
+      "new_samples": 26819
+    },
+    "validation": {
+      "samples": 1797,
+      "hours": 2.0004,
+      "identical_to_20h_experiment": true
+    },
+    "test": {
+      "samples": 1802,
+      "hours": 2.0002,
+      "identical_to_20h_experiment": true
+    }
+  },
+  "training": {
+    "method": "LoRA",
+    "epochs_configured": 3,
+    "stopped_epoch": 2.1351,
+    "optimizer_steps": 2750,
+    "best_checkpoint_step": 2750,
+    "precision": "BF16",
+    "batch_size": 4,
+    "gradient_accumulation": 8,
+    "effective_batch_size": 32,
+    "learning_rate": 0.0001,
+    "lora_rank": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "lora_targets": [
+      "q_proj",
+      "v_proj"
+    ],
+    "early_stopping_patience": 3,
+    "early_stopping_threshold_wer_points": 0.2
+  },
+  "best_validation": {
+    "wer": 14.929610329003657,
+    "cer": 7.26663043177861
+  },
+  "fixed_test_results": [
+    {
+      "model": "self-trained-whisper-small-vi-20h",
+      "wer": 15.204271123491178,
+      "cer": 7.2941933112826165
+    },
+    {
+      "model": "self-trained-whisper-small-vi-50h",
+      "wer": 13.765088207985144,
+      "cer": 6.674016905549431
+    }
+  ],
+  "relative_wer_improvement_over_20h_percent": 9.46,
+  "comparison_report": "/home/anhlu/vimmrc-training/reports/stt_20h_vs_50h.json"
+}

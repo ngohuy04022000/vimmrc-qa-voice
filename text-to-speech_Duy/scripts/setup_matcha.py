@@ -7,8 +7,12 @@ Matcha-TTS không được commit (đã .gitignore) vì là repo bên ngoài có
 Matcha-TTS chỉ được dùng như mã nguồn (src/matcha_engine.py tự thêm Matcha-TTS/ vào sys.path),
 không cần `pip install`. Thư viện phụ thuộc nằm trong requirements.txt.
 
-Chạy lệnh (từ bất kỳ thư mục nào):
+Chạy lệnh (từ thư mục gốc repository):
+    cd text-to-speech_Duy
     python scripts/setup_matcha.py
+
+Hoặc chạy trực tiếp từ thư mục gốc:
+    python text-to-speech_Duy/scripts/setup_matcha.py
 """
 
 import os
@@ -20,7 +24,7 @@ MATCHA_DIR = os.path.join(ROOT_DIR, "Matcha-TTS")
 MATCHA_REPO = "https://github.com/shivammehta25/Matcha-TTS.git"
 MATCHA_COMMIT = "bd4d90d"  # commit đã kiểm thử với checkpoint của dự án
 
-# Monotonic Alignment Search viết bằng numba (giống bản trong notebooks/02_train_matcha_colab.ipynb)
+# Monotonic Alignment Search viết bằng numba (giống bản trong notebooks/train_matcha.ipynb)
 MAS_CODE = '''import numba
 import numpy as np
 import torch

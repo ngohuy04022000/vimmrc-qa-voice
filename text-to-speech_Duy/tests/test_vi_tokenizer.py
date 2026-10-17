@@ -1,7 +1,11 @@
-"""Kiểm thử frontend tiếng Việt dùng chung cho huấn luyện (notebooks/02_train_matcha_colab.ipynb) và suy luận (matcha_engine).
+"""Kiểm thử bộ tách token tiếng Việt dùng chung cho huấn luyện (notebooks/train_matcha.ipynb) và suy luận (matcha_engine).
 
-Chạy lệnh:
-    python -m pytest tests/test_vi_frontend.py -q
+Chạy lệnh (từ thư mục gốc repository):
+    cd text-to-speech_Duy
+    python -m pytest tests/test_vi_tokenizer.py -q
+
+Hoặc chạy trực tiếp từ thư mục gốc:
+    python -m pytest text-to-speech_Duy/tests/test_vi_tokenizer.py -q
 """
 
 import json
@@ -14,9 +18,9 @@ _src_dir = os.path.join(_root_dir, "src")
 if _src_dir not in sys.path:
     sys.path.insert(0, _src_dir)
 
-from vi_frontend import SYMBOLS_V2, clean_chars, text_to_tokens, tokens_to_ids  # noqa: E402
+from vi_tokenizer import SYMBOLS, clean_chars, text_to_tokens, tokens_to_ids  # noqa: E402
 
-NOTEBOOK = os.path.join(_root_dir, "notebooks", "02_train_matcha_colab.ipynb")
+NOTEBOOK = os.path.join(_root_dir, "notebooks", "train_matcha.ipynb")
 
 
 def test_tone_is_split_to_end_of_syllable():
@@ -44,20 +48,20 @@ def test_punctuation_tokens():
 def test_acronyms_and_loanwords():
     assert clean_chars("Đáp án B: Matcha-TTS") == "đáp án bê matcha tê tê ét"
     assert clean_chars("Flow") == "phlou"
-    assert all(t in SYMBOLS_V2 for t in text_to_tokens("Đáp án B: Zalo, Wifi, Jazz!"))
+    assert all(t in SYMBOLS for t in text_to_tokens("Đáp án B: Zalo, Wifi, Jazz!"))
 
 
 def test_tokens_to_ids_interleaves_blank():
-    symbol2id = {s: i for i, s in enumerate(SYMBOLS_V2)}
+    symbol2id = {s: i for i, s in enumerate(SYMBOLS)}
     ids = tokens_to_ids(text_to_tokens("à"), symbol2id)
     assert ids == [0, symbol2id["a"], 0, symbol2id["2"], 0]
 
 
-def test_notebook_embeds_identical_frontend():
-    """Notebook train phải chứa bản sao nguyên văn src/vi_frontend.py để train & suy luận token hóa như nhau."""
+def test_notebook_embeds_identical_tokenizer():
+    """Notebook train phải chứa bản sao nguyên văn src/vi_tokenizer.py để train & suy luận token hóa như nhau."""
     with open(NOTEBOOK, encoding="utf-8") as f:
         cells = json.load(f)["cells"]
-    embedded = ["".join(c["source"]) for c in cells if "".join(c["source"]).startswith("%%writefile vi_frontend.py")]
-    assert len(embedded) == 1, "Không tìm thấy cell %%writefile vi_frontend.py trong notebook train"
-    with open(os.path.join(_src_dir, "vi_frontend.py"), encoding="utf-8") as f:
+    embedded = ["".join(c["source"]) for c in cells if "".join(c["source"]).startswith("%%writefile vi_tokenizer.py")]
+    assert len(embedded) == 1, "Không tìm thấy cell %%writefile vi_tokenizer.py trong notebook train"
+    with open(os.path.join(_src_dir, "vi_tokenizer.py"), encoding="utf-8") as f:
         assert embedded[0].split("\n", 1)[1] == f.read().rstrip("\n")

@@ -3,19 +3,23 @@
 Thiết lập thực nghiệm:
 - Tham chiếu: N câu thu âm người thật của InfoRe1 (giọng nữ, công khai trên Hugging Face), tải qua
   datasets-server và lưu đệm ở outputs/benchmark/refs/. Các engine đọc đúng văn bản của từng câu.
-- Engine: Matcha-TTS (checkpoint tự huấn luyện, giọng nữ mặc định), VITS MMS (facebook/mms-tts-vie),
+- Engine: Matcha-TTS (checkpoints/matcha_vi.pt), VITS MMS (facebook/mms-tts-vie),
   Edge-TTS (vi-VN-HoaiMyNeural, giọng nữ).
 - Chỉ số (src/evaluator.py): MCD-DTW (dB), F0 RMSE (Hz), log-F0 RMSE (bán cung, không phụ thuộc giọng),
   CER qua ASR PhoWhisper, RTF. Dòng "Giọng người thật" cho CER trần (sai số của chính ASR).
 
 Lưu ý diễn giải: tham chiếu là một người nói khác với giọng của các engine, nên MCD và F0 RMSE gồm cả
 khác biệt về chất giọng; log-F0 RMSE và CER phản ánh độ chuẩn thanh điệu và độ rõ tốt hơn.
-Checkpoint huấn luyện trên InfoRe1 (notebook 02) đã thấy các câu này khi train, cần tập kiểm thử riêng.
+Notebook huấn luyện loại các câu từ chỉ số REF_OFFSET trở đi khỏi dữ liệu train, nên đây là tập kiểm thử riêng.
 
-Chạy lệnh (từ bất kỳ thư mục nào):
+Chạy lệnh (từ thư mục gốc repository):
+    cd text-to-speech_Duy
     python scripts/benchmark.py                 # 10 câu, đủ chỉ số
     python scripts/benchmark.py -n 5 --no-cer   # nhanh hơn, bỏ ASR
     python scripts/benchmark.py --engines matcha vits
+
+Hoặc chạy trực tiếp từ thư mục gốc:
+    python text-to-speech_Duy/scripts/benchmark.py
 """
 
 import argparse
@@ -48,7 +52,7 @@ REF_OFFSET = 14800  # cuối dataset, cố định để tái lập kết quả
 MIN_REF_SEC, MAX_REF_SEC = 2.0, 8.0
 
 ENGINES = {
-    "matcha": {"name": "Matcha-TTS (tự huấn luyện)", "ext": ".wav", "kwargs": {"voice": "nu"},
+    "matcha": {"name": "Matcha-TTS (tự huấn luyện)", "ext": ".wav", "kwargs": {},
                "note": "OT-CFM, CPU cục bộ"},
     "vits": {"name": "VITS MMS (pretrained)", "ext": ".wav", "kwargs": {},
              "note": "End-to-end VAE, CPU cục bộ"},

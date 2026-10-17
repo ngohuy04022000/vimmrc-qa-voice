@@ -21,9 +21,9 @@ from scipy.fft import dct
 from scipy.signal import resample_poly, spectrogram
 
 try:
-    from .vi_frontend import clean_chars
+    from .vi_tokenizer import clean_chars
 except ImportError:
-    from vi_frontend import clean_chars
+    from vi_tokenizer import clean_chars
 
 # Tần số lấy mẫu chung: mọi file được resample về đây trước khi so sánh
 EVAL_SAMPLE_RATE = 22050
@@ -80,7 +80,7 @@ def extract_mel_cepstrum(
 
     Gồm các bước: phổ công suất (STFT cửa sổ Hann) → ngân hàng bộ lọc Mel tam giác trong [0, fmax] →
     log biên độ → DCT-II, chuẩn hóa theo định nghĩa mel-cepstrum của công thức MCD. Giới hạn fmax = 8 kHz là dải tần chung của mọi hệ thống được so sánh
-    (dữ liệu huấn luyện VIVOS/InfoRe gốc 16 kHz); nếu không, dải trống trên 8 kHz của giọng tổng hợp
+    (dữ liệu InfoRe1 gốc 16 kHz); nếu không, dải trống trên 8 kHz của giọng tổng hợp
     sẽ chi phối toàn bộ phép đo.
 
     Args:
@@ -253,7 +253,7 @@ def calculate_cer(ref_text: str, hyp_text: str) -> float:
     """Tính Character Error Rate giữa văn bản gốc và kết quả ASR nhận dạng lại giọng tổng hợp.
 
     Hai chuỗi được đưa về cùng dạng (chữ thường, bỏ dấu câu/chữ số, đánh vần chữ viết tắt)
-    bằng `vi_frontend.clean_chars` trước khi so.
+    bằng `vi_tokenizer.clean_chars` trước khi so.
 
     Returns:
         CER trong [0, +∞); 0 là nhận dạng đúng hoàn toàn.

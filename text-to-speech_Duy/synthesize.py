@@ -57,21 +57,19 @@ def synthesize(
     normalize: bool = True,
     rate: str = "+0%",
     pitch: str = "+0Hz",
-    speaker_id: Optional[int] = None,
 ) -> str:
     """Chuyển đổi văn bản tiếng Việt thành giọng nói (audio file).
 
     Args:
         text: Chuỗi văn bản cần đọc (ví dụ câu trả lời từ mô hình MRC).
         output_path: Đường dẫn lưu file âm thanh. Nếu None, tự sinh file tại thư mục outputs/.
-        voice: Giọng đọc ('vi-VN-HoaiMyNeural', 'vi-VN-NamMinhNeural', 'nu', 'nam').
+        voice: Giọng đọc của Edge-TTS ('vi-VN-HoaiMyNeural', 'vi-VN-NamMinhNeural', 'nu', 'nam').
+            Matcha-TTS chỉ có một giọng nên bỏ qua tham số này.
         engine: Công cụ tổng hợp ('matcha', 'vits', 'edge', 'gtts'). Mặc định là 'matcha'.
         checkpoint_path: Đường dẫn đến file trọng số mô hình đã huấn luyện (.pt).
         normalize: Tự động chuẩn hóa số, ngày tháng, nhãn trắc nghiệm trước khi đọc.
         rate: Tốc độ đọc (ví dụ: '+0%', '+10%', '-10%').
         pitch: Cao độ giọng (ví dụ: '+0Hz', '+5Hz').
-        speaker_id: Chỉ số người nói của checkpoint Matcha đa giọng (VIVOS: 0 - 64). None: chọn giọng
-            mặc định theo giới tính suy ra từ `voice`. Các engine khác bỏ qua tham số này.
 
     Returns:
         Đường dẫn tuyệt đối (str) tới file âm thanh đã được tạo.
@@ -104,7 +102,6 @@ def synthesize(
             voice=voice,
             rate=rate,
             pitch=pitch,
-            speaker_id=speaker_id,
         )
         return result_path
     except Exception as e:
@@ -122,9 +119,8 @@ def main():
     parser = argparse.ArgumentParser(description="Vietnamese Text-to-Speech (TTS) synthesizer CLI")
     parser.add_argument("-t", "--text", required=True, help="Văn bản tiếng Việt cần đọc")
     parser.add_argument("-o", "--output", default=None, help="Đường dẫn file lưu audio đầu ra")
-    parser.add_argument("-v", "--voice", default="vi-VN-HoaiMyNeural", help="Giọng đọc: 'nu' / 'nam' (Matcha chọn giọng VIVOS mặc định theo giới tính), "
-                        "hoặc tên giọng Edge vi-VN-HoaiMyNeural / vi-VN-NamMinhNeural")
-    parser.add_argument("-s", "--speaker-id", type=int, default=None, help="Chỉ số người nói Matcha (VIVOS: 0 - 64)")
+    parser.add_argument("-v", "--voice", default="vi-VN-HoaiMyNeural", help="Giọng Edge-TTS: 'nu' / 'nam' "
+                        "hoặc vi-VN-HoaiMyNeural / vi-VN-NamMinhNeural")
     parser.add_argument("-e", "--engine", default="matcha", choices=["matcha", "vits", "edge", "gtts"], help="Engine sử dụng: 'matcha' (Flow Matching 2024), 'vits', 'edge', 'gtts'")
     parser.add_argument("-c", "--checkpoint", default=None, help="Đường dẫn file trọng số tự huấn luyện (.pt)")
     parser.add_argument("--no-norm", action="store_true", help="Tắt tính năng chuẩn hóa văn bản")
@@ -139,7 +135,6 @@ def main():
         checkpoint_path=args.checkpoint,
         normalize=not args.no_norm,
         rate=args.rate,
-        speaker_id=args.speaker_id,
     )
     print(f"[OK] File audio đã được lưu tại: {audio_path}")
 

@@ -4,9 +4,10 @@ Module của Huy chọn đoạn văn tiếng Việt liên quan tới câu hỏi 
 
 ## Chạy nhanh với dữ liệu tổng hợp
 
-Từ thư mục `retrieval-model_Huy/`:
+Từ thư mục gốc repository:
 
 ```powershell
+cd retrieval-model_Huy
 python retrieval_cli.py demo "Hành tinh nào gần Mặt Trời nhất?"
 python retrieval_cli.py index --input synthetic_passages.json --output sample_index.json
 python retrieval_cli.py query --index sample_index.json --question "Mưa hình thành từ đâu?" --top-k 2

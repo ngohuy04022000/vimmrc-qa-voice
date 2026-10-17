@@ -1,7 +1,15 @@
 """Script kiểm thử và benchmark toàn diện cho module Text-to-Speech (TTS).
 
-Chạy lệnh:
-    python test_tts.py
+Chạy lệnh (từ thư mục gốc repository):
+    cd text-to-speech_Duy
+    python tests/test_tts.py
+
+Hoặc chạy với pytest:
+    cd text-to-speech_Duy
+    python -m pytest tests/test_tts.py -v
+
+Hoặc chạy trực tiếp từ thư mục gốc:
+    python text-to-speech_Duy/tests/test_tts.py
 """
 
 import os

@@ -9,7 +9,7 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
 |---|---|---|---|---|---|
 | STT | Xong (Faster-Whisper). Checkpoint fine-tune Whisper-small-vi (50h) có trên Drive nhóm, tải về `speech-to-text_Luong/checkpoints/whisper-small-vi-50h-ct2/` (không commit vào git) | `speech-to-text_Luong/stt_server.py` | `POST /api/stt` (multipart audio) → `{text}` | `WHISPER_MODEL=<path checkpoint> uvicorn stt_server:app --port 8001` (bỏ `WHISPER_MODEL` → model "small" gốc chưa fine-tune) | chưa có test riêng |
 | Retrieval | Xong, đã benchmark | `retrieval-model_Huy/retrieval_client.py` | `Retriever.search(q, top_k) -> list[{id,passage,score}]`; `Retriever.retrieve(q) -> str` (API phụ, chỉ `test_retrieval.py` dùng) | `retrieval_cli.py` | `retrieval-model_Huy/test_retrieval.py` |
-| MRC (ViT5) | Chỉ hoạt động sau khi fine-tune; chưa có checkpoint sẵn trong repo. Bộ dữ liệu train đã mở rộng (xem dưới) | `mrc-model_Huy/mrc_client.py` | `answer_question(question, passage) -> str` | `train.py` → checkpoint, rồi `MRCClient(checkpoint_dir)` | `mrc-model_Huy/tests/` |
+| MRC (ViT5) | Đã fine-tune trên bộ dữ liệu mở rộng (xem dưới): **Exact Match 41,05%, token F1 66,02%** trên test (27.164 câu, không so được với số liệu ViMMRC thuần cũ). Checkpoint tại `mrc-model_Huy/checkpoints/vit5-combined/`, không commit (quá lớn) | `mrc-model_Huy/mrc_client.py` | `answer_question(question, passage) -> str` | `MRC_CHECKPOINT=<path> uvicorn scripts.api_server:app`, hoặc `MRCClient(checkpoint_dir)` trực tiếp | `mrc-model_Huy/tests/` |
 | Lexical baseline (MRC) | Xong, dùng khi chưa có checkpoint ViT5 | `mrc_client.LexicalBaselineClient` | `answer_question(question, passage) -> str` | không cần setup | cùng `mrc-model_Huy/tests/` |
 | ChoiceRanker (trắc nghiệm) | Đã train: **51,95%** acc dev (vs lexical baseline 43,62%, random 25,18%) | `mrc-model_Huy/choice_ranker.py` | `predict(question, passage, options[4]) -> {label, scores, answer}` | `train_choice_ranker.py` | `test_choice_ranker.py` |
 | TTS | Xong, nhiều engine + fallback (edge-tts/gTTS mặc định; VITS/Matcha cần setup riêng) | `text-to-speech_Duy/synthesize.py` | `synthesize(text, engine?, voice?) -> đường dẫn audio` | `python synthesize.py --text "..."` | `text-to-speech_Duy/tests/` |
@@ -52,8 +52,16 @@ commit — tự chạy script để tái tạo, seed cố định 42). `mrc_data
 article (ViMMRC có `options`/`answers`; ViQuAD có `answer_texts`); `evaluate_predictions` tự bỏ
 `choice_accuracy` khi tập có lẫn hàng không-trắc-nghiệm. Chi tiết: `mrc-model_Huy/README.md`.
 
+- `train.py`'s `compute_metrics`/predict test từng crash `OverflowError: can't convert negative int to unsigned`
+  khi eval cuối epoch 1 trên bộ dữ liệu mở rộng — `predictions` sinh ra từ `generate()` có thể chứa `-100`
+  giống `labels`, nhưng chỉ `labels` được lọc trước `batch_decode`. Đã sửa: lọc `-100` → `pad_token_id`
+  cho cả `predictions` ở `compute_metrics` và ở phần predict test cuối.
+
 ## Nợ kỹ thuật còn lại (không gấp)
 
 - STT, web UI chưa có test riêng.
-- MRC (ViT5 fine-tune) chưa có checkpoint kèm repo — pipeline mặc định chạy lexical baseline cho đến khi ai train.
+- Pipeline mặc định (không set `MRC_CHECKPOINT`) vẫn chạy lexical baseline — checkpoint ViT5 đã có nhưng
+  không commit vào git (quá lớn), mỗi máy cần tự chạy `train.py` để có checkpoint cục bộ.
+- Exact Match 41% còn khiêm tốn — ViT5-base, 3 epoch, chưa hyperparameter search. Có thể cải thiện bằng
+  thêm epoch, model lớn hơn, hoặc `--context-strategy question_chunks` cho passage dài.
 - Tính năng trắc nghiệm của `/api/answer` (`options` → `choice_label`) chưa được web UI dùng; chỉ tồn tại qua CLI/test.

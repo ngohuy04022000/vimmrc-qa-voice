@@ -28,4 +28,4 @@ prediction = ranker.predict(question, passage, options)
 answer = ranker.answer_question(question, passage, options)
 ```
 
-`options` là danh sách đúng bốn chuỗi theo thứ tự A–D. `scores` là xác suất dự đoán theo từng lựa chọn, **không chuẩn hóa để tổng bốn lựa chọn bằng 1**. Phương án rỗng có điểm `-inf`. Để chạy test module: `pip install pytest` rồi `python -m pytest -q tests/test_choice_ranker.py`.
+`options` là danh sách đúng bốn chuỗi theo thứ tự A–D. `scores` là xác suất dự đoán theo từng lựa chọn, **không chuẩn hóa để tổng bốn lựa chọn bằng 1**. Phương án rỗng có điểm `-inf`. Để chạy test module: `pip install pytest` rồi chuyển vào thư mục `cd mrc-model_Huy` và chạy `python -m pytest -q tests/test_choice_ranker.py` (hoặc từ thư mục gốc: `python -m pytest -q mrc-model_Huy/tests/test_choice_ranker.py`).

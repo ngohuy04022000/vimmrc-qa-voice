@@ -101,7 +101,7 @@ class EdgeTTSEngine(BaseTTSEngine):
             rate: Tốc độ đọc tương đối, ví dụ '+10%'.
             pitch: Cao độ tương đối, ví dụ '+5Hz'.
             volume: Âm lượng tương đối, ví dụ '+0%'.
-            **kwargs: Tham số của engine khác (speaker_id, ...), bị bỏ qua.
+            **kwargs: Tham số của engine khác, bị bỏ qua.
 
         Returns:
             Đường dẫn tuyệt đối tới file âm thanh.
@@ -164,16 +164,15 @@ class GTTSEngine(BaseTTSEngine):
 class VITSEngine(BaseTTSEngine):
     """Mô hình End-to-End VITS chạy offline trên máy (facebook/mms-tts-vie)."""
 
-    _instance = None
-
     def __init__(self, model_id: str = "facebook/mms-tts-vie"):
         """Nạp mô hình VITS từ Hugging Face Hub (tải về bộ đệm ở lần chạy đầu)."""
-        try:
-            from .vits_decomposed import VITSDecomposedTTS
-        except ImportError:
-            from vits_decomposed import VITSDecomposedTTS
+        import torch
+        from transformers import VitsModel, VitsTokenizer
+
         self.model_id = model_id
-        self._vits = VITSDecomposedTTS(model_id=model_id)
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.tokenizer = VitsTokenizer.from_pretrained(model_id)
+        self.model = VitsModel.from_pretrained(model_id).to(self.device).eval()
 
     def synthesize(
         self,
@@ -195,20 +194,24 @@ class VITSEngine(BaseTTSEngine):
         Returns:
             Đường dẫn tuyệt đối tới file âm thanh.
         """
-        return self._vits.synthesize(
-            text=text,
-            output_path=output_path,
-            normalize=False,  # Chuẩn hóa đã được xử lý ở entrypoint synthesize
-            speaking_rate=speaking_rate,
-            noise_scale=noise_scale,
-        )
+        import soundfile as sf
+        import torch
+
+        inputs = self.tokenizer(text.strip(), return_tensors="pt").to(self.device)
+        self.model.speaking_rate = speaking_rate
+        self.model.noise_scale = noise_scale
+        with torch.no_grad():
+            waveform = self.model(**inputs).waveform[0].cpu().float().numpy()
+        os.makedirs(os.path.dirname(os.path.abspath(output_path)), exist_ok=True)
+        sf.write(output_path, waveform, samplerate=self.model.config.sampling_rate)
+        return os.path.abspath(output_path)
 
 
 class MatchaEngine(BaseTTSEngine):
     """Mô hình Optimal-Transport Conditional Flow Matching (Matcha-TTS, ICASSP 2024)."""
 
     def __init__(self, checkpoint_path: Optional[str] = None):
-        """Khởi tạo Matcha-TTS; None: tự chọn checkpoint trong checkpoints/ (ưu tiên matcha_vi_v2.pt)."""
+        """Khởi tạo Matcha-TTS; None: dùng checkpoints/matcha_vi.pt."""
         try:
             from .matcha_engine import MatchaTTSEngine
         except ImportError:
@@ -221,8 +224,7 @@ class MatchaEngine(BaseTTSEngine):
         Args:
             text: Văn bản đã chuẩn hóa.
             output_path: Đường dẫn file .wav đầu ra.
-            **kwargs: `voice` ('nu' / 'nam' / tên giọng Edge, để chọn giọng VIVOS theo giới tính),
-                `speaker_id` (chỉ số người nói, ưu tiên hơn `voice`), `rate` (dạng '+10%').
+            **kwargs: `rate` (dạng '+10%'); các tham số khác bị bỏ qua vì mô hình chỉ có một giọng.
 
         Returns:
             Đường dẫn tuyệt đối tới file âm thanh.
@@ -232,8 +234,6 @@ class MatchaEngine(BaseTTSEngine):
             text=text,
             output_path=output_path,
             normalize=False,
-            voice=kwargs.get("voice"),
-            speaker_id=kwargs.get("speaker_id"),
             speaking_rate=1.0 + float(rate) / 100.0,
         )
         return path

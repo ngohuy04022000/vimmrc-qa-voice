@@ -10,9 +10,10 @@ Mỗi JSON là một mảng bài đọc. Mỗi bài có `article` (chuỗi), `qu
 
 ## Chạy demo offline và kiểm tra dữ liệu
 
-Trong thư mục này:
+Từ thư mục gốc repository:
 
 ```powershell
+cd mrc-model_Huy
 pip install -r requirements.txt pytest
 python -m pytest -q tests
 python train.py --dry-run
@@ -23,6 +24,7 @@ Notebook [01_vimmrc_training.ipynb](01_vimmrc_training.ipynb) chạy từ đầu
 ## Fine-tune trên GPU/Colab
 
 ```powershell
+cd mrc-model_Huy
 pip install -r requirements.txt
 python train.py --data-dir ../data --output-dir checkpoints/vit5-vimmrc
 ```

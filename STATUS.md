@@ -12,7 +12,7 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
 | MRC (ViT5) | Chỉ hoạt động sau khi fine-tune; chưa có checkpoint sẵn trong repo | `mrc-model_Huy/mrc_client.py` | `answer_question(question, passage) -> str` | `train.py` → checkpoint, rồi `MRCClient(checkpoint_dir)` | `mrc-model_Huy/tests/` |
 | Lexical baseline (MRC) | Xong, dùng khi chưa có checkpoint ViT5 | `mrc_client.LexicalBaselineClient` | `answer_question(question, passage) -> str` | không cần setup | cùng `mrc-model_Huy/tests/` |
 | ChoiceRanker (trắc nghiệm) | Đã train: **51,95%** acc dev (vs lexical baseline 43,62%, random 25,18%) | `mrc-model_Huy/choice_ranker.py` | `predict(question, passage, options[4]) -> {label, scores, answer}` | `train_choice_ranker.py` | `test_choice_ranker.py` |
-| TTS | Xong, nhiều engine + fallback (edge-tts/gTTS mặc định; VITS/Matcha cần setup riêng) | `text-to-speech_Duy/synthesize.py` | `synthesize(text, engine?, voice?) -> đường dẫn audio` | `python synthesize.py --text "..."` | `text-to-speech_Duy/tests/` |
+| TTS | Xong: Matcha-TTS mặc định (cần `checkpoints/matcha_vi.pt` + `scripts/setup_matcha.py`), VITS/Edge/gTTS, lỗi thì fallback gTTS | `text-to-speech_Duy/synthesize.py` | `synthesize(text, engine?, voice?) -> đường dẫn audio` | `python synthesize.py --text "..."` | `text-to-speech_Duy/tests/` |
 | Tích hợp API | Xong | `scripts/api_server.py` (mount `stt_server.app`) | xem bảng route dưới | `uvicorn scripts.api_server:app` | `tests/test_api_server.py`, `tests/test_pipeline.py` |
 | Web UI | Xong (Angular), build sẵn được server phục vụ nếu có `dist/` | `web-interface_Luong/src/app/` | gọi các route `/api/*` qua `pipeline.service.ts` | `npm start` trong `web-interface_Luong/` | chưa có test riêng |
 

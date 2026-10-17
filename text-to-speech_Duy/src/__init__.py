@@ -10,8 +10,6 @@ from .evaluator import (
 from .matcha_engine import MatchaTTSEngine
 from .normalizer import normalize_vietnamese_text
 from .tts_engine import BaseTTSEngine, EdgeTTSEngine, GTTSEngine, VITSEngine, get_tts_engine
-from .vits_decomposed import DecomposedVITSOutput, VITSDecomposedTTS, print_decomposition_report
-from .vivos_preprocessor import AudioSample, VIVOSPreprocessor
 
 __all__ = [
     "normalize_vietnamese_text",
@@ -21,11 +19,6 @@ __all__ = [
     "VITSEngine",
     "MatchaTTSEngine",
     "get_tts_engine",
-    "VITSDecomposedTTS",
-    "DecomposedVITSOutput",
-    "print_decomposition_report",
-    "VIVOSPreprocessor",
-    "AudioSample",
     "calculate_mcd",
     "calculate_cer",
     "calculate_f0_rmse",

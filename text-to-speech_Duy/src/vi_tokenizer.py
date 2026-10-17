@@ -1,13 +1,11 @@
-"""Frontend văn bản tiếng Việt cho Matcha-TTS, dùng chung cho notebook huấn luyện và engine suy luận.
+"""Bộ tách token văn bản tiếng Việt cho Matcha-TTS, dùng chung cho notebook huấn luyện và engine suy luận.
 
-Hai kiểu token hóa (lưu trong metadata checkpoint, khóa "frontend"):
-- "char_v1": mỗi ký tự NFC là một token (nguyên âm mang dấu thanh là token riêng). Dùng cho checkpoint VIVOS cũ.
-- "vi_tone_v2": tách dấu thanh khỏi nguyên âm và đặt thành token cuối mỗi âm tiết
-  ("hồ" -> h, ô, 2). Năm thanh dùng chung cho mọi nguyên âm nên học thanh điệu nhanh và chuẩn hơn;
-  dấu câu (, . ? !) được giữ làm token để mô hình học ngắt nghỉ, ngữ điệu (nếu dữ liệu có dấu câu).
+Mỗi âm tiết được tách thành các chữ cái (đã bỏ dấu thanh) và một token thanh điệu ở cuối:
+"hồ" -> h, ô, 2. Sáu thanh dùng chung cho mọi nguyên âm; dấu câu (, . ? !) được giữ làm token
+khi dữ liệu huấn luyện có dấu câu.
 
-Notebook notebooks/02_train_matcha_colab.ipynb chứa bản sao nguyên văn file này (kiểm tra bởi
-tests/test_vi_frontend.py). Sau khi sửa file này, chạy `python scripts/sync_notebook_frontend.py`.
+Notebook notebooks/train_matcha.ipynb chứa bản sao nguyên văn file này (kiểm tra bởi
+tests/test_vi_tokenizer.py). Sau khi sửa file này, chạy `python scripts/sync_notebook_tokenizer.py`.
 """
 
 import re
@@ -29,8 +27,8 @@ TONE_MARKS = {"́": "1", "̀": "2", "̉": "3", "̃": "4", "̣": "5"}
 TONES = ["0", "1", "2", "3", "4", "5"]
 BASE_LETTERS = list("abcdeghiklmnopqrstuvxy") + ["ă", "â", "đ", "ê", "ô", "ơ", "ư"]
 PUNCTUATION = [",", ".", "?", "!"]
-# Bộ token cố định của vi_tone_v2; id 0 = blank/pad (chèn giữa các token như add_blank của Matcha)
-SYMBOLS_V2 = ["_", " "] + PUNCTUATION + BASE_LETTERS + TONES
+# Bộ token cố định; id 0 = blank/pad (chèn giữa các token như add_blank của Matcha)
+SYMBOLS = ["_", " "] + PUNCTUATION + BASE_LETTERS + TONES
 
 _PUNCT_MAP = {";": ",", ":": ",", "…": ".", "\n": "."}
 _ITEM_RE = re.compile(r"[a-zăâđêôơừ-ͯ]+|[,.?!]")
@@ -62,15 +60,13 @@ def spell_out(text: str) -> str:
 
 
 def clean_chars(text: str) -> str:
-    """Chuẩn hóa văn bản của frontend char_v1: chỉ giữ chữ cái và một khoảng trắng giữa các từ.
-
-    Cũng được dùng để đưa văn bản gốc và kết quả ASR về cùng dạng khi tính CER.
+    """Đưa văn bản gốc và kết quả ASR về cùng dạng khi tính CER: chữ thường, không dấu câu, không chữ số.
 
     Args:
         text: Văn bản bất kỳ.
 
     Returns:
-        Chuỗi chữ thường, không dấu câu, không chữ số.
+        Chuỗi chữ cái và một khoảng trắng giữa các từ.
     """
     text = re.sub(r"[\W\d_]+", " ", spell_out(text))
     return re.sub(r"\s+", " ", text).strip()
@@ -94,21 +90,17 @@ def syllable_tokens(syllable: str) -> List[str]:
     return [c for c in letters if c in BASE_LETTERS] + [tone]
 
 
-def text_to_tokens(text: str, frontend: str = "vi_tone_v2", keep_punctuation: bool = True) -> List[str]:
-    """Chuyển văn bản thành danh sách token theo frontend của checkpoint.
+def text_to_tokens(text: str, keep_punctuation: bool = True) -> List[str]:
+    """Chuyển văn bản thành danh sách token.
 
     Args:
         text: Văn bản đã qua normalizer.
-        frontend: "vi_tone_v2" (tách thanh điệu) hoặc "char_v1" (ký tự mang dấu, checkpoint VIVOS cũ).
         keep_punctuation: Giữ dấu câu (, . ? !) làm token; chỉ bật khi mô hình đã học dấu câu.
             Dấu ; : được quy về dấu phẩy, dấu … và xuống dòng quy về dấu chấm.
 
     Returns:
         Danh sách token; các âm tiết cách nhau bởi token khoảng trắng " ".
     """
-    if frontend == "char_v1":
-        return list(clean_chars(text))
-
     text = spell_out(text)
     for src, dst in _PUNCT_MAP.items():
         text = text.replace(src, dst)

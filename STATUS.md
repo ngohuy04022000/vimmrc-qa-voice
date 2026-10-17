@@ -7,9 +7,9 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
 
 | Module | Trạng thái | File chính | Hợp đồng vào/ra | Chạy standalone | Test |
 |---|---|---|---|---|---|
-| STT | Xong (Faster-Whisper) | `speech-to-text_Luong/stt_server.py` | `POST /api/stt` (multipart audio) → `{text}` | `uvicorn stt_server:app --port 8001` | chưa có test riêng |
+| STT | Xong (Faster-Whisper). Checkpoint fine-tune Whisper-small-vi (50h) có trên Drive nhóm, tải về `speech-to-text_Luong/checkpoints/whisper-small-vi-50h-ct2/` (không commit vào git) | `speech-to-text_Luong/stt_server.py` | `POST /api/stt` (multipart audio) → `{text}` | `WHISPER_MODEL=<path checkpoint> uvicorn stt_server:app --port 8001` (bỏ `WHISPER_MODEL` → model "small" gốc chưa fine-tune) | chưa có test riêng |
 | Retrieval | Xong, đã benchmark | `retrieval-model_Huy/retrieval_client.py` | `Retriever.search(q, top_k) -> list[{id,passage,score}]`; `Retriever.retrieve(q) -> str` (API phụ, chỉ `test_retrieval.py` dùng) | `retrieval_cli.py` | `retrieval-model_Huy/test_retrieval.py` |
-| MRC (ViT5) | Chỉ hoạt động sau khi fine-tune; chưa có checkpoint sẵn trong repo | `mrc-model_Huy/mrc_client.py` | `answer_question(question, passage) -> str` | `train.py` → checkpoint, rồi `MRCClient(checkpoint_dir)` | `mrc-model_Huy/tests/` |
+| MRC (ViT5) | Chỉ hoạt động sau khi fine-tune; chưa có checkpoint sẵn trong repo. Bộ dữ liệu train đã mở rộng (xem dưới) | `mrc-model_Huy/mrc_client.py` | `answer_question(question, passage) -> str` | `train.py` → checkpoint, rồi `MRCClient(checkpoint_dir)` | `mrc-model_Huy/tests/` |
 | Lexical baseline (MRC) | Xong, dùng khi chưa có checkpoint ViT5 | `mrc_client.LexicalBaselineClient` | `answer_question(question, passage) -> str` | không cần setup | cùng `mrc-model_Huy/tests/` |
 | ChoiceRanker (trắc nghiệm) | Đã train: **51,95%** acc dev (vs lexical baseline 43,62%, random 25,18%) | `mrc-model_Huy/choice_ranker.py` | `predict(question, passage, options[4]) -> {label, scores, answer}` | `train_choice_ranker.py` | `test_choice_ranker.py` |
 | TTS | Xong, nhiều engine + fallback (edge-tts/gTTS mặc định; VITS/Matcha cần setup riêng) | `text-to-speech_Duy/synthesize.py` | `synthesize(text, engine?, voice?) -> đường dẫn audio` | `python synthesize.py --text "..."` | `text-to-speech_Duy/tests/` |
@@ -41,6 +41,16 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
   khi cài chung một venv.
 - `choice_accuracy` trong `mrc-model_Huy/README.md` là phép ghép **heuristic** (so khớp F1 câu sinh với 4
   lựa chọn), không phải điểm xác suất thật của mô hình cho từng lựa chọn — khác với `ChoiceRanker.predict`.
+
+## Dữ liệu huấn luyện MRC đã mở rộng
+
+`mrc-model_Huy/build_combined_dataset.py` gộp ViMMRC 2.0 (5.273 câu hỏi, trắc nghiệm) với
+[UIT-ViQuAD2.0](https://huggingface.co/datasets/taidng/UIT-ViQuAD2.0) (21.891 câu hỏi tự luận,
+Wikipedia, công khai) thành pool chung, rồi chia lại 80/10/10 theo **đơn vị passage** (không rò rỉ
+article giữa split) → ghi ra `data/combined/{train,dev,test}_vimmrc.json` (27.164 câu hỏi tổng, không
+commit — tự chạy script để tái tạo, seed cố định 42). `mrc_data.flatten_articles` đọc được cả hai dạng
+article (ViMMRC có `options`/`answers`; ViQuAD có `answer_texts`); `evaluate_predictions` tự bỏ
+`choice_accuracy` khi tập có lẫn hàng không-trắc-nghiệm. Chi tiết: `mrc-model_Huy/README.md`.
 
 ## Nợ kỹ thuật còn lại (không gấp)
 

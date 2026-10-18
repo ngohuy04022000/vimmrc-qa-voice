@@ -57,11 +57,35 @@ article (ViMMRC có `options`/`answers`; ViQuAD có `answer_texts`); `evaluate_p
   giống `labels`, nhưng chỉ `labels` được lọc trước `batch_decode`. Đã sửa: lọc `-100` → `pad_token_id`
   cho cả `predictions` ở `compute_metrics` và ở phần predict test cuối.
 
+## Đã thử: nâng độ chính xác MRC lên 80-90% bằng LLM (kết luận: không khả thi với cách đo hiện có)
+
+Mục tiêu ban đầu là đạt 80-90% Exact Match. Đã thử 2 hướng dùng LLM local (Ollama,
+`mrc-model_Huy/llm_eval.py`):
+
+| Hướng | n | LLM-judge acc | EM ký tự | Token F1 |
+|---|---|---|---|---|
+| ViT5 fine-tune + LLM chấm theo ý nghĩa | 200 | 61,0% | 43,5% | 65,6% |
+| ViT5 fine-tune + LLM chấm theo ý nghĩa | 50 (cùng seed với dòng dưới) | 50,0% | 44,0% | 63,0% |
+| LLM (`ornith-1.5:9b`) sinh trực tiếp, không dùng ViT5 | 50 (cùng seed) | 54,0% | 32,0% | 61,7% |
+
+**Kết luận:** không hướng nào tới gần 80-90% ở bất kỳ thước đo nào. So sánh công bằng (cùng 50
+câu, cùng seed) cho thấy ViT5 fine-tune và LLM 9B sinh trực tiếp **gần như tương đương**
+(chênh vài điểm, trong biên độ sai số của mẫu 50 câu) — không có hướng nào nổi trội rõ ràng.
+32% câu hỏi (16/50) cả hai hướng đều trả lời sai giống nhau — đây là giới hạn thật của bài toán
+(câu hỏi cần suy luận/ngữ cảnh phức tạp), không phải điểm yếu riêng của một model. Chấm theo ý
+nghĩa (LLM judge) luôn cao hơn EM ký tự ~10-20 điểm vì câu trả lời dài diễn giải khác cách nhưng
+đúng ý — đây là hướng cải thiện thước đo thật, không phải cải thiện model.
+
+Để tiến xa hơn mức ~50-61% thật sự cần: model LLM lớn hơn hẳn (70B+, hoặc API thương mại như
+GPT-4/Claude thay Ollama local 9B), hoặc re-rank nhiều candidate answer, hoặc chấp nhận F1/judge
+accuracy làm thước đo chính thay EM ký tự (EM ký tự về cấu trúc không thể cao với câu trả lời
+dài có trong dữ liệu này, bất kể model tốt đến đâu).
+
 ## Nợ kỹ thuật còn lại (không gấp)
 
 - STT, web UI chưa có test riêng.
 - Pipeline mặc định (không set `MRC_CHECKPOINT`) vẫn chạy lexical baseline — checkpoint ViT5 đã có nhưng
   không commit vào git (quá lớn), mỗi máy cần tự chạy `train.py` để có checkpoint cục bộ.
-- Exact Match 41% còn khiêm tốn — ViT5-base, 3 epoch, chưa hyperparameter search. Có thể cải thiện bằng
-  thêm epoch, model lớn hơn, hoặc `--context-strategy question_chunks` cho passage dài.
+- Exact Match 41% còn khiêm tốn — ViT5-base, 3 epoch, chưa hyperparameter search. Đã thử LLM judge/generate
+  để cải thiện (xem mục trên) — không có hướng nào vượt trội rõ ràng ở quy mô đã thử.
 - Tính năng trắc nghiệm của `/api/answer` (`options` → `choice_label`) chưa được web UI dùng; chỉ tồn tại qua CLI/test.

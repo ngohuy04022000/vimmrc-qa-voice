@@ -117,7 +117,8 @@ def synthesize(
 def main():
     """Giao diện dòng lệnh: đọc tham số, gọi synthesize() và in đường dẫn file audio."""
     parser = argparse.ArgumentParser(description="Vietnamese Text-to-Speech (TTS) synthesizer CLI")
-    parser.add_argument("-t", "--text", required=True, help="Văn bản tiếng Việt cần đọc")
+    parser.add_argument("-t", "--text", default=None, help="Văn bản tiếng Việt cần đọc")
+    parser.add_argument("-f", "--file", default=None, help="Đường dẫn file .txt chứa văn bản UTF-8 cần đọc")
     parser.add_argument("-o", "--output", default=None, help="Đường dẫn file lưu audio đầu ra")
     parser.add_argument("-v", "--voice", default="vi-VN-HoaiMyNeural", help="Giọng Edge-TTS: 'nu' / 'nam' "
                         "hoặc vi-VN-HoaiMyNeural / vi-VN-NamMinhNeural")
@@ -127,8 +128,22 @@ def main():
     parser.add_argument("--rate", default="+0%", help="Tốc độ nói (vd: +10%%, -5%%)")
 
     args = parser.parse_args()
+
+    if args.file:
+        with open(args.file, "r", encoding="utf-8") as f:
+            raw_text = f.read().strip()
+    elif args.text:
+        raw_text = args.text
+    else:
+        parser.error("Cần cung cấp ít nhất -t/--text hoặc -f/--file.")
+
+    import re
+    if re.search(r"\w\?|\?\w", raw_text):
+        print("[Cảnh báo] Phát hiện ký tự '?' dính liền với từ ngữ. Terminal Windows có thể đã làm mất dấu tiếng Việt.\n"
+              "          Hãy chạy lệnh 'chcp 65001' trong PowerShell hoặc dùng '-f file.txt' để đảm bảo UTF-8 chuẩn.")
+
     audio_path = synthesize(
-        text=args.text,
+        text=raw_text,
         output_path=args.output,
         voice=args.voice,
         engine=args.engine,
@@ -141,3 +156,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

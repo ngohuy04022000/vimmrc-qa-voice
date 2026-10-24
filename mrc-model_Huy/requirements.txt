@@ -4,3 +4,8 @@ safetensors>=0.4
 sentencepiece>=0.2
 torch>=2.2
 transformers>=4.40.0,<4.58  # khớp dải version với text-to-speech_Duy/requirements.txt và requirements-api.txt
+
+# Chỉ cần cho build_combined_dataset.py (gộp thêm UIT-ViQuAD2.0 vào bộ huấn luyện)
+huggingface_hub>=0.20
+pandas>=2.0,<3
+pyarrow>=14.0

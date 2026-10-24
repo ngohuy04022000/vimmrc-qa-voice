@@ -110,6 +110,9 @@ def main(argv=None):
 
     def compute_metrics(result):
         predictions = result.predictions[0] if isinstance(result.predictions, tuple) else result.predictions
+        # Generated sequences can be padded with -100 (same as labels) depending on the
+        # transformers version; batch_decode crashes on negative ids, so clean both.
+        predictions = np.where(predictions == -100, tokenizer.pad_token_id, predictions)
         labels = np.where(result.label_ids == -100, tokenizer.pad_token_id, result.label_ids)
         answers = tokenizer.batch_decode(predictions, skip_special_tokens=True)
         gold = tokenizer.batch_decode(labels, skip_special_tokens=True)
@@ -164,6 +167,7 @@ def main(argv=None):
 
     prediction = trainer.predict(encoded["test"], metric_key_prefix="test")
     generated = prediction.predictions[0] if isinstance(prediction.predictions, tuple) else prediction.predictions
+    generated = np.where(generated == -100, tokenizer.pad_token_id, generated)
     answers = tokenizer.batch_decode(generated, skip_special_tokens=True)
     metrics = evaluate_predictions(answers, examples["test"])
     print("Held-out test metrics:", metrics)

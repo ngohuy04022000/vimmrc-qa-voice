@@ -1,0 +1,48 @@
+{
+  "dataset": "NhutP/VietSpeech",
+  "base_model": "openai/whisper-small",
+  "split_strategy": "normalized_transcription_hash",
+  "speaker_disjoint": false,
+  "splits": {
+    "train": {
+      "samples": 14393,
+      "hours": 16.0004
+    },
+    "validation": {
+      "samples": 1797,
+      "hours": 2.0004
+    },
+    "test": {
+      "samples": 1802,
+      "hours": 2.0002
+    }
+  },
+  "training": {
+    "method": "LoRA",
+    "epochs": 3,
+    "optimizer_steps": 1350,
+    "precision": "BF16",
+    "batch_size": 4,
+    "gradient_accumulation": 8,
+    "learning_rate": 0.0001,
+    "lora_rank": 16,
+    "trainable_parameters": 1769472
+  },
+  "test_results": [
+    {
+      "model": "openai/whisper-small",
+      "wer": 36.76493345713401,
+      "cer": 19.42943770672547
+    },
+    {
+      "model": "self-trained-whisper-small-vi",
+      "wer": 15.204271123491178,
+      "cer": 7.2941933112826165
+    },
+    {
+      "model": "NhutP/ViWhisper-small",
+      "wer": 0.8240482822655524,
+      "cer": 0.5402425578831311
+    }
+  ]
+}

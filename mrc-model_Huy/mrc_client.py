@@ -41,14 +41,22 @@ class MRCClient:
         self.context_strategy = context_strategy or settings.get("context_strategy", "head")
 
     def answer_question(self, question: str, passage: str) -> str:
+        return self.answer_candidates(question, passage, num_candidates=1)[0]
+
+    def answer_candidates(self, question: str, passage: str, num_candidates: int = 5) -> list[str]:
+        """Beam search'in top candidates, best-first, for re-ranking (e.g. by an LLM judge)
+        instead of trusting the single best-beam answer. Same beam count as answer_question
+        (4) when num_candidates<=4; widens beams to match num_candidates otherwise so every
+        candidate still comes from a real, distinct beam rather than sampling noise."""
         import torch
 
         encoded = encode_input(question, passage, self.tokenizer, self.max_input_tokens,
                                self.context_strategy, return_tensors="pt").to(self.device)
+        num_beams = max(4, num_candidates)
         with torch.inference_mode():
             tokens = self.model.generate(**encoded, max_new_tokens=self.max_new_tokens,
-                                         num_beams=4)
-        return self.tokenizer.decode(tokens[0], skip_special_tokens=True).strip()
+                                         num_beams=num_beams, num_return_sequences=num_candidates)
+        return [self.tokenizer.decode(seq, skip_special_tokens=True).strip() for seq in tokens]
 
 
 class LexicalBaselineClient:

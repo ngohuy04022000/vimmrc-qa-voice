@@ -14,6 +14,7 @@ from train import EncodedExamples, truncation_report
 def test_trainer_one_step_and_label_mask(tmp_path):
     pytest.importorskip("torch")
     pytest.importorskip("transformers")
+    pytest.importorskip("accelerate")
     from tokenizers import Tokenizer, models, pre_tokenizers
     from transformers import (DataCollatorForSeq2Seq, PreTrainedTokenizerFast,
                               Seq2SeqTrainer, Seq2SeqTrainingArguments, T5Config,

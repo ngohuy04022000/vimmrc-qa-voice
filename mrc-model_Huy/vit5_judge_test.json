@@ -1,0 +1,310 @@
+{
+  "llm_judge_accuracy": 0.5,
+  "n": 50,
+  "details": [
+    {
+      "question": "Nội dung chủ yếu trong tuyên bố của Bộ Ngoại giao nước CHXHCN Việt Nam về quần đảo Hoàng Sa và Trường Sa ngày 7 tháng 8 năm 1979 là gì?",
+      "gold": "Việt Nam khẳng định lại chủ quyền đối với 2 quần đảo này, nhắc lại lập trường của Việt Nam về việc giải quyết sự tranh chấp về 2 quần đảo giữa hai nước bằng thương lượng hoà bình",
+      "prediction": "khẳng định lại chủ quyền đối với 2 quần đảo này",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Vào năm nào thì tuyến đường đến Vũ Xương được hoàn thành?",
+      "gold": "năm 1936",
+      "prediction": "1842",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Quyển sách đầu tiên mà Fermi nghiên cứu vật lý có tên là gì?",
+      "gold": "Campo de' Fiori",
+      "prediction": "Elementorum physicae mathematicae",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Do sự khác biệt về cấu trúc nên giữa pyrit và marcasit khác nhau về các đặc điểm nào?",
+      "gold": "hình dáng tinh thể và tính đối xứng",
+      "prediction": "hình dáng tinh thể và tính đối xứng",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Qua bài này, chúng ta thấy chim rừng Tây Nguyên như thế nào?",
+      "gold": "Đa dạng chủng loại và có nhiều loài chim đẹp.",
+      "prediction": "Ríu rít.",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Thái độ của Washington đối với Hội Tam Điểm như thế nào?",
+      "gold": "Washington kính trọng cao độ đối với nội quy của hội và thường hay ca ngợi nó",
+      "prediction": "kính trọng cao độ đối với nội quy của hội và thường hay ca ngợi nó",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Có bao nhiêu người tới Mỹ sinh sống vào những năm cuối thế kỉ 20?",
+      "gold": "13 triệu người",
+      "prediction": "rất nhiều người Mỹ Latin",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Trên toàn quốc có bao nhiêu tỉnh trong thời kỳ kháng chiến chống Nhật?",
+      "gold": "38 đơn vị hành chính cấp tỉnh",
+      "prediction": "38 đơn vị hành chính cấp tỉnh",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Dù tên gọi marcasit có nguồn gốc từ khoáng vật pyrit nhưng giữa hai khoáng vật này có điểm gì khác nhau?",
+      "gold": "khác về cấu trúc và vì thế khác biệt về hình dáng tinh thể và tính đối xứng",
+      "prediction": "khác về cấu trúc và vì thế khác biệt về hình dáng tinh thể và tính đối xứng",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Trò chơi thả diều đã đem lại cho trẻ em những ước mơ đẹp ra sao?",
+      "gold": "Cánh diều tuổi ngọc ngà hãy bay đi, mang theo những khát khao của tôi.",
+      "prediction": "Cả A, B, C đều đúng.",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Lĩnh vực nào tiêu thụ terbi nhiều nhất?",
+      "gold": "Chiếu sáng ba màu",
+      "prediction": "Chiếu sáng ba màu",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Số lượng thành viên trong nghị viên là bao nhiêu?",
+      "gold": "100 thượng nghị sĩ",
+      "prediction": "2 người",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Chính quyền Niue đã có chính sách gì để thu hút các nguồn đầu tư nước ngoài vào ngành du lịch?",
+      "gold": "các đề nghị giảm thuế nhập khẩu và thuế doanh nghiệp",
+      "prediction": "giảm thuế nhập khẩu và thuế doanh nghiệp",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Trong khổ thơ đầu tiên, quê hương được so sánh như hình ảnh nào?",
+      "gold": "Chùm khế ngọt, đường đi học.",
+      "prediction": "Mẹ.",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Quyền công dân của những đứa trẻ được sinh ra bởi nô lệ được giải phóng được quy định như thế nào?",
+      "gold": "Bất kỳ đứa trẻ nào được một nô lệ được giải phóng sinh ra thì đều là người tự do, với đầy đủ các quyền công dân",
+      "prediction": "đều là người tự do, với đầy đủ các quyền công dân",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Trong kế hoạch của Ban Siêu, ông bố trí bao nhiêu quân phục kích trước nhà?",
+      "gold": "26",
+      "prediction": "26 người",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Yêu cầu mà Himerus nhận được từ triều đình Parthia là gì?",
+      "gold": "phải chinh phục Characene",
+      "prediction": "chinh phục Characene",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Khi nào thì chính quyền lọt vào tay của Việt Minh?",
+      "gold": "ngày 19/8/1945",
+      "prediction": "ngày 19/8/1945",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Ý nào sau đây nói về “con đường” độc đáo của văn nghệ đến với người đọc?",
+      "gold": "Lời gửi của văn nghệ không chỉ là những bài học đạo đức luân lí mà cả những say sưa, vui buồn, mơ mộng, yêu ghét của người nghệ sĩ",
+      "prediction": "Cả A, B, C đều đúng",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "\"Cuộc diệt chủng dân bản địa\" là thuật ngữ David Stannard dùng để chỉ kết quả của sự việc nào?",
+      "gold": "sự lây lan của các bệnh dịch mới do người châu Âu và châu Phi đem tới đã giết chết nhiều cư dân tại châu Mỹ, Người bản địa và thực dân châu Âu xảy ra xung đột trên diện rộng",
+      "prediction": "Người bản địa và thực dân châu Âu xảy ra xung đột trên diện rộng",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Vào thế kỷ mấy được xem như sự thay đổi hoàn toàn về súng và đạn?",
+      "gold": "thế kỷ 19",
+      "prediction": "thế kỷ 19",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Trong điều lệnh mật số 26 nhận định rằng điều quan trong nhất trong anh ninh Hoa Kỳ là gì?",
+      "gold": "Việc tiếp cận tới nguồn dầu mỏ ở Vịnh Péc xích và an ninh của các quốc gia đồng minh chủ chốt trong vùng",
+      "prediction": "việc tiếp cận tới nguồn dầu mỏ ở Vịnh Péc xích và an ninh của các quốc gia đồng minh chủ chốt trong vùng",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Các giáo đường Chính thoogns giáo được phép làm gì?",
+      "gold": "được duy trì tài sản của họ",
+      "prediction": "được duy trì tài sản",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Thứ gì cháy mãi lên trong tâm hồn của những đứa trẻ?",
+      "gold": "Khát vọng.",
+      "prediction": "Khát vọng.",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Ai là người có nhiệm vụ khôi phục lại quyền thống trị của Pháp tại Việt Nam?",
+      "gold": "Jean Cédile",
+      "prediction": "Jean Cédile",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Ngoài hoa anh đào thì loài hoa nào cũng được sử dụng để gọi đến đất nước Nhật Bản?",
+      "gold": "hoa cúc",
+      "prediction": "Anh Hoa",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Hình ảnh nào không có trong hai câu thơ đầu của nguyên tác bài “Mộ” của Hồ Chí Minh?",
+      "gold": "Núi",
+      "prediction": "Bóng trăng",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Kể tên các dân tộc thổ dân Canada còn tồn tại đến ngày nay?",
+      "gold": "Các dân tộc Trước tiên (First Nations), Inuit, và Métis",
+      "prediction": "Các dân tộc Trước tiên (First Nations), Inuit, và Métis",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Phần lớn cộng đồng người Bumiputera phi Mã Lai theo tôn giáo nào?",
+      "gold": "Ki-tô giáo",
+      "prediction": "Ki-tô giáo",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Tại sao người miền Nam lại có thái độ chống đối dữ dội đến những quyết định của ủy ban quốc hội chung?",
+      "gold": "do sự hiềm khích ngày càng sâu rộng giữa miền Nam và miền Bắc",
+      "prediction": "do sự hiềm khích ngày càng sâu rộng giữa miền Nam và miền Bắc",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Ai là người bị Việt Minh truy nã gắt gao nhưng vẫn chống đối việc hợp tác giữa Việt Nam Quốc dân Đảng với Đảng Cộng sản Đông Dương?",
+      "gold": "Trương Tử Anh",
+      "prediction": "Trương Tử Anh",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Qua bài Nói với con, nhà thơ muốn gửi gắm điều gì?",
+      "gold": "Cả 3 ý trên",
+      "prediction": "Cả hai đáp án trên đều đúng",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Trước khi chính sách hải cấm được ban hành thì khu vực nào của Trung Quốc tập trung các cảng mậu dịch?",
+      "gold": "Quảng Đông, Phúc Kiến",
+      "prediction": "khu vực chuyển từ Quảng Đông, Phúc Kiến sang các thuộc địa của phương Tây tại Đông Nam Á",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Bản đồ địa chất tờ Minh Hóa được vẽ theo tỉ lệ bao nhiêu?",
+      "gold": "1:50.000",
+      "prediction": "1:50.000",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Lực lượng Hồng Quân ở Đông Đức đã được Liên Xô tài trợ tên lửa Scud để nhắm vào những mục tiêu nào?",
+      "gold": "cơ sở thông tin, trung tâm chỉ huy và làm trì hoãn quá trình động viên quân đội của Tây Đức cũng như các lực lượng Đồng Minh tại Đức",
+      "prediction": "tiêu diệt các cơ sở thông tin, trung tâm chỉ huy và làm trì hoãn quá trình động viên quân đội của Tây Đức cũng như các lực lượng Đồng Minh tại Đức",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "3000 nhà thờ địa phương thuộc về ai?",
+      "gold": "liên hiệp Ngũ tuần khác",
+      "prediction": "Hội thánh Đức tin Phúc Âm Ukraina",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Thổ Nhĩ Kỳ có một nền văn hóa như thế nào?",
+      "gold": "Văn hóa Thổ Nhĩ Kỳ rất đa dạng, là một sự pha trộn của các yếu tố khác nhau đến từ văn hóa và truyền thống Thổ Oğuz, Anatolia, Ottoman (tiếp nối văn hóa Hy-La và Hồi giáo) và phương Tây- bắt đầu khi Ottoman Tây hóa và vẫn tiếp tục cho đến nay",
+      "prediction": "rất đa dạng",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Người ta thường tìm thấy những hợp chất của Crom ở đâu?",
+      "gold": "trong môi trường do bào mòn các đá chứa crom và có thể được cung cấp từ nguồn núi lửa",
+      "prediction": "trong môi trường do bào mòn các đá chứa crom và có thể được cung cấp từ nguồn núi lửa",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Khi nào thì hệ thống ký tự kana xuất hiện ở Nhật Bản?",
+      "gold": "giai đoạn đầu của thời kỳ Heian",
+      "prediction": "giai đoạn đầu của thời kỳ Heian",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Mỗi vị Tổng thống của Nga có thể đảm nhiệm chức vụ tối đa bao nhiêu nhiệm kỳ liên tiếp nhau?",
+      "gold": "2",
+      "prediction": "không quá 2 nhiệm kỳ",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Nếu điều gì xảy ra thì các tổ chức Liên hiệp quốc hay Liên đoàn các quốc gia sẽ tan rã?",
+      "gold": "không có được sự ủng hộ của các quốc gia lớn",
+      "prediction": "không thể hoạt động mà không có được sự ủng hộ của các quốc gia lớn",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Ngòi bút Nguyễn Công Hoan có sở trường và nổi tiếng nhất với thể loại, khuynh hướng nào?",
+      "gold": "Truyện ngắn lãng mạn",
+      "prediction": "Tất cả các đáp án trên",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Triều đại Elizabeth dưới ánh nhìn của các sử gia giai đoạn giữa thế kỷ XX như thế nào?",
+      "gold": "thời kỳ hoàng kim của sự tiến bộ",
+      "prediction": "Elizabeth trở nên biểu tượng lãng mạn cho tinh thần dân tộc chống lại hiểm họa ngoại bang",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Chuyển động Brown thiết lập mối quan hệ giữa thăng giáng nhiệt động và gì?",
+      "gold": "sự tiêu tán năng lượng",
+      "prediction": "sự tiêu tán năng lượng",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Theo số liệu từ cuộc điều tra dân số năm 2010, người ta đã có những thống kê gì về các tôn giáo của các dân tộc tại Malaysia?",
+      "gold": "83,6% người Trung Quốc xác định bản thân là Phật tử, và một lượng lớn các tín đồ theo Đạo giáo (3,4%) và Ki-tô giáo (11,1%), cùng với một nhóm nhỏ người Hồi sinh sống tại các khu vực như Penang",
+      "prediction": "83,6% người Trung Quốc xác định bản thân là Phật tử, và một lượng lớn các tín đồ theo Đạo giáo (3,4%) và Ki-tô giáo (11,1%), cùng với một nhóm nhỏ người Hồi sinh sống tại các khu vực như Penang",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Dòng nào dưới đây nêu không sát nội dung cảm xúc của bài thơ “Trang Giang” được gửi gắm qua lời đề từ: “Bâng khuâng trời rộng nhớ sông dài”?",
+      "gold": "Nỗi xao xuyến khó tả trước vẻ đẹp của thế giới tự nhiên.",
+      "prediction": "Cả hai đáp án trên đều đúng",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Trong tự truyện, ông nhắc đến điều gì về tình dục?",
+      "gold": "cuộc phấn đấu chống lại sự thôi thúc tính dục và những cuộc ghen tuông vì bà Kasturba",
+      "prediction": "cuộc phấn đấu chống lại sự thôi thúc tính dục và những cuộc ghen tuông vì bà Kasturba",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Nhận định nào nói đúng nội dung của truyện Cô bé bán diêm?",
+      "gold": "Cả A, B, C đều đúng.",
+      "prediction": "Cả A, B, C đều đúng",
+      "llm_judge_correct": true
+    },
+    {
+      "question": "Người nào đã theo bánh xe đỗ của người ai Cập, Babylon và người Ba Tư?",
+      "gold": "người Hy Lạp và người La Mã",
+      "prediction": "người Hy Lạp và người La Mã",
+      "llm_judge_correct": false
+    },
+    {
+      "question": "Có tất cả bao nhiêu thành viên trong hạ viện?",
+      "gold": "435 thành viên",
+      "prediction": "435 thành viên",
+      "llm_judge_correct": true
+    }
+  ],
+  "char_level_metrics": {
+    "exact_match": 0.44,
+    "token_f1": 0.6296207874727247
+  }
+}

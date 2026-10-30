@@ -13,3 +13,5 @@ text-to-speech_Duy/Matcha-TTS/
 text-to-speech_Duy/checkpoints/*.zip
 mrc-model_Huy/checkpoints/*/checkpoint-*/
 mrc-model_Huy/checkpoints/vit5-combined/
+data/
+!data/vimmrc_index.json

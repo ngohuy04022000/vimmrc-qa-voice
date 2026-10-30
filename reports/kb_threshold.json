@@ -1,0 +1,51 @@
+{
+  "A_n": 2570,
+  "B_n": 600,
+  "table": [
+    {
+      "threshold": 0,
+      "A_kb_R@1": 0.7105,
+      "B_answer_in_top1": 0.0783
+    },
+    {
+      "threshold": 5,
+      "A_kb_R@1": 0.7105,
+      "B_answer_in_top1": 0.0783
+    },
+    {
+      "threshold": 10,
+      "A_kb_R@1": 0.7097,
+      "B_answer_in_top1": 0.0783
+    },
+    {
+      "threshold": 15,
+      "A_kb_R@1": 0.7089,
+      "B_answer_in_top1": 0.0783
+    },
+    {
+      "threshold": 20,
+      "A_kb_R@1": 0.7047,
+      "B_answer_in_top1": 0.0767
+    },
+    {
+      "threshold": 25,
+      "A_kb_R@1": 0.6829,
+      "B_answer_in_top1": 0.075
+    },
+    {
+      "threshold": 30,
+      "A_kb_R@1": 0.6366,
+      "B_answer_in_top1": 0.08
+    },
+    {
+      "threshold": 40,
+      "A_kb_R@1": 0.5058,
+      "B_answer_in_top1": 0.07
+    },
+    {
+      "threshold": 1000000000.0,
+      "A_kb_R@1": 0.0,
+      "B_answer_in_top1": 0.045
+    }
+  ]
+}

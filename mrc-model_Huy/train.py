@@ -83,6 +83,9 @@ def main(argv=None):
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--save-steps", type=int, default=0,
                         help="Eval+checkpoint every N optimizer steps instead of each epoch (crash safety)")
+    parser.add_argument("--early-stopping-patience", type=int, default=0,
+                        help="Stop after N evaluations without dev EM improvement (0 = off); "
+                             "pair with a large --epochs to train until the curve flattens")
     parser.add_argument("--resume", action="store_true",
                         help="Resume from the latest checkpoint-* in --output-dir")
     parser.add_argument("--dry-run", action="store_true", help="Validate licensed splits without loading a model")
@@ -100,7 +103,7 @@ def main(argv=None):
     import numpy as np
     import torch
     from transformers import (AutoModelForSeq2SeqLM, AutoTokenizer, DataCollatorForSeq2Seq,
-                              Seq2SeqTrainer, Seq2SeqTrainingArguments, set_seed)
+                              EarlyStoppingCallback, Seq2SeqTrainer, Seq2SeqTrainingArguments, set_seed)
 
     if not torch.cuda.is_available():
         raise RuntimeError("Full ViT5 training requires a CUDA GPU. Use --dry-run for CPU validation.")
@@ -161,6 +164,7 @@ def main(argv=None):
         data_collator=DataCollatorForSeq2Seq(tokenizer, model=model, label_pad_token_id=-100),
         processing_class=tokenizer,
         compute_metrics=compute_metrics,
+        callbacks=[EarlyStoppingCallback(args.early_stopping_patience)] if args.early_stopping_patience else None,
     )
     has_checkpoint = any(args.output_dir.glob("checkpoint-*"))
     trainer.train(resume_from_checkpoint=args.resume and has_checkpoint)

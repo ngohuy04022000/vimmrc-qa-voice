@@ -8,12 +8,13 @@ services:
     ports:
       - "${PORT:-8090}:8000"
     environment:
-      - WHISPER_MODEL=small
       - WHISPER_DEVICE=cpu
       - TTS_ENGINE=matcha
       - MRC_CHECKPOINT=/app/mrc-model_Huy/checkpoints/vit5-combined-cont
       - TRANSFORMERS_NO_TF=1
-      - QA_INDEX=/app/data/vimmrc_index.json
+      - QA_INDEX=/app/data/kb_index.json
+      - KB_WIKI=/app/data/kb_wiki_full
+      - KB_WIKI_RATIO=0.5
     volumes:
       - ./data:/app/data:ro
       - ./text-to-speech_Duy/outputs:/app/text-to-speech_Duy/outputs

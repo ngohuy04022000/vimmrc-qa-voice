@@ -37,6 +37,7 @@ for folder in (
         sys.path.insert(0, path_str)
 
 from retrieval_client import Retriever
+from kb_retriever import load_any
 from mrc_client import LexicalBaselineClient, MRCClient
 
 from synthesize import synthesize as tts_synthesize
@@ -113,7 +114,7 @@ def get_qa_services() -> tuple[Retriever, object]:
             index_path = os.getenv("QA_INDEX")
             default_index = ROOT / "data" / "vimmrc_index.json"
             if index_path and Path(index_path).exists():
-                _retriever = Retriever.load(index_path)
+                _retriever = load_any(index_path, os.getenv("KB_WIKI"), float(os.getenv("KB_WIKI_RATIO", "0.5")))
             elif default_index.exists():
                 _retriever = Retriever.load(str(default_index))
             else:

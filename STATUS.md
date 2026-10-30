@@ -8,7 +8,7 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
 | Module | Trạng thái | File chính | Hợp đồng vào/ra | Chạy standalone | Test |
 |---|---|---|---|---|---|
 | STT | Xong (Faster-Whisper). Checkpoint fine-tune Whisper-small-vi (50h) có trên Drive nhóm, tải về `speech-to-text_Luong/checkpoints/whisper-small-vi-50h-ct2/` (không commit vào git) | `speech-to-text_Luong/stt_server.py` | `POST /api/stt` (multipart audio) → `{text}` | `WHISPER_MODEL=<path checkpoint> uvicorn stt_server:app --port 8001` (bỏ `WHISPER_MODEL` → model "small" gốc chưa fine-tune) | chưa có test riêng |
-| Retrieval | Xong, đã benchmark | `retrieval-model_Huy/retrieval_client.py` | `Retriever.search(q, top_k) -> list[{id,passage,score}]`; `Retriever.retrieve(q) -> str` (API phụ, chỉ `test_retrieval.py` dùng) | `retrieval_cli.py` | `retrieval-model_Huy/test_retrieval.py` |
+| Retrieval (RAG) | Xong. KB 2 tầng: `data/kb_index.json` (552 ViMMRC + 5.317 ViQuAD) + `data/kb_wiki_full` (1,48 triệu đoạn Wikipedia tiếng Việt, bm25s shard, dùng khi điểm wiki > 0,5 × điểm KB). Dựng bằng `build_kb.py`; data không commit. Dev R@1 70,7% / R@5 85,1%, ~30 ms/câu | `retrieval-model_Huy/kb_retriever.py` (`load_any`), `retrieval_client.py` | `Retriever.search(q, top_k) -> list[{id,passage,score}]`; `Retriever.retrieve(q) -> str` (API phụ, chỉ `test_retrieval.py` dùng) | `retrieval_cli.py` | `retrieval-model_Huy/test_retrieval.py` |
 | MRC (ViT5) | Đã fine-tune trên bộ dữ liệu mở rộng (xem dưới): **Exact Match 41,05%, token F1 66,55%** trên test (27.164 câu, không so được với số liệu ViMMRC thuần cũ). Checkpoint dùng trong Docker: `mrc-model_Huy/checkpoints/vit5-combined-cont/` (train tiếp 2 epoch từ `vit5-combined`, F1 66,02%), không commit (quá lớn) | `mrc-model_Huy/mrc_client.py` | `answer_question(question, passage) -> str` | `MRC_CHECKPOINT=<path> uvicorn scripts.api_server:app`, hoặc `MRCClient(checkpoint_dir)` trực tiếp | `mrc-model_Huy/tests/` |
 | Lexical baseline (MRC) | Xong, dùng khi chưa có checkpoint ViT5 | `mrc_client.LexicalBaselineClient` | `answer_question(question, passage) -> str` | không cần setup | cùng `mrc-model_Huy/tests/` |
 | TTS | Xong: Matcha-TTS mặc định (cần `checkpoints/matcha_vi.pt` + `scripts/setup_matcha.py`), VITS/Edge/gTTS, lỗi thì fallback gTTS | `text-to-speech_Duy/synthesize.py` | `synthesize(text, engine?, voice?) -> đường dẫn audio` | `python synthesize.py --text "..."` | `text-to-speech_Duy/tests/` |
@@ -35,6 +35,18 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
 - `transformers` được nới về `>=4.40.0,<4.58` ở cả `mrc-model_Huy/requirements.txt` và
   `requirements-api.txt`/`text-to-speech_Duy/requirements.txt`, tránh pin cứng gây resolver conflict
   khi cài chung một venv.
+
+## Đánh giá toàn chuỗi (retrieval → ViT5), `scripts/eval_e2e.py`
+
+Dev 2.570 câu (404 ViMMRC + 2.166 ViQuAD có đoạn văn trong KB), báo cáo `reports/e2e_dev_kb_*.json`:
+
+| Reader | Toàn chuỗi EM / F1 | ViMMRC F1 | ViQuAD F1 | Đoạn đúng F1 |
+|---|---|---|---|---|
+| **vit5-combined-cont** (đang dùng) | 33,4 / 54,6 | 22,5 | 60,6 | 68,7 |
+| vit5-vimmrc-ft (fine-tune riêng ViMMRC, dừng sớm khi dev phẳng) | 32,4 / 54,4 | 23,9 | 60,1 | 68,1 |
+
+Đã thử, không áp dụng: reranker bge-v2-m3 (+1,5 R@1, chậm ~1 s/câu), đọc top-3 lấy điểm cao nhất (kém hơn),
+`question_chunks` lúc suy luận (không tăng). STT: Whisper-small-vi-50h (`eval_stt.py`, WER 8,1% trên gTTS).
 
 ## Dữ liệu huấn luyện MRC đã mở rộng
 

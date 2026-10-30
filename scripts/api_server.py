@@ -239,4 +239,6 @@ def synthesize_endpoint(request: TTSRequest) -> FileResponse:
 # Mount static Angular web client if built
 dist_browser = ROOT / "web-interface_Luong" / "dist" / "web-interface" / "browser"
 if dist_browser.exists() and (dist_browser / "index.html").exists():
+    # stt_server's GET / info route would shadow the frontend index
+    app.router.routes = [r for r in app.router.routes if getattr(r, "path", None) != "/"]
     app.mount("/", StaticFiles(directory=str(dist_browser), html=True), name="static_frontend")

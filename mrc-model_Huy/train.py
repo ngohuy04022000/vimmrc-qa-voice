@@ -70,6 +70,8 @@ def main(argv=None):
     parser.add_argument("--data-dir", type=Path, default=Path(__file__).resolve().parents[1] / "data")
     parser.add_argument("--output-dir", type=Path, default=Path(__file__).resolve().parent / "checkpoints" / "vit5-vimmrc")
     parser.add_argument("--model-name", default="VietAI/vit5-base")
+    parser.add_argument("--tokenizer-name", default=None,
+                        help="Defaults to --model-name; use the base model when continuing from an old checkpoint")
     parser.add_argument("--epochs", type=float, default=3)
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--gradient-accumulation", type=int, default=16)
@@ -79,6 +81,10 @@ def main(argv=None):
     parser.add_argument("--context-strategy", choices=["head", "question_chunks"], default="head",
                         help="Use question_chunks to select evidence throughout long passages")
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--save-steps", type=int, default=0,
+                        help="Eval+checkpoint every N optimizer steps instead of each epoch (crash safety)")
+    parser.add_argument("--resume", action="store_true",
+                        help="Resume from the latest checkpoint-* in --output-dir")
     parser.add_argument("--dry-run", action="store_true", help="Validate licensed splits without loading a model")
     args = parser.parse_args(argv)
 
@@ -101,7 +107,7 @@ def main(argv=None):
     random.seed(args.seed)
     np.random.seed(args.seed)
     set_seed(args.seed)
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_name or args.model_name)
     print("Truncation report:", truncation_report(
         examples, tokenizer, args.max_input_tokens, args.max_target_tokens))
     model = AutoModelForSeq2SeqLM.from_pretrained(args.model_name)
@@ -129,8 +135,10 @@ def main(argv=None):
         per_device_eval_batch_size=args.batch_size,
         gradient_accumulation_steps=args.gradient_accumulation,
         learning_rate=args.learning_rate,
-        eval_strategy="epoch",
-        save_strategy="epoch",
+        eval_strategy="steps" if args.save_steps else "epoch",
+        save_strategy="steps" if args.save_steps else "epoch",
+        eval_steps=args.save_steps or None,
+        save_steps=args.save_steps or None,
         load_best_model_at_end=True,
         metric_for_best_model="exact_match",
         greater_is_better=True,
@@ -154,7 +162,8 @@ def main(argv=None):
         processing_class=tokenizer,
         compute_metrics=compute_metrics,
     )
-    trainer.train()
+    has_checkpoint = any(args.output_dir.glob("checkpoint-*"))
+    trainer.train(resume_from_checkpoint=args.resume and has_checkpoint)
     trainer.save_model(str(args.output_dir))
     tokenizer.save_pretrained(str(args.output_dir))
     (args.output_dir / "mrc_config.json").write_text(

@@ -67,15 +67,15 @@
     * Tinh chỉnh tham số thực nghiệm: $k_1 = 2.1$, $b = 1.0$.
     * Bổ sung cơ chế **Bigram Phrase Boost (+0.4)** ưu tiên từ ghép tiếng Việt, giúp tìm chính xác bài đọc chỉ với 1 câu hỏi ngắn.
   * **Đóng góp 2 - Mô hình MRC Kép Linh hoạt:**
-    * **ChoiceRanker:** Trích xuất đặc trưng TF-IDF n-gram đa tầng + Logistic Regression $C=10$, chuyên biệt hóa cho bài toán 4 lựa chọn.
-    * **ViT5 Sequence-to-Sequence:** Tích hợp bộ chọn lọc ngữ cảnh Heuristic (`context_selection`) giải quyết trần 512 token.
+    * **ChoiceRanker:** 11 đặc trưng độ khớp (cosine TF-IDF n-gram ký tự 2-4, tỷ lệ phủ từ, khớp cụm chính xác) + Logistic Regression $C=10$, chuyên cho bài toán 4 lựa chọn. Đã kiểm tra lại: TF-IDF âm tiết 53,2%, BM25 52,3%, thêm embedding e5 52,1% so với 51,95% — chênh lệch nằm trong sai số.
+    * **ViT5-base fine-tune (câu hỏi tự do):** EM 41,05%, F1 66,55% trên test 2.716 câu (dữ liệu ViMMRC + UIT-ViQuAD2.0).
   * **Đóng góp 3 - Làm chủ Kiến trúc Matcha-TTS (Flow Matching):**
     * Ứng dụng thành công **Optimal-Transport Conditional Flow Matching (OT-CFM)** từ ICASSP 2024.
     * Đề xuất **Frontend tách thanh điệu `vi_tone_v2`**: Tách 6 thanh điệu thành token độc lập (ví dụ `hồ` $\rightarrow$ `h ô 2`), giúp mô hình nắm bắt cao độ F0 cực kỳ ổn định.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Về mặt kỹ thuật, nhóm xin nhấn mạnh vào 3 đóng góp trọng tâm:  
   > Thứ nhất, ở khâu truy xuất, thay vì dùng BM25 mặc định, nhóm đã tinh chỉnh siêu tham số $k_1=2.1, b=1.0$ và đề xuất cơ chế Bigram Phrase Boost cộng 0.4 điểm cho các cụm từ ghép tiếng Việt, giải quyết triệt để bài toán tìm kiếm bài đọc khi người dùng chỉ hỏi ngắn gọn một câu.  
-  > Thứ hai, ở phân hệ Đọc hiểu, nhóm xây dựng mô hình ChoiceRanker dựa trên kỹ nghệ đặc trưng ma trận TF-IDF đa mức, kết hợp bộ phân loại Logistic Regression đạt độ chính xác vượt trội trên dữ liệu trắc nghiệm.  
+  > Thứ hai, ở phân hệ Đọc hiểu, khi có 4 lựa chọn, ChoiceRanker dùng 11 đặc trưng độ khớp chấm bằng Logistic Regression, đạt 51,95% trên dev. Nhóm đã kiểm tra lại: thay TF-IDF ký tự bằng TF-IDF âm tiết, BM25 hay embedding ngữ nghĩa đều chỉ dao động 52 đến 53%, trong sai số — giới hạn nằm ở câu hỏi cần suy luận. Khi không có lựa chọn, ViT5 fine-tune sinh câu trả lời tự do, F1 66,55% trên test.  
   > Thứ ba và là điểm nhấn học thuật lớn nhất: nhóm đã làm chủ và huấn luyện thành công kiến trúc tiên tiến Matcha-TTS theo trường phái Flow Matching. Nhóm đã tự thiết kế frontend `vi_tone_v2` bóc tách 6 thanh điệu tiếng Việt, giúp chất lượng ngữ điệu âm thanh vượt trội so với các mô hình truyền thống."
 
 ---

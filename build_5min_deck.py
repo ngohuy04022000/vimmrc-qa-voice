@@ -76,7 +76,7 @@ s2 = builder.add_content_slide(
 steps = [
     ("CHẶNG 1: STT", "Faster-Whisper Small", "CTranslate2 + INT8", "VAD cắt khoảng lặng", "Nhận dạng WAV 16kHz", PRIMARY_BLUE),
     ("CHẶNG 2: RETRIEVAL", "BM25 Tinh chỉnh", "Kho 552 bài đọc", "Bigram Phrase Boost", "Recall@1: 71.45%", TEAL),
-    ("CHẶNG 3: MRC", "ChoiceRanker & ViT5", "Đặc trưng TF-IDF n-gram", "Logistic Reg (C=10)", "Acc Dev: 51.95%", TECH_BLUE),
+    ("CHẶNG 3: MRC", "ChoiceRanker & ViT5", "Ranker: Logistic Reg (C=10)", "ViT5: F1 test 66.55%", "Acc Dev: 51.95%", TECH_BLUE),
     ("CHẶNG 4: TTS", "Matcha-TTS (OT-CFM)", "10 bước ODE trên CPU", "Frontend vi_tone_v2", "RTF: 0.52 | CER: 1.9%", GREEN)
 ]
 
@@ -132,7 +132,7 @@ bp2.space_before = Pt(2)
 # ==========================================
 s3_notes = """Về mặt kỹ thuật, nhóm xin nhấn mạnh vào 3 đóng góp trọng tâm:
 Thứ nhất, ở khâu truy xuất, thay vì dùng BM25 mặc định, nhóm đã tinh chỉnh siêu tham số k1=2.1, b=1.0 và đề xuất cơ chế Bigram Phrase Boost cộng 0.4 điểm cho các cụm từ ghép tiếng Việt, giải quyết triệt để bài toán tìm kiếm bài đọc khi người dùng chỉ hỏi ngắn gọn một câu.
-Thứ hai, ở phân hệ Đọc hiểu, nhóm xây dựng mô hình ChoiceRanker dựa trên kỹ nghệ đặc trưng ma trận TF-IDF đa mức, kết hợp bộ phân loại Logistic Regression đạt độ chính xác vượt trội trên dữ liệu trắc nghiệm.
+Thứ hai, ở phân hệ Đọc hiểu, khi có 4 lựa chọn, ChoiceRanker dùng 11 đặc trưng độ khớp giữa lựa chọn với đoạn văn và câu hỏi, chấm bằng Logistic Regression, đạt 51,95% trên dev. Nhóm đã kiểm tra lại: thay TF-IDF ký tự bằng TF-IDF âm tiết, BM25 hay embedding ngữ nghĩa e5 đều chỉ dao động trong khoảng 52 đến 53%, nằm trong sai số, nên giới hạn nằm ở bản chất câu hỏi cần suy luận chứ không ở cách đo độ khớp. Khi không có lựa chọn, ViT5 fine-tune sinh câu trả lời tự do, đạt F1 66,55% trên test.
 Thứ ba và là điểm nhấn học thuật lớn nhất: nhóm đã làm chủ và huấn luyện thành công kiến trúc tiên tiến Matcha-TTS theo trường phái Flow Matching. Nhóm đã tự thiết kế frontend vi_tone_v2 bóc tách 6 thanh điệu tiếng Việt, giúp chất lượng ngữ điệu âm thanh vượt trội so với các mô hình truyền thống."""
 
 s3 = builder.add_content_slide(
@@ -166,9 +166,10 @@ for b in bullets_c1:
 c2, tf2 = builder.add_card(s3, Inches(4.8), col_y, col_w, col_h, title="2. Mô Hình Kép: ChoiceRanker & ViT5", title_color=TEAL)
 bullets_c2 = [
     "ChoiceRanker (Trắc nghiệm 4 lựa chọn): Xây dựng ma trận đặc trưng liên kết (Passage, Query, Option).",
-    "Kỹ nghệ đặc trưng: TF-IDF n-gram từ & ký tự, tỷ lệ bao phủ từ vựng, mức độ khớp cụm từ chính xác.",
-    "Logistic Regression (C=10): Đạt Accuracy 51.95% trên Dev, vượt trội hơn Lexical Baseline (43.62%) và Random (25.18%).",
-    "ViT5 Seq2Seq (VietAI): Cơ chế Context Chunking Heuristic giải quyết trần 512 token mà không làm mất bằng chứng."
+    "Đặc trưng: cosine TF-IDF n-gram ký tự (2-4), tỷ lệ phủ từ với đoạn văn/câu then chốt, khớp cụm chính xác.",
+    "Logistic Regression (C=10): Accuracy 51.95% trên Dev, hơn Lexical Baseline (43.62%) và Random (25.18%).",
+    "Kiểm tra lại: TF-IDF âm tiết 53.2%, BM25 52.3%, + e5 ngữ nghĩa 52.1% → chênh lệch nằm trong sai số (±2.1%).",
+    "ViT5-base fine-tune (câu hỏi tự do): EM 41.05%, F1 66.55% trên test 2.716 câu."
 ]
 for b in bullets_c2:
     p = tf2.add_paragraph()

@@ -19,7 +19,7 @@ WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     WHISPER_DEVICE=cpu \
-    TTS_ENGINE=edge \
+    TTS_ENGINE=matcha \
     PORT=8000
 
 # Install required system packages for audio processing (ffmpeg, libsndfile) and health check (curl)
@@ -27,14 +27,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     libsndfile1 \
     curl \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies (using PyTorch CPU wheels for lightweight container size)
 COPY requirements-docker.txt .
-RUN pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cpu -r requirements-docker.txt
+RUN pip install --no-cache-dir --default-timeout=300 --retries 10 --extra-index-url https://download.pytorch.org/whl/cpu -r requirements-docker.txt
 
 # Copy repository source code, datasets, and pre-trained checkpoints
 COPY . .
+
+RUN python text-to-speech_Duy/scripts/setup_matcha.py \
+    && test -f text-to-speech_Duy/checkpoints/matcha_vi.pt \
+    && test -f text-to-speech_Duy/checkpoints/matcha_vi_hifigan.pt
 
 # Copy compiled Angular frontend from builder stage into expected path
 COPY --from=frontend-builder /app/dist/web-interface/browser /app/web-interface_Luong/dist/web-interface/browser

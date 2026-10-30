@@ -1,4 +1,4 @@
-services:
+﻿services:
   vimmrc-qa-voice:
     build:
       context: .
@@ -17,7 +17,7 @@ services:
       - OMP_NUM_THREADS=${OMP_NUM_THREADS:-4}
       - QA_INDEX=/app/data/kb_index.json
       - KB_WIKI=/app/data/kb_wiki_full
-      - KB_WIKI_RATIO=0.5
+      - KB_WIKI_RATIO=0.4
     volumes:
       - ./data:/app/data:ro
       - ./text-to-speech_Duy/outputs:/app/text-to-speech_Duy/outputs

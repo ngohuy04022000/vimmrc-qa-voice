@@ -59,7 +59,7 @@ builder.add_title_slide(
 # ==========================================
 s2_notes = """Để đạt được mục tiêu đó, nhóm đã thiết kế kiến trúc pipeline 4 chặng đồng bộ:
 Chặng 1: Giọng nói từ micro được phân hệ STT Faster-Whisper chuyển thành văn bản, có tích hợp bộ lọc VAD cắt nhiễu môi trường.
-Chặng 2: Văn bản câu hỏi được đưa vào bộ truy xuất BM25 để tìm ra bài đọc liên quan nhất trong kho 552 văn bản của bộ dữ liệu ViMMRC 2.0.
+Chặng 2: Văn bản câu hỏi được đưa vào bộ truy xuất BM25 để tìm ra đoạn văn liên quan nhất trong kho tri thức hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt.
 Chặng 3: Mô hình Đọc hiểu tiếp nhận cặp bài đọc và câu hỏi để suy luận đáp án chính xác.
 Chặng 4: Đáp án dạng chữ được đưa qua bộ tổng hợp tiếng nói tiên tiến Matcha-TTS để tái tạo âm thanh tự nhiên phát qua loa.
 Toàn bộ pipeline được trang bị cơ chế dự phòng tự động: nếu một nhánh gặp sự cố, hệ thống tự chuyển fallback ngay mà không bao giờ làm gián đoạn trải nghiệm người dùng."""
@@ -75,7 +75,7 @@ s2 = builder.add_content_slide(
 # 4 Pipeline Boxes
 steps = [
     ("CHẶNG 1: STT", "Faster-Whisper Small", "CTranslate2 + INT8", "VAD cắt khoảng lặng", "Nhận dạng WAV 16kHz", PRIMARY_BLUE),
-    ("CHẶNG 2: RETRIEVAL", "BM25 Tinh chỉnh", "Kho 552 bài đọc", "Bigram Phrase Boost", "Recall@1: 71.45%", TEAL),
+    ("CHẶNG 2: RETRIEVAL", "BM25 Tinh chỉnh", "Kho 5.869 đoạn + Wikipedia", "Bigram Phrase Boost", "Test R@1: 71.1%", TEAL),
     ("CHẶNG 3: MRC", "ViT5-base fine-tune", "Sinh câu trả lời tự do", "Train ViMMRC + ViQuAD2.0", "Test: EM 41.05% | F1 66.55%", TECH_BLUE),
     ("CHẶNG 4: TTS", "Matcha-TTS (OT-CFM)", "10 bước ODE trên CPU", "Frontend vi_tone_v2", "RTF: 0.52 | CER: 1.9%", GREEN)
 ]
@@ -150,10 +150,10 @@ col_h = Inches(5.35)
 # Card 1: Retrieval
 c1, tf1 = builder.add_card(s3, Inches(0.8), col_y, col_w, col_h, title="1. BM25 Tối Ưu Hóa & Bigram Boost", title_color=PRIMARY_BLUE)
 bullets_c1 = [
-    "Bài toán Open-Domain: Tìm chính xác bài đọc trong kho 552 văn bản chỉ bằng 1 câu hỏi âm thanh ngắn.",
+    "Kho tri thức hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt (bm25s, chia shard).",
     "Tinh chỉnh siêu tham số: k1 = 2.1 (độ bão hòa tần suất từ), b = 1.0 (phạt triệt để độ dài thừa).",
     "Bigram Phrase Boost (+0.4): Nhận diện cụm từ ghép liền kề tiếng Việt ('Điện Biên', 'Văn Miếu'), cộng điểm thưởng chuẩn xác.",
-    "Hiệu năng: Recall@1 đạt 71.45%, Recall@5 đạt 83.69%, MRR đạt 0.7624 trong thời gian chỉ 14.8 ms."
+    "Hiệu năng (test 2.545 câu): Recall@1 71,1%, Recall@5 85,9%, khoảng 35 ms mỗi câu."
 ]
 for b in bullets_c1:
     p = tf1.add_paragraph()
@@ -196,7 +196,7 @@ for b in bullets_c3:
 # SLIDE 4: KẾT QUẢ THỰC NGHIỆM & BENCHMARK
 # ==========================================
 s4_notes = """Kính thưa Thầy, các kết quả trên bảng là minh chứng định lượng cho hiệu quả của hệ thống:
-Ở phân hệ Retrieval, giải thuật BM25 tinh chỉnh đạt Recall@1 là 71.45% và Recall@5 lên tới 83.69%, với chỉ số MRR đạt 0.762. Nghĩa là phần lớn trường hợp hệ thống định vị chính xác bài đọc ngay ở vị trí đầu tiên.
+Ở phân hệ Retrieval, trên 2.545 câu test với kho tri thức hai tầng, BM25 tinh chỉnh đạt Recall@1 71,1% và Recall@5 85,9%. Nếu chỉ dùng kho ViMMRC 552 bài ban đầu, tinh chỉnh nâng Recall@1 từ 64,2% lên 71,45%.
 Ở phân hệ MRC, ViT5 fine-tune đạt token F1 66,55% và Exact Match 41,05% trên 2.716 câu test, sinh câu trả lời ngắn gọn thay vì trích cả câu như bộ trích câu dự phòng.
 Đặc biệt ở phân hệ TTS, khi nhóm thiết lập benchmark âm học chuẩn quốc tế: Matcha-TTS đạt tỷ lệ lỗi ký tự CER cực thấp chỉ 1.9%, bám sát mức trần của giọng người thật là 0.7% và tốt hơn VITS hơn 2 lần. Sai số thanh điệu log-F0 đạt 2.86 bán cung, tiệm cận mô hình thương mại Edge-TTS. Quan trọng nhất, chỉ số RTF đạt 0.52 trên CPU thông thường, nghĩa là chỉ mất nửa giây để tổng hợp câu nói 1 giây, hoàn toàn đáp ứng đàm thoại thời gian thực."""
 
@@ -210,8 +210,9 @@ s4 = builder.add_content_slide(
 
 headers_s4 = ["Phân hệ / Mô hình", "Chỉ số Đo lường", "Kết quả Đạt được", "Mức Đối chứng (Baseline)", "Ý nghĩa Thực tiễn"]
 rows_s4 = [
-    ["Retrieval: BM25 Tinh chỉnh", "Recall@1 / Recall@5", "71.45% / 83.69%", "BM25 Lucene: 64.2% / 80.0%", "Định vị đúng bài đọc ngay ở Top 1 và Top 5"],
-    ["Retrieval: BM25 Tinh chỉnh", "MRR@5 (Mean Recip.)", "0.7624", "BM25 Lucene: 0.7042", "Bài đọc đúng luôn nằm ở nhóm đầu bảng xếp hạng"],
+    ["Retrieval: BM25 Tinh chỉnh (kho 2 tầng)", "Recall@1 / Recall@5 (Test 2.545 câu)", "71.1% / 85.9%", "—", "Định vị đúng đoạn văn ngay ở Top 1 và Top 5"],
+    ["Retrieval: BM25 Tinh chỉnh (kho 552 bài)", "Recall@1 (Dev 564 câu)", "71.45%", "BM25 Lucene: 64.2%", "Ablation tinh chỉnh k1, b và bigram boost"],
+    ["Toàn chuỗi: BM25 → ViT5", "EM / token F1 (Test 2.545 câu)", "32.3% / 53.9%", "Đưa đúng đoạn văn: F1 68.6%", "Độ chính xác khi tự tìm đoạn văn rồi đọc"],
     ["MRC: ViT5-base fine-tune", "EM / token F1 (Test 2.716 câu)", "41.05% / 66.55%", "Trích câu khớp nhất (chưa đo)", "Trả lời ngắn gọn, đúng trọng tâm câu hỏi"],
     ["TTS: Giọng Người thật (InfoRe1)", "CER (ASR PhoWhisper)", "0.7%", "Mức trần lý thuyết kiểm định", "Độ chính xác nhận dạng đối chứng tối đa"],
     ["TTS: Matcha-TTS (Nhóm huấn luyện)", "CER (ASR PhoWhisper)", "1.9%", "VITS MMS: 4.3%", "Phát âm trong trẻo, rõ chữ, ít lỗi hơn VITS > 2 lần"],
@@ -240,8 +241,8 @@ ps1.space_before = Pt(2)
 # SLIDE 5: SẢN PHẨM HOÀN CHỈNH & KỊCH BẢN DEMO
 # ==========================================
 s5_notes = """Về mặt sản phẩm phần mềm, nhóm đã tích hợp hoàn chỉnh thành một ứng dụng Full-stack: Backend FastAPI kết hợp Frontend Angular với giao diện Chat hiện đại, có biểu đồ thể hiện luồng pipeline đang chạy ở phân hệ nào.
-Toàn bộ hệ thống được đóng gói thành container Docker tự động hóa 100%, vượt qua tất cả 55/55 bài kiểm thử tự động.
-Trong kịch bản demo: khi người dùng bấm mic hỏi 'Thủ đô của Việt Nam là gì?', hệ thống ngay lập tức nhận dạng câu hỏi, truy xuất đúng bài đọc Văn Miếu số 288 trong 552 bài đọc, mô hình ViT5 đọc bài và sinh câu trả lời 'Hà Nội', rồi Matcha-TTS phát âm thanh câu trả lời cho người dùng."""
+Toàn bộ hệ thống được đóng gói thành container Docker tự động hóa 100%, vượt qua tất cả 54/54 bài kiểm thử tự động.
+Trong kịch bản demo: khi người dùng bấm mic hỏi 'Ai là tác giả của Truyện Kiều?', hệ thống ngay lập tức nhận dạng câu hỏi, truy xuất đoạn văn liên quan trong kho tri thức, mô hình ViT5 đọc đoạn văn và sinh câu trả lời 'Nguyễn Du', rồi Matcha-TTS phát âm thanh câu trả lời cho người dùng."""
 
 s5 = builder.add_content_slide(
     category="Kỹ nghệ & Thực nghiệm",
@@ -258,7 +259,7 @@ eng_points = [
     ("Giao diện Trực quan:", "Hiển thị Pipeline Flow Indicator theo thời gian thực (Thu âm -> STT -> Retrieval -> MRC -> TTS -> Nghe)."),
     ("Docker Multi-Stage:", "Stage 1 (Node 22) build web; Stage 2 (Python 3.11-slim) chạy API & PyTorch CPU wheel siêu nhẹ."),
     ("Khởi chạy 1 Lệnh:", "docker compose up -d cô lập cổng 8090, tích hợp sẵn Docker Healthcheck."),
-    ("Chất lượng Kiểm thử:", "55/55 Bài tests tự động ĐẠT 100% (pytest), không phát sinh lỗi hồi quy.")
+    ("Chất lượng Kiểm thử:", "54/54 Bài tests tự động ĐẠT 100% (pytest), không phát sinh lỗi hồi quy.")
 ]
 for title_p, desc_p in eng_points:
     p = tf_eng.add_paragraph()
@@ -270,12 +271,12 @@ for title_p, desc_p in eng_points:
 # Right Column: Live Demo Flow
 c_demo, tf_demo = builder.add_card(s5, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Kịch Bản Demo Thực Tế (Live Flow)", title_color=TEAL)
 demo_steps = [
-    ("1. Giọng nói Đầu vào:", "Người dùng bấm mic hỏi: 'Thủ đô của Việt Nam là gì?'."),
-    ("2. STT (0.42s):", "Faster-Whisper nhận dạng chính xác văn bản tiếng Việt có dấu chuẩn xác."),
-    ("3. Retrieval (15ms):", "BM25 quét 552 văn bản, định vị chính xác bài đọc 'train:0288' (Văn Miếu - Quốc Tử Giám Hà Nội, Score: 26.97)."),
-    ("4. MRC:", "ViT5 đọc bài Văn Miếu và sinh câu trả lời 'Hà Nội'."),
+    ("1. Giọng nói Đầu vào:", "Người dùng bấm mic hỏi: 'Ai là tác giả của Truyện Kiều?'."),
+    ("2. STT (~3s):", "Faster-Whisper nhận dạng chính xác văn bản tiếng Việt có dấu chuẩn xác."),
+    ("3. Retrieval (~35ms):", "BM25 quét kho tri thức hai tầng, tìm đoạn văn liên quan."),
+    ("4. MRC:", "ViT5 đọc đoạn Wikipedia về Truyện Kiều và sinh câu trả lời 'Nguyễn Du'."),
     ("5. TTS:", "Matcha-TTS chuẩn hóa văn bản và tổng hợp giọng đọc câu trả lời."),
-    ("6. Tổng Độ trễ:", "Chỉ 1.85 giây từ lúc dứt câu hỏi đến khi nghe câu trả lời!")
+    ("6. Tổng Độ trễ:", "Khoảng 6 giây trên CPU (STT ~3s, ViT5 ~1.4s, TTS ~1.3s).")
 ]
 for title_d, desc_d in demo_steps:
     p = tf_demo.add_paragraph()

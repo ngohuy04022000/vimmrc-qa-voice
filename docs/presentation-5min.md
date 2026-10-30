@@ -45,14 +45,14 @@
     $$\text{Micro (Audio 16kHz)} \xrightarrow{\text{STT}} \text{Văn bản câu hỏi} \xrightarrow{\text{Retrieval}} \text{Bài đọc liên quan} \xrightarrow{\text{MRC}} \text{Đáp án} \xrightarrow{\text{TTS}} \text{Loa (Audio 22kHz)}$$
   * **4 Phân hệ phối hợp:**
     1. **STT:** Faster-Whisper Small (CTranslate2) + Bộ lọc VAD + Thread-safe Lazy Loading.
-    2. **Retrieval:** BM25 tối ưu hóa trên kho 552 bài đọc độc bản ViMMRC 2.0.
+    2. **Retrieval:** BM25 tối ưu hóa trên kho tri thức hai tầng (5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt).
     3. **MRC:** ViT5-base fine-tune sinh câu trả lời tự do từ câu hỏi và bài đọc.
     4. **TTS:** Matcha-TTS (Flow Matching) + VITS + Edge-TTS dự phòng.
   * **Thiết kế chịu lỗi (Fault-Tolerant):** Hệ thống có cơ chế Fallback tự động ở từng chặng, đảm bảo hoạt động offline trên CPU thông thường mà không cần GPU đắt tiền.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Để đạt được mục tiêu đó, nhóm đã thiết kế kiến trúc pipeline 4 chặng đồng bộ:  
   > Chặng 1: Giọng nói từ micro được phân hệ STT Faster-Whisper chuyển thành văn bản, có tích hợp bộ lọc VAD cắt nhiễu môi trường.  
-  > Chặng 2: Văn bản câu hỏi được đưa vào bộ truy xuất BM25 để tìm ra bài đọc liên quan nhất trong kho 552 văn bản của bộ dữ liệu ViMMRC 2.0.  
+  > Chặng 2: Văn bản câu hỏi được đưa vào bộ truy xuất BM25 để tìm ra đoạn văn liên quan nhất trong kho tri thức hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt.  
   > Chặng 3: Mô hình Đọc hiểu tiếp nhận cặp bài đọc và câu hỏi để suy luận đáp án chính xác.  
   > Chặng 4: Đáp án dạng chữ được đưa qua bộ tổng hợp tiếng nói tiên tiến Matcha-TTS để tái tạo âm thanh tự nhiên phát qua loa.  
   > Toàn bộ pipeline được trang bị cơ chế dự phòng tự động: nếu một nhánh gặp sự cố, hệ thống tự chuyển fallback ngay mà không bao giờ làm gián đoạn trải nghiệm người dùng."
@@ -89,8 +89,9 @@
 
 | Phân hệ / Mô hình | Chỉ số then chốt | Giá trị đạt được | So sánh Baseline | Ý nghĩa thực tiễn |
 |---|---|:---:|:---:|---|
-| **Retrieval (BM25)** | Recall@1 / Recall@5 | **71.45% / 83.69%** | Lucene DF: 64.2% | Tìm đúng bài đọc ngay ở top 1 và top 5 |
-| **Retrieval (BM25)** | MRR@5 | **0.7624** | Baseline: 0.689 | Thứ hạng văn bản đúng nằm ở vị trí rất cao |
+| **Retrieval (BM25, kho 2 tầng)** | Recall@1 / Recall@5 (test 2.545 câu) | **71.1% / 85.9%** | — | Tìm đúng đoạn văn ngay ở top 1 và top 5 |
+| **Retrieval (BM25, kho 552 bài)** | Recall@1 (dev 564 câu) | **71.45%** | Lucene DF: 64.2% | Ablation tinh chỉnh k1, b, bigram boost |
+| **Toàn chuỗi BM25 → ViT5** | EM / F1 (test 2.545 câu) | **32.3% / 53.9%** | Đưa đúng đoạn văn: F1 68.6% | Độ chính xác khi tự tìm rồi đọc |
 | **MRC (ViT5 fine-tune)** | EM / token F1 (Test 2.716 câu) | **41.05% / 66.55%** | Trích câu khớp nhất (chưa đo) | Trả lời ngắn gọn, đúng trọng tâm |
 | **TTS (Matcha-TTS)** | Tỷ lệ lỗi chữ (CER) | **1.9%** | VITS: 4.3% (Người thật: 0.7%) | Phát âm rõ chữ, ít lỗi hơn VITS gấp 2 lần |
 | **TTS (Matcha-TTS)** | Sai số cao độ (log-F0) | **2.86 semitones** | VITS: 4.31 / Edge-TTS: 2.69 | Thanh điệu chuẩn xác, gần bằng mô hình thương mại |
@@ -98,7 +99,7 @@
 
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Kính thưa Thầy, các kết quả trên bảng là minh chứng định lượng cho hiệu quả của hệ thống:  
-  > Ở phân hệ Retrieval, giải thuật BM25 tinh chỉnh đạt Recall@1 là 71.45% và Recall@5 lên tới 83.69%, với chỉ số MRR đạt 0.762. Nghĩa là phần lớn trường hợp hệ thống định vị chính xác bài đọc ngay ở vị trí đầu tiên.  
+  > Ở phân hệ Retrieval, trên 2.545 câu test với kho tri thức hai tầng, BM25 tinh chỉnh đạt Recall@1 71,1% và Recall@5 85,9%. Nếu chỉ dùng kho ViMMRC 552 bài ban đầu, tinh chỉnh nâng Recall@1 từ 64,2% lên 71,45%.  
   > Ở phân hệ MRC, ViT5 fine-tune đạt token F1 66,55% và Exact Match 41,05% trên 2.716 câu test.  
   > Đặc biệt ở phân hệ TTS, khi nhóm thiết lập benchmark âm học chuẩn quốc tế: Matcha-TTS đạt tỷ lệ lỗi ký tự CER cực thấp chỉ 1.9%, bám sát mức trần của giọng người thật là 0.7% và tốt hơn VITS hơn 2 lần. Sai số thanh điệu log-F0 đạt 2.86 bán cung, tiệm cận mô hình thương mại Edge-TTS. Quan trọng nhất, chỉ số RTF đạt 0.52 trên CPU thông thường, nghĩa là chỉ mất nửa giây để tổng hợp câu nói 1 giây, hoàn toàn đáp ứng đàm thoại thời gian thực."
 
@@ -111,16 +112,16 @@
   * **Sản phẩm hoàn thiện:**
     * **Web UI (Angular 19):** Giao diện Chat trực quan, hiển thị tiến trình pipeline (Thu âm $\rightarrow$ STT $\rightarrow$ Retrieval $\rightarrow$ MRC $\rightarrow$ TTS $\rightarrow$ Nghe audio).
     * **Backend (FastAPI):** Kiến trúc RESTful modules hóa, hỗ trợ Lazy Loading.
-    * **Đóng gói Docker:** Multi-stage build (`node:22-alpine` + `python:3.11-slim`), cô lập cổng 8090, 55/55 test cases ĐẠT 100%.
+    * **Đóng gói Docker:** Multi-stage build (`node:22-alpine` + `python:3.11-slim`), cô lập cổng 8090, 54/54 test cases ĐẠT 100%.
   * **Minh họa luồng Demo thực tế (End-to-End Test):**
-    * Người dùng hỏi: *"Thủ đô của Việt Nam là gì?"*.
-    * Retrieval truy xuất bài đọc `train:0288` (Văn Miếu Hà Nội, điểm 26.97).
-    * ViT5 sinh câu trả lời: *"Hà Nội"*.
+    * Người dùng hỏi: *"Ai là tác giả của Truyện Kiều?"*.
+    * Retrieval truy xuất đoạn văn liên quan trong kho tri thức hai tầng.
+    * ViT5 sinh câu trả lời: *"Nguyễn Du"*.
     * Matcha-TTS đọc câu trả lời bằng giọng nơ-ron.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Về mặt sản phẩm phần mềm, nhóm đã tích hợp hoàn chỉnh thành một ứng dụng Full-stack: Backend FastAPI kết hợp Frontend Angular với giao diện Chat hiện đại, có biểu đồ thể hiện luồng pipeline đang chạy ở phân hệ nào.  
-  > Toàn bộ hệ thống được đóng gói thành container Docker tự động hóa 100%, vượt qua tất cả 55/55 bài kiểm thử tự động.  
-  > Trong kịch bản demo: khi người dùng bấm mic hỏi 'Thủ đô của Việt Nam là gì?', hệ thống ngay lập tức nhận dạng câu hỏi, truy xuất đúng bài đọc Văn Miếu số 288 trong 552 bài đọc, mô hình ViT5 sinh câu trả lời 'Hà Nội' và Matcha-TTS phát âm thanh câu trả lời cho người dùng."
+  > Toàn bộ hệ thống được đóng gói thành container Docker tự động hóa 100%, vượt qua tất cả 54/54 bài kiểm thử tự động.  
+  > Trong kịch bản demo: khi người dùng bấm mic hỏi 'Ai là tác giả của Truyện Kiều?', hệ thống ngay lập tức nhận dạng câu hỏi, truy xuất đoạn Wikipedia về Truyện Kiều, mô hình ViT5 sinh câu trả lời 'Nguyễn Du' và Matcha-TTS phát âm thanh câu trả lời cho người dùng."
 
 ---
 

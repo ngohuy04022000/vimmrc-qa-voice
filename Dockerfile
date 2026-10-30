@@ -34,6 +34,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY requirements-docker.txt .
 RUN pip install --no-cache-dir --default-timeout=300 --retries 10 --extra-index-url https://download.pytorch.org/whl/cpu -r requirements-docker.txt
 
+# e5 query encoder for the dense Wikipedia index (data/kb_wiki_full/shard_*/embeddings.npy)
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('intfloat/multilingual-e5-small')"
+
 # Copy repository source code, datasets, and pre-trained checkpoints
 COPY . .
 

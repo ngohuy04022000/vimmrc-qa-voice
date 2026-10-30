@@ -107,20 +107,67 @@ class TieredRetriever:
     tuned ratio, not directly (scripts/tune_kb_threshold.py, reports/kb_threshold_full.json).
     """
 
-    def __init__(self, primary, secondary, ratio: float = 0.4):
+    def __init__(self, primary, secondary, ratio: float = 0.4, secondary_dense=None):
         self.primary, self.secondary, self.ratio = primary, secondary, ratio
+        # BM25 ratio picks the tier; the e5 index (if built) picks the wiki passage:
+        # same tier-1 F1, open-domain F1 15.4 -> 16.9 (reports/dense_routing_e2e.json)
+        self.secondary_dense = secondary_dense
         self.passages = primary.passages
 
     def search(self, question: str, top_k: int = 5) -> list[dict]:
         hits = self.primary.search(question, top_k)
         wiki = self.secondary.search(question, top_k)
         if wiki and (not hits or wiki[0]["score"] > self.ratio * hits[0]["score"]):
-            return wiki
+            return self.secondary_dense.search(question, top_k) if self.secondary_dense else wiki
         return hits
 
     def retrieve(self, question: str) -> str:
         hits = self.search(question, 1)
         return hits[0]["passage"] if hits else ""
+
+
+class Encoder:
+    """e5 sentence encoder (CPU unless told otherwise); query/passage prefixes as the model expects."""
+
+    def __init__(self, model_name: str, device: str = "cpu"):
+        from sentence_transformers import SentenceTransformer
+        self.model = SentenceTransformer(model_name, device=device)
+        self.model.max_seq_length = 256
+
+    def queries(self, texts):
+        return self.model.encode(["query: " + t for t in texts], normalize_embeddings=True, convert_to_numpy=True)
+
+    def passages(self, texts):
+        return self.model.encode(["passage: " + t for t in texts], normalize_embeddings=True, convert_to_numpy=True)
+
+
+class DenseKB:
+    """Cosine search over shard_*/embeddings.npy (from build_dense.py); passage text read from the BM25 shard."""
+
+    def __init__(self, directory: str | Path, bm25_kb, encoder: Encoder | None = None):
+        import numpy as np
+        dirs = sorted(Path(directory).glob("shard_*")) or [Path(directory)]
+        shards = bm25_kb.shards if isinstance(bm25_kb, ShardedKB) else [bm25_kb]
+        self.shards = shards
+        # float16 mmap (1.1 GB on disk for 1.48M x 384); a float32 copy in RAM ran a laptop out of memory
+        self.emb = [np.load(d / "embeddings.npy", mmap_mode="r") for d in dirs]
+        model = (dirs[0] / "dense_model.txt").read_text(encoding="utf-8").strip()
+        self.encoder = encoder or Encoder(model)
+
+    def search_vec(self, qv, top_k: int = 5) -> list[dict]:
+        import numpy as np
+        hits = []
+        for shard, emb in zip(self.shards, self.emb):
+            # numpy float16 matmul is slow: upcast in 100k-row blocks
+            q32 = np.asarray(qv, dtype=np.float32)
+            scores = np.concatenate([np.asarray(emb[s:s + 100_000], dtype=np.float32) @ q32
+                                     for s in range(0, len(emb), 100_000)])
+            top = np.argpartition(-scores, top_k - 1)[:top_k]
+            hits += [dict(shard._passage(int(i)), score=float(scores[i])) for i in top]
+        return sorted(hits, key=lambda h: -h["score"])[:top_k]
+
+    def search(self, question: str, top_k: int = 5) -> list[dict]:
+        return self.search_vec(self.encoder.queries([question])[0], top_k)
 
 
 def load_any(path: str | Path, wiki_dir: str | Path | None = None, ratio: float = 0.4):
@@ -132,7 +179,14 @@ def load_any(path: str | Path, wiki_dir: str | Path | None = None, ratio: float 
         from retrieval_client import Retriever
         primary = Retriever.load(path)
     if wiki_dir and Path(wiki_dir).is_dir():
-        return TieredRetriever(primary, load_kb_dir(wiki_dir), ratio)
+        wiki = load_kb_dir(wiki_dir)
+        dense = None
+        if any(Path(wiki_dir).glob("**/embeddings.npy")):
+            try:
+                dense = DenseKB(wiki_dir, wiki)
+            except ImportError:  # sentence-transformers not installed: BM25 wiki only
+                pass
+        return TieredRetriever(primary, wiki, ratio, dense)
     return primary
 
 

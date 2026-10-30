@@ -51,6 +51,9 @@ toàn chuỗi EM 32,3 / F1 53,9 (ViMMRC F1 22,4, ViQuAD F1 59,6); đoạn đúng
 **Chọn tầng KB/Wikipedia** (`scripts/eval_routing.py`, `reports/routing_e2e.json`, 500 câu/bộ, answer F1): A = câu có
 đoạn trong KB, B = câu ViQuAD test đã gỡ đoạn khỏi KB (kiến thức mở). Ngưỡng BM25 0,5 → A 53,7 / B 14,1; **0,4 → A 52,9 /
 B 16,0 (đang dùng)**; chọn theo độ tự tin ViT5 (margin 0) → A 44,7 / B 19,4. Câu kiến thức mở vẫn yếu (F1 ~16).
+**Dense Wikipedia** (`build_dense.py`, e5-small, `shard_*/embeddings.npy` float16 1,1 GB; `scripts/eval_dense.py`,
+`reports/dense_routing_e2e.json`, 200 câu/bộ, CPU): ngưỡng BM25 0,4 chọn tầng, đoạn wiki lấy từ dense → A 57,9 / B 16,9
+(BM25 thuần: 58,0 / 15,4) — **đang dùng**. Xếp hạng chung bằng cosine cho cả hai tầng: B 20,7 nhưng A tụt còn 32–45, không dùng.
 Độ trễ Docker CPU (`OMP_NUM_THREADS=4`): STT ~3 s, truy xuất ~0,1 s, ViT5 1,4–4 s, Matcha 1–4 s.
 
 Đã thử, không áp dụng: reranker bge-v2-m3 (+1,5 R@1, chậm ~1 s/câu), đọc top-3 lấy điểm cao nhất (kém hơn),

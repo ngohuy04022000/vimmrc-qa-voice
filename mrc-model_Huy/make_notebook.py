@@ -38,7 +38,7 @@ nb.cells = [
         "sample = load_examples(WORK_DIR / 'examples' / 'sample_vimmrc.json')\n"
         "assert len(sample) == 2 and sample[0]['answer'] == 'Hà Nội'\n"
         "for row in sample:\n"
-        "    print({'question': row['question'], 'label': row['answer_letter'], 'answer': row['answer']})"
+        "    print({'question': row['question'], 'answer': row['answer']})"
     ),
     nbf.v4.new_code_cell(
         "DATA_DIR = WORK_DIR.parent / 'data'\n"
@@ -80,8 +80,7 @@ nb.cells = [
     ),
     nbf.v4.new_markdown_cell(
         "## 5. Suy luận và đánh giá\n\nCheckpoint do bước 4 tạo mới có thể khởi tạo `MRCClient`. "
-        "Metric test được ghi vào `test_metrics.json`: Exact Match, token F1 và độ chính xác trắc nghiệm "
-        "(`choice_accuracy`, ghép câu sinh với lựa chọn có token F1 cao nhất)."
+        "Metric test được ghi vào `test_metrics.json`: Exact Match và token F1."
     ),
     nbf.v4.new_code_cell(
         "if (CHECKPOINT / 'config.json').exists():\n"

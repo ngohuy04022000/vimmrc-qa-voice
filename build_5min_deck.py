@@ -22,7 +22,7 @@ metadata_items = [
         "name": "Ngô Trí Huy",
         "desc": [
             "Truy xuất BM25 tối ưu hóa",
-            "Mô hình MRC (ChoiceRanker & ViT5)",
+            "Mô hình đọc hiểu ViT5 sinh câu trả lời",
             "Kiến trúc tổng thể & Tích hợp"
         ]
     },
@@ -76,7 +76,7 @@ s2 = builder.add_content_slide(
 steps = [
     ("CHẶNG 1: STT", "Faster-Whisper Small", "CTranslate2 + INT8", "VAD cắt khoảng lặng", "Nhận dạng WAV 16kHz", PRIMARY_BLUE),
     ("CHẶNG 2: RETRIEVAL", "BM25 Tinh chỉnh", "Kho 552 bài đọc", "Bigram Phrase Boost", "Recall@1: 71.45%", TEAL),
-    ("CHẶNG 3: MRC", "ChoiceRanker & ViT5", "Ranker: Logistic Reg (C=10)", "ViT5: F1 test 66.55%", "Acc Dev: 51.95%", TECH_BLUE),
+    ("CHẶNG 3: MRC", "ViT5-base fine-tune", "Sinh câu trả lời tự do", "Train ViMMRC + ViQuAD2.0", "Test: EM 41.05% | F1 66.55%", TECH_BLUE),
     ("CHẶNG 4: TTS", "Matcha-TTS (OT-CFM)", "10 bước ODE trên CPU", "Frontend vi_tone_v2", "RTF: 0.52 | CER: 1.9%", GREEN)
 ]
 
@@ -122,7 +122,7 @@ bp1.font.color.rgb = TEXT_DARK
 bp1.space_before = Pt(3)
 
 bp2 = b_tf.add_paragraph()
-bp2.text = "• MRC & TTS: ChoiceRanker chạy 2.3ms trên CPU; Matcha-TTS dự phòng linh hoạt với VITS MMS và Edge-TTS; không phụ thuộc GPU rời."
+bp2.text = "• MRC & TTS: ViT5 chạy được trên CPU, dự phòng bằng bộ trích câu khớp nhất; Matcha-TTS dự phòng bằng VITS MMS và Edge-TTS."
 bp2.font.size = Pt(11)
 bp2.font.color.rgb = TEXT_DARK
 bp2.space_before = Pt(2)
@@ -132,12 +132,12 @@ bp2.space_before = Pt(2)
 # ==========================================
 s3_notes = """Về mặt kỹ thuật, nhóm xin nhấn mạnh vào 3 đóng góp trọng tâm:
 Thứ nhất, ở khâu truy xuất, thay vì dùng BM25 mặc định, nhóm đã tinh chỉnh siêu tham số k1=2.1, b=1.0 và đề xuất cơ chế Bigram Phrase Boost cộng 0.4 điểm cho các cụm từ ghép tiếng Việt, giải quyết triệt để bài toán tìm kiếm bài đọc khi người dùng chỉ hỏi ngắn gọn một câu.
-Thứ hai, ở phân hệ Đọc hiểu, khi có 4 lựa chọn, ChoiceRanker dùng 11 đặc trưng độ khớp giữa lựa chọn với đoạn văn và câu hỏi, chấm bằng Logistic Regression, đạt 51,95% trên dev. Nhóm đã kiểm tra lại: thay TF-IDF ký tự bằng TF-IDF âm tiết, BM25 hay embedding ngữ nghĩa e5 đều chỉ dao động trong khoảng 52 đến 53%, nằm trong sai số, nên giới hạn nằm ở bản chất câu hỏi cần suy luận chứ không ở cách đo độ khớp. Khi không có lựa chọn, ViT5 fine-tune sinh câu trả lời tự do, đạt F1 66,55% trên test.
+Thứ hai, ở phân hệ Đọc hiểu, hệ thống trả lời câu hỏi tự do, không cần phương án lựa chọn. Nhóm fine-tune ViT5-base trên 21.733 câu hỏi gộp từ ViMMRC 2.0 và UIT-ViQuAD2.0, trong đó đáp án ViMMRC được chuyển thành văn bản. Mô hình đạt F1 66,55% và Exact Match 41,05% trên 2.716 câu test, trả lời gọn như 'Hà Nội' hay '82 tấm bia' thay vì trích nguyên cả câu.
 Thứ ba và là điểm nhấn học thuật lớn nhất: nhóm đã làm chủ và huấn luyện thành công kiến trúc tiên tiến Matcha-TTS theo trường phái Flow Matching. Nhóm đã tự thiết kế frontend vi_tone_v2 bóc tách 6 thanh điệu tiếng Việt, giúp chất lượng ngữ điệu âm thanh vượt trội so với các mô hình truyền thống."""
 
 s3 = builder.add_content_slide(
     category="Đóng góp Học thuật",
-    title="3 Điểm Nhấn Đột Phá: Retrieval BM25, ChoiceRanker & Matcha-TTS",
+    title="3 Điểm Nhấn Kỹ Thuật: Retrieval BM25, ViT5 & Matcha-TTS",
     presenter="Ngô Trí Huy / Trương Hoàng Duy",
     time_str="1:45 - 2:45 (60s)",
     notes_text=s3_notes
@@ -162,14 +162,13 @@ for b in bullets_c1:
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-# Card 2: MRC ChoiceRanker
-c2, tf2 = builder.add_card(s3, Inches(4.8), col_y, col_w, col_h, title="2. Mô Hình Kép: ChoiceRanker & ViT5", title_color=TEAL)
+# Card 2: MRC ViT5
+c2, tf2 = builder.add_card(s3, Inches(4.8), col_y, col_w, col_h, title="2. Đọc Hiểu Sinh Câu Trả Lời: ViT5", title_color=TEAL)
 bullets_c2 = [
-    "ChoiceRanker (Trắc nghiệm 4 lựa chọn): Xây dựng ma trận đặc trưng liên kết (Passage, Query, Option).",
-    "Đặc trưng: cosine TF-IDF n-gram ký tự (2-4), tỷ lệ phủ từ với đoạn văn/câu then chốt, khớp cụm chính xác.",
-    "Logistic Regression (C=10): Accuracy 51.95% trên Dev, hơn Lexical Baseline (43.62%) và Random (25.18%).",
-    "Kiểm tra lại: TF-IDF âm tiết 53.2%, BM25 52.3%, + e5 ngữ nghĩa 52.1% → chênh lệch nằm trong sai số (±2.1%).",
-    "ViT5-base fine-tune (câu hỏi tự do): EM 41.05%, F1 66.55% trên test 2.716 câu."
+    "Hỏi đáp tự do: người dùng chỉ cần đặt câu hỏi, không cần cung cấp phương án lựa chọn.",
+    "Dữ liệu: 27.164 câu hỏi gộp ViMMRC 2.0 + UIT-ViQuAD2.0, chia theo bài đọc để không rò rỉ (21.733 / 2.715 / 2.716).",
+    "ViT5-base (VietAI) fine-tune seq2seq; huấn luyện có checkpoint định kỳ, resume được khi máy tắt đột ngột.",
+    "Kết quả test: Exact Match 41.05%, token F1 66.55%; câu trả lời ngắn gọn ('Hà Nội', '82 tấm bia')."
 ]
 for b in bullets_c2:
     p = tf2.add_paragraph()
@@ -198,7 +197,7 @@ for b in bullets_c3:
 # ==========================================
 s4_notes = """Kính thưa Thầy, các kết quả trên bảng là minh chứng định lượng cho hiệu quả của hệ thống:
 Ở phân hệ Retrieval, giải thuật BM25 tinh chỉnh đạt Recall@1 là 71.45% và Recall@5 lên tới 83.69%, với chỉ số MRR đạt 0.762. Nghĩa là phần lớn trường hợp hệ thống định vị chính xác bài đọc ngay ở vị trí đầu tiên.
-Ở phân hệ MRC, ChoiceRanker đạt độ chính xác 51.95%, cao hơn baseline từ khóa 8.3% và gấp hơn 2 lần phương pháp chọn ngẫu nhiên.
+Ở phân hệ MRC, ViT5 fine-tune đạt token F1 66,55% và Exact Match 41,05% trên 2.716 câu test, sinh câu trả lời ngắn gọn thay vì trích cả câu như bộ trích câu dự phòng.
 Đặc biệt ở phân hệ TTS, khi nhóm thiết lập benchmark âm học chuẩn quốc tế: Matcha-TTS đạt tỷ lệ lỗi ký tự CER cực thấp chỉ 1.9%, bám sát mức trần của giọng người thật là 0.7% và tốt hơn VITS hơn 2 lần. Sai số thanh điệu log-F0 đạt 2.86 bán cung, tiệm cận mô hình thương mại Edge-TTS. Quan trọng nhất, chỉ số RTF đạt 0.52 trên CPU thông thường, nghĩa là chỉ mất nửa giây để tổng hợp câu nói 1 giây, hoàn toàn đáp ứng đàm thoại thời gian thực."""
 
 s4 = builder.add_content_slide(
@@ -213,7 +212,7 @@ headers_s4 = ["Phân hệ / Mô hình", "Chỉ số Đo lường", "Kết quả 
 rows_s4 = [
     ["Retrieval: BM25 Tinh chỉnh", "Recall@1 / Recall@5", "71.45% / 83.69%", "BM25 Lucene: 64.2% / 80.0%", "Định vị đúng bài đọc ngay ở Top 1 và Top 5"],
     ["Retrieval: BM25 Tinh chỉnh", "MRR@5 (Mean Recip.)", "0.7624", "BM25 Lucene: 0.7042", "Bài đọc đúng luôn nằm ở nhóm đầu bảng xếp hạng"],
-    ["MRC: ChoiceRanker", "Accuracy (Dev 564 câu)", "51.95% (293/564)", "Lexical: 43.62% | Random: 25.18%", "Vượt trội +8.33% so với baseline từ khóa trùng khớp"],
+    ["MRC: ViT5-base fine-tune", "EM / token F1 (Test 2.716 câu)", "41.05% / 66.55%", "Trích câu khớp nhất (chưa đo)", "Trả lời ngắn gọn, đúng trọng tâm câu hỏi"],
     ["TTS: Giọng Người thật (InfoRe1)", "CER (ASR PhoWhisper)", "0.7%", "Mức trần lý thuyết kiểm định", "Độ chính xác nhận dạng đối chứng tối đa"],
     ["TTS: Matcha-TTS (Nhóm huấn luyện)", "CER (ASR PhoWhisper)", "1.9%", "VITS MMS: 4.3%", "Phát âm trong trẻo, rõ chữ, ít lỗi hơn VITS > 2 lần"],
     ["TTS: Matcha-TTS (Nhóm huấn luyện)", "log-F0 RMSE (semitones)", "2.86 bán cung", "VITS: 4.31 | Edge-TTS: 2.69", "Thanh điệu tiếng Việt chuẩn xác, tiệm cận mô hình thương mại"],
@@ -242,7 +241,7 @@ ps1.space_before = Pt(2)
 # ==========================================
 s5_notes = """Về mặt sản phẩm phần mềm, nhóm đã tích hợp hoàn chỉnh thành một ứng dụng Full-stack: Backend FastAPI kết hợp Frontend Angular với giao diện Chat hiện đại, có biểu đồ thể hiện luồng pipeline đang chạy ở phân hệ nào.
 Toàn bộ hệ thống được đóng gói thành container Docker tự động hóa 100%, vượt qua tất cả 55/55 bài kiểm thử tự động.
-Trong kịch bản demo: khi người dùng bấm mic hỏi 'Thủ đô của Việt Nam là gì?', hệ thống ngay lập tức nhận dạng câu hỏi, truy xuất đúng bài đọc Văn Miếu số 288 trong 552 bài đọc, suy luận phương án B Hà Nội với xác suất 80.7% và phát âm thanh câu trả lời mượt mà cho người dùng chỉ sau chưa đầy 2 giây."""
+Trong kịch bản demo: khi người dùng bấm mic hỏi 'Thủ đô của Việt Nam là gì?', hệ thống ngay lập tức nhận dạng câu hỏi, truy xuất đúng bài đọc Văn Miếu số 288 trong 552 bài đọc, mô hình ViT5 đọc bài và sinh câu trả lời 'Hà Nội', rồi Matcha-TTS phát âm thanh câu trả lời cho người dùng."""
 
 s5 = builder.add_content_slide(
     category="Kỹ nghệ & Thực nghiệm",
@@ -271,11 +270,11 @@ for title_p, desc_p in eng_points:
 # Right Column: Live Demo Flow
 c_demo, tf_demo = builder.add_card(s5, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Kịch Bản Demo Thực Tế (Live Flow)", title_color=TEAL)
 demo_steps = [
-    ("1. Giọng nói Đầu vào:", "Người dùng bấm mic hỏi: 'Thủ đô của Việt Nam là gì?' kèm 4 lựa chọn (Huế, Hà Nội, Đà Nẵng, Cần Thơ)."),
+    ("1. Giọng nói Đầu vào:", "Người dùng bấm mic hỏi: 'Thủ đô của Việt Nam là gì?'."),
     ("2. STT (0.42s):", "Faster-Whisper nhận dạng chính xác văn bản tiếng Việt có dấu chuẩn xác."),
     ("3. Retrieval (15ms):", "BM25 quét 552 văn bản, định vị chính xác bài đọc 'train:0288' (Văn Miếu - Quốc Tử Giám Hà Nội, Score: 26.97)."),
-    ("4. MRC (3ms):", "ChoiceRanker phân tích ngữ cảnh: Phương án B (Hà Nội) đạt xác suất áp đảo 80.7%."),
-    ("5. TTS (0.35s):", "Normalizer chuẩn hóa thành 'Đáp án B: Hà Nội' và tổng hợp âm thanh giọng đọc truyền cảm."),
+    ("4. MRC:", "ViT5 đọc bài Văn Miếu và sinh câu trả lời 'Hà Nội'."),
+    ("5. TTS:", "Matcha-TTS chuẩn hóa văn bản và tổng hợp giọng đọc câu trả lời."),
     ("6. Tổng Độ trễ:", "Chỉ 1.85 giây từ lúc dứt câu hỏi đến khi nghe câu trả lời!")
 ]
 for title_d, desc_d in demo_steps:

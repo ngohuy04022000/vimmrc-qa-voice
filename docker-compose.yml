@@ -1,4 +1,4 @@
-﻿services:
+services:
   vimmrc-qa-voice:
     build:
       context: .
@@ -18,6 +18,8 @@
       - QA_INDEX=/app/data/kb_index.json
       - KB_WIKI=/app/data/kb_wiki_full
       - KB_WIKI_RATIO=0.4
+      # cross-encoder over both tiers: better answers, but ~4-5 s extra per question on CPU; empty = off
+      - KB_RERANKER=${KB_RERANKER-BAAI/bge-reranker-v2-m3}
     volumes:
       - ./data:/app/data:ro
       - ./text-to-speech_Duy/outputs:/app/text-to-speech_Duy/outputs

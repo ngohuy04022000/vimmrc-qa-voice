@@ -107,19 +107,37 @@ class TieredRetriever:
     tuned ratio, not directly (scripts/tune_kb_threshold.py, reports/kb_threshold_full.json).
     """
 
-    def __init__(self, primary, secondary, ratio: float = 0.4, secondary_dense=None):
+    def __init__(self, primary, secondary, ratio: float = 0.4, secondary_dense=None,
+                 reranker=None, kb_bonus: float = 0.25, pool: int = 3):
         self.primary, self.secondary, self.ratio = primary, secondary, ratio
+        # With a cross-encoder: rerank top-3 of tier-1 BM25, wiki BM25 and wiki dense together,
+        # tier-1 gets +kb_bonus. F1 in-KB 57.9 -> 60.7, open-domain 16.9 -> 24.3 (reports/rerank_routing_e2e.json)
+        self.reranker, self.kb_bonus, self.pool = reranker, kb_bonus, pool
         # BM25 ratio picks the tier; the e5 index (if built) picks the wiki passage:
         # same tier-1 F1, open-domain F1 15.4 -> 16.9 (reports/dense_routing_e2e.json)
         self.secondary_dense = secondary_dense
         self.passages = primary.passages
 
     def search(self, question: str, top_k: int = 5) -> list[dict]:
+        if self.reranker:
+            return self._rerank(question, top_k)
         hits = self.primary.search(question, top_k)
         wiki = self.secondary.search(question, top_k)
         if wiki and (not hits or wiki[0]["score"] > self.ratio * hits[0]["score"]):
             return self.secondary_dense.search(question, top_k) if self.secondary_dense else wiki
         return hits
+
+    def _rerank(self, question: str, top_k: int) -> list[dict]:
+        kb = self.primary.search(question, self.pool)
+        wiki = self.secondary.search(question, self.pool)
+        dense = self.secondary_dense.search(question, self.pool) if self.secondary_dense else []
+        cands = list({h["id"]: dict(h) for h in kb + wiki + dense}.values())
+        if not cands:
+            return []
+        kb_ids = {h["id"] for h in kb}
+        for h, s in zip(cands, self.reranker.predict([(question, h["passage"]) for h in cands], batch_size=16)):
+            h["score"] = float(s) + (self.kb_bonus if h["id"] in kb_ids else 0.0)
+        return sorted(cands, key=lambda h: -h["score"])[:top_k]
 
     def retrieve(self, question: str) -> str:
         hits = self.search(question, 1)
@@ -170,7 +188,8 @@ class DenseKB:
         return self.search_vec(self.encoder.queries([question])[0], top_k)
 
 
-def load_any(path: str | Path, wiki_dir: str | Path | None = None, ratio: float = 0.4):
+def load_any(path: str | Path, wiki_dir: str | Path | None = None, ratio: float = 0.4,
+             reranker: str | None = None):
     """Directory -> KBRetriever; JSON file -> legacy Retriever; with wiki_dir -> two tiers."""
     path = Path(path)
     if path.is_dir():
@@ -186,7 +205,11 @@ def load_any(path: str | Path, wiki_dir: str | Path | None = None, ratio: float 
                 dense = DenseKB(wiki_dir, wiki)
             except ImportError:  # sentence-transformers not installed: BM25 wiki only
                 pass
-        return TieredRetriever(primary, wiki, ratio, dense)
+        ce = None
+        if reranker:
+            from sentence_transformers import CrossEncoder
+            ce = CrossEncoder(reranker, max_length=512, device="cpu")
+        return TieredRetriever(primary, wiki, ratio, dense, ce)
     return primary
 
 

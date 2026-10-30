@@ -24,7 +24,7 @@ metadata_s1 = [
         "name": "Ngô Trí Huy",
         "desc": [
             "Truy xuất BM25 tối ưu hóa",
-            "Mô hình MRC (ChoiceRanker & ViT5)",
+            "Retrieval (RAG) & MRC (ViT5)",
             "Thiết kế kiến trúc & Tích hợp"
         ]
     },
@@ -129,7 +129,7 @@ s3 = builder.add_content_slide(
 principles = [
     ("1. TÍNH MODULE HÓA CAO (HIGH MODULARITY)", "Kiến trúc hướng dịch vụ, trừu tượng hóa qua các BaseClient Interface.", "Cho phép hoán đổi độc lập các thuật toán (ví dụ: thay BM25 bằng Dense Retriever, thay Matcha bằng VITS) mà không ảnh hưởng toàn hệ thống.", PRIMARY_BLUE),
     ("2. KHẢ NĂNG CHẠY CỤC BỘ (LOCAL & CPU-FRIENDLY)", "Tối ưu hóa tham số để toàn bộ pipeline chạy ổn định trên CPU máy tính 8GB RAM.", "Hoàn toàn không phụ thuộc vào các API đám mây thương mại trả phí (OpenAI, Google Speech), bảo mật 100% dữ liệu người dùng.", TEAL),
-    ("3. TÍNH CHỊU LỖI & DỰ PHÒNG (FAULT TOLERANCE)", "Thiết kế cơ chế Multi-level Fallback ở từng phân hệ.", "Nếu mô hình ViT5 chưa nạp xong -> ChoiceRanker kích hoạt; Nếu TTS offline lỗi -> Edge-TTS hoặc Web Speech tự động thay thế; không bao giờ crash.", TECH_BLUE),
+    ("3. TÍNH CHỊU LỖI & DỰ PHÒNG (FAULT TOLERANCE)", "Thiết kế cơ chế Multi-level Fallback ở từng phân hệ.", "Nếu chưa có checkpoint ViT5 -> Lexical baseline trích câu trả lời; Nếu TTS offline lỗi -> Edge-TTS hoặc Web Speech tự động thay thế; không bao giờ crash.", TECH_BLUE),
     ("4. PHẢN HỒI THỜI GIAN THỰC (REAL-TIME LATENCY)", "Tối ưu hóa từng mili-giây ở cả 4 khâu: VAD cắt khoảng lặng, BM25 dưới 15ms, Euler 10 bước TTS.", "Tổng thời gian phản hồi từ lúc người dùng dứt lời đến khi nghe câu trả lời đạt ngưỡng < 2 giây.", GREEN)
 ]
 
@@ -179,7 +179,7 @@ builder.add_table(s4, Inches(0.8), Inches(1.5), Inches(11.733), Inches(2.3), hea
 
 c_s4_left, tf_s4_l = builder.add_card(s4, Inches(0.8), Inches(4.0), Inches(5.6), Inches(2.85), title="Đặc Điểm & Thách Thức Ngữ Liệu", title_color=PRIMARY_BLUE)
 for b in [
-    "Cấu trúc trắc nghiệm: Mỗi mẫu gồm Bài đọc (Article) + Câu hỏi (Question) + 4 Phương án (A, B, C, D) + Đáp án đúng.",
+    "Dữ liệu dùng dạng hỏi đáp tự do: Bài đọc (Passage) + Câu hỏi (Question) + Câu trả lời dạng văn bản (đã bỏ phần trắc nghiệm).",
     "Biến thiên độ dài cực lớn: Từ ngắn nhất 120 từ đến bài dài nhất 1.250 từ (vượt trần 512 subword token của Transformer).",
     "Độ nhiễu phương án: Các lựa chọn sai thường trích xuất cùng đoạn văn với lựa chọn đúng, dễ gây nhiễu cho mô hình đếm từ khóa."
 ]:
@@ -210,7 +210,7 @@ for b in [
 s5_notes = """Kính thưa Thầy Cô, em là Huỳnh Công Lương, xin phép tiếp tục trình bày về Kiến trúc Hệ thống và Phân hệ Nhận dạng Giọng nói.
 Trên màn hình là sơ đồ kiến trúc tổng thể của hệ thống Voice Q&A. Nhóm xây dựng một pipeline 4 chặng hoạt động theo mô hình hướng dịch vụ (Service-Oriented Architecture):
 Khi người dùng bấm thu âm, tín hiệu âm thanh được gửi đến phân hệ STT để chuyển thành câu hỏi dạng chữ. Câu hỏi này được đưa sang phân hệ Retrieval để quét trong kho 552 bài đọc và trả về top các bài đọc có độ khớp cao nhất. Tiếp đó, phân hệ MRC sẽ phân tích câu hỏi cùng ngữ cảnh bài đọc được truy xuất để tìm ra câu trả lời chính xác. Cuối cùng, văn bản câu trả lời đi qua phân hệ TTS để tổng hợp thành giọng nói tự nhiên và phát lại cho người dùng.
-Điểm đặc biệt trong kiến trúc của nhóm là Cơ chế Fallback Đa Tầng: ở từng phân hệ, nhóm đều thiết kế ít nhất một phương án dự phòng cục bộ. Nếu mô hình sinh văn bản ViT5 chưa kịp nạp vào RAM, ChoiceRanker sẽ lập tức xử lý; nếu kết nối mạng của Edge-TTS bị ngắt, Matcha-TTS hoặc VITS chạy cục bộ sẽ ngay lập tức thay thế. Nhờ vậy, hệ thống đạt độ tin cậy tuyệt đối trong mọi điều kiện vận hành."""
+Điểm đặc biệt trong kiến trúc của nhóm là Cơ chế Fallback Đa Tầng: ở từng phân hệ, nhóm đều thiết kế ít nhất một phương án dự phòng cục bộ. Nếu chưa có checkpoint ViT5, bộ trích xuất lexical sẽ trả lời thay; nếu kết nối mạng của Edge-TTS bị ngắt, Matcha-TTS hoặc VITS chạy cục bộ sẽ ngay lập tức thay thế. Nhờ vậy, hệ thống đạt độ tin cậy tuyệt đối trong mọi điều kiện vận hành."""
 
 s5 = builder.add_content_slide(
     category="Phần 2: Kiến trúc & STT",
@@ -223,7 +223,7 @@ s5 = builder.add_content_slide(
 steps_s5 = [
     ("CHẶNG 1: STT", "Faster-Whisper (small)", "Audio 16kHz -> Text Query", "Fallback: Web Speech API", PRIMARY_BLUE),
     ("CHẶNG 2: RETRIEVAL", "BM25 Tinh chỉnh", "Kho 552 bài đọc ViMMRC", "Top 5 bài đọc khớp nhất", TEAL),
-    ("CHẶNG 3: MRC", "ChoiceRanker / ViT5", "Đọc hiểu & Suy luận đáp án", "Fallback: Lexical Overlap", TECH_BLUE),
+    ("CHẶNG 3: MRC", "ViT5 (RAG)", "Đọc hiểu & Suy luận đáp án", "Fallback: Lexical Overlap", TECH_BLUE),
     ("CHẶNG 4: TTS", "Matcha-TTS (Flow Matching)", "Text Answer -> Audio 22kHz", "Fallback: VITS / Edge-TTS", GREEN)
 ]
 
@@ -262,7 +262,7 @@ c_proto, tf_proto = builder.add_card(s5, Inches(0.8), Inches(5.15), Inches(11.73
 for b in [
     "POST /api/stt: Nhận multipart/form-data WAV -> Trả về JSON {text, language, duration, status}.",
     "POST /api/retrieve: Nhận {query, top_k} -> Trả về Top K bài đọc kèm BM25 score và metadata bài đọc.",
-    "POST /api/answer: Nhận {passage, query, options} -> Trả về {answer, best_idx, confidence, method}.",
+    "POST /api/answer: Nhận {question, passage} -> Trả về {answer}.",
     "POST /api/tts: Nhận {text, voice, speed} -> Trả về audio/wav hoặc audio/mpeg kèm base64 streaming."
 ]:
     p = tf_proto.add_paragraph()
@@ -548,26 +548,26 @@ for b in [
     p.space_before = Pt(6)
 
 # SLIDE 12
-s12_notes = """Ở phân hệ Đọc hiểu máy MRC, nhóm tiếp cận theo hai nhánh bài toán: đọc hiểu trắc nghiệm và đọc hiểu tự luận mở.
-Đối với bài toán trắc nghiệm chuẩn ViMMRC, em đã phát triển mô hình ChoiceRanker. Thay vì áp dụng một mô hình nơ-ron quá cồng kềnh khó chạy CPU, ChoiceRanker sử dụng kỹ nghệ đặc trưng ma trận đa tầng: trích xuất độ tương đồng TF-IDF n-gram từ ngữ và ký tự, tỷ lệ bao phủ từ vựng giữa phương án và đoạn văn, cùng tỷ lệ khớp cụm từ chính xác.
-Vector đặc trưng này sau đó được chuẩn hóa và đưa qua bộ phân loại Logistic Regression với siêu tham số điều chuẩn C=10.
-Trên tập Dev 564 câu hỏi, ChoiceRanker đạt độ chính xác 51.95% (293 câu đúng). Để Thầy Cô dễ hình dung: phương pháp chọn ngẫu nhiên chỉ đạt 25.18%, và phương pháp đếm từ khóa trùng khớp chỉ đạt 43.62%. ChoiceRanker đã vượt baseline từ khóa tới 8.33% với thời gian tính toán chỉ mất vỏn vẹn 2.3 mili-giây, cực kỳ thích hợp làm engine chính chạy offline ổn định."""
+s12_notes = """Mục tiêu của hệ thống là trả lời mọi câu hỏi, nên nhóm bỏ hẳn nhánh trắc nghiệm và dựng một kho tri thức hai tầng cho RAG.
+Tầng một gồm 5.869 đoạn văn của ViMMRC và ViQuAD. Tầng hai gồm 1,48 triệu đoạn trích từ toàn bộ Wikipedia tiếng Việt, đánh chỉ mục BM25 bằng bm25s, chia shard và đọc đoạn văn từ đĩa nên chỉ tốn khoảng 760 MB RAM.
+Wikipedia chỉ được dùng khi điểm BM25 của nó vượt 0,5 lần điểm của tầng một, ngưỡng này được dò trên tập dev.
+Trên tập test 2.545 câu, đoạn đúng nằm ở vị trí 1 trong 71,1% câu và trong top 5 ở 85,9% câu, mỗi câu khoảng 35 mili-giây."""
 
 s12 = builder.add_content_slide(
     category="Phần 3: Retrieval & MRC",
-    title="Phân Hệ MRC: Mô Hình ChoiceRanker Cho Bài Toán Trắc Nghiệm",
+    title="Retrieval: Kho Tri Thức Hai Tầng Cho RAG",
     presenter="Ngô Trí Huy (Lead)",
     time_str="15:30 - 17:00 (90s)",
     notes_text=s12_notes
 )
 
-c_s12_l, tf_s12_l = builder.add_card(s12, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Kỹ Nghệ Đặc Trưng Đa Tầng (Features)", title_color=PRIMARY_BLUE)
+c_s12_l, tf_s12_l = builder.add_card(s12, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Kiến Trúc Kho Tri Thức", title_color=PRIMARY_BLUE)
 for b in [
-    "Không chỉ đếm từ khóa đơn thuần, ChoiceRanker xây dựng không gian đặc trưng giữa Passage, Query và Option.",
-    "Word & Char n-gram TF-IDF: Đo lường độ tương đồng cosine ở cả cấp độ từ và n-gram ký tự (bắt được từ đồng nghĩa, từ viết tắt).",
-    "Query-Option Alignment: Tỷ lệ giao thoa từ vựng trực tiếp giữa câu hỏi và từng phương án.",
-    "Exact Phrase Coverage: Mức độ trùng khớp cụm từ chính xác của phương án trong đoạn văn.",
-    "Relative Length Ratio: Tỷ lệ độ dài phương án so với độ dài câu chứa từ khóa."
+    "Tầng 1: 5.869 đoạn văn ViMMRC + ViQuAD (BM25, k1=2.1, b=1.0, bigram boost).",
+    "Tầng 2: 1,48 triệu đoạn Wikipedia tiếng Việt (≤800 ký tự/đoạn), bm25s chia shard, mmap.",
+    "Định tuyến: dùng Wikipedia khi điểm wiki > 0,5 × điểm tầng 1 (dò trên dev).",
+    "Đoạn văn đọc từ đĩa theo offset: ~760 MB RAM cho toàn bộ kho.",
+    "Đã thử reranker bge-reranker-v2-m3: +1,5 điểm R@1 nhưng chậm ~1 s/câu nên không dùng."
 ]:
     p = tf_s12_l.add_paragraph()
     p.text = "• " + b
@@ -575,13 +575,12 @@ for b in [
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-c_s12_r, tf_s12_r = builder.add_card(s12, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Hiệu Năng Phân Loại Logistic Regression (C=10)", title_color=TEAL)
+c_s12_r, tf_s12_r = builder.add_card(s12, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Kết Quả Trên Tập Test (2.545 câu)", title_color=TEAL)
 mrc_stats = [
-    ("Độ chính xác ChoiceRanker (Dev)", "51.95% (293/564 câu trả lời chính xác)"),
-    ("Lexical Match Baseline", "43.62% (ChoiceRanker vượt trội +8.33%)"),
-    ("Random Guessing Baseline", "25.18% (ChoiceRanker gấp hơn 2 lần ngẫu nhiên)"),
-    ("Thời gian suy luận / câu hỏi", "2.3 mili-giây trên CPU (tốc độ gần như tức thì)"),
-    ("Mức chiếm dụng bộ nhớ", "Dưới 50 MB RAM, cực kỳ nhẹ nhàng và ổn định")
+    ("Recall@1 / Recall@5 (tất cả)", "71,1% / 85,9%"),
+    ("Câu hỏi ViQuAD (2.156 câu)", "R@1 73,2% / R@5 88,9%"),
+    ("Câu hỏi ViMMRC (389 câu)", "R@1 59,4% / R@5 69,2%"),
+    ("Thời gian truy xuất / câu", "~35 mili-giây trên CPU")
 ]
 for title_m, val_m in mrc_stats:
     p = tf_s12_r.add_paragraph()
@@ -597,7 +596,7 @@ for title_m, val_m in mrc_stats:
     p_v.space_before = Pt(2)
 
 # SLIDE 13
-s13_notes = """Bên cạnh ChoiceRanker, để hệ thống có khả năng trả lời các câu hỏi tự luận mở khi người dùng không cung cấp 4 phương án trắc nghiệm, nhóm đã tích hợp mô hình ViT5-base của VietAI.
+s13_notes = """Sau khi truy xuất được đoạn văn, để sinh câu trả lời tự do cho mọi câu hỏi, nhóm đã tích hợp mô hình ViT5-base của VietAI.
 Tuy nhiên, một trở ngại kỹ thuật lớn xuất hiện: ViT5 có giới hạn đầu vào cố định là 512 token. Trong khi đó, rất nhiều bài đọc của ViMMRC có độ dài lên tới 800 đến 1.200 từ. Nếu chúng ta chỉ đơn giản cắt lấy 512 token đầu tiên của bài đọc, rất có thể đoạn văn chứa câu trả lời nằm ở cuối bài sẽ bị mất hoàn toàn.
 Để khắc phục, em đã xây dựng module context_selection: giải thuật sẽ tự động phân tách bài đọc thành các câu độc lập, chấm điểm mức độ liên quan giữa từng câu với câu hỏi của người dùng, sau đó trích xuất và sắp xếp lại các câu giàu thông tin nhất thành một đoạn ngữ cảnh cô đọng dưới 450 tokens. Nhờ vậy, ViT5 luôn tiếp nhận được trọn vẹn bằng chứng cần thiết để sinh ra câu trả lời chính xác."""
 
@@ -613,7 +612,7 @@ c_s13_l, tf_s13_l = builder.add_card(s13, Inches(0.8), Inches(1.5), Inches(5.6),
 for b in [
     "Kiến trúc Transformer Sequence-to-Sequence (Text-to-Text Transfer Transformer).",
     "Được VietAI tiền huấn luyện chuyên sâu trên kho ngữ liệu tiếng Việt quy mô lớn.",
-    "Nhiệm vụ: Phục vụ chế độ Generative QA (Người dùng hỏi câu hỏi tự luận mở, không có 4 lựa chọn).",
+    "Nhiệm vụ: Generative QA, test toàn chuỗi F1 53,9 (đoạn đúng: F1 68,6), EM 41,05 trên tập combined.",
     "Đầu vào: 'context: <ngữ cảnh> question: <câu hỏi>'.",
     "Đầu ra: Tự động sinh chuỗi câu trả lời hoàn chỉnh ngữ pháp tiếng Việt."
 ]:
@@ -954,7 +953,7 @@ for b in [
 # SLIDE 21
 s21_notes = """Thưa Thầy Cô, một đồ án công nghệ thông tin chất lượng không chỉ nằm ở thuật toán mà còn phải thể hiện qua tính chuẩn mực trong kỹ nghệ phần mềm. Nhóm đã thiết lập bộ kiểm thử tự động toàn diện bằng pytest bao phủ từ mức độ hàm xử lý dữ liệu cho đến các API tích hợp cuối cùng.
 Trước khi đóng gói phiên bản chính thức, toàn bộ 55 trên 55 bài kiểm thử đều vượt qua thành công với tỷ lệ đạt 100%.
-Bộ test này kiểm tra chi tiết từ việc chuẩn hóa dấu câu, khả năng truy xuất chính xác của BM25, khả năng phân loại của ChoiceRanker, cho đến tính chịu lỗi của cơ chế Fallback khi các dịch vụ bên ngoài bị ngắt. Điều này đảm bảo hệ thống có độ tin cậy rất cao và không bao giờ xảy ra lỗi hồi quy khi tích hợp các nhánh mã nguồn của các thành viên."""
+Bộ test này kiểm tra chi tiết từ việc chuẩn hóa dấu câu, khả năng truy xuất chính xác của BM25, khả năng sinh câu trả lời của ViT5, cho đến tính chịu lỗi của cơ chế Fallback khi các dịch vụ bên ngoài bị ngắt. Điều này đảm bảo hệ thống có độ tin cậy rất cao và không bao giờ xảy ra lỗi hồi quy khi tích hợp các nhánh mã nguồn của các thành viên."""
 
 s21 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
@@ -968,7 +967,7 @@ headers_s21 = ["Bộ Kiểm Thử (Test Suite)", "Số Lượng Tests", "Phạm 
 rows_s21 = [
     ["test_tts_normalizer.py", "14 tests", "Chuẩn hóa trắc nghiệm, ngày tháng, tiền tệ, số liệu, chèn ngắt nhịp", "14/14 PASSED (100%)"],
     ["test_retrieval.py", "10 tests", "BM25 scoring, Bigram boost, Tokenizer, Lập chỉ mục 552 bài đọc", "10/10 PASSED (100%)"],
-    ["test_mrc_model.py", "12 tests", "ChoiceRanker features, Logistic Regression, ViT5 Context chunking", "12/12 PASSED (100%)"],
+    ["test_mrc_model.py", "12 tests", "Dữ liệu MRC, metric EM/F1, ViT5 Context chunking", "12/12 PASSED (100%)"],
     ["test_tts_engine.py", "11 tests", "Matcha-TTS synthesis, VITS MMS, Edge-TTS fallback logic", "11/11 PASSED (100%)"],
     ["test_stt_and_server.py", "8 tests", "Audio PCM conversion, REST API Endpoints, Healthcheck", "8/8 PASSED (100%)"],
     ["TỔNG CỘNG TOÀN HỆ THỐNG", "55 TESTS", "Thời gian chạy kiểm thử tự động: 14.52 giây", "55/55 PASSED (100%)"]
@@ -992,7 +991,7 @@ for b in [
 s22_notes = """Sau đây, nhóm xin kính mời Thầy Cô và các bạn cùng theo dõi kịch bản vận hành thực tế của hệ thống được quay trực tiếp trên giao diện Web:
 Khi người dùng bấm giữ nút micro và hỏi: 'Thủ đô của Việt Nam là gì? Phương án A Huế, Phương án B Hà Nội, Phương án C Đà Nẵng, Phương án D Cần Thơ'.
 Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản chỉ sau 0.42 giây. Bộ truy xuất BM25 lập tức quét trong 552 văn bản và định vị chính xác bài đọc số 288 về Văn Miếu - Quốc Tử Giám với điểm khớp 26.97.
-Tiếp đó, mô hình ChoiceRanker phân tích bài đọc và chỉ ra phương án B Hà Nội có độ tin cậy vượt trội đạt 80.7%. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.
+Tiếp đó, mô hình ViT5 đọc đoạn văn và sinh câu trả lời Hà Nội. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.
 Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời chỉ diễn ra trong vòng 1.85 giây. Hệ thống đã chứng minh sự trơn tru, chuẩn xác và tính khả thi ứng dụng rất cao."""
 
 s22 = builder.add_content_slide(

@@ -30,3 +30,4 @@ rich>=13.0.0
 matplotlib>=3.7.0
 wget>=3.2
 gdown>=4.7.0
+bm25s>=0.2.0

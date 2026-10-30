@@ -1,0 +1,57 @@
+{
+  "questions": 100,
+  "voice": "gTTS vi",
+  "reference_R@1": 0.69,
+  "small": {
+    "WER": 0.08284457478005865,
+    "R@1_from_transcript": 0.59,
+    "error_samples": [
+      {
+        "ref": "Hai Bà Trưng gồm những người nào?",
+        "hyp": "Hay bà Trưng gồm những người nào?"
+      },
+      {
+        "ref": "Hai Bà Trưng được sử sách lưu danh là người như thế nào?",
+        "hyp": "Hay bà Trưng được sử sách Liêu danh là người như thế nào?"
+      },
+      {
+        "ref": "Tại sao bao lâu nay nhân dân ta tôn kính Hai Bà Trưng?",
+        "hyp": "Tại sao bao lâu nay nhân dân ta tôn kính hai bà chương?"
+      },
+      {
+        "ref": "Từ “thám hiểm” trong câu “Côlômbô là nhà thám hiểm nổi tiếng của thế kỉ XV.” có nghĩa là gì?",
+        "hyp": "Từ thám hiểm, trong câu, Colombo là nhà thám hiểm nổi tiếng của thế kỷ 15. Có nghĩa là gì?"
+      },
+      {
+        "ref": "Trong truyện, Côlômbô đã đố mọi người làm điều gì?",
+        "hyp": "Trong chuyện, cô Lung Bồ đã đố mọi người làm điều gì?"
+      }
+    ]
+  },
+  "whisper-small-vi-50h-ct2": {
+    "WER": 0.0813782991202346,
+    "R@1_from_transcript": 0.59,
+    "error_samples": [
+      {
+        "ref": "Sau khi nhận được bánh mì, cậu bé đã:",
+        "hyp": "sau khi nhận được bánh mì cậu bé đó"
+      },
+      {
+        "ref": "Hai Bà Trưng gồm những người nào?",
+        "hyp": "hay bà chân gồm những người nào"
+      },
+      {
+        "ref": "Hai Bà Trưng được sử sách lưu danh là người như thế nào?",
+        "hyp": "hay bà chương được sử sách liêu danh là người như thế nào"
+      },
+      {
+        "ref": "Tại sao bao lâu nay nhân dân ta tôn kính Hai Bà Trưng?",
+        "hyp": "tại sao bao lâu nay nhân dân ta tôn kính hai bà trương"
+      },
+      {
+        "ref": "Từ “thám hiểm” trong câu “Côlômbô là nhà thám hiểm nổi tiếng của thế kỉ XV.” có nghĩa là gì?",
+        "hyp": "từ thám hiểm trong câu colombo là nhà thám hiểm nổi tiếng của thế kỷ mười lăm có nghĩa là gì"
+      }
+    ]
+  }
+}

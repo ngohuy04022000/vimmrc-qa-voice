@@ -6,7 +6,7 @@ Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC
 
 ## Chạy hệ thống tích hợp
 
-Backend FastAPI phục vụ STT (Whisper), BM25 retrieval (trên toàn bộ 552 bài đọc ViMMRC), MRC (ViT5 sinh câu trả lời hoặc ChoiceRanker trắc nghiệm 4 đáp án), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
+Backend FastAPI phục vụ STT (Whisper), BM25 retrieval (trên toàn bộ 552 bài đọc ViMMRC), MRC (ViT5 sinh câu trả lời tự do), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
 
 Từ thư mục gốc:
 
@@ -18,9 +18,8 @@ python -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000
 ```
 
 - Hệ thống tự động nhận diện kho bài đọc ViMMRC tại `data/vimmrc_index.json` (hoặc biến `QA_INDEX`).
-- Tự động nạp mô hình trắc nghiệm `ChoiceRanker` đã huấn luyện tại `mrc-model_Huy/checkpoints/choice_ranker` khi có tùy chọn A-D.
-- Hỗ trợ mô hình đọc hiểu sinh ViT5 qua biến môi trường `MRC_CHECKPOINT`.
-- Phân hệ TTS tự động chuẩn hóa văn bản tiếng Việt (nhãn trắc nghiệm, số, ngày tháng), hỗ trợ đa engine (`matcha`, `vits`, `edge`, `gtts`) với cơ chế tự động chuyển dự phòng thông minh (fallback).
+- Mô hình đọc hiểu ViT5 nạp qua biến môi trường `MRC_CHECKPOINT` (Docker mặc định dùng `mrc-model_Huy/checkpoints/vit5-combined-cont`); không đặt thì dùng bộ trích câu khớp nhất làm dự phòng.
+- Phân hệ TTS tự động chuẩn hóa văn bản tiếng Việt (số, ngày tháng), hỗ trợ đa engine (`matcha`, `vits`, `edge`, `gtts`) với cơ chế tự động chuyển dự phòng thông minh (fallback).
 - Giao diện web Angular đã được build sẵn tại `web-interface_Luong/dist/` và được phục vụ trực tiếp tại `http://127.0.0.1:8000/`.
 
 ## Chạy nhanh bằng Docker & Docker Compose
@@ -56,13 +55,13 @@ Mở trình duyệt tại `http://localhost:4200`.
 python -m pytest -v
 ```
 
-Hệ thống bao gồm 49+ bài kiểm thử tự động phủ khắp các phân hệ STT, Retrieval, Context Selection, MRC (ViT5 & ChoiceRanker), TTS (Normalizer, VITS, Matcha, Edge, gTTS) và FastAPI End-to-End.
+Hệ thống bao gồm 54 bài kiểm thử tự động phủ khắp các phân hệ STT, Retrieval, Context Selection, MRC (ViT5), TTS (Normalizer, VITS, Matcha, Edge, gTTS) và FastAPI End-to-End.
 
 ## Chạy CLI Pipeline đầu-cuối
 
 ```powershell
-# Chạy trắc nghiệm với ChoiceRanker đã huấn luyện + tổng hợp giọng nói
-python -X utf8 scripts/qa_pipeline.py --index data/vimmrc_index.json --choice-model mrc-model_Huy/checkpoints/choice_ranker --question "Thủ đô của Việt Nam là gì?" --options "Huế" "Hà Nội" "Đà Nẵng" "Cần Thơ" --tts
+# Hỏi đáp tự do với ViT5 đã fine-tune + tổng hợp giọng nói
+python -X utf8 scripts/qa_pipeline.py --index data/vimmrc_index.json --model mrc-model_Huy/checkpoints/vit5-combined-cont --question "Thủ đô của Việt Nam là gì?" --tts
 
 # Chạy demo offline
 python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đâu?"
@@ -75,14 +74,14 @@ python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đ
 
 ## 1. Mục tiêu
 
-- Đọc hiểu văn bản tiếng Việt và trả lời câu hỏi trắc nghiệm/tự luận dựa trên ViMMRC 2.0.
+- Đọc hiểu văn bản tiếng Việt và trả lời câu hỏi tự do dựa trên ViMMRC 2.0 (không cần phương án lựa chọn).
 - Cho phép người dùng **hỏi bằng giọng nói** thay vì gõ chữ.
 - Trả lời lại bằng **giọng nói tổng hợp** (không chỉ hiển thị văn bản).
 
 ## 2. Dataset
 
 - **Nguồn**: [uitnlp/vimmrc2.0](https://huggingface.co/datasets/uitnlp/vimmrc2.0)
-- **Nội dung**: đoạn văn (passage) tiếng Việt + câu hỏi + các phương án trả lời (trắc nghiệm 4 đáp án) + đáp án đúng.
+- **Nội dung**: đoạn văn (passage) tiếng Việt + câu hỏi + các phương án trả lời (trắc nghiệm 4 đáp án) + đáp án đúng. Dự án dùng **văn bản của phương án đúng** làm câu trả lời tự do; không dùng các phương án khi trả lời.
 - **Vai trò**: dùng để huấn luyện/đánh giá mô hình đọc hiểu (MRC) trả lời câu hỏi dựa trên ngữ cảnh.
 
 ## 3. Sơ đồ kiến trúc tổng thể
@@ -144,7 +143,7 @@ python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đ
 - [x] Tải và kiểm tra schema, số lượng, cách chia dữ liệu ViMMRC 2.0 (482 train / 70 dev / 147 test).
 - [x] Chuẩn bị Retrieval BM25, lập chỉ mục toàn bộ bài đọc (`data/vimmrc_index.json`).
 - [x] Chuẩn bị mã fine-tune ViT5 và API MRC độc lập.
-- [x] Huấn luyện và đánh giá mô hình phân loại trắc nghiệm `ChoiceRanker` (đạt 51.95% accuracy trên dev).
+- [x] Fine-tune ViT5 sinh câu trả lời tự do (test: EM 41,05%, token F1 66,55%).
 - [x] Tích hợp STT tiếng Việt (Faster-Whisper với bộ đệm lazy-load).
 - [x] Triển khai hệ thống TTS đa engine tiếng Việt (Matcha-TTS, VITS MMS, Edge-TTS, gTTS) có tự động fallback và chuẩn hóa văn bản.
 - [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và pipeline đầu-cuối CLI.

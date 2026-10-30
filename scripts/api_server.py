@@ -3,7 +3,7 @@
 Integrates:
 - STT: Faster-Whisper (speech-to-text_Luong)
 - Retrieval: BM25 Retriever over ViMMRC 2.0 articles (retrieval-model_Huy)
-- MRC: ViT5 generator or ChoiceRanker classifier (mrc-model_Huy)
+- MRC: fine-tuned ViT5 answer generator (mrc-model_Huy)
 - TTS: Multi-engine Vietnamese synthesis with normalizer (text-to-speech_Duy)
 - Web UI: Angular static assets mounted directly when built (web-interface_Luong)
 
@@ -38,10 +38,6 @@ for folder in (
 
 from retrieval_client import Retriever
 from mrc_client import LexicalBaselineClient, MRCClient
-try:
-    from choice_ranker import ChoiceRanker
-except ImportError:
-    ChoiceRanker = None
 
 from synthesize import synthesize as tts_synthesize
 import stt_server
@@ -52,7 +48,6 @@ app.title = "ViMMRC Voice Q&A API"
 _service_lock = Lock()
 _retriever: Retriever | None = None
 _reader = None
-_choice_ranker = None
 
 DEMO_PASSAGES = [
     {
@@ -82,7 +77,6 @@ class RetrieveRequest(BaseModel):
 class AnswerRequest(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
     passage: str = Field(min_length=1, max_length=100_000)
-    options: list[str] | None = None
 
     @field_validator("question", "passage")
     @classmethod
@@ -108,11 +102,11 @@ class TTSRequest(BaseModel):
         return value
 
 
-def get_qa_services() -> tuple[Retriever, object, object | None]:
-    """Load index, reader, and optional choice ranker with fallbacks."""
-    global _retriever, _reader, _choice_ranker
+def get_qa_services() -> tuple[Retriever, object]:
+    """Load index and reader with fallbacks."""
+    global _retriever, _reader
     if _retriever is not None and _reader is not None:
-        return _retriever, _reader, _choice_ranker
+        return _retriever, _reader
 
     with _service_lock:
         if _retriever is None:
@@ -129,20 +123,12 @@ def get_qa_services() -> tuple[Retriever, object, object | None]:
             checkpoint = os.getenv("MRC_CHECKPOINT")
             _reader = MRCClient(checkpoint) if checkpoint else LexicalBaselineClient()
 
-        if _choice_ranker is None and ChoiceRanker is not None:
-            ranker_dir = Path(os.getenv("CHOICE_RANKER_CHECKPOINT", ROOT / "mrc-model_Huy" / "checkpoints" / "choice_ranker"))
-            if ranker_dir.exists() and (ranker_dir / "ranker.joblib").exists():
-                try:
-                    _choice_ranker = ChoiceRanker.load(str(ranker_dir))
-                except Exception as exc:
-                    print(f"[Warning] Could not load ChoiceRanker: {exc}")
-
-    return _retriever, _reader, _choice_ranker
+    return _retriever, _reader
 
 
 @app.get("/api/health")
 def health() -> dict:
-    retriever, reader, choice_ranker = get_qa_services()
+    retriever, _ = get_qa_services()
     index_source = "custom_index" if os.getenv("QA_INDEX") else (
         "vimmrc_corpus" if (ROOT / "data" / "vimmrc_index.json").exists() else "demo_corpus"
     )
@@ -152,7 +138,6 @@ def health() -> dict:
         "retrieval": index_source,
         "retrieval_passages": len(retriever.passages),
         "reader": "trained_vit5" if os.getenv("MRC_CHECKPOINT") else "lexical_baseline",
-        "choice_ranker": "trained_ranker" if choice_ranker is not None else "none",
         "tts_engine": os.getenv("TTS_ENGINE", "matcha"),
         "frontend_served": dist_browser.exists() and (dist_browser / "index.html").exists(),
     }
@@ -160,7 +145,7 @@ def health() -> dict:
 
 @app.post("/api/retrieve")
 def retrieve(request: RetrieveRequest) -> dict:
-    retriever, _, _ = get_qa_services()
+    retriever, _ = get_qa_services()
     hits = retriever.search(request.question, top_k=request.top_k)
     return {
         "passages": [
@@ -176,31 +161,7 @@ def retrieve(request: RetrieveRequest) -> dict:
 
 @app.post("/api/answer")
 def answer(request: AnswerRequest) -> dict:
-    _, reader, choice_ranker = get_qa_services()
-
-    # If 4 options are provided, use ChoiceRanker if available, else lexical_baseline
-    if request.options and len(request.options) == 4:
-        if choice_ranker is not None:
-            try:
-                choice = choice_ranker.predict(request.question, request.passage, request.options)
-                return {
-                    "answer": choice["answer"],
-                    "choice_label": choice["label"],
-                    "choice_scores": choice["scores"],
-                }
-            except Exception as exc:
-                print(f"[Warning] ChoiceRanker prediction failed: {exc}, falling back to lexical baseline.")
-        try:
-            from choice_ranker import lexical_baseline
-            choice = lexical_baseline(request.question, request.passage, request.options)
-            return {
-                "answer": choice["answer"],
-                "choice_label": choice["label"],
-                "choice_scores": choice["scores"],
-            }
-        except Exception as exc:
-            print(f"[Warning] Lexical baseline prediction failed: {exc}, falling back to reader.")
-
+    _, reader = get_qa_services()
     return {"answer": reader.answer_question(request.question, request.passage)}
 
 

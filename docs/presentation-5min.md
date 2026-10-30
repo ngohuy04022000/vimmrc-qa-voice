@@ -24,7 +24,7 @@
 * **Nội dung hiển thị trên Slide:**
   * **Tên đề tài:** Hệ Thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0 (ViMMRC Voice Q&A System)
   * **Học viên thực hiện:**
-    * **Ngô Trí Huy** (Lead): Retrieval BM25 tối ưu, Mô hình MRC (ChoiceRanker & ViT5), Tích hợp hệ thống.
+    * **Ngô Trí Huy** (Lead): Retrieval BM25 tối ưu, Mô hình đọc hiểu ViT5 sinh câu trả lời, Tích hợp hệ thống.
     * **Huỳnh Công Lương**: Nhận dạng giọng nói (Faster-Whisper), Giao diện Web Client Angular.
     * **Trương Hoàng Duy**: Tổng hợp giọng nói (Matcha-TTS Flow Matching & VITS), Benchmark âm học.
   * **Vấn đề cốt lõi:**
@@ -46,7 +46,7 @@
   * **4 Phân hệ phối hợp:**
     1. **STT:** Faster-Whisper Small (CTranslate2) + Bộ lọc VAD + Thread-safe Lazy Loading.
     2. **Retrieval:** BM25 tối ưu hóa trên kho 552 bài đọc độc bản ViMMRC 2.0.
-    3. **MRC:** Hướng tiếp cận kép (ChoiceRanker cho trắc nghiệm & ViT5 cho câu hỏi mở).
+    3. **MRC:** ViT5-base fine-tune sinh câu trả lời tự do từ câu hỏi và bài đọc.
     4. **TTS:** Matcha-TTS (Flow Matching) + VITS + Edge-TTS dự phòng.
   * **Thiết kế chịu lỗi (Fault-Tolerant):** Hệ thống có cơ chế Fallback tự động ở từng chặng, đảm bảo hoạt động offline trên CPU thông thường mà không cần GPU đắt tiền.
 * **Kịch bản thuyết trình (Speaker Script):**
@@ -66,16 +66,17 @@
   * **Đóng góp 1 - Retrieval BM25 Tối ưu hóa:**
     * Tinh chỉnh tham số thực nghiệm: $k_1 = 2.1$, $b = 1.0$.
     * Bổ sung cơ chế **Bigram Phrase Boost (+0.4)** ưu tiên từ ghép tiếng Việt, giúp tìm chính xác bài đọc chỉ với 1 câu hỏi ngắn.
-  * **Đóng góp 2 - Mô hình MRC Kép Linh hoạt:**
-    * **ChoiceRanker:** 11 đặc trưng độ khớp (cosine TF-IDF n-gram ký tự 2-4, tỷ lệ phủ từ, khớp cụm chính xác) + Logistic Regression $C=10$, chuyên cho bài toán 4 lựa chọn. Đã kiểm tra lại: TF-IDF âm tiết 53,2%, BM25 52,3%, thêm embedding e5 52,1% so với 51,95% — chênh lệch nằm trong sai số.
-    * **ViT5-base fine-tune (câu hỏi tự do):** EM 41,05%, F1 66,55% trên test 2.716 câu (dữ liệu ViMMRC + UIT-ViQuAD2.0).
+  * **Đóng góp 2 - Đọc hiểu sinh câu trả lời tự do (ViT5):**
+    * Người dùng chỉ cần đặt câu hỏi, không cần phương án lựa chọn.
+    * Fine-tune ViT5-base trên 27.164 câu gộp ViMMRC 2.0 + UIT-ViQuAD2.0, chia theo bài đọc (21.733 / 2.715 / 2.716).
+    * Kết quả test: EM 41,05%, token F1 66,55%; trả lời ngắn gọn ("Hà Nội", "82 tấm bia").
   * **Đóng góp 3 - Làm chủ Kiến trúc Matcha-TTS (Flow Matching):**
     * Ứng dụng thành công **Optimal-Transport Conditional Flow Matching (OT-CFM)** từ ICASSP 2024.
     * Đề xuất **Frontend tách thanh điệu `vi_tone_v2`**: Tách 6 thanh điệu thành token độc lập (ví dụ `hồ` $\rightarrow$ `h ô 2`), giúp mô hình nắm bắt cao độ F0 cực kỳ ổn định.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Về mặt kỹ thuật, nhóm xin nhấn mạnh vào 3 đóng góp trọng tâm:  
   > Thứ nhất, ở khâu truy xuất, thay vì dùng BM25 mặc định, nhóm đã tinh chỉnh siêu tham số $k_1=2.1, b=1.0$ và đề xuất cơ chế Bigram Phrase Boost cộng 0.4 điểm cho các cụm từ ghép tiếng Việt, giải quyết triệt để bài toán tìm kiếm bài đọc khi người dùng chỉ hỏi ngắn gọn một câu.  
-  > Thứ hai, ở phân hệ Đọc hiểu, khi có 4 lựa chọn, ChoiceRanker dùng 11 đặc trưng độ khớp chấm bằng Logistic Regression, đạt 51,95% trên dev. Nhóm đã kiểm tra lại: thay TF-IDF ký tự bằng TF-IDF âm tiết, BM25 hay embedding ngữ nghĩa đều chỉ dao động 52 đến 53%, trong sai số — giới hạn nằm ở câu hỏi cần suy luận. Khi không có lựa chọn, ViT5 fine-tune sinh câu trả lời tự do, F1 66,55% trên test.  
+  > Thứ hai, ở phân hệ Đọc hiểu, hệ thống trả lời câu hỏi tự do, không cần phương án lựa chọn. Nhóm fine-tune ViT5-base trên hơn 21 nghìn câu hỏi gộp từ ViMMRC 2.0 và UIT-ViQuAD2.0. Mô hình đạt F1 66,55% trên tập test và trả lời gọn như 'Hà Nội' thay vì trích nguyên cả câu.  
   > Thứ ba và là điểm nhấn học thuật lớn nhất: nhóm đã làm chủ và huấn luyện thành công kiến trúc tiên tiến Matcha-TTS theo trường phái Flow Matching. Nhóm đã tự thiết kế frontend `vi_tone_v2` bóc tách 6 thanh điệu tiếng Việt, giúp chất lượng ngữ điệu âm thanh vượt trội so với các mô hình truyền thống."
 
 ---
@@ -90,7 +91,7 @@
 |---|---|:---:|:---:|---|
 | **Retrieval (BM25)** | Recall@1 / Recall@5 | **71.45% / 83.69%** | Lucene DF: 64.2% | Tìm đúng bài đọc ngay ở top 1 và top 5 |
 | **Retrieval (BM25)** | MRR@5 | **0.7624** | Baseline: 0.689 | Thứ hạng văn bản đúng nằm ở vị trí rất cao |
-| **MRC (ChoiceRanker)**| Accuracy (Dev) | **51.95%** (293/564) | Lexical: 43.6% / Random: 25.2% | Vượt trội hơn 8.3% so với baseline từ khóa |
+| **MRC (ViT5 fine-tune)** | EM / token F1 (Test 2.716 câu) | **41.05% / 66.55%** | Trích câu khớp nhất (chưa đo) | Trả lời ngắn gọn, đúng trọng tâm |
 | **TTS (Matcha-TTS)** | Tỷ lệ lỗi chữ (CER) | **1.9%** | VITS: 4.3% (Người thật: 0.7%) | Phát âm rõ chữ, ít lỗi hơn VITS gấp 2 lần |
 | **TTS (Matcha-TTS)** | Sai số cao độ (log-F0) | **2.86 semitones** | VITS: 4.31 / Edge-TTS: 2.69 | Thanh điệu chuẩn xác, gần bằng mô hình thương mại |
 | **Tốc độ (Matcha CPU)**| Real-Time Factor (RTF)| **0.52** | Yêu cầu thời gian thực: < 1.0 | Nhanh gấp 2 lần thời gian thực trên CPU i5/i7 |
@@ -98,7 +99,7 @@
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Kính thưa Thầy, các kết quả trên bảng là minh chứng định lượng cho hiệu quả của hệ thống:  
   > Ở phân hệ Retrieval, giải thuật BM25 tinh chỉnh đạt Recall@1 là 71.45% và Recall@5 lên tới 83.69%, với chỉ số MRR đạt 0.762. Nghĩa là phần lớn trường hợp hệ thống định vị chính xác bài đọc ngay ở vị trí đầu tiên.  
-  > Ở phân hệ MRC, ChoiceRanker đạt độ chính xác 51.95%, cao hơn baseline từ khóa 8.3% và gấp hơn 2 lần phương pháp chọn ngẫu nhiên.  
+  > Ở phân hệ MRC, ViT5 fine-tune đạt token F1 66,55% và Exact Match 41,05% trên 2.716 câu test.  
   > Đặc biệt ở phân hệ TTS, khi nhóm thiết lập benchmark âm học chuẩn quốc tế: Matcha-TTS đạt tỷ lệ lỗi ký tự CER cực thấp chỉ 1.9%, bám sát mức trần của giọng người thật là 0.7% và tốt hơn VITS hơn 2 lần. Sai số thanh điệu log-F0 đạt 2.86 bán cung, tiệm cận mô hình thương mại Edge-TTS. Quan trọng nhất, chỉ số RTF đạt 0.52 trên CPU thông thường, nghĩa là chỉ mất nửa giây để tổng hợp câu nói 1 giây, hoàn toàn đáp ứng đàm thoại thời gian thực."
 
 ---
@@ -112,14 +113,14 @@
     * **Backend (FastAPI):** Kiến trúc RESTful modules hóa, hỗ trợ Lazy Loading.
     * **Đóng gói Docker:** Multi-stage build (`node:22-alpine` + `python:3.11-slim`), cô lập cổng 8090, 55/55 test cases ĐẠT 100%.
   * **Minh họa luồng Demo thực tế (End-to-End Test):**
-    * Người dùng hỏi: *"Thủ đô của Việt Nam là gì?"* (Kèm 4 phương án: Huế, Hà Nội, Đà Nẵng, Cần Thơ).
+    * Người dùng hỏi: *"Thủ đô của Việt Nam là gì?"*.
     * Retrieval truy xuất bài đọc `train:0288` (Văn Miếu Hà Nội, điểm 26.97).
-    * ChoiceRanker suy luận: Phương án B đạt 0.807.
-    * TTS tự động phát: *"Đáp án B: Hà Nội"* với giọng đọc nơ-ron tự nhiên trong 1.8 giây.
+    * ViT5 sinh câu trả lời: *"Hà Nội"*.
+    * Matcha-TTS đọc câu trả lời bằng giọng nơ-ron.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Về mặt sản phẩm phần mềm, nhóm đã tích hợp hoàn chỉnh thành một ứng dụng Full-stack: Backend FastAPI kết hợp Frontend Angular với giao diện Chat hiện đại, có biểu đồ thể hiện luồng pipeline đang chạy ở phân hệ nào.  
   > Toàn bộ hệ thống được đóng gói thành container Docker tự động hóa 100%, vượt qua tất cả 55/55 bài kiểm thử tự động.  
-  > Trong kịch bản demo: khi người dùng bấm mic hỏi 'Thủ đô của Việt Nam là gì?', hệ thống ngay lập tức nhận dạng câu hỏi, truy xuất đúng bài đọc Văn Miếu số 288 trong 552 bài đọc, suy luận phương án B Hà Nội với xác suất 80.7% và phát âm thanh câu trả lời mượt mà cho người dùng chỉ sau chưa đầy 2 giây."
+  > Trong kịch bản demo: khi người dùng bấm mic hỏi 'Thủ đô của Việt Nam là gì?', hệ thống ngay lập tức nhận dạng câu hỏi, truy xuất đúng bài đọc Văn Miếu số 288 trong 552 bài đọc, mô hình ViT5 sinh câu trả lời 'Hà Nội' và Matcha-TTS phát âm thanh câu trả lời cho người dùng."
 
 ---
 

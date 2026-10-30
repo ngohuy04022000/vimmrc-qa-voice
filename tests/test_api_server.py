@@ -46,20 +46,6 @@ class ApiServerIntegrationTests(unittest.TestCase):
         self.assertIn("answer", data)
         self.assertTrue(len(data["answer"]) > 0)
 
-    def test_answer_endpoint_multiple_choice(self):
-        payload = {
-            "question": "Thủ đô của Việt Nam là gì?",
-            "passage": "Hà Nội là thủ đô của Việt Nam.",
-            "options": ["Huế", "Hà Nội", "Đà Nẵng", "Cần Thơ"],
-        }
-        response = self.client.post("/api/answer", json=payload)
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertIn("answer", data)
-        self.assertEqual(data["answer"], "Hà Nội")
-        if "choice_label" in data:
-            self.assertEqual(data["choice_label"], "B")
-
     def test_tts_endpoint(self):
         payload = {
             "text": "Xin chào, đây là câu trả lời kiểm thử.",

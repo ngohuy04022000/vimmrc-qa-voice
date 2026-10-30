@@ -45,6 +45,9 @@ Dev 2.570 câu (404 ViMMRC + 2.166 ViQuAD có đoạn văn trong KB), báo cáo 
 | **vit5-combined-cont** (đang dùng) | 33,4 / 54,6 | 22,5 | 60,6 | 68,7 |
 | vit5-vimmrc-ft (fine-tune riêng ViMMRC, dừng sớm khi dev phẳng) | 32,4 / 54,4 | 23,9 | 60,1 | 68,1 |
 
+**Test** (2.545 câu, `vit5-combined-cont`, `reports/e2e_test_kb_vit5-combined-cont.json`): R@1 71,1% / R@5 85,9%;
+toàn chuỗi EM 32,3 / F1 53,9 (ViMMRC F1 22,4, ViQuAD F1 59,6); đoạn đúng F1 68,6.
+
 Đã thử, không áp dụng: reranker bge-v2-m3 (+1,5 R@1, chậm ~1 s/câu), đọc top-3 lấy điểm cao nhất (kém hơn),
 `question_chunks` lúc suy luận (không tăng). STT: Whisper-small-vi-50h (`eval_stt.py`, WER 8,1% trên gTTS).
 

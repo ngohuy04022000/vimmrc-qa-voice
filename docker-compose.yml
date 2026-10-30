@@ -10,8 +10,9 @@ services:
     environment:
       - WHISPER_MODEL=small
       - WHISPER_DEVICE=cpu
-      - TTS_ENGINE=edge
-      - TTS_VOICE=vi-VN-HoaiMyNeural
+      - TTS_ENGINE=matcha
+      - MRC_CHECKPOINT=/app/mrc-model_Huy/checkpoints/vit5-combined-cont
+      - TRANSFORMERS_NO_TF=1
       - QA_INDEX=/app/data/vimmrc_index.json
     volumes:
       - ./data:/app/data:ro

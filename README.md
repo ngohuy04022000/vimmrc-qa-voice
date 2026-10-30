@@ -6,7 +6,7 @@ Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC
 
 ## Chạy hệ thống tích hợp
 
-Backend FastAPI phục vụ STT (Whisper), BM25 retrieval (trên toàn bộ 552 bài đọc ViMMRC), MRC (ViT5 sinh câu trả lời tự do), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
+Backend FastAPI phục vụ STT (Whisper), BM25 retrieval (kho hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt), MRC (ViT5 sinh câu trả lời tự do), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
 
 Từ thư mục gốc:
 

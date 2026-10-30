@@ -114,7 +114,7 @@ def get_qa_services() -> tuple[Retriever, object]:
             index_path = os.getenv("QA_INDEX")
             default_index = ROOT / "data" / "vimmrc_index.json"
             if index_path and Path(index_path).exists():
-                _retriever = load_any(index_path, os.getenv("KB_WIKI"), float(os.getenv("KB_WIKI_RATIO", "0.5")))
+                _retriever = load_any(index_path, os.getenv("KB_WIKI"), float(os.getenv("KB_WIKI_RATIO", "0.4")))
             elif default_index.exists():
                 _retriever = Retriever.load(str(default_index))
             else:

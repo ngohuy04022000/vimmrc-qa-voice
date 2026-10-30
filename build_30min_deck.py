@@ -157,7 +157,7 @@ for idx, (title_p, sub_p, det_p, col_p) in enumerate(principles):
 s4_notes = """Trọng tâm dữ liệu của đề tài là bộ dữ liệu ViMMRC 2.0 do phòng thí nghiệm UIT-NLP Đại học Công nghệ Thông tin ĐHQG-HCM xây dựng. Đây là bộ dữ liệu đọc hiểu tiếng Việt rất chất lượng, được biên soạn từ các bài tập đọc dành cho học sinh phổ thông.
 Toàn bộ 699 bài đọc với 5.273 câu hỏi được chia thành 3 tập Train, Dev và Test. Điểm cốt lõi mà nhóm tuân thủ nghiêm ngặt là tính phân tách tuyệt đối ở cấp độ bài đọc: nghĩa là các bài đọc trong tập Dev và Test hoàn toàn chưa từng xuất hiện trong tập Train, đảm bảo độ rò rỉ dữ liệu bằng không (zero data leakage).
 Khi đào sâu phân tích dữ liệu, nhóm phát hiện hai đặc điểm lớn: Thứ nhất, có những bài đọc rất dài vượt quá 1.000 từ, vượt xa giới hạn độ dài ngữ cảnh 512 token của các mô hình Transformer như ViT5 hay mBART. Thứ hai, các phương án lựa chọn có độ tương đồng từ vựng cao, đòi hỏi mô hình phải nắm bắt được ngữ cảnh tinh vi thay vì chỉ đếm từ khóa thông thường.
-Nhóm đã thực hiện tiền xử lý chuẩn hóa toàn bộ về Unicode NFC, làm sạch các ký tự đặc biệt, lập chỉ mục 552 bài đọc Train+Dev làm kho tài liệu truy xuất ngữ cảnh phục vụ cho toàn bộ hệ thống."""
+Nhóm đã thực hiện tiền xử lý chuẩn hóa toàn bộ về Unicode NFC, làm sạch các ký tự đặc biệt, lập kho tri thức hai tầng: 5.869 đoạn văn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt, phục vụ truy xuất ngữ cảnh cho toàn bộ hệ thống."""
 
 s4 = builder.add_content_slide(
     category="Phần 1: Tổng quan & Bài toán",
@@ -172,7 +172,7 @@ rows_s4 = [
     ["Tập Huấn luyện (Train)", "482 bài đọc", "3.600 câu hỏi", "68.3%", "Tập ngữ cảnh chính để học trọng số BM25 & Logistic"],
     ["Tập Phát triển (Dev)", "70 bài đọc", "564 câu hỏi", "10.7%", "Tuyệt đối không trùng bài đọc với Train (Disjoint)"],
     ["Tập Kiểm thử (Test)", "147 bài đọc", "1.109 câu hỏi", "21.0%", "Đánh giá mù năng lực tổng quát hóa (Zero Leakage)"],
-    ["TỔNG CỘNG CẢ BỘ", "699 bài đọc", "5.273 câu hỏi", "100.0%", "Kho chỉ mục phục vụ truy xuất Open-domain: 552 bài"]
+    ["TỔNG CỘNG CẢ BỘ", "699 bài đọc", "5.273 câu hỏi", "100.0%", "Kho truy xuất: 5.869 đoạn + 1,48 triệu đoạn Wikipedia"]
 ]
 col_w_s4 = [Inches(2.6), Inches(2.2), Inches(2.2), Inches(1.3), Inches(3.433)]
 builder.add_table(s4, Inches(0.8), Inches(1.5), Inches(11.733), Inches(2.3), headers_s4, rows_s4, col_w_s4)
@@ -193,7 +193,7 @@ c_s4_right, tf_s4_r = builder.add_card(s4, Inches(6.7), Inches(4.0), Inches(5.83
 for b in [
     "Chuẩn hóa Unicode NFC: Giải quyết triệt để lỗi mã hóa tổ hợp (NFD) trong tiếng Việt.",
     "Làm sạch ký tự rỗng & điều khiển ẩn: Loại bỏ các khoảng trắng zwnj, tab lỗi trong dữ liệu gốc.",
-    "Lập chỉ mục độc bản (vimmrc_index.json): Trích xuất 552 văn bản độc bản từ Train + Dev làm cơ sở dữ liệu tri thức truy xuất.",
+    "Kho tri thức (build_kb.py): 5.869 đoạn ViMMRC + ViQuAD (kb_index.json) và 1,48 triệu đoạn Wikipedia tiếng Việt (kb_wiki_full).",
     "Thiết kế cơ chế đánh giá kép: Choice Ranking (chọn 1 trong 4) song song Generative QA (sinh câu tự do)."
 ]:
     p = tf_s4_r.add_paragraph()
@@ -209,7 +209,7 @@ for b in [
 # SLIDE 5
 s5_notes = """Kính thưa Thầy Cô, em là Huỳnh Công Lương, xin phép tiếp tục trình bày về Kiến trúc Hệ thống và Phân hệ Nhận dạng Giọng nói.
 Trên màn hình là sơ đồ kiến trúc tổng thể của hệ thống Voice Q&A. Nhóm xây dựng một pipeline 4 chặng hoạt động theo mô hình hướng dịch vụ (Service-Oriented Architecture):
-Khi người dùng bấm thu âm, tín hiệu âm thanh được gửi đến phân hệ STT để chuyển thành câu hỏi dạng chữ. Câu hỏi này được đưa sang phân hệ Retrieval để quét trong kho 552 bài đọc và trả về top các bài đọc có độ khớp cao nhất. Tiếp đó, phân hệ MRC sẽ phân tích câu hỏi cùng ngữ cảnh bài đọc được truy xuất để tìm ra câu trả lời chính xác. Cuối cùng, văn bản câu trả lời đi qua phân hệ TTS để tổng hợp thành giọng nói tự nhiên và phát lại cho người dùng.
+Khi người dùng bấm thu âm, tín hiệu âm thanh được gửi đến phân hệ STT để chuyển thành câu hỏi dạng chữ. Câu hỏi này được đưa sang phân hệ Retrieval để quét trong kho tri thức hai tầng (ViMMRC + ViQuAD và Wikipedia tiếng Việt) và trả về top các bài đọc có độ khớp cao nhất. Tiếp đó, phân hệ MRC sẽ phân tích câu hỏi cùng ngữ cảnh bài đọc được truy xuất để tìm ra câu trả lời chính xác. Cuối cùng, văn bản câu trả lời đi qua phân hệ TTS để tổng hợp thành giọng nói tự nhiên và phát lại cho người dùng.
 Điểm đặc biệt trong kiến trúc của nhóm là Cơ chế Fallback Đa Tầng: ở từng phân hệ, nhóm đều thiết kế ít nhất một phương án dự phòng cục bộ. Nếu chưa có checkpoint ViT5, bộ trích xuất lexical sẽ trả lời thay; nếu kết nối mạng của Edge-TTS bị ngắt, Matcha-TTS hoặc VITS chạy cục bộ sẽ ngay lập tức thay thế. Nhờ vậy, hệ thống đạt độ tin cậy tuyệt đối trong mọi điều kiện vận hành."""
 
 s5 = builder.add_content_slide(
@@ -222,7 +222,7 @@ s5 = builder.add_content_slide(
 
 steps_s5 = [
     ("CHẶNG 1: STT", "Faster-Whisper (small)", "Audio 16kHz -> Text Query", "Fallback: Web Speech API", PRIMARY_BLUE),
-    ("CHẶNG 2: RETRIEVAL", "BM25 Tinh chỉnh", "Kho 552 bài đọc ViMMRC", "Top 5 bài đọc khớp nhất", TEAL),
+    ("CHẶNG 2: RETRIEVAL", "BM25 Tinh chỉnh", "Kho 5.869 đoạn + Wikipedia", "Top 5 bài đọc khớp nhất", TEAL),
     ("CHẶNG 3: MRC", "ViT5 (RAG)", "Đọc hiểu & Suy luận đáp án", "Fallback: Lexical Overlap", TECH_BLUE),
     ("CHẶNG 4: TTS", "Matcha-TTS (Flow Matching)", "Text Answer -> Audio 22kHz", "Fallback: VITS / Edge-TTS", GREEN)
 ]
@@ -305,7 +305,7 @@ whisper_stats = [
     ("Tiêu thụ bộ nhớ RAM", "Giảm 65% (Từ 1.8 GB xuống còn 540 MB)"),
     ("Kích thước mô hình (Weights)", "Model 'small': 244M tham số, điểm cân bằng vàng"),
     ("Tỷ lệ nhận dạng từ đúng (WER)", "Đạt mức tương đương bản gốc FP32 (độ lệch < 0.2%)"),
-    ("Độ trễ trung bình câu hỏi 3s", "0.42 giây trên CPU Intel Core i7 thế hệ phổ thông")
+    ("Độ trễ trung bình câu hỏi 3s", "Khoảng 3 giây trên CPU (đo trong Docker)")
 ]
 for title_w, val_w in whisper_stats:
     p = tf_s6_r.add_paragraph()
@@ -434,7 +434,7 @@ c_s9_l, tf_s9_l = builder.add_card(s9, Inches(0.8), Inches(1.5), Inches(5.6), In
 for b in [
     "Bài toán MRC lý thuyết (Closed-Domain): Bài đọc luôn được cung cấp sẵn cùng câu hỏi -> Mô hình chỉ việc trích xuất hoặc xếp hạng.",
     "Hệ thống Voice Q&A thực tế (Open-Domain): Người dùng chỉ hỏi một câu ngắn bằng giọng nói, hoàn toàn không chỉ định bài đọc.",
-    "Nhiệm vụ của Phân hệ Retrieval: Quét kho 552 bài đọc độc bản ViMMRC, định vị chính xác bài đọc chứa bằng chứng đúng.",
+    "Nhiệm vụ của Phân hệ Retrieval: Quét kho tri thức hai tầng (5.869 đoạn + 1,48 triệu đoạn Wikipedia), định vị chính xác bài đọc chứa bằng chứng đúng.",
     "Nếu Retrieval sai bài đọc -> Cả mô hình MRC phía sau chắc chắn sẽ trả lời sai (Garbage In, Garbage Out)."
 ]:
     p = tf_s9_l.add_paragraph()
@@ -511,14 +511,14 @@ for b in [
     p.space_before = Pt(6)
 
 # SLIDE 11
-s11_notes = """Nhóm đã tiến hành kiểm thử toàn diện trên tất cả 564 câu hỏi của tập Dev đối chiếu với kho 552 bài đọc độc bản. Kết quả thực nghiệm được trình bày chi tiết trên bảng:
+s11_notes = """Để tinh chỉnh BM25, nhóm làm ablation trên 564 câu hỏi Dev đối chiếu với kho ViMMRC 552 bài đọc ban đầu (trước khi mở rộng kho). Kết quả thực nghiệm được trình bày chi tiết trên bảng:
 Với cấu hình BM25 mặc định, Recall@1 chỉ đạt 64.18%. Sau khi tinh chỉnh k1 và b, chỉ số này tăng lên 68.79%. Và khi bổ sung cơ chế Bigram Phrase Boost, Recall@1 đã tăng vọt lên 71.45%, và Recall@5 đạt tới 83.69%.
 Chỉ số Mean Reciprocal Rank (MRR@5) đạt 0.7624. Điều này đồng nghĩa với việc: trong đại đa số trường hợp, văn bản chứa câu trả lời luôn được xếp ở vị trí thứ nhất hoặc thứ hai.
 Đáng chú ý nhất, thời gian truy xuất trung bình chỉ mất 14.8 mili-giây trên CPU, hoàn toàn đáp ứng yêu cầu khắt khe về hiệu năng thời gian thực của đồ án."""
 
 s11 = builder.add_content_slide(
     category="Phần 3: Retrieval & MRC",
-    title="Đánh Giá Thực Nghiệm Phân Hệ Retrieval Trên 564 Câu Hỏi Dev",
+    title="Ablation Tinh Chỉnh BM25 (Kho ViMMRC 552 Bài, 564 Câu Dev)",
     presenter="Ngô Trí Huy (Lead)",
     time_str="14:15 - 15:30 (75s)",
     notes_text=s11_notes
@@ -899,7 +899,7 @@ c_s19_r, tf_s19_r = builder.add_card(s19, Inches(6.7), Inches(1.5), Inches(5.833
 for b in [
     "Giao diện Chat Voice đàm thoại: Trực quan, tối ưu cho cả máy tính để bàn và thiết bị di động.",
     "Thành phần Pipeline Flow Indicator: Hiển thị thanh tiến trình 5 bước theo thời gian thực (Mic -> STT -> Retrieval -> MRC -> TTS -> Nghe).",
-    "Thư viện bài đọc ViMMRC tích hợp: Cho phép người dùng duyệt kho 552 văn bản, chọn nhanh ngữ cảnh để thử nghiệm câu hỏi.",
+    "Thư viện bài đọc ViMMRC tích hợp: Cho phép người dùng duyệt kho bài đọc, chọn nhanh ngữ cảnh để thử nghiệm câu hỏi.",
     "Web Audio Visualizer: Hiển thị sóng âm thanh động khi người dùng nói vào micro."
 ]:
     p = tf_s19_r.add_paragraph()
@@ -957,7 +957,7 @@ Bộ test này kiểm tra chi tiết từ việc chuẩn hóa dấu câu, khả 
 
 s21 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
-    title="Đảm Bảo Chất Lượng: 55/55 Automated Tests Đạt 100%",
+    title="Đảm Bảo Chất Lượng: 54/54 Automated Tests Đạt 100%",
     presenter="Ngô Trí Huy (Lead)",
     time_str="27:00 - 28:00 (60s)",
     notes_text=s21_notes
@@ -966,11 +966,11 @@ s21 = builder.add_content_slide(
 headers_s21 = ["Bộ Kiểm Thử (Test Suite)", "Số Lượng Tests", "Phạm Vi Kiểm Định (Test Scope)", "Trạng Thái (Status)"]
 rows_s21 = [
     ["test_tts_normalizer.py", "14 tests", "Chuẩn hóa trắc nghiệm, ngày tháng, tiền tệ, số liệu, chèn ngắt nhịp", "14/14 PASSED (100%)"],
-    ["test_retrieval.py", "10 tests", "BM25 scoring, Bigram boost, Tokenizer, Lập chỉ mục 552 bài đọc", "10/10 PASSED (100%)"],
+    ["test_retrieval.py", "10 tests", "BM25 scoring, Bigram boost, Tokenizer, Lập chỉ mục kho bài đọc", "10/10 PASSED (100%)"],
     ["test_mrc_model.py", "12 tests", "Dữ liệu MRC, metric EM/F1, ViT5 Context chunking", "12/12 PASSED (100%)"],
     ["test_tts_engine.py", "11 tests", "Matcha-TTS synthesis, VITS MMS, Edge-TTS fallback logic", "11/11 PASSED (100%)"],
     ["test_stt_and_server.py", "8 tests", "Audio PCM conversion, REST API Endpoints, Healthcheck", "8/8 PASSED (100%)"],
-    ["TỔNG CỘNG TOÀN HỆ THỐNG", "55 TESTS", "Thời gian chạy kiểm thử tự động: 14.52 giây", "55/55 PASSED (100%)"]
+    ["TỔNG CỘNG TOÀN HỆ THỐNG", "54 TESTS", "Thời gian chạy kiểm thử tự động: ~106 giây", "54/54 PASSED (100%)"]
 ]
 col_w_s21 = [Inches(3.2), Inches(1.8), Inches(4.733), Inches(2.0)]
 builder.add_table(s21, Inches(0.8), Inches(1.5), Inches(11.733), Inches(3.2), headers_s21, rows_s21, col_w_s21)
@@ -989,26 +989,26 @@ for b in [
 
 # SLIDE 22
 s22_notes = """Sau đây, nhóm xin kính mời Thầy Cô và các bạn cùng theo dõi kịch bản vận hành thực tế của hệ thống được quay trực tiếp trên giao diện Web:
-Khi người dùng bấm giữ nút micro và hỏi: 'Thủ đô của Việt Nam là gì? Phương án A Huế, Phương án B Hà Nội, Phương án C Đà Nẵng, Phương án D Cần Thơ'.
-Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản chỉ sau 0.42 giây. Bộ truy xuất BM25 lập tức quét trong 552 văn bản và định vị chính xác bài đọc số 288 về Văn Miếu - Quốc Tử Giám với điểm khớp 26.97.
-Tiếp đó, mô hình ViT5 đọc đoạn văn và sinh câu trả lời Hà Nội. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.
-Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời chỉ diễn ra trong vòng 1.85 giây. Hệ thống đã chứng minh sự trơn tru, chuẩn xác và tính khả thi ứng dụng rất cao."""
+Khi người dùng bấm giữ nút micro và hỏi: 'Ai là tác giả của Truyện Kiều?'.
+Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản trong khoảng 3 giây. Bộ truy xuất BM25 lập tức quét kho tri thức và vì kho ViMMRC + ViQuAD không có đoạn khớp, hệ thống lấy đoạn Wikipedia nói về Truyện Kiều.
+Tiếp đó, mô hình ViT5 đọc đoạn văn và sinh câu trả lời Nguyễn Du. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.
+Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời mất khoảng 6 giây khi chạy hoàn toàn trên CPU."""
 
 s22 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
-    title="Kịch Bản Live Demonstration: Chu Trình Đàm Thoại 1.85 Giây",
+    title="Kịch Bản Live Demonstration: Chu Trình Hỏi Đáp Bằng Giọng Nói",
     presenter="Cả Nhóm (Demo Thực Tế)",
     time_str="28:00 - 29:15 (75s)",
     notes_text=s22_notes
 )
 
 demo_cards = [
-    ("1. VOICE INPUT", "Micro Browser", "Người dùng hỏi: 'Thủ đô của Việt Nam là gì? (A. Huế, B. Hà Nội, C. Đà Nẵng, D. Cần Thơ)'", PRIMARY_BLUE),
-    ("2. STT WHISPER", "0.42 Giây", "Faster-Whisper nhận dạng chính xác văn bản tiếng Việt có dấu hoàn chỉnh.", TEAL),
-    ("3. BM25 RETRIEVAL", "15 Mili-giây", "Quét 552 bài đọc, định vị bài 'train:0288' Văn Miếu Hà Nội (Score: 26.97).", TECH_BLUE),
-    ("4. MRC CHOICERANKER", "3 Mili-giây", "Phân tích đặc trưng ngữ cảnh: Phương án B (Hà Nội) đạt xác suất 80.7%.", GREEN),
-    ("5. TTS SYNTHESIS", "0.35 Giây", "Normalizer chuyển đổi -> Matcha-TTS tổng hợp câu nói tự nhiên.", AMBER),
-    ("6. PLAYBACK AUDIO", "Phản hồi < 2s", "Trình duyệt tự động phát câu trả lời giọng đọc nơ-ron qua loa.", PRIMARY_BLUE)
+    ("1. VOICE INPUT", "Micro Browser", "Người dùng hỏi: 'Ai là tác giả của Truyện Kiều?' (câu hỏi tự do)", PRIMARY_BLUE),
+    ("2. STT WHISPER", "~3 Giây", "Faster-Whisper nhận dạng chính xác văn bản tiếng Việt có dấu hoàn chỉnh.", TEAL),
+    ("3. BM25 RETRIEVAL", "~0.1 Giây", "Kho ViMMRC + ViQuAD không đủ khớp → lấy đoạn Wikipedia 'Lục bát' nói về Truyện Kiều.", TECH_BLUE),
+    ("4. MRC VIT5", "~1.4 Giây", "ViT5 đọc đoạn văn và sinh câu trả lời 'Nguyễn Du'.", GREEN),
+    ("5. TTS SYNTHESIS", "~1.3 Giây", "Normalizer chuyển đổi -> Matcha-TTS tổng hợp câu nói tự nhiên.", AMBER),
+    ("6. PLAYBACK AUDIO", "Tổng ~6 Giây", "Trình duyệt tự động phát câu trả lời giọng đọc nơ-ron qua loa.", PRIMARY_BLUE)
 ]
 
 for idx, (head_d, time_d, desc_d, col_d) in enumerate(demo_cards):
@@ -1067,7 +1067,7 @@ for b in [
 c_s23_r, tf_s23_r = builder.add_card(s23, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Giới Hạn Phạm Vi Của Hệ Thống Hiện Tại", title_color=PRIMARY_BLUE)
 for b in [
     "Tương tác Đơn Lượt (Single-Turn Q&A): Hệ thống trả lời dứt điểm từng câu hỏi, chưa có cơ chế Session Memory để nhớ ngữ cảnh của các câu hỏi trước đó.",
-    "Cơ sở Tri thức Cố định: Tri thức hiện tại nằm trong 552 văn bản của ViMMRC 2.0, chưa hỗ trợ cập nhật tri thức động thời gian thực từ Internet.",
+    "Cơ sở Tri thức Tĩnh: Kho gồm ViMMRC + ViQuAD và bản Wikipedia tiếng Việt đã tải về, chưa cập nhật tri thức thời gian thực từ Internet.",
     "Định dạng Âm thanh Đầu ra: Hiện mặc định xuất tần số lấy mẫu 22.05kHz, chưa nâng cấp lên 44.1kHz Hi-Fi studio."
 ]:
     p = tf_s23_r.add_paragraph()
@@ -1095,7 +1095,7 @@ for b in [
     "Xây dựng thành công hệ thống Voice Q&A tiếng Việt mã nguồn mở hoàn chỉnh đầu tiên dựa trên chuẩn dữ liệu ViMMRC 2.0.",
     "Ứng dụng thành công kỹ thuật tiên tiến Flow Matching (Matcha-TTS ICASSP 2024) và đề xuất frontend vi_tone_v2 tách thanh điệu.",
     "Chứng minh tính khả thi của việc chạy cục bộ toàn bộ pipeline AI trên CPU thông thường mà không cần GPU đắt đỏ.",
-    "Chuẩn mực kỹ nghệ phần mềm: Đóng gói Docker đa tầng 1 lệnh, 55/55 bài kiểm thử tự động đạt 100%."
+    "Chuẩn mực kỹ nghệ phần mềm: Đóng gói Docker đa tầng 1 lệnh, 54/54 bài kiểm thử tự động đạt 100%."
 ]:
     p = tf_s24_l.add_paragraph()
     p.text = "✔ " + b

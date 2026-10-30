@@ -136,7 +136,7 @@
     * **Recall@5:** **85,9%** (ViQuAD 88,9%; ViMMRC 69,2%).
     * **Tốc độ:** khoảng 35 ms / câu hỏi trên CPU. Reranker `bge-reranker-v2-m3` tăng +1,5 R@1 nhưng ~1 giây / câu hỏi nên không áp dụng.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Tiếp theo là phân hệ Truy xuất Đoạn văn do em phụ trách. Khi người dùng hỏi một câu như 'Thủ đô của Việt Nam là gì?', hệ thống phải tìm ra bài đọc tương ứng trong hàng trăm văn bản.  
+  > "Tiếp theo là phân hệ Truy xuất Đoạn văn do em phụ trách. Khi người dùng hỏi một câu như 'Ai là tác giả của Truyện Kiều?', hệ thống phải tìm ra bài đọc tương ứng trong hàng trăm văn bản.  
   > Em xây dựng kho tri thức hai tầng bằng thuật toán BM25 nâng cao: tầng một là 5.869 đoạn văn từ ViMMRC và ViQuAD, tầng hai là 1,48 triệu chunk Wikipedia tiếng Việt. Thay vì dùng tham số mặc định của Lucene, em tinh chỉnh $k_1=2.1$ và $b=1.0$, kết hợp Bigram Phrase Boost; hệ thống chuyển sang Wikipedia khi điểm Wikipedia lớn hơn 0,5 lần điểm tầng một.  
   > Kết quả trên tập test 2.545 câu hỏi cho thấy: Recall@1 đạt 71,1% và Recall@5 đạt 85,9%, với tốc độ khoảng 35 mili-giây mỗi câu hỏi trên CPU. Điều này chứng minh BM25 hai tầng đáp ứng tốt vai trò cung cấp ngữ cảnh cho mô hình đọc hiểu."
 
@@ -211,7 +211,7 @@
     * Stage 2 (`python:3.11-slim`): Cài đặt ffmpeg, libsndfile, PyTorch CPU wheel siêu nhẹ và backend.
     * Quản lý bằng `docker-compose.yml`, tích hợp Healthcheck tự động, chạy cô lập trên cổng 8090.
   * **Chất lượng Kiểm thử Phần mềm:**
-    * Bộ kiểm thử tự động **55/55 bài tests ĐẠT (100% Passed)** phủ khắp toàn bộ các phân hệ từ mức hàm đến API Server.
+    * Bộ kiểm thử tự động **54/54 bài tests ĐẠT (100% Passed)** phủ khắp toàn bộ các phân hệ từ mức hàm đến API Server.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Về khía cạnh kỹ nghệ phần mềm, nhóm đã tích hợp toàn bộ các phân hệ thành một khối thống nhất:  
   > Phía Frontend, em xây dựng ứng dụng Angular với giao diện trực quan, có biểu đồ trạng thái thể hiện rõ hệ thống đang chạy ở bước nào trong pipeline. Người dùng có thể bấm mic nói hoặc chọn bài đọc từ thư viện.  
@@ -224,17 +224,17 @@
 * **Người trình bày:** Nhóm thực hiện (Demo trực tiếp hoặc video clip)
 * **Nội dung hiển thị trên Slide:**
   * **Tình huống Demo minh họa:**
-    * **Đầu vào giọng nói:** Người dùng bấm micro và hỏi: *"Thủ đô của Việt Nam là gì?"* (câu hỏi tự do, không kèm phương án).
+    * **Đầu vào giọng nói:** Người dùng bấm micro và hỏi: *"Ai là tác giả của Truyện Kiều?"* (câu hỏi tự do, không kèm phương án).
   * **Quy trình xử lý nội bộ:**
     1. **STT:** Whisper nhận dạng chính xác câu hỏi tiếng Việt có dấu.
-    2. **Retrieval:** BM25 tự động quét kho 552 văn bản và truy xuất đúng bài đọc mã số `train:0288` về Văn Miếu - Quốc Tử Giám Hà Nội (điểm số 26.97).
-    3. **MRC:** ViT5 đọc đoạn văn đã truy xuất và sinh ra câu trả lời *"Hà Nội"*.
+    2. **Retrieval:** BM25 tự động quét kho tri thức hai tầng và truy xuất đoạn văn liên quan.
+    3. **MRC:** ViT5 đọc đoạn văn đã truy xuất và sinh ra câu trả lời *"Nguyễn Du"*.
     4. **TTS:** Normalizer chuẩn hóa câu trả lời và Edge-TTS/Matcha-TTS tổng hợp thành âm thanh MP3/WAV.
   * **Đầu ra:** Trình duyệt tự động phát câu trả lời giọng nói truyền cảm cho người dùng nghe.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Sau đây, nhóm xin kính mời Thầy/Cô và các bạn cùng theo dõi kịch bản chạy thử nghiệm thực tế của hệ thống.  
-  > Khi người dùng bấm nút thu âm và đặt câu hỏi: 'Thủ đô của Việt Nam là gì?', phân hệ STT ngay lập tức chuyển đổi thành văn bản. Bộ truy xuất BM25 lập tức quét trong 552 bài đọc và trả về đúng bài đọc số 288 về Văn Miếu - Quốc Tử Giám với điểm khớp 26.97.  
-  > Ngay sau đó, ViT5 đọc đoạn văn vừa truy xuất và sinh ra câu trả lời 'Hà Nội'. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra câu trả lời bằng giọng đọc nơ-ron tự nhiên. Toàn bộ chu trình từ lúc người dùng dứt lời đến khi nghe câu trả lời chỉ mất khoảng 1.5 đến 2 giây."
+  > Khi người dùng bấm nút thu âm và đặt câu hỏi: 'Ai là tác giả của Truyện Kiều?', phân hệ STT ngay lập tức chuyển đổi thành văn bản. Bộ truy xuất BM25 lập tức quét kho tri thức hai tầng và trả về đoạn văn liên quan.  
+  > Ngay sau đó, ViT5 đọc đoạn văn vừa truy xuất và sinh ra câu trả lời 'Nguyễn Du'. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra câu trả lời bằng giọng đọc nơ-ron tự nhiên. Toàn bộ chu trình từ lúc người dùng dứt lời đến khi nghe câu trả lời mất khoảng 6 giây khi chạy trên CPU."
 
 ---
 

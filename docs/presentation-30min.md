@@ -37,7 +37,7 @@
 #### PHẦN 5: KỸ NGHỆ HỆ THỐNG, DEMO & KẾT LUẬN (5:00) - Cả Nhóm
 * **Slide 19 (25:00 - 26:00):** Kiến trúc Phần mềm Full-Stack FastAPI & Angular SPA (Huỳnh Công Lương)
 * **Slide 20 (26:00 - 27:00):** Đóng gói Triển khai Docker Multi-Stage & Healthcheck (Huỳnh Công Lương)
-* **Slide 21 (27:00 - 28:00):** Đảm bảo Chất lượng Kiểm thử (55/55 Automated Tests) (Ngô Trí Huy)
+* **Slide 21 (27:00 - 28:00):** Đảm bảo Chất lượng Kiểm thử (54/54 Automated Tests) (Ngô Trí Huy)
 * **Slide 22 (28:00 - 29:15):** Kịch bản Live Demonstration Chi tiết Từng Bước (Cả Nhóm)
 * **Slide 23 (29:15 - 30:00):** Phân tích Lỗi, Thảo luận Giới hạn & Hướng Phát triển (Ngô Trí Huy)
 
@@ -125,7 +125,7 @@
   > "Trọng tâm dữ liệu của đề tài là bộ dữ liệu ViMMRC 2.0 do phòng thí nghiệm UIT-NLP Đại học Công nghệ Thông tin ĐHQG-HCM xây dựng. Đây là bộ dữ liệu đọc hiểu tiếng Việt rất chất lượng, được biên soạn từ các bài tập đọc dành cho học sinh phổ thông.  
   > Toàn bộ 699 bài đọc với 5.273 câu hỏi được chia thành 3 tập Train, Dev và Test. Điểm cốt lõi mà nhóm tuân thủ nghiêm ngặt là tính phân tách tuyệt đối ở cấp độ bài đọc: nghĩa là các bài đọc trong tập Dev và Test hoàn toàn chưa từng xuất hiện trong tập Train, đảm bảo độ rò rỉ dữ liệu bằng không (zero data leakage).  
   > Khi đào sâu phân tích dữ liệu, nhóm phát hiện hai đặc điểm lớn: Thứ nhất, có những bài đọc rất dài vượt quá 1.000 từ, vượt xa giới hạn độ dài ngữ cảnh 512 token của các mô hình Transformer như ViT5 hay mBART. Thứ hai, ViMMRC gốc là bộ dữ liệu trắc nghiệm; nhóm đã chuyển sang dạng hỏi - đáp tự do gồm đoạn văn, câu hỏi và câu trả lời dạng văn bản, đồng thời bổ sung ViQuAD để tăng độ đa dạng.  
-  > Nhóm đã thực hiện tiền xử lý chuẩn hóa toàn bộ về Unicode NFC, làm sạch các ký tự đặc biệt, lập chỉ mục 552 bài đọc Train+Dev làm kho tài liệu truy xuất ngữ cảnh phục vụ cho toàn bộ hệ thống."
+  > Nhóm đã thực hiện tiền xử lý chuẩn hóa toàn bộ về Unicode NFC, làm sạch các ký tự đặc biệt, lập kho tri thức hai tầng: 5.869 đoạn văn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt, phục vụ truy xuất ngữ cảnh cho toàn bộ hệ thống."
 
 ---
 
@@ -147,7 +147,7 @@
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Kính thưa Thầy Cô, em là Huỳnh Công Lương, xin phép tiếp tục trình bày về Kiến trúc Hệ thống và Phân hệ Nhận dạng Giọng nói.  
   > Trên màn hình là sơ đồ kiến trúc tổng thể của hệ thống Voice Q&A. Nhóm xây dựng một pipeline 4 chặng hoạt động theo mô hình hướng dịch vụ (Service-Oriented Architecture):  
-  > Khi người dùng bấm thu âm, tín hiệu âm thanh được gửi đến phân hệ STT để chuyển thành câu hỏi dạng chữ. Câu hỏi này được đưa sang phân hệ Retrieval để quét trong kho 552 bài đọc và trả về top các bài đọc có độ khớp cao nhất. Tiếp đó, phân hệ MRC sẽ phân tích câu hỏi cùng ngữ cảnh bài đọc được truy xuất để tìm ra câu trả lời chính xác. Cuối cùng, văn bản câu trả lời đi qua phân hệ TTS để tổng hợp thành giọng nói tự nhiên và phát lại cho người dùng.  
+  > Khi người dùng bấm thu âm, tín hiệu âm thanh được gửi đến phân hệ STT để chuyển thành câu hỏi dạng chữ. Câu hỏi này được đưa sang phân hệ Retrieval để quét trong kho tri thức hai tầng (ViMMRC + ViQuAD và Wikipedia tiếng Việt) và trả về top các bài đọc có độ khớp cao nhất. Tiếp đó, phân hệ MRC sẽ phân tích câu hỏi cùng ngữ cảnh bài đọc được truy xuất để tìm ra câu trả lời chính xác. Cuối cùng, văn bản câu trả lời đi qua phân hệ TTS để tổng hợp thành giọng nói tự nhiên và phát lại cho người dùng.  
   > Điểm đặc biệt trong kiến trúc của nhóm là Cơ chế Fallback Đa Tầng: ở từng phân hệ, nhóm đều thiết kế ít nhất một phương án dự phòng cục bộ. Nếu chưa có checkpoint ViT5, Lexical Baseline sẽ lập tức trích xuất câu trả lời; nếu kết nối mạng của Edge-TTS bị ngắt, Matcha-TTS hoặc VITS chạy cục bộ sẽ ngay lập tức thay thế. Nhờ vậy, hệ thống đạt độ tin cậy tuyệt đối trong mọi điều kiện vận hành."
 
 ---
@@ -222,7 +222,7 @@
   * **Đặt bài toán:**
     * Trong cấu trúc ViMMRC gốc, mỗi câu hỏi luôn đi kèm sẵn với một bài đọc cố định.
     * Trong kịch bản thực tế của Voice Q&A, người dùng chỉ bật mic và hỏi: *"Chiến dịch Điện Biên Phủ diễn ra vào năm nào?"* mà hoàn toàn không cho biết câu hỏi thuộc bài đọc nào.
-    * Hệ thống phải tự động quét trong toàn bộ kho **552 bài đọc độc bản** để tìm ra đúng ngữ cảnh chứa câu trả lời.
+    * Hệ thống phải tự động quét trong kho tri thức hai tầng (**5.869 đoạn + 1,48 triệu đoạn Wikipedia**) để tìm ra đúng ngữ cảnh chứa câu trả lời.
   * **Thách thức của bài toán Open-Domain Retrieval:**
     * Số lượng từ vựng lớn, nhiều bài đọc có chủ đề tương tự nhau (lịch sử, khoa học, danh nhân).
     * Câu hỏi người dùng ngắn gọn (thường chỉ 5 - 10 từ), trong khi bài đọc dài từ 300 - 800 từ (vấn đề bất cân xứng độ dài câu hỏi - tài liệu).
@@ -258,7 +258,7 @@
 * **Thời lượng:** 1 phút 15 giây (14:15 - 15:30)
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
-  * **Tập dữ liệu kiểm thử:** Toàn bộ **564 câu hỏi** thuộc tập Dev của ViMMRC 2.0 quét qua kho 552 văn bản.
+  * **Tập dữ liệu kiểm thử:** Ablation BM25: **564 câu hỏi** Dev của ViMMRC 2.0 quét qua kho 552 văn bản ban đầu (trước khi mở rộng kho; kết quả kho hiện tại ở Slide 12).
   * **Bảng so sánh đối chứng hiệu năng truy xuất:**
 
 | Thuật toán / Cấu hình | Recall@1 (%) $\uparrow$ | Recall@3 (%) $\uparrow$ | Recall@5 (%) $\uparrow$ | MRR@5 $\uparrow$ | Thời gian truy xuất TB |
@@ -273,7 +273,7 @@
     * **MRR@5 đạt 0.7624:** Chỉ số nghịch đảo thứ hạng trung bình rất cao, chứng minh bài đọc đúng luôn nằm ở nhóm đầu bảng.
     * **Thời gian xử lý: 14.8 mili-giây:** Cực kỳ tối ưu, tiêu tốn chưa đến 1% tổng thời gian pipeline.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Nhóm đã tiến hành kiểm thử toàn diện trên tất cả 564 câu hỏi của tập Dev đối chiếu với kho 552 bài đọc độc bản. Kết quả thực nghiệm được trình bày chi tiết trên bảng:  
+  > "Để tinh chỉnh BM25, nhóm làm ablation trên 564 câu hỏi Dev đối chiếu với kho ViMMRC 552 bài đọc ban đầu (trước khi mở rộng kho). Kết quả thực nghiệm được trình bày chi tiết trên bảng:  
   > Với cấu hình BM25 mặc định, Recall@1 chỉ đạt 64.18%. Sau khi tinh chỉnh $k_1$ và $b$, chỉ số này tăng lên 68.79%. Và khi bổ sung cơ chế Bigram Phrase Boost, Recall@1 đã tăng vọt lên **71.45%**, và Recall@5 đạt tới **83.69%**.  
   > Chỉ số Mean Reciprocal Rank (MRR@5) đạt 0.7624. Điều này đồng nghĩa với việc: trong đại đa số trường hợp, văn bản chứa câu trả lời luôn được xếp ở vị trí thứ nhất hoặc thứ hai.  
   > Đáng chú ý nhất, thời gian truy xuất trung bình chỉ mất **14.8 mili-giây** trên CPU, hoàn toàn đáp ứng yêu cầu khắt khe về hiệu năng thời gian thực của đồ án."
@@ -508,19 +508,19 @@
 * **Người trình bày:** Cả Nhóm (Thao tác màn hình thực tế)
 * **Nội dung hiển thị:**
   * **Kịch bản Demo trực tiếp trên giao diện Web (`http://localhost:8090`):**
-    * **Bước 1 (Voice Input):** Bấm micro và đặt câu hỏi âm thanh: *"Thủ đô của Việt Nam là gì?"* (câu hỏi tự do, không kèm phương án).
-    * **Bước 2 (STT Processing):** Faster-Whisper nhận dạng chính xác chuỗi văn bản tiếng Việt có dấu trong 0.42 giây.
-    * **Bước 3 (Retrieval Processing):** BM25 quét 552 bài đọc và trả về đúng bài đọc mã `train:0288` (Văn Miếu - Quốc Tử Giám) với điểm số BM25 là 26.97 trong 15 mili-giây.
-    * **Bước 4 (MRC Processing):** ViT5 đọc đoạn văn đã truy xuất và sinh ra câu trả lời *"Hà Nội"*.
-    * **Bước 5 (TTS Processing):** Text Normalizer chuẩn hóa câu trả lời *"Hà Nội"* và Matcha-TTS / Edge-TTS tổng hợp thành âm thanh trong 0.35 giây.
+    * **Bước 1 (Voice Input):** Bấm micro và đặt câu hỏi âm thanh: *"Ai là tác giả của Truyện Kiều?"* (câu hỏi tự do, không kèm phương án).
+    * **Bước 2 (STT Processing):** Faster-Whisper nhận dạng chính xác chuỗi văn bản tiếng Việt có dấu trong khoảng 3 giây.
+    * **Bước 3 (Retrieval Processing):** BM25 quét kho tri thức hai tầng và lấy đoạn Wikipedia nói về Truyện Kiều (kho ViMMRC + ViQuAD không có đoạn khớp).
+    * **Bước 4 (MRC Processing):** ViT5 đọc đoạn văn đã truy xuất và sinh ra câu trả lời *"Nguyễn Du"*.
+    * **Bước 5 (TTS Processing):** Text Normalizer chuẩn hóa câu trả lời *"Nguyễn Du"* và Matcha-TTS tổng hợp thành âm thanh trong khoảng 1,3 giây.
     * **Bước 6 (Audio Output):** Trình duyệt tự động phát giọng nói câu trả lời rõ ràng, truyền cảm.
-  * **Tổng thời gian xử lý toàn pipeline:** **1.85 giây** (Hoàn toàn đáp ứng ngưỡng thời gian thực).
+  * **Tổng thời gian xử lý toàn pipeline:** **khoảng 6 giây** trên CPU (đo trên Docker: STT ~3 s, truy xuất ~0,1 s, ViT5 ~1,4 s, TTS ~1,3 s).
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Sau đây, nhóm xin kính mời Thầy Cô và các bạn cùng theo dõi kịch bản vận hành thực tế của hệ thống được quay trực tiếp trên giao diện Web:  
-  > Khi người dùng bấm giữ nút micro và hỏi: 'Thủ đô của Việt Nam là gì?'.  
-  > Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản chỉ sau 0.42 giây. Bộ truy xuất BM25 lập tức quét trong 552 văn bản và định vị chính xác bài đọc số 288 về Văn Miếu - Quốc Tử Giám với điểm khớp 26.97.  
-  > Tiếp đó, mô hình ViT5 đọc đoạn văn vừa truy xuất và sinh ra câu trả lời 'Hà Nội'. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.  
-  > Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời chỉ diễn ra trong vòng 1.85 giây. Hệ thống đã chứng minh sự trơn tru, chuẩn xác và tính khả thi ứng dụng rất cao."
+  > Khi người dùng bấm giữ nút micro và hỏi: 'Ai là tác giả của Truyện Kiều?'.  
+  > Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản trong khoảng 3 giây. Bộ truy xuất BM25 lập tức quét kho tri thức và vì kho ViMMRC + ViQuAD không có đoạn khớp, hệ thống lấy đoạn Wikipedia nói về Truyện Kiều.  
+  > Tiếp đó, mô hình ViT5 đọc đoạn văn vừa truy xuất và sinh ra câu trả lời 'Nguyễn Du'. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.  
+  > Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời mất khoảng 6 giây khi chạy hoàn toàn trên CPU."
 
 ---
 

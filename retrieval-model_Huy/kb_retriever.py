@@ -107,7 +107,7 @@ class TieredRetriever:
     tuned ratio, not directly (scripts/tune_kb_threshold.py, reports/kb_threshold_full.json).
     """
 
-    def __init__(self, primary, secondary, ratio: float = 0.5):
+    def __init__(self, primary, secondary, ratio: float = 0.4):
         self.primary, self.secondary, self.ratio = primary, secondary, ratio
         self.passages = primary.passages
 
@@ -123,7 +123,7 @@ class TieredRetriever:
         return hits[0]["passage"] if hits else ""
 
 
-def load_any(path: str | Path, wiki_dir: str | Path | None = None, ratio: float = 0.5):
+def load_any(path: str | Path, wiki_dir: str | Path | None = None, ratio: float = 0.4):
     """Directory -> KBRetriever; JSON file -> legacy Retriever; with wiki_dir -> two tiers."""
     path = Path(path)
     if path.is_dir():

@@ -2,7 +2,7 @@
 ## ĐỀ TÀI: HỆ THỐNG HỎI - ĐÁP BẰNG GIỌNG NÓI TIẾNG VIỆT DỰA TRÊN BỘ DỮ LIỆU ViMMRC 2.0 (ViMMRC VOICE Q&A)
 **Môn học:** Học máy tiên tiến và ứng dụng (Chương trình Cao học Công nghệ Thông tin)  
 **Thời lượng:** 30 phút (khoảng 3.800 - 4.200 từ thuyết minh, nhịp độ 130 từ/phút)  
-**Mục tiêu:** Báo cáo chi tiết, chuyên sâu, toàn diện tất cả các khía cạnh: Động lực nghiên cứu, Phân tích dữ liệu ViMMRC 2.0, Kiến trúc 4 phân hệ, Cơ sở lý thuyết toán học (OT-CFM, BM25, Logistic Regression, ViT5), Kỹ thuật tối ưu hóa phần mềm (Lazy loading, VAD, Normalizer, Docker), Bảng benchmark đối sánh chuẩn quốc tế, Phân tích lỗi và Hướng phát triển.
+**Mục tiêu:** Báo cáo chi tiết, chuyên sâu, toàn diện tất cả các khía cạnh: Động lực nghiên cứu, Phân tích dữ liệu ViMMRC 2.0, Kiến trúc 4 phân hệ, Cơ sở lý thuyết toán học (OT-CFM, BM25, ViT5), Kỹ thuật tối ưu hóa phần mềm (Lazy loading, VAD, Normalizer, Docker), Bảng benchmark đối sánh chuẩn quốc tế, Phân tích lỗi và Hướng phát triển.
 
 ---
 
@@ -24,7 +24,7 @@
 * **Slide 9 (11:30 - 12:45):** Phân hệ Retrieval - Bài toán Tìm kiếm Văn bản Open-Domain
 * **Slide 10 (12:45 - 14:15):** Tinh chỉnh Giải thuật BM25 ($k_1, b$) & Bigram Phrase Boost
 * **Slide 11 (14:15 - 15:30):** Đánh giá Thực nghiệm Phân hệ Retrieval (Recall@1, Recall@5, MRR)
-* **Slide 12 (15:30 - 17:00):** Phân hệ MRC - Mô hình ChoiceRanker (TF-IDF & Logistic Regression)
+* **Slide 12 (15:30 - 17:00):** Retrieval: Kho Tri Thức Hai Tầng Cho RAG
 * **Slide 13 (17:00 - 18:30):** Phân hệ MRC - Mô hình ViT5 Seq2Seq & Heuristic Context Selection
 
 #### PHẦN 4: PHÂN HỆ TỔNG HỢP TIẾNG NÓI TIÊN TIẾN TTS (6:30) - Trương Hoàng Duy
@@ -54,7 +54,7 @@
   * **Tên đề tài:** HỆ THỐNG HỎI - ĐÁP BẰNG GIỌNG NÓI TIẾNG VIỆT DỰA TRÊN BỘ DỮ LIỆU ViMMRC 2.0 (ViMMRC VOICE Q&A SYSTEM)
   * **Giảng viên hướng dẫn:** [Tên Thầy / Cô hướng dẫn]
   * **Thành viên nhóm & Phân công trách nhiệm:**
-    * **Ngô Trí Huy (Nhóm trưởng):** Nghiên cứu giải thuật Truy xuất văn bản BM25 tinh chỉnh, Xây dựng 2 mô hình MRC (ChoiceRanker & ViT5), Thiết kế kiến trúc tổng thể, Điều phối tích hợp hệ thống.
+    * **Ngô Trí Huy (Nhóm trưởng):** Nghiên cứu giải thuật Truy xuất văn bản BM25 tinh chỉnh, Xây dựng kho tri thức hai tầng và mô hình MRC ViT5, Thiết kế kiến trúc tổng thể, Điều phối tích hợp hệ thống.
     * **Huỳnh Công Lương:** Nghiên cứu phân hệ STT Faster-Whisper, Tối ưu hóa suy luận CTranslate2, Thiết kế kiến trúc Web Client (Angular 19/22) và Đóng gói triển khai Docker.
     * **Trương Hoàng Duy:** Nghiên cứu phân hệ TTS Matcha-TTS (Flow Matching) & VITS, Đề xuất frontend tách thanh điệu `vi_tone_v2`, Xây dựng Text Normalizer và Thiết lập bộ benchmark đánh giá âm học.
 * **Kịch bản thuyết trình (Speaker Script):**
@@ -110,8 +110,8 @@
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Tổng quan UIT-NLP/ViMMRC 2.0:**
-    * Bộ dữ liệu đọc hiểu trắc nghiệm chuẩn tiếng Việt dành cho học sinh tiểu học và THCS do nhóm UIT-NLP công bố.
-    * Quy mô: 699 bài đọc, 5.273 câu hỏi trắc nghiệm 4 lựa chọn (A, B, C, D).
+    * Bộ dữ liệu đọc hiểu chuẩn tiếng Việt dành cho học sinh tiểu học và THCS do nhóm UIT-NLP công bố. ViMMRC gốc là trắc nghiệm; dự án chuyển sang dạng hỏi - đáp tự do (đoạn văn + câu hỏi + câu trả lời dạng văn bản) và bổ sung thêm ViQuAD.
+    * Quy mô: 699 bài đọc, 5.273 câu hỏi.
   * **Phân chia dữ liệu Disjoint cấp Bài đọc (Zero Data Leakage):**
     * **Train set:** 482 bài đọc (3.600 câu hỏi - chiếm ~68.3%).
     * **Dev set:** 70 bài đọc (564 câu hỏi - chiếm ~10.7%).
@@ -119,12 +119,12 @@
     * Tuyệt đối không trùng lặp bài đọc giữa các tập, đảm bảo đánh giá khách quan năng lực tổng quát hóa.
   * **Phân tích đặc trưng dữ liệu & Thách thức tiền xử lý:**
     * Độ dài bài đọc: trung bình 385 từ, bài dài nhất lên tới hơn 1.200 từ (vượt trần 512 token của Transformer).
-    * Hiện tượng phương án rỗng hoặc chứa ký tự điều khiển Unicode ẩn trong dữ liệu thô.
-    * Giải pháp: Chuẩn hóa Unicode NFC toàn diện, lọc khoảng trắng thừa, và phân tách bài toán thành 2 chế độ: Đọc hiểu xếp hạng (Choice Ranking) và Đọc hiểu sinh câu tự do (Generative QA).
+    * Hiện tượng đáp án rỗng hoặc chứa ký tự điều khiển Unicode ẩn trong dữ liệu thô.
+    * Giải pháp: Chuẩn hóa Unicode NFC toàn diện, lọc khoảng trắng thừa, và chuyển dữ liệu sang bài toán Đọc hiểu sinh câu tự do (Generative QA).
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Trọng tâm dữ liệu của đề tài là bộ dữ liệu ViMMRC 2.0 do phòng thí nghiệm UIT-NLP Đại học Công nghệ Thông tin ĐHQG-HCM xây dựng. Đây là bộ dữ liệu đọc hiểu tiếng Việt rất chất lượng, được biên soạn từ các bài tập đọc dành cho học sinh phổ thông.  
   > Toàn bộ 699 bài đọc với 5.273 câu hỏi được chia thành 3 tập Train, Dev và Test. Điểm cốt lõi mà nhóm tuân thủ nghiêm ngặt là tính phân tách tuyệt đối ở cấp độ bài đọc: nghĩa là các bài đọc trong tập Dev và Test hoàn toàn chưa từng xuất hiện trong tập Train, đảm bảo độ rò rỉ dữ liệu bằng không (zero data leakage).  
-  > Khi đào sâu phân tích dữ liệu, nhóm phát hiện hai đặc điểm lớn: Thứ nhất, có những bài đọc rất dài vượt quá 1.000 từ, vượt xa giới hạn độ dài ngữ cảnh 512 token của các mô hình Transformer như ViT5 hay mBART. Thứ hai, các phương án lựa chọn có độ tương đồng từ vựng cao, đòi hỏi mô hình phải nắm bắt được ngữ cảnh tinh vi thay vì chỉ đếm từ khóa thông thường.  
+  > Khi đào sâu phân tích dữ liệu, nhóm phát hiện hai đặc điểm lớn: Thứ nhất, có những bài đọc rất dài vượt quá 1.000 từ, vượt xa giới hạn độ dài ngữ cảnh 512 token của các mô hình Transformer như ViT5 hay mBART. Thứ hai, ViMMRC gốc là bộ dữ liệu trắc nghiệm; nhóm đã chuyển sang dạng hỏi - đáp tự do gồm đoạn văn, câu hỏi và câu trả lời dạng văn bản, đồng thời bổ sung ViQuAD để tăng độ đa dạng.  
   > Nhóm đã thực hiện tiền xử lý chuẩn hóa toàn bộ về Unicode NFC, làm sạch các ký tự đặc biệt, lập chỉ mục 552 bài đọc Train+Dev làm kho tài liệu truy xuất ngữ cảnh phục vụ cho toàn bộ hệ thống."
 
 ---
@@ -134,21 +134,21 @@
 * **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Sơ đồ luồng dữ liệu 4 Chặng chi tiết:**
-    $$\text{User Mic} \xrightarrow{\text{Audio}} \text{[STT: Faster-Whisper]} \xrightarrow{\text{Text Query}} \text{[Retrieval: BM25]} \xrightarrow{\text{Passage}} \text{[MRC: ChoiceRanker/ViT5]} \xrightarrow{\text{Answer Text}} \text{[TTS: Matcha/VITS]} \xrightarrow{\text{Audio}} \text{Speaker}$$
+    $$\text{User Mic} \xrightarrow{\text{Audio}} \text{[STT: Faster-Whisper]} \xrightarrow{\text{Text Query}} \text{[Retrieval: BM25]} \xrightarrow{\text{Passage}} \text{[MRC: ViT5]} \xrightarrow{\text{Answer Text}} \text{[TTS: Matcha/VITS]} \xrightarrow{\text{Audio}} \text{Speaker}$$
   * **Giao thức truyền thông liên phân hệ:**
     * Phân hệ STT tiếp nhận `multipart/form-data` audio/wav $\rightarrow$ trả về JSON `{text, language, duration}`.
     * Phân hệ Retrieval nhận `{query, top_k}` $\rightarrow$ quét qua chỉ mục `vimmrc_index.json` $\rightarrow$ trả về Top 5 văn bản kèm BM25 score.
-    * Phân hệ MRC nhận `{passage, query, options}` $\rightarrow$ trả về `{answer, confidence, best_option_idx}`.
+    * Phân hệ MRC nhận `POST /api/answer {question, passage}` $\rightarrow$ trả về `{answer}`.
     * Phân hệ TTS nhận `{text, voice, speed}` $\rightarrow$ chuyển qua normalizer $\rightarrow$ tạo sóng âm WAV/MP3.
   * **Cơ chế Fallback Đa Tầng:**
     * STT: Whisper Local $\rightarrow$ Web Speech API fallback.
-    * MRC: ViT5 GPU/CPU $\rightarrow$ ChoiceRanker Logistic $\rightarrow$ Lexical Overlap Heuristic.
+    * MRC: ViT5 GPU/CPU $\rightarrow$ Lexical Baseline (trích xuất đáp án khi chưa có checkpoint ViT5).
     * TTS: Matcha-TTS Local $\rightarrow$ VITS MMS $\rightarrow$ Edge-TTS $\rightarrow$ Web Speech Synthesis.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Kính thưa Thầy Cô, em là Huỳnh Công Lương, xin phép tiếp tục trình bày về Kiến trúc Hệ thống và Phân hệ Nhận dạng Giọng nói.  
   > Trên màn hình là sơ đồ kiến trúc tổng thể của hệ thống Voice Q&A. Nhóm xây dựng một pipeline 4 chặng hoạt động theo mô hình hướng dịch vụ (Service-Oriented Architecture):  
   > Khi người dùng bấm thu âm, tín hiệu âm thanh được gửi đến phân hệ STT để chuyển thành câu hỏi dạng chữ. Câu hỏi này được đưa sang phân hệ Retrieval để quét trong kho 552 bài đọc và trả về top các bài đọc có độ khớp cao nhất. Tiếp đó, phân hệ MRC sẽ phân tích câu hỏi cùng ngữ cảnh bài đọc được truy xuất để tìm ra câu trả lời chính xác. Cuối cùng, văn bản câu trả lời đi qua phân hệ TTS để tổng hợp thành giọng nói tự nhiên và phát lại cho người dùng.  
-  > Điểm đặc biệt trong kiến trúc của nhóm là Cơ chế Fallback Đa Tầng: ở từng phân hệ, nhóm đều thiết kế ít nhất một phương án dự phòng cục bộ. Nếu mô hình sinh văn bản ViT5 chưa kịp nạp vào RAM, ChoiceRanker sẽ lập tức xử lý; nếu kết nối mạng của Edge-TTS bị ngắt, Matcha-TTS hoặc VITS chạy cục bộ sẽ ngay lập tức thay thế. Nhờ vậy, hệ thống đạt độ tin cậy tuyệt đối trong mọi điều kiện vận hành."
+  > Điểm đặc biệt trong kiến trúc của nhóm là Cơ chế Fallback Đa Tầng: ở từng phân hệ, nhóm đều thiết kế ít nhất một phương án dự phòng cục bộ. Nếu chưa có checkpoint ViT5, Lexical Baseline sẽ lập tức trích xuất câu trả lời; nếu kết nối mạng của Edge-TTS bị ngắt, Matcha-TTS hoặc VITS chạy cục bộ sẽ ngay lập tức thay thế. Nhờ vậy, hệ thống đạt độ tin cậy tuyệt đối trong mọi điều kiện vận hành."
 
 ---
 
@@ -280,25 +280,24 @@
 
 ---
 
-### SLIDE 12: PHÂN HỆ MRC - MÔ HÌNH CHOICERANKER
+### SLIDE 12: RETRIEVAL - KHO TRI THỨC HAI TẦNG CHO RAG
 * **Thời lượng:** 1 phút 30 giây (15:30 - 17:00)
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
-  * **Kiến trúc mô hình ChoiceRanker (Trắc nghiệm 4 lựa chọn):**
-    * Không chỉ dựa vào khớp từ đơn thuần, ChoiceRanker xây dựng một không gian đặc trưng đa chiều giữa Ngữ cảnh (Passage), Câu hỏi (Query) và từng Phương án lựa chọn (Option).
-  * **Kỹ nghệ trích xuất Đặc trưng (Feature Engineering):**
-    1. *Word & Char n-gram TF-IDF similarity:* Điểm tương đồng cosine giữa Option và Passage.
-    2. *Query-Option Alignment:* Mức độ giao thoa từ vựng giữa câu hỏi và phương án.
-    3. *Length Ratio & Exact Phrase Match:* Tỷ lệ chiều dài tương đối và mức độ khớp cụm từ chính xác trong đoạn văn.
-  * **Bộ phân loại tối ưu: Logistic Regression ($C=10$):**
-    * Đạt độ chính xác **51.95%** trên tập Dev (293/564 câu đúng).
-    * So sánh với Baseline: Vượt trội hơn Lexical Match Baseline (**43.62%**) tới **+8.33%**, và gấp hơn **2 lần** so với Random Guessing (**25.18%**).
-    * Thời gian suy luận: **2.3 mili-giây / câu hỏi** – tốc độ gần như tức thời.
+  * **Tầng 1 - Kho chuyên biệt:** 5.869 đoạn văn (passages) từ ViMMRC + ViQuAD, chỉ mục BM25 ($k_1=2.1$, $b=1.0$, bigram boost).
+  * **Tầng 2 - Wikipedia tiếng Việt:** 1,48 triệu chunk (mỗi chunk ≤ 800 ký tự), chỉ mục `bm25s` chia shard, nạp bằng mmap, tiêu tốn khoảng 760 MB RAM.
+  * **Cơ chế định tuyến (Routing):** dùng kết quả Wikipedia khi điểm Wikipedia > 0,5 × điểm tầng 1 (ngưỡng được tinh chỉnh trên tập dev).
+  * **Kết quả trên tập test 2.545 câu hỏi:**
+    * Tổng thể: **R@1 71,1%**, **R@5 85,9%**.
+    * ViQuAD: R@1 73,2% / R@5 88,9%; ViMMRC: R@1 59,4% / R@5 69,2%.
+    * Thời gian truy xuất: khoảng **35 ms / câu hỏi** trên CPU.
+  * **Đã thử nhưng không áp dụng:** reranker `bge-reranker-v2-m3` tăng +1,5 R@1 nhưng mất khoảng 1 giây / câu hỏi nên không được đưa vào hệ thống.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Ở phân hệ Đọc hiểu máy MRC, nhóm tiếp cận theo hai nhánh bài toán: đọc hiểu trắc nghiệm và đọc hiểu tự luận mở.  
-  > Đối với bài toán trắc nghiệm chuẩn ViMMRC, em đã phát triển mô hình **ChoiceRanker**. Thay vì áp dụng một mô hình nơ-ron quá cồng kềnh khó chạy CPU, ChoiceRanker sử dụng kỹ nghệ đặc trưng ma trận đa tầng: trích xuất độ tương đồng TF-IDF n-gram từ ngữ và ký tự, tỷ lệ bao phủ từ vựng giữa phương án và đoạn văn, cùng tỷ lệ khớp cụm từ chính xác.  
-  > Vector đặc trưng này sau đó được chuẩn hóa và đưa qua bộ phân loại Logistic Regression với siêu tham số điều chuẩn $C=10$.  
-  > Trên tập Dev 564 câu hỏi, ChoiceRanker đạt độ chính xác **51.95%** (293 câu đúng). Để Thầy Cô dễ hình dung: phương pháp chọn ngẫu nhiên chỉ đạt 25.18%, và phương pháp đếm từ khóa trùng khớp chỉ đạt 43.62%. ChoiceRanker đã vượt baseline từ khóa tới 8.33% với thời gian tính toán chỉ mất vỏn vẹn 2.3 mili-giây, cực kỳ thích hợp làm engine chính chạy offline ổn định."
+  > "Để hệ thống trả lời được câu hỏi tự do chứ không chỉ các bài đọc có sẵn, nhóm xây dựng kho tri thức hai tầng cho RAG.  
+  > Tầng thứ nhất gồm 5.869 đoạn văn từ ViMMRC và ViQuAD, dùng BM25 với cấu hình đã tinh chỉnh và bigram boost. Tầng thứ hai là 1,48 triệu chunk Wikipedia tiếng Việt, mỗi chunk tối đa 800 ký tự, được lập chỉ mục bằng bm25s chia shard và nạp qua mmap nên chỉ tốn khoảng 760 MB RAM.  
+  > Hệ thống dùng Wikipedia khi điểm Wikipedia lớn hơn 0,5 lần điểm của tầng thứ nhất; ngưỡng này được tinh chỉnh trên tập dev.  
+  > Trên tập test 2.545 câu hỏi, Recall@1 đạt 71,1% và Recall@5 đạt 85,9%. Riêng ViQuAD là 73,2% và 88,9%, còn ViMMRC là 59,4% và 69,2%. Thời gian truy xuất khoảng 35 mili-giây mỗi câu hỏi trên CPU.  
+  > Nhóm cũng đã thử reranker bge-reranker-v2-m3: Recall@1 tăng thêm 1,5 điểm nhưng mất khoảng 1 giây mỗi câu hỏi, nên nhóm quyết định không áp dụng."
 
 ---
 
@@ -308,7 +307,8 @@
 * **Nội dung hiển thị:**
   * **Mô hình Seq2Seq ViT5 (`VietAI/vit5-base`):**
     * Kiến trúc Transformer T5 được tiền huấn luyện chuyên sâu cho tiếng Việt bởi VietAI.
-    * Giải quyết bài toán câu hỏi tự luận mở (Generative QA): người dùng hỏi tự do không có sẵn 4 phương án.
+    * Giải quyết bài toán hỏi - đáp tự do (Generative QA): ViT5 (`vit5-combined-cont`) sinh câu trả lời từ đoạn văn đã truy xuất.
+    * Kết quả trên tập test dữ liệu kết hợp: **EM 41,05**, **F1 66,55**. Kiểm thử end-to-end (truy xuất rồi đọc hiểu): **F1 53,9**; khi dùng đoạn văn đúng (gold passage): **F1 68,6**.
   * **Vấn đề Giới hạn Độ dài Ngữ cảnh (512 Token Ceiling):**
     * Bài đọc ViMMRC trung bình 385 từ, nhiều bài dài 800 - 1.200 từ $\rightarrow$ vượt quá giới hạn 512 subword tokens của ViT5.
     * Cắt cụt ngây thơ (naive truncation) ở đầu hoặc đuôi sẽ làm mất đoạn văn chứa đáp án.
@@ -318,7 +318,7 @@
     * Ghép các Chunks có điểm số cao nhất lại với nhau cho đến khi tiệm cận ngưỡng 450 tokens.
     * Đảm bảo thông tin bằng chứng luôn hiện diện trong cửa sổ ngữ cảnh đầu vào của ViT5.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Bên cạnh ChoiceRanker, để hệ thống có khả năng trả lời các câu hỏi tự luận mở khi người dùng không cung cấp 4 phương án trắc nghiệm, nhóm đã tích hợp mô hình **ViT5-base** của VietAI.  
+  > "Sau bước truy xuất, nhóm tích hợp mô hình **ViT5** của VietAI (bản `vit5-combined-cont`) để sinh câu trả lời tự do. Trên tập test dữ liệu kết hợp, mô hình đạt EM 41,05 và F1 66,55; khi chạy end-to-end từ truy xuất đến đọc hiểu, F1 là 53,9, còn với đoạn văn đúng thì F1 đạt 68,6.  
   > Tuy nhiên, một trở ngại kỹ thuật lớn xuất hiện: ViT5 có giới hạn đầu vào cố định là 512 token. Trong khi đó, rất nhiều bài đọc của ViMMRC có độ dài lên tới 800 đến 1.200 từ. Nếu chúng ta chỉ đơn giản cắt lấy 512 token đầu tiên của bài đọc, rất có thể đoạn văn chứa câu trả lời nằm ở cuối bài sẽ bị mất hoàn toàn.  
   > Để khắc phục, em đã xây dựng module `context_selection`: giải thuật sẽ tự động phân tách bài đọc thành các câu độc lập, chấm điểm mức độ liên quan giữa từng câu với câu hỏi của người dùng, sau đó trích xuất và sắp xếp lại các câu giàu thông tin nhất thành một đoạn ngữ cảnh cô đọng dưới 450 tokens. Nhờ vậy, ViT5 luôn tiếp nhận được trọn vẹn bằng chứng cần thiết để sinh ra câu trả lời chính xác."
 
@@ -492,14 +492,14 @@
     * **55 / 55 Bài kiểm thử tự động ĐẠT 100% (Passed)** trong 14.52 giây:
       * 14 tests: Phân hệ Chuẩn hóa Text Normalizer tiếng Việt.
       * 10 tests: Phân hệ Truy xuất BM25, Tokenizer và Lập chỉ mục.
-      * 12 tests: Phân hệ Đọc hiểu ChoiceRanker, Logistic Regression và ViT5.
+      * 12 tests: Dữ liệu MRC, metric EM/F1, ViT5 context chunking.
       * 11 tests: Phân hệ TTS Matcha-TTS, VITS và Fallback Logic.
       * 8 tests: Phân hệ STT Audio Conversion và Server API Endpoints.
     * Đảm bảo tính toàn vẹn (Integrity), không bị hồi quy (Zero Regression) khi hợp nhất mã nguồn giữa các thành viên.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Thưa Thầy Cô, một đồ án công nghệ thông tin chất lượng không chỉ nằm ở thuật toán mà còn phải thể hiện qua tính chuẩn mực trong kỹ nghệ phần mềm. Nhóm đã thiết lập bộ kiểm thử tự động toàn diện bằng pytest bao phủ từ mức độ hàm xử lý dữ liệu cho đến các API tích hợp cuối cùng.  
   > Trước khi đóng gói phiên bản chính thức, toàn bộ **55 trên 55 bài kiểm thử** đều vượt qua thành công với tỷ lệ đạt 100%.  
-  > Bộ test này kiểm tra chi tiết từ việc chuẩn hóa dấu câu, khả năng truy xuất chính xác của BM25, khả năng phân loại của ChoiceRanker, cho đến tính chịu lỗi của cơ chế Fallback khi các dịch vụ bên ngoài bị ngắt. Điều này đảm bảo hệ thống có độ tin cậy rất cao và không bao giờ xảy ra lỗi hồi quy khi tích hợp các nhánh mã nguồn của các thành viên."
+  > Bộ test này kiểm tra chi tiết từ việc chuẩn hóa dấu câu, khả năng truy xuất chính xác của BM25, tính đúng đắn của metric EM/F1 và ViT5 context chunking, cho đến tính chịu lỗi của cơ chế Fallback khi các dịch vụ bên ngoài bị ngắt. Điều này đảm bảo hệ thống có độ tin cậy rất cao và không bao giờ xảy ra lỗi hồi quy khi tích hợp các nhánh mã nguồn của các thành viên."
 
 ---
 
@@ -508,18 +508,18 @@
 * **Người trình bày:** Cả Nhóm (Thao tác màn hình thực tế)
 * **Nội dung hiển thị:**
   * **Kịch bản Demo trực tiếp trên giao diện Web (`http://localhost:8090`):**
-    * **Bước 1 (Voice Input):** Bấm micro và đặt câu hỏi âm thanh: *"Thủ đô của Việt Nam là gì?"* kèm 4 lựa chọn: *A. Huế, B. Hà Nội, C. Đà Nẵng, D. Cần Thơ*.
+    * **Bước 1 (Voice Input):** Bấm micro và đặt câu hỏi âm thanh: *"Thủ đô của Việt Nam là gì?"* (câu hỏi tự do, không kèm phương án).
     * **Bước 2 (STT Processing):** Faster-Whisper nhận dạng chính xác chuỗi văn bản tiếng Việt có dấu trong 0.42 giây.
     * **Bước 3 (Retrieval Processing):** BM25 quét 552 bài đọc và trả về đúng bài đọc mã `train:0288` (Văn Miếu - Quốc Tử Giám) với điểm số BM25 là 26.97 trong 15 mili-giây.
-    * **Bước 4 (MRC Processing):** ChoiceRanker tính toán ma trận tương quan đặc trưng: Phương án B (Hà Nội) đạt xác suất cao nhất 0.807 trong 3 mili-giây.
-    * **Bước 5 (TTS Processing):** Text Normalizer định dạng thành *"Đáp án B: Hà Nội"* và Matcha-TTS / Edge-TTS tổng hợp thành âm thanh trong 0.35 giây.
+    * **Bước 4 (MRC Processing):** ViT5 đọc đoạn văn đã truy xuất và sinh ra câu trả lời *"Hà Nội"*.
+    * **Bước 5 (TTS Processing):** Text Normalizer chuẩn hóa câu trả lời *"Hà Nội"* và Matcha-TTS / Edge-TTS tổng hợp thành âm thanh trong 0.35 giây.
     * **Bước 6 (Audio Output):** Trình duyệt tự động phát giọng nói câu trả lời rõ ràng, truyền cảm.
   * **Tổng thời gian xử lý toàn pipeline:** **1.85 giây** (Hoàn toàn đáp ứng ngưỡng thời gian thực).
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Sau đây, nhóm xin kính mời Thầy Cô và các bạn cùng theo dõi kịch bản vận hành thực tế của hệ thống được quay trực tiếp trên giao diện Web:  
-  > Khi người dùng bấm giữ nút micro và hỏi: 'Thủ đô của Việt Nam là gì? Phương án A Huế, Phương án B Hà Nội, Phương án C Đà Nẵng, Phương án D Cần Thơ'.  
+  > Khi người dùng bấm giữ nút micro và hỏi: 'Thủ đô của Việt Nam là gì?'.  
   > Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản chỉ sau 0.42 giây. Bộ truy xuất BM25 lập tức quét trong 552 văn bản và định vị chính xác bài đọc số 288 về Văn Miếu - Quốc Tử Giám với điểm khớp 26.97.  
-  > Tiếp đó, mô hình ChoiceRanker phân tích bài đọc và chỉ ra phương án B Hà Nội có độ tin cậy vượt trội đạt 80.7%. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.  
+  > Tiếp đó, mô hình ViT5 đọc đoạn văn vừa truy xuất và sinh ra câu trả lời 'Hà Nội'. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.  
   > Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời chỉ diễn ra trong vòng 1.85 giây. Hệ thống đã chứng minh sự trơn tru, chuẩn xác và tính khả thi ứng dụng rất cao."
 
 ---

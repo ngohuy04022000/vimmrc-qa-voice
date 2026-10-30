@@ -81,7 +81,7 @@ python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đ
 ## 2. Dataset
 
 - **Nguồn**: [uitnlp/vimmrc2.0](https://huggingface.co/datasets/uitnlp/vimmrc2.0)
-- **Nội dung**: đoạn văn (passage) tiếng Việt + câu hỏi + các phương án trả lời (trắc nghiệm 4 đáp án) + đáp án đúng. Dự án dùng **văn bản của phương án đúng** làm câu trả lời tự do; không dùng các phương án khi trả lời.
+- **Nội dung**: ViMMRC gốc là dạng trắc nghiệm; dự án chuyển sang dạng hỏi - đáp tự do (đoạn văn + câu hỏi + câu trả lời dạng văn bản, lấy từ văn bản của đáp án đúng) và bổ sung thêm ViQuAD.
 - **Vai trò**: dùng để huấn luyện/đánh giá mô hình đọc hiểu (MRC) trả lời câu hỏi dựa trên ngữ cảnh.
 
 ## 3. Sơ đồ kiến trúc tổng thể

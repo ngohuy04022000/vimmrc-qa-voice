@@ -19,6 +19,7 @@ from mrc_data import load_articles, normalize_text, token_f1  # noqa: E402
 from retrieval_client import Retriever  # noqa: E402
 
 POOL = 5
+MARGINS = (0.1, 0.25, 0.5, 0.75, 1.0)
 
 
 def main():
@@ -26,6 +27,7 @@ def main():
     ap.add_argument("--n", type=int, default=500)
     ap.add_argument("--checkpoint", type=Path, default=ROOT / "mrc-model_Huy/checkpoints/vit5-combined-cont")
     ap.add_argument("--output", type=Path, default=ROOT / "reports/dense_routing_e2e.json")
+    ap.add_argument("--reranker", help="cross-encoder (e.g. BAAI/bge-reranker-v2-m3) scoring both tiers together")
     args = ap.parse_args()
 
     kb = Retriever.load(ROOT / "data/kb_index.json")
@@ -49,9 +51,14 @@ def main():
     set_b = set_b[:args.n]
 
     reader = Reader(args.checkpoint)
+    ce = None
+    if args.reranker:
+        from sentence_transformers import CrossEncoder
+        ce = CrossEncoder(args.reranker, max_length=512, device="cpu")
     rules = ["bm25_ratio_0.4", "wiki_dense_top1"] + [f"pooled_cos_k{k}" for k in (1, 3, 5)] \
         + [f"pooled_cos_k{k}_kbmargin" for k in (1, 3)] \
-        + [f"ratio_{r}_then_wiki_dense" for r in (0.4, 0.3, 0.2)] + [f"ratio_{r}_then_wiki_bestcos" for r in (0.4, 0.3, 0.2)]
+        + [f"ratio_{r}_then_wiki_dense" for r in (0.4, 0.3, 0.2)] + [f"ratio_{r}_then_wiki_bestcos" for r in (0.4, 0.3, 0.2)] \
+        + (["rerank_kb1_wd1", "rerank_pool3"] + [f"rerank_pool3_kbmargin{m}" for m in MARGINS] if args.reranker else [])
     report = {}
     for name, rows, tier1 in (("A_in_kb", set_a, kb), ("B_open", set_b, kb_b)):
         f1 = {r: 0.0 for r in rules}
@@ -86,6 +93,16 @@ def main():
                 kb1 = k[0] if k else None
                 picks[f"ratio_{r}_then_wiki_dense"] = (wd[0] if wd else None) if go_wiki else kb1
                 picks[f"ratio_{r}_then_wiki_bestcos"] = wiki_best if go_wiki else kb1
+            if ce:
+                cand = list({h["id"]: h for h in [dict(x, src="kb") for x in k[:3]] + [dict(x, src="wb") for x in wb[:3]]
+                             + [dict(x, src="wd") for x in wd[:3]]}.values())
+                for h, s in zip(cand, ce.predict([(q, h["passage"]) for h in cand], batch_size=16)):
+                    h["ce"] = float(s)
+                pair = [h for h in cand if (k and h["id"] == k[0]["id"]) or (wd and h["id"] == wd[0]["id"])]
+                picks["rerank_kb1_wd1"] = max(pair, key=lambda h: h["ce"], default=None)
+                picks["rerank_pool3"] = max(cand, key=lambda h: h["ce"], default=None)
+                for m in MARGINS:
+                    picks[f"rerank_pool3_kbmargin{m}"] = max(cand, key=lambda h: h["ce"] + (m if h["src"] == "kb" else 0), default=None)
             for rule, h in picks.items():
                 if not h:
                     continue

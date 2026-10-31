@@ -91,7 +91,7 @@
     $$\text{Micro (Audio)} \xrightarrow{\text{STT}} \text{Văn bản câu hỏi} \xrightarrow{\text{Retrieval}} \text{Đoạn văn liên quan} \xrightarrow{\text{MRC}} \text{Đáp án} \xrightarrow{\text{TTS}} \text{Loa (Audio)}$$
   * **4 Phân hệ nòng cốt:**
     1. **STT Module:** Faster-Whisper trích xuất câu hỏi từ audio 16kHz.
-    2. **Retrieval Module:** BM25 hai tầng (5.869 đoạn văn ViMMRC + ViQuAD và 1,48 triệu chunk Wikipedia tiếng Việt) truy xuất top đoạn văn.
+    2. **Retrieval Module:** Truy xuất hai tầng (5.869 đoạn văn ViMMRC + ViQuAD và 1,48 triệu chunk Wikipedia tiếng Việt) bằng BM25 + dense, reranker bge-reranker-v2-m3 chọn đoạn văn tốt nhất.
     3. **MRC Module:** ViT5 Transformer sinh câu trả lời tự do từ đoạn văn truy xuất (có Lexical Baseline dự phòng).
     4. **TTS Module:** Matcha-TTS (Conditional Flow Matching) & VITS (MMS) tổng hợp âm thanh giọng nói.
   * **Cơ chế dự phòng (Resilience Architecture):** Fallback tự động đa tầng đảm bảo hệ thống không bao giờ gặp lỗi gián đoạn.
@@ -126,19 +126,18 @@
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị trên Slide:**
   * **Bài toán:** Trong kịch bản thực tế, người dùng chỉ đặt câu hỏi mà không cung cấp bài đọc. Hệ thống phải tự tìm bài đọc liên quan nhất trong toàn bộ kho tài liệu.
-  * **Giải thuật BM25 Tối ưu hóa (Optimized BM25):**
-    * **Kho tri thức hai tầng:** tầng 1 gồm **5.869 đoạn văn** từ ViMMRC + ViQuAD; tầng 2 gồm **1,48 triệu chunk Wikipedia tiếng Việt** (≤ 800 ký tự, `bm25s` chia shard, mmap, ~760 MB RAM).
-    * Tinh chỉnh siêu tham số thực nghiệm: $k_1 = 2.1$ (độ bão hòa tần suất từ), $b = 1.0$ (chuẩn hóa độ dài bài đọc).
-    * Bổ sung cơ chế **Bigram Phrase Boost**: Ưu tiên các đoạn văn chứa cụm từ ghép có thứ tự chính xác.
-    * **Định tuyến:** dùng Wikipedia khi điểm Wikipedia > 0,5 × điểm tầng 1 (tinh chỉnh trên dev).
-  * **Kết quả đo lường trên tập test (2.545 câu hỏi):**
-    * **Recall@1:** **71,1%** (ViQuAD 73,2%; ViMMRC 59,4%).
-    * **Recall@5:** **85,9%** (ViQuAD 88,9%; ViMMRC 69,2%).
-    * **Tốc độ:** khoảng 35 ms / câu hỏi trên CPU. Reranker `bge-reranker-v2-m3` tăng +1,5 R@1 nhưng ~1 giây / câu hỏi nên không áp dụng.
+  * **Truy xuất lai BM25 + Dense + Reranker:**
+    * **Kho tri thức hai tầng:** tầng 1 gồm **5.869 đoạn văn** từ ViMMRC + ViQuAD (BM25 $k_1 = 2.1$, $b = 1.0$, **Bigram Phrase Boost** +0,4); tầng 2 gồm **1,48 triệu chunk Wikipedia tiếng Việt** với cả chỉ mục BM25 (`bm25s` chia shard) và chỉ mục vector dense (`multilingual-e5-small`, 384 chiều, float16 mmap ~1,1 GB).
+    * **Ứng viên:** top-3 BM25 tầng 1 + top-3 BM25 Wikipedia + top-3 dense Wikipedia (≤ 9 ứng viên).
+    * **Reranker** `bge-reranker-v2-m3` (cross-encoder) chấm chung tất cả; đoạn tầng 1 được cộng +0,25, điểm cao nhất thắng.
+  * **Kết quả đo lường:**
+    * **BM25 hai tầng (trước khi thêm reranker), test 2.545 câu:** Recall@1 **71,1%** (ViQuAD 73,2%; ViMMRC 59,4%); Recall@5 **85,9%** (ViQuAD 88,9%; ViMMRC 69,2%).
+    * **So sánh pipeline cuối (answer F1, 200 câu có trong kho / 200 câu kiến thức mở):** BM25 thuần 58,0 / 15,4; BM25 + dense Wikipedia 57,9 / 16,9; **reranker + ưu tiên kho +0,25 (đang dùng) 60,7 / 24,3**. Mức cộng được chọn trên chính các câu này nên hơi lạc quan.
+    * **Tốc độ:** truy xuất + reranker ~6 giây / câu trên CPU Docker; có thể tắt reranker (`KB_RERANKER=`) để truy xuất còn ~0,1–1,7 giây với độ chính xác thấp hơn.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Tiếp theo là phân hệ Truy xuất Đoạn văn do em phụ trách. Khi người dùng hỏi một câu như 'Ai là tác giả của Truyện Kiều?', hệ thống phải tìm ra bài đọc tương ứng trong hàng trăm văn bản.  
-  > Em xây dựng kho tri thức hai tầng bằng thuật toán BM25 nâng cao: tầng một là 5.869 đoạn văn từ ViMMRC và ViQuAD, tầng hai là 1,48 triệu chunk Wikipedia tiếng Việt. Thay vì dùng tham số mặc định của Lucene, em tinh chỉnh $k_1=2.1$ và $b=1.0$, kết hợp Bigram Phrase Boost; hệ thống chuyển sang Wikipedia khi điểm Wikipedia lớn hơn 0,5 lần điểm tầng một.  
-  > Kết quả trên tập test 2.545 câu hỏi cho thấy: Recall@1 đạt 71,1% và Recall@5 đạt 85,9%, với tốc độ khoảng 35 mili-giây mỗi câu hỏi trên CPU. Điều này chứng minh BM25 hai tầng đáp ứng tốt vai trò cung cấp ngữ cảnh cho mô hình đọc hiểu."
+  > Em xây dựng kho tri thức hai tầng: tầng một là 5.869 đoạn văn từ ViMMRC và ViQuAD dùng BM25 tinh chỉnh $k_1=2.1$, $b=1.0$ cùng Bigram Phrase Boost; tầng hai là 1,48 triệu chunk Wikipedia tiếng Việt, có cả chỉ mục BM25 và chỉ mục vector dense multilingual-e5-small. Với mỗi câu hỏi, hệ thống lấy top 3 từ mỗi nguồn, tối đa 9 ứng viên, rồi reranker bge-reranker-v2-m3 chấm chung; đoạn tầng một được cộng thêm 0,25 và đoạn điểm cao nhất thắng.  
+  > Với BM25 hai tầng, trước khi thêm reranker, trên tập test 2.545 câu Recall@1 đạt 71,1% và Recall@5 đạt 85,9%. Ở pipeline cuối, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4 lên 24,3 và trên câu có đoạn trong kho từ 58,0 lên 60,7, dù mức cộng 0,25 được chọn trên chính các câu này nên hơi lạc quan. Truy xuất cùng reranker mất khoảng 6 giây mỗi câu trên CPU."
 
 ---
 
@@ -215,7 +214,7 @@
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Về khía cạnh kỹ nghệ phần mềm, nhóm đã tích hợp toàn bộ các phân hệ thành một khối thống nhất:  
   > Phía Frontend, em xây dựng ứng dụng Angular với giao diện trực quan, có biểu đồ trạng thái thể hiện rõ hệ thống đang chạy ở bước nào trong pipeline. Người dùng có thể bấm mic nói hoặc chọn bài đọc từ thư viện.  
-  > Toàn bộ dự án được đóng gói thành container Docker đa tầng: tự build giao diện web và khởi chạy server FastAPI chỉ bằng đúng một lệnh `docker compose up -d`. Đồ án đạt tỷ lệ kiểm thử thành công 100% với 55 trên 55 test cases tự động, đảm bảo tính ổn định và khả năng tái lập cao nhất."
+  > Toàn bộ dự án được đóng gói thành container Docker đa tầng: tự build giao diện web và khởi chạy server FastAPI chỉ bằng đúng một lệnh `docker compose up -d`. Đồ án đạt tỷ lệ kiểm thử thành công 100% với 54 trên 54 test cases tự động, đảm bảo tính ổn định và khả năng tái lập cao nhất."
 
 ---
 
@@ -227,14 +226,14 @@
     * **Đầu vào giọng nói:** Người dùng bấm micro và hỏi: *"Ai là tác giả của Truyện Kiều?"* (câu hỏi tự do, không kèm phương án).
   * **Quy trình xử lý nội bộ:**
     1. **STT:** Whisper nhận dạng chính xác câu hỏi tiếng Việt có dấu.
-    2. **Retrieval:** BM25 tự động quét kho tri thức hai tầng và truy xuất đoạn văn liên quan.
+    2. **Retrieval:** BM25 + dense lấy ứng viên từ kho tri thức hai tầng, reranker chọn đoạn Wikipedia "Truyện Kiều".
     3. **MRC:** ViT5 đọc đoạn văn đã truy xuất và sinh ra câu trả lời *"Nguyễn Du"*.
     4. **TTS:** Normalizer chuẩn hóa câu trả lời và Edge-TTS/Matcha-TTS tổng hợp thành âm thanh MP3/WAV.
   * **Đầu ra:** Trình duyệt tự động phát câu trả lời giọng nói truyền cảm cho người dùng nghe.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Sau đây, nhóm xin kính mời Thầy/Cô và các bạn cùng theo dõi kịch bản chạy thử nghiệm thực tế của hệ thống.  
-  > Khi người dùng bấm nút thu âm và đặt câu hỏi: 'Ai là tác giả của Truyện Kiều?', phân hệ STT ngay lập tức chuyển đổi thành văn bản. Bộ truy xuất BM25 lập tức quét kho tri thức hai tầng và trả về đoạn văn liên quan.  
-  > Ngay sau đó, ViT5 đọc đoạn văn vừa truy xuất và sinh ra câu trả lời 'Nguyễn Du'. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra câu trả lời bằng giọng đọc nơ-ron tự nhiên. Toàn bộ chu trình từ lúc người dùng dứt lời đến khi nghe câu trả lời mất khoảng 6 giây khi chạy trên CPU."
+  > Khi người dùng bấm nút thu âm và đặt câu hỏi: 'Ai là tác giả của Truyện Kiều?', phân hệ STT ngay lập tức chuyển đổi thành văn bản. Bộ truy xuất lấy ứng viên từ BM25 và dense, rồi reranker chọn đoạn Wikipedia về Truyện Kiều.  
+  > Ngay sau đó, ViT5 đọc đoạn văn vừa truy xuất và sinh ra câu trả lời 'Nguyễn Du'. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra câu trả lời bằng giọng đọc nơ-ron tự nhiên. Toàn bộ chu trình từ lúc người dùng dứt lời đến khi nghe câu trả lời mất khoảng 12 giây khi chạy trên CPU Docker (STT ~3 giây, truy xuất + reranker ~6 giây, ViT5 ~1,4 giây, TTS ~1,3 giây); nếu tắt reranker thì còn khoảng 6 giây nhưng độ chính xác thấp hơn. Câu 'Sông dài nhất thế giới là sông nào?' cũng trả lời đúng 'Sông Amazon' trong Docker."
 
 ---
 
@@ -247,12 +246,14 @@
     * Ứng dụng thành công kỹ thuật Flow Matching (Matcha-TTS) và frontend tách thanh điệu cho tiếng Việt.
     * Tích hợp kiến trúc phân tán linh hoạt, chạy được cả offline trên CPU thông thường và triển khai nhanh qua Docker.
   * **Hạn chế hiện tại:**
-    * BM25 là phương pháp so khớp từ khóa lexical, chưa nắm bắt được trọn vẹn ngữ nghĩa tiềm ẩn (semantic) đối với các câu hỏi phức tạp.
+    * Một số câu hỏi kiến thức chung vẫn sai, ví dụ "Thủ đô của Việt Nam là gì?" trả về "Sài Gòn" vì đoạn ViQuAD tầng 1 về TP. Hồ Chí Minh thắng; F1 kiến thức mở mới ~24.
+    * Độ trễ ~12 giây/câu trên CPU Docker do reranker chiếm ~6 giây.
     * Checkpoint ViT5 cần tài nguyên GPU lớn hơn để huấn luyện hội tụ hoàn toàn số epoch cao.
   * **Hướng phát triển:**
-    * Nâng cấp bộ truy xuất sang dạng lai kết hợp Dense Retrieval (Bi-Encoder embeddings) và Reranker.
-    * Tích hợp các mô hình ngôn ngữ lớn (LLMs tiếng Việt) để hỗ trợ hội thoại đa lượt (multi-turn dialog).
+    * Chạy GPU để giảm độ trễ.
+    * Tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung.
+    * Thử LLM tiếng Việt để sinh câu trả lời.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Tóm lại, qua đề tài này, nhóm chúng em đã giải quyết trọn vẹn bài toán tích hợp giữa Nhận dạng giọng nói, Truy xuất văn bản, Đọc hiểu máy và Tổng hợp giọng nói tiếng Việt với mã nguồn mở và khả năng chạy cục bộ hiệu quả.  
-  > Trong tương lai, nhóm định hướng sẽ nâng cấp bộ tìm kiếm sang kiến trúc lai Dense Retrieval kết hợp mô hình nhúng ngữ nghĩa, đồng thời mở rộng khả năng đối thoại đa lượt với người dùng.  
+  > Trong tương lai, nhóm định hướng sẽ chạy hệ thống trên GPU để giảm độ trễ, tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung, đồng thời thử LLM tiếng Việt để sinh câu trả lời.  
   > Nhóm chúng em xin chân thành cảm ơn sự lắng nghe và chỉ dẫn quý báu của Thầy/Cô. Rất mong nhận được những câu hỏi và đóng góp ý kiến từ Thầy/Cô và các bạn! Xin trân trọng cảm ơn!"

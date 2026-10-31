@@ -59,7 +59,7 @@ builder.add_title_slide(
 # ==========================================
 s2_notes = """Để đạt được mục tiêu đó, nhóm đã thiết kế kiến trúc pipeline 4 chặng đồng bộ:
 Chặng 1: Giọng nói từ micro được phân hệ STT Faster-Whisper chuyển thành văn bản, có tích hợp bộ lọc VAD cắt nhiễu môi trường.
-Chặng 2: Văn bản câu hỏi được đưa vào bộ truy xuất BM25 để tìm ra đoạn văn liên quan nhất trong kho tri thức hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt.
+Chặng 2: Văn bản câu hỏi được đưa vào bộ truy xuất lai (BM25 + dense) để lấy tối đa 9 ứng viên trong kho tri thức hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt, rồi reranker bge-reranker-v2-m3 chọn ra đoạn văn liên quan nhất.
 Chặng 3: Mô hình Đọc hiểu tiếp nhận cặp bài đọc và câu hỏi để suy luận đáp án chính xác.
 Chặng 4: Đáp án dạng chữ được đưa qua bộ tổng hợp tiếng nói tiên tiến Matcha-TTS để tái tạo âm thanh tự nhiên phát qua loa.
 Toàn bộ pipeline được trang bị cơ chế dự phòng tự động: nếu một nhánh gặp sự cố, hệ thống tự chuyển fallback ngay mà không bao giờ làm gián đoạn trải nghiệm người dùng."""
@@ -75,7 +75,7 @@ s2 = builder.add_content_slide(
 # 4 Pipeline Boxes
 steps = [
     ("CHẶNG 1: STT", "Faster-Whisper Small", "CTranslate2 + INT8", "VAD cắt khoảng lặng", "Nhận dạng WAV 16kHz", PRIMARY_BLUE),
-    ("CHẶNG 2: RETRIEVAL", "BM25 Tinh chỉnh", "Kho 5.869 đoạn + Wikipedia", "Bigram Phrase Boost", "Test R@1: 71.1%", TEAL),
+    ("CHẶNG 2: RETRIEVAL", "BM25 + Dense + Reranker", "Kho 5.869 đoạn + Wikipedia", "bge-reranker-v2-m3", "F1 kiến thức mở: 15,4 → 24,3", TEAL),
     ("CHẶNG 3: MRC", "ViT5-base fine-tune", "Sinh câu trả lời tự do", "Train ViMMRC + ViQuAD2.0", "Test: EM 41.05% | F1 66.55%", TECH_BLUE),
     ("CHẶNG 4: TTS", "Matcha-TTS (OT-CFM)", "10 bước ODE trên CPU", "Frontend vi_tone_v2", "RTF: 0.52 | CER: 1.9%", GREEN)
 ]
@@ -150,10 +150,11 @@ col_h = Inches(5.35)
 # Card 1: Retrieval
 c1, tf1 = builder.add_card(s3, Inches(0.8), col_y, col_w, col_h, title="1. BM25 Tối Ưu Hóa & Bigram Boost", title_color=PRIMARY_BLUE)
 bullets_c1 = [
-    "Kho tri thức hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt (bm25s, chia shard).",
+    "Kho tri thức hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt (BM25 bm25s chia shard + vector dense multilingual-e5-small).",
     "Tinh chỉnh siêu tham số: k1 = 2.1 (độ bão hòa tần suất từ), b = 1.0 (phạt triệt để độ dài thừa).",
     "Bigram Phrase Boost (+0.4): Nhận diện cụm từ ghép liền kề tiếng Việt ('Điện Biên', 'Văn Miếu'), cộng điểm thưởng chuẩn xác.",
-    "Hiệu năng (test 2.545 câu): Recall@1 71,1%, Recall@5 85,9%, khoảng 35 ms mỗi câu."
+    "Top-3 mỗi nguồn (≤9 ứng viên) được reranker bge-reranker-v2-m3 chấm chung, đoạn tầng 1 cộng +0,25.",
+    "BM25 hai tầng (trước khi thêm reranker, test 2.545 câu): Recall@1 71,1%, Recall@5 85,9%. Answer F1 kiến thức mở: 15,4 → 24,3 nhờ reranker."
 ]
 for b in bullets_c1:
     p = tf1.add_paragraph()
@@ -273,10 +274,10 @@ c_demo, tf_demo = builder.add_card(s5, Inches(6.7), Inches(1.5), Inches(5.833), 
 demo_steps = [
     ("1. Giọng nói Đầu vào:", "Người dùng bấm mic hỏi: 'Ai là tác giả của Truyện Kiều?'."),
     ("2. STT (~3s):", "Faster-Whisper nhận dạng chính xác văn bản tiếng Việt có dấu chuẩn xác."),
-    ("3. Retrieval (~35ms):", "BM25 quét kho tri thức hai tầng, tìm đoạn văn liên quan."),
+    ("3. Retrieval + reranker (~6s):", "BM25 + dense lấy ứng viên, reranker chọn đoạn Wikipedia 'Truyện Kiều'."),
     ("4. MRC:", "ViT5 đọc đoạn Wikipedia về Truyện Kiều và sinh câu trả lời 'Nguyễn Du'."),
     ("5. TTS:", "Matcha-TTS chuẩn hóa văn bản và tổng hợp giọng đọc câu trả lời."),
-    ("6. Tổng Độ trễ:", "Khoảng 6 giây trên CPU (STT ~3s, ViT5 ~1.4s, TTS ~1.3s).")
+    ("6. Tổng Độ trễ:", "Khoảng 12 giây trên CPU Docker (STT ~3s, truy xuất + reranker ~6s, ViT5 ~1.4s, TTS ~1.3s); tắt reranker còn ~6 giây.")
 ]
 for title_d, desc_d in demo_steps:
     p = tf_demo.add_paragraph()
@@ -289,7 +290,7 @@ for title_d, desc_d in demo_steps:
 # SLIDE 6: TỔNG KẾT & HƯỚNG PHÁT TRIỂN
 # ==========================================
 s6_notes = """Tóm lại, đồ án của nhóm đã hiện thực hóa thành công một hệ thống Voice Q&A tiếng Việt hoàn chỉnh, nhẹ, chạy được offline trên máy tính cá nhân và làm chủ các kỹ thuật học máy tiên tiến từ Flow Matching đến MRC.
-Trong giai đoạn tiếp theo, nhóm định hướng sẽ nâng cấp bộ tìm kiếm sang dạng lai Dense Retrieval và tích hợp LLMs tiếng Việt để hỗ trợ trò chuyện đa lượt.
+Trong giai đoạn tiếp theo, nhóm định hướng sẽ chạy GPU để giảm độ trễ, tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung, và thử LLM tiếng Việt để sinh câu trả lời.
 Nhóm chúng em xin chân thành cảm ơn sự lắng nghe và chỉ dẫn của Thầy! Nhóm rất mong nhận được những góp ý quý báu từ Thầy để tiếp tục hoàn thiện đồ án."""
 
 s6 = builder.add_content_slide(
@@ -305,7 +306,7 @@ c_achieve, tf_achieve = builder.add_card(s6, Inches(0.8), Inches(1.5), Inches(5.
 achieve_list = [
     "Khép kín chu trình Voice Q&A tiếng Việt đa phương thức hoàn chỉnh đầu tiên dựa trên bộ dữ liệu chuẩn UIT-NLP/ViMMRC 2.0.",
     "Làm chủ và ứng dụng thành công kỹ thuật tiên tiến Flow Matching (Matcha-TTS ICASSP 2024) với frontend vi_tone_v2 tách thanh điệu.",
-    "Tối ưu hóa chạy cục bộ trên CPU thông thường, đạt độ trễ thời gian thực < 2 giây và độc lập với API thương mại đám mây.",
+    "Tối ưu hóa chạy cục bộ trên CPU thông thường, chạy offline hoàn toàn (~12 giây/câu, ~6 giây khi tắt reranker) và độc lập với API thương mại đám mây.",
     "Hoàn thiện sản phẩm Full-stack: Giao diện Web thân thiện, đóng gói Docker tiện lợi và kiểm thử tự động 100%."
 ]
 for item in achieve_list:
@@ -317,8 +318,9 @@ for item in achieve_list:
 
 c_future, tf_future = builder.add_card(s6, Inches(6.7), Inches(1.5), Inches(5.833), Inches(4.1), title="Hướng Phát Triển Tiếp Theo", title_color=AMBER)
 future_list = [
-    "Nâng cấp Hybrid Dense Retrieval: Kết hợp BM25 với mô hình nhúng Bi-Encoder tiếng Việt và Reranker nơ-ron để nắm bắt ngữ nghĩa sâu.",
-    "Tích hợp Large Language Models (LLMs): Thử nghiệm PhoGPT / Vistral để hỗ trợ suy luận đa bước và sinh câu trả lời tự luận phong phú.",
+    "Chạy GPU: Giảm độ trễ (hiện ~12 giây/câu trên CPU Docker).",
+    "Tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung (hiện F1 kiến thức mở ~24; ví dụ 'Thủ đô của Việt Nam' còn trả 'Sài Gòn').",
+    "Thử LLM tiếng Việt (PhoGPT / Vistral) để sinh câu trả lời tự luận phong phú.",
     "Hỗ trợ Đối thoại Đa Lượt (Multi-Turn Dialogue): Bổ sung bộ nhớ ngữ cảnh phiên làm việc để người dùng có thể hỏi nối tiếp tự nhiên.",
     "Ứng dụng thực tiễn: Tích hợp vào Smart Kiosk trường học, hỗ trợ người khiếm thị tra cứu sách giáo khoa và tài liệu học tập."
 ]

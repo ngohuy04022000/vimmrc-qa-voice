@@ -21,7 +21,7 @@ rơi vào đúng một split, tránh model "học vẹt" passage đã thấy ở
 Article lấy từ ViQuAD không có `options`/`answers` (không phải trắc nghiệm) — thay vào đó có
 `answer_texts`: danh sách các câu trả lời tự luận được chấp nhận cho mỗi câu hỏi. `mrc_data.flatten_articles`
 đọc được cả hai dạng và đều trả về hàng `{question, passage, answer}` dạng văn bản tự do.
-Câu hỏi không có đáp án (`is_impossible=True`) trong ViQuAD2.0 bị loại.
+Câu hỏi không có đáp án (`is_impossible=True`) trong ViQuAD2.0 bị loại: 28.454 câu gốc → 21.891 câu còn lại (cộng 5.273 câu ViMMRC = 27.164 câu).
 
 Chạy (cần `huggingface_hub`, `pandas`, `pyarrow` — đã có trong `requirements.txt`):
 
@@ -63,12 +63,12 @@ python train.py --dry-run
 
 Notebook [01_vimmrc_training.ipynb](01_vimmrc_training.ipynb) chạy từ đầu đến cuối với dữ liệu mẫu tự tạo ở `examples/sample_vimmrc.json`. Mặc định `RUN_TRAINING = False`, nên notebook không tải ViT5 và không cần GPU. Để mở notebook qua Jupyter, cài thêm `jupyterlab`; để tạo lại notebook từ `make_notebook.py`, cài `nbformat`. Giữ nguyên notebook cũ `mrc_vimmrc.ipynb` để tham khảo.
 
-## Fine-tune trên GPU/Colab
+## Fine-tune trên GPU/Colab (bộ gộp ViMMRC 2.0 + UIT-ViQuAD2.0, 27.164 câu; train 21.733)
 
 ```powershell
 cd mrc-model_Huy
 pip install -r requirements.txt
-python train.py --data-dir ../data --output-dir checkpoints/vit5-vimmrc
+python train.py --data-dir ../data/combined --output-dir checkpoints/vit5-combined
 ```
 
 Mặc định: `VietAI/vit5-base`, seed 42, ba epoch, batch 1, tích lũy gradient 16, đầu vào tối đa 512 token, đầu ra 64 token. Script báo số đầu vào/đáp án sẽ bị cắt token trước khi huấn luyện. Trainer chọn checkpoint bằng Exact Match trên **dev**; sau đó mới dự đoán **test** và ghi `test_metrics.json`. `DataCollatorForSeq2Seq` đệm nhãn bằng `-100`, nên padding không tham gia loss. Script yêu cầu CUDA, dùng BF16 khi GPU hỗ trợ và FP32 nếu không; không thực hiện full training trên CPU. Có thể đổi các tham số bằng `python train.py --help`.
@@ -89,7 +89,7 @@ python train.py --data-dir ../data/combined --output-dir checkpoints/vit5-combin
 ```python
 from mrc_client import MRCClient, LexicalBaselineClient
 
-client = MRCClient("checkpoints/vit5-combined")  # chỉ sau khi fine-tune xong
+client = MRCClient("checkpoints/vit5-combined-cont")  # chỉ sau khi fine-tune xong
 answer = client.answer_question("Thủ đô của Việt Nam là gì?", "Hà Nội là thủ đô của Việt Nam.")
 
 demo = LexicalBaselineClient()  # chỉ để thử pipeline offline

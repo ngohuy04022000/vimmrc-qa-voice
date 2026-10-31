@@ -31,9 +31,9 @@
     * Các hệ thống Đọc hiểu máy (MRC) hiện nay hầu hết bị bó hẹp ở dạng văn bản gõ phím (text-only).
     * Mục tiêu của nhóm là chuyển đổi bài toán MRC thành chu trình **Hỏi bằng giọng nói $\rightarrow$ Trả lời bằng giọng nói** tự nhiên, chạy cục bộ (riêng tư) trên CPU; đo thực tế ~12 giây/câu trên Docker CPU (~6 giây khi tắt reranker).
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Kính thưa Thầy! Hôm nay, nhóm chúng em xin phép báo cáo nhanh tiến độ và kết quả thực hiện đồ án môn 'Học máy tiên tiến và ứng dụng' với đề tài: **Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0**.  
-  > Nhóm gồm có 3 thành viên: Em là Ngô Trí Huy phụ trách phân hệ Truy xuất và Đọc hiểu; bạn Huỳnh Công Lương phụ trách Nhận dạng giọng nói, Giao diện Web và Docker; và bạn Trương Hoàng Duy phụ trách Tổng hợp giọng nói và Đánh giá âm học.  
-  > Động lực lớn nhất của đề tài xuất phát từ việc: phần lớn các hệ thống đọc hiểu hiện nay chỉ tương tác qua gõ chữ, rất bất tiện trong các tình huống rảnh tay hoặc cho người khiếm thị. Mục tiêu của chúng em là xây dựng một chu trình khép kín: người dùng hỏi trực tiếp bằng giọng nói, hệ thống tự tìm văn bản, đọc hiểu suy luận và phát âm thanh trả lời."
+  > "Kính thưa Thầy, nhóm em báo cáo đồ án môn Học máy tiên tiến và ứng dụng: **Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0**.  
+  > Nhóm có 3 thành viên: em Ngô Trí Huy phụ trách Truy xuất và Đọc hiểu; Huỳnh Công Lương phụ trách Nhận dạng giọng nói, Web và Docker; Trương Hoàng Duy phụ trách Tổng hợp giọng nói.  
+  > Động lực: các hệ thống đọc hiểu hiện nay chủ yếu chỉ gõ chữ, bất tiện khi rảnh tay hoặc cho người khiếm thị. Nhóm xây dựng chu trình khép kín: hỏi bằng giọng nói, hệ thống tự tìm văn bản, suy luận và trả lời bằng giọng nói."
 
 ---
 
@@ -50,12 +50,12 @@
     4. **TTS:** Matcha-TTS (Flow Matching) + VITS + Edge-TTS dự phòng.
   * **Thiết kế chịu lỗi (Fault-Tolerant):** Hệ thống có cơ chế Fallback tự động ở từng chặng, chạy cục bộ trên CPU thông thường mà không cần GPU (Edge-TTS/gTTS dự phòng cần Internet).
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Để đạt được mục tiêu đó, nhóm đã thiết kế kiến trúc pipeline 4 chặng đồng bộ:  
-  > Chặng 1: Giọng nói từ micro được phân hệ STT chuyển thành văn bản bằng Whisper-small fine-tune LoRA 50h VietSpeech (CTranslate2 int8; WER 13,77% / CER 6,67% trên 1.802 mẫu test, Whisper small gốc 36,76% / 19,43%).  
-  > Chặng 2: Văn bản câu hỏi được đưa vào bộ truy xuất lai BM25 và dense để lấy tối đa 9 ứng viên trong kho tri thức hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt, rồi reranker bge-reranker-v2-m3 chọn ra đoạn văn liên quan nhất.  
-  > Chặng 3: Mô hình Đọc hiểu tiếp nhận cặp bài đọc và câu hỏi để suy luận đáp án chính xác.  
-  > Chặng 4: Đáp án dạng chữ được đưa qua bộ tổng hợp tiếng nói tiên tiến Matcha-TTS để tái tạo âm thanh tự nhiên phát qua loa.  
-  > Toàn bộ pipeline được trang bị cơ chế dự phòng tự động: hệ thống có cơ chế dự phòng ở từng phân hệ khi một nhánh gặp sự cố."
+  > "Kiến trúc gồm 4 chặng:  
+  > Chặng 1, STT: Whisper-small fine-tune LoRA 50h VietSpeech, chuyển sang CTranslate2 int8 để chạy nhanh trên CPU, đạt WER 13,77% so với 36,76% của bản gốc chưa fine-tune.  
+  > Chặng 2, Retrieval: BM25 và dense cùng lấy tối đa 9 ứng viên từ kho hai tầng - 5.869 đoạn ViMMRC và ViQuAD, cộng 1,48 triệu đoạn Wikipedia tiếng Việt - rồi reranker bge-reranker-v2-m3 chấm lại và chọn đoạn tốt nhất, ưu tiên nhẹ cho đoạn trong kho tầng 1.  
+  > Chặng 3, MRC: mô hình ViT5 suy luận và sinh câu trả lời tự do từ bài đọc và câu hỏi, không cần phương án lựa chọn sẵn.  
+  > Chặng 4, TTS: Matcha-TTS tổng hợp giọng nói tự nhiên từ câu trả lời.  
+  > Mỗi chặng đều có cơ chế dự phòng tự động: ViT5 chưa nạp xong thì dùng bộ trích câu dự phòng, Matcha-TTS lỗi thì chuyển sang VITS hoặc Edge-TTS."
 
 ---
 
@@ -74,10 +74,10 @@
     * Ứng dụng thành công **Optimal-Transport Conditional Flow Matching (OT-CFM)** từ ICASSP 2024.
     * Đề xuất **Frontend tách thanh điệu `vi_tone_v2`**: Tách 6 thanh điệu thành token độc lập (ví dụ `hồ` $\rightarrow$ `h ô 2`), giúp mô hình nắm bắt cao độ F0 cực kỳ ổn định.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Về mặt kỹ thuật, nhóm xin nhấn mạnh vào 3 đóng góp trọng tâm:  
-  > Thứ nhất, ở khâu truy xuất, thay vì dùng BM25 mặc định, nhóm đã tinh chỉnh siêu tham số $k_1=2.1, b=1.0$ và đề xuất cơ chế Bigram Phrase Boost cộng 0.4 điểm cho các cụm từ ghép tiếng Việt, giải quyết triệt để bài toán tìm kiếm bài đọc khi người dùng chỉ hỏi ngắn gọn một câu.  
-  > Thứ hai, ở phân hệ Đọc hiểu, hệ thống trả lời câu hỏi tự do. Nhóm fine-tune ViT5-base trên bộ 27.164 câu hỏi (train 21.733) gộp từ ViMMRC 2.0 và UIT-ViQuAD2.0. Mô hình đạt F1 66,55% trên tập test và trả lời gọn như 'Hà Nội' thay vì trích nguyên cả câu.  
-  > Thứ ba và là điểm nhấn học thuật lớn nhất: nhóm đã làm chủ và huấn luyện thành công kiến trúc tiên tiến Matcha-TTS theo trường phái Flow Matching. Nhóm đã tự thiết kế frontend `vi_tone_v2` bóc tách 6 thanh điệu tiếng Việt, giúp chất lượng ngữ điệu âm thanh vượt trội so với các mô hình truyền thống."
+  > "3 đóng góp kỹ thuật trọng tâm:  
+  > Một, ở khâu truy xuất, thay vì dùng BM25 mặc định, nhóm tinh chỉnh siêu tham số $k_1=2.1, b=1.0$ và đề xuất Bigram Phrase Boost cộng điểm cho cụm từ ghép tiếng Việt, giúp tìm đúng bài đọc chỉ với một câu hỏi ngắn.  
+  > Hai, ở phân hệ Đọc hiểu, hệ thống trả lời câu hỏi tự do. Nhóm fine-tune ViT5-base trên 27.164 câu gộp từ ViMMRC 2.0 và UIT-ViQuAD2.0, đạt F1 66,55% và Exact Match 41,05% trên tập test, trả lời gọn như 'Hà Nội' thay vì trích nguyên cả câu.  
+  > Ba, nhóm làm chủ và huấn luyện thành công kiến trúc Matcha-TTS theo trường phái Flow Matching, với frontend `vi_tone_v2` tự thiết kế để tách 6 thanh điệu tiếng Việt thành token độc lập, giúp mô hình nắm bắt cao độ và ngữ điệu tự nhiên hơn."
 
 ---
 
@@ -99,10 +99,10 @@
 | **Tốc độ (Matcha CPU)**| Real-Time Factor (RTF)| **0.52** | Yêu cầu thời gian thực: < 1.0 | Nhanh gấp 2 lần thời gian thực trên CPU i5/i7 |
 
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Kính thưa Thầy, các kết quả trên bảng là minh chứng định lượng cho hiệu quả của hệ thống:  
-  > Ở phân hệ Retrieval, trên 2.545 câu test với kho tri thức hai tầng, BM25 hai tầng, trước khi thêm reranker, đạt Recall@1 71,1% và Recall@5 85,9%. Nếu chỉ dùng kho ViMMRC 552 bài ban đầu, tinh chỉnh nâng Recall@1 từ 64,2% lên 71,45%. Với pipeline cuối có reranker và dense, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4 lên 24,3 và trên câu có đoạn trong kho từ 58,0 lên 60,7.  
+  > "Kính thưa Thầy, kết quả định lượng trên bảng là minh chứng cho hiệu quả của hệ thống:  
+  > Ở phân hệ Retrieval, trên 2.545 câu test với kho tri thức hai tầng, BM25 đạt Recall@1 71,1% và Recall@5 85,9%. Với pipeline cuối có reranker và dense, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4 lên 24,3, và trên câu có đoạn trong kho từ 58,0 lên 60,7.  
   > Ở phân hệ MRC, ViT5 fine-tune đạt token F1 66,55% và Exact Match 41,05% trên 2.716 câu test.  
-  > Đặc biệt ở phân hệ TTS, khi nhóm thiết lập benchmark âm học chuẩn quốc tế: Matcha-TTS đạt tỷ lệ lỗi ký tự CER cực thấp chỉ 1.9%, bám sát mức trần của giọng người thật là 0.7% và tốt hơn VITS hơn 2 lần. Sai số thanh điệu log-F0 đạt 2.86 bán cung, tiệm cận mô hình thương mại Edge-TTS. Quan trọng nhất, chỉ số RTF đạt 0.52 trên CPU thông thường, nghĩa là chỉ mất nửa giây để tổng hợp câu nói 1 giây, tức là TTS nhanh hơn thời gian thực."
+  > Đặc biệt ở phân hệ TTS, Matcha-TTS đạt tỷ lệ lỗi ký tự CER chỉ 1,9%, gần mức trần giọng người thật 0,7% và tốt hơn VITS hơn 2 lần. Sai số cao độ log-F0 đạt 2,86 bán cung, tiệm cận mô hình thương mại Edge-TTS. Chỉ số RTF đạt 0,52, nghĩa là TTS nhanh gấp đôi thời gian thực."
 
 ---
 
@@ -120,9 +120,8 @@
     * ViT5 sinh câu trả lời: *"Nguyễn Du"*.
     * Matcha-TTS đọc câu trả lời bằng giọng nơ-ron.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Về mặt sản phẩm phần mềm, nhóm đã tích hợp hoàn chỉnh thành một ứng dụng Full-stack: Backend FastAPI kết hợp Frontend Angular với giao diện Chat hiện đại, có biểu đồ thể hiện luồng pipeline đang chạy ở phân hệ nào.  
-  > Toàn bộ hệ thống được đóng gói thành container Docker tự động hóa 100%, vượt qua tất cả 54/54 bài kiểm thử tự động.  
-  > Trong kịch bản demo: khi người dùng bấm mic hỏi 'Ai là tác giả của Truyện Kiều?', hệ thống nhận dạng câu hỏi, truy xuất và dùng reranker để chọn đoạn Wikipedia về Truyện Kiều, mô hình ViT5 sinh câu trả lời 'Nguyễn Du' và Matcha-TTS phát âm thanh câu trả lời cho người dùng."
+  > "Sản phẩm là ứng dụng Full-stack: FastAPI và Angular, giao diện Chat hiển thị luồng pipeline đang chạy. Đóng gói Docker một lệnh, 54/54 bài kiểm thử tự động đạt.  
+  > Demo: người dùng hỏi 'Ai là tác giả của Truyện Kiều?', hệ thống truy xuất và dùng reranker chọn đoạn Wikipedia về Truyện Kiều, ViT5 sinh câu trả lời 'Nguyễn Du', Matcha-TTS đọc câu trả lời."
 
 ---
 
@@ -140,6 +139,6 @@
     * Thử LLM tiếng Việt (như PhoGPT / Vistral) để sinh câu trả lời.
   * **Lời cảm ơn & Xin ý kiến nhận xét của Thầy.**
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Tóm lại, đồ án của nhóm đã hiện thực hóa thành công một hệ thống Voice Q&A tiếng Việt hoàn chỉnh, nhẹ, chạy cục bộ trên máy tính cá nhân (Edge-TTS/gTTS dự phòng cần Internet) và làm chủ các kỹ thuật học máy tiên tiến từ Flow Matching đến MRC.  
-  > Trong giai đoạn tiếp theo, nhóm định hướng sẽ chạy GPU để giảm độ trễ, tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung, và thử LLM tiếng Việt để sinh câu trả lời.  
-  > Nhóm chúng em xin chân thành cảm ơn sự lắng nghe và chỉ dẫn của Thầy! Nhóm rất mong nhận được những góp ý quý báu từ Thầy để tiếp tục hoàn thiện đồ án."
+  > "Tóm lại, nhóm đã xây dựng hoàn chỉnh hệ thống Voice Q&A tiếng Việt, chạy cục bộ trên CPU, làm chủ các kỹ thuật từ Flow Matching đến MRC.  
+  > Hướng tiếp theo: chạy GPU giảm độ trễ, tinh chỉnh reranker cho câu hỏi kiến thức chung, và thử LLM tiếng Việt.  
+  > Nhóm xin cảm ơn Thầy và mong nhận góp ý để hoàn thiện đồ án."

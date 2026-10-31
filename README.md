@@ -1,4 +1,4 @@
-# ViMMRC Voice Q&A (Kiến trúc sơ bộ)
+# ViMMRC Voice Q&A
 
 Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC 2.0](https://huggingface.co/datasets/uitnlp/vimmrc2.0), mở rộng thêm khả năng **giao tiếp bằng giọng nói**: Speech-to-Text (STT) đầu vào và Text-to-Speech (TTS) đầu ra.
 
@@ -37,7 +37,7 @@ docker logs -f vimmrc-qa-voice
 docker compose down
 ```
 
-Truy cập ứng dụng tại `http://localhost:8090/`. Giao diện Angular và toàn bộ API backend đã sẵn sàng hoạt động.
+Truy cập ứng dụng tại `http://localhost:8090/` (Docker map cổng 8090 của máy chủ tới cổng 8000 trong container). Giao diện Angular và toàn bộ API backend đã sẵn sàng hoạt động.
 
 Để chạy chế độ phát triển Frontend (với hot-reload qua proxy):
 
@@ -81,7 +81,8 @@ python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đ
 ## 2. Dataset
 
 - **Nguồn**: [uitnlp/vimmrc2.0](https://huggingface.co/datasets/uitnlp/vimmrc2.0)
-- **Nội dung**: ViMMRC gốc là dạng trắc nghiệm; dự án chuyển sang dạng hỏi - đáp tự do (đoạn văn + câu hỏi + câu trả lời dạng văn bản, lấy từ văn bản của đáp án đúng) và bổ sung thêm ViQuAD.
+- **Nội dung**: ViMMRC gốc là dạng trắc nghiệm; dự án chuyển sang dạng hỏi - đáp tự do (đoạn văn + câu hỏi + câu trả lời dạng văn bản, lấy từ văn bản của đáp án đúng) và bổ sung thêm UIT-ViQuAD2.0.
+- **Dữ liệu huấn luyện MRC**: ViMMRC 2.0 (5.273 câu) + UIT-ViQuAD2.0 (28.454 câu gốc → 21.891 câu sau khi loại câu không có đáp án) = 27.164 câu; chia theo bài đọc: train 21.733 / dev 2.715 / test 2.716.
 - **Vai trò**: dùng để huấn luyện/đánh giá mô hình đọc hiểu (MRC) trả lời câu hỏi dựa trên ngữ cảnh.
 
 ## 3. Sơ đồ kiến trúc tổng thể
@@ -104,7 +105,7 @@ python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đ
                          │    đoạn văn liên quan        │
                          │  - Mô hình đọc hiểu (MRC)     │
                          │    được train/fine-tune trên │
-                         │    ViMMRC 2.0                │
+                         │    ViMMRC 2.0 + ViQuAD2.0    │
                          └──────────────┬───────────────┘
                                          │ câu trả lời (text)
                                          ▼
@@ -124,7 +125,7 @@ python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đ
 1. **Thu âm**: Người dùng nói câu hỏi qua micro (web/app).
 2. **STT**: Chuyển audio → text (ví dụ: Whisper, Google Speech-to-Text, VAIS/FPT.AI cho tiếng Việt).
 3. **Truy xuất ngữ cảnh (Retrieval)**: Nếu có nhiều đoạn văn, chọn passage liên quan nhất tới câu hỏi (BM25/embedding search).
-4. **Mô hình MRC**: Đưa (passage, câu hỏi) vào mô hình đọc hiểu đã fine-tune trên ViMMRC 2.0 để sinh câu trả lời.
+4. **Mô hình MRC**: Đưa (passage, câu hỏi) vào mô hình đọc hiểu đã fine-tune trên ViMMRC 2.0 + UIT-ViQuAD2.0 để sinh câu trả lời.
 5. **TTS**: Chuyển câu trả lời text → audio (ví dụ: VAIS TTS, FPT.AI TTS, Google TTS, Coqui TTS).
 6. **Phát lại**: Trả audio về cho người dùng nghe.
 
@@ -134,21 +135,21 @@ python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đ
 |--------------------|---------------------------------------------|--------------------------------------------|
 | STT                | Audio → Text                               | Whisper, FPT.AI STT, Google STT           |
 | Retrieval          | Chọn đoạn văn liên quan (nếu nhiều passage) | BM25 + dense (multilingual-e5-small) + reranker bge-reranker-v2-m3 |
-| MRC Model          | Trả lời câu hỏi dựa trên passage           | PhoBERT/ViBERT fine-tune trên ViMMRC 2.0  |
+| MRC Model          | Trả lời câu hỏi dựa trên passage           | ViT5-base fine-tune trên ViMMRC 2.0 + UIT-ViQuAD2.0 |
 | TTS                | Text → Audio                                | FPT.AI TTS, Google TTS, Coqui TTS, VAIS   |
 | Giao diện          | Ghi âm & phát audio                         | Web app (mic + speaker)                   |
 
 ## 6. Tiến độ
 
-- [x] Tải và kiểm tra schema, số lượng, cách chia dữ liệu ViMMRC 2.0 (482 train / 70 dev / 147 test).
+- [x] Tải và kiểm tra schema dữ liệu ViMMRC 2.0 (5.273 câu) và gộp với UIT-ViQuAD2.0 (21.891 câu) thành 27.164 câu, chia theo bài đọc: train 21.733 / dev 2.715 / test 2.716.
 - [x] Chuẩn bị Retrieval BM25, lập chỉ mục toàn bộ bài đọc (`data/vimmrc_index.json`).
 - [x] Chuẩn bị mã fine-tune ViT5 và API MRC độc lập.
-- [x] Fine-tune ViT5 sinh câu trả lời tự do (test: EM 41,05%, token F1 66,55%).
-- [x] Tích hợp STT tiếng Việt (Faster-Whisper với bộ đệm lazy-load).
+- [x] Fine-tune ViT5 sinh câu trả lời tự do (test: EM 41,05%, token F1 66,55% (bộ gộp, test 2.716 câu)).
+- [x] Tích hợp STT tiếng Việt (Whisper-small fine-tune LoRA 50h VietSpeech → CTranslate2 int8, WER 13,77% / CER 6,67% trên 1.802 mẫu test; bộ đệm lazy-load).
 - [x] Triển khai hệ thống TTS đa engine tiếng Việt (Matcha-TTS, VITS MMS, Edge-TTS, gTTS) có tự động fallback và chuẩn hóa văn bản.
 - [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và pipeline đầu-cuối CLI.
 - [x] Ghép toàn diện STT, Retrieval, MRC, TTS và giao diện web Angular vào API Server FastAPI thống nhất.
-- [x] Tự động hóa bộ kiểm thử tích hợp (49 test cases kiểm thử tự động toàn diện).
+- [x] Tự động hóa bộ kiểm thử tích hợp (54 test cases kiểm thử tự động toàn diện).
 
 ## 7. Phân công
 
@@ -156,6 +157,6 @@ python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đ
 |---|---|---|
 | Huỳnh Công Lương | Speech-to-Text (STT) | `speech-to-text_Luong/` |
 | Trương Hoàng Duy | Text-to-Speech (TTS) | `text-to-speech_Duy/` |
-| Ngô Trí Huy | Retrieval model | `retrieval-model_Huy/` |
-| Ngô Trí Huy | MRC model (fine-tune ViMMRC 2.0) | `mrc-model_Huy/` |
-| Huỳnh Công Lương | Giao diện web (mic + speaker) | `web-interface_Luong/` |
+| Ngô Trí Huy | Retrieval model (+ tích hợp backend, kho tri thức) | `retrieval-model_Huy/` |
+| Ngô Trí Huy | MRC model (ViT5 fine-tune trên ViMMRC 2.0 + UIT-ViQuAD2.0) | `mrc-model_Huy/` |
+| Huỳnh Công Lương | Giao diện web (mic + speaker) và Docker | `web-interface_Luong/` |

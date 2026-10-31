@@ -15,7 +15,7 @@ builder = SlideDeckBuilder("docs/ViMMRC_Presentation_30min.pptx")
 
 # SLIDE 1
 s1_notes = """Kính thưa Thầy Cô trong Hội đồng và các bạn học viên cao học! Hôm nay, nhóm chúng em xin trân trọng trình bày báo cáo chuyên đề đồ án môn học 'Học máy tiên tiến và ứng dụng' với đề tài: 'Xây dựng Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0'.
-Nhóm nghiên cứu gồm ba thành viên: Em là Ngô Trí Huy, đảm nhận vai trò nhóm trưởng, chịu trách nhiệm chính về Phân hệ Truy xuất Ngữ cảnh BM25 và Mô hình Đọc hiểu MRC. Bạn Huỳnh Công Lương chịu trách nhiệm Phân hệ Nhận dạng Giọng nói Faster-Whisper và Giao diện Web Full-stack. Và bạn Trương Hoàng Duy phụ trách Phân hệ Tổng hợp Tiếng nói Flow Matching cùng Bộ benchmark đánh giá âm học.
+Nhóm nghiên cứu gồm ba thành viên: Em là Ngô Trí Huy, đảm nhận vai trò nhóm trưởng, chịu trách nhiệm chính về Phân hệ Truy xuất, Mô hình Đọc hiểu MRC và tích hợp backend, kho tri thức. Bạn Huỳnh Công Lương chịu trách nhiệm Phân hệ Nhận dạng Giọng nói (Whisper-small fine-tune LoRA), Giao diện Web và Docker. Và bạn Trương Hoàng Duy phụ trách Phân hệ Tổng hợp Tiếng nói Flow Matching cùng Bộ benchmark đánh giá âm học.
 Trong video báo cáo 30 phút này, nhóm sẽ trình bày chi tiết từ bối cảnh khoa học, bài toán dữ liệu, cơ sở lý thuyết toán học của các mô hình, quy trình tối ưu kỹ thuật, kết quả thực nghiệm đối sánh, cho đến phần demo chạy thực tế của hệ thống. Xin kính mời Thầy Cô cùng theo dõi!"""
 
 metadata_s1 = [
@@ -23,18 +23,18 @@ metadata_s1 = [
         "badge": "Nhóm trưởng / Lead",
         "name": "Ngô Trí Huy",
         "desc": [
-            "Truy xuất BM25 tối ưu hóa",
+            "Truy xuất BM25 + dense + reranker",
             "Retrieval (RAG) & MRC (ViT5)",
-            "Thiết kế kiến trúc & Tích hợp"
+            "Tích hợp backend & kho tri thức"
         ]
     },
     {
         "badge": "Kỹ sư STT & Web",
         "name": "Huỳnh Công Lương",
         "desc": [
-            "Nhận dạng giọng nói Faster-Whisper",
+            "STT Whisper-small LoRA 50h",
             "Tối ưu CTranslate2 & VAD filter",
-            "Giao diện Web Client Angular 19/22"
+            "Giao diện Web Angular 22 & Docker"
         ]
     },
     {
@@ -60,8 +60,8 @@ builder.add_title_slide(
 s2_notes = """Thưa Thầy Cô, Machine Reading Comprehension là một trong những trụ cột quan trọng của Xử lý Ngôn ngữ Tự nhiên. Tuy nhiên, việc giới hạn người dùng ở bàn phím và màn hình văn bản đã tước đi cơ hội tiếp cận công nghệ của rất nhiều đối tượng, đặc biệt là người khiếm thị, người cao tuổi, hoặc các tình huống đang điều khiển phương tiện giao thông.
 Khi nâng cấp bài toán đọc hiểu văn bản thành Voice Q&A, chúng ta phải đối mặt với ba nút thắt lớn:
 Thứ nhất là tính chất thanh điệu của tiếng Việt. Tiếng Việt là ngôn ngữ đơn âm tiết có 6 thanh điệu biến thiên cao độ liên tục. Các hệ thống TTS tiếng Anh áp dụng vào tiếng Việt thường phát âm như người nước ngoài hoặc nhầm lẫn dấu hỏi, ngã, nặng.
-Thứ hai là độ trễ tích lũy: qua 4 chặng nhận dạng, tìm kiếm, đọc hiểu và phát âm, nếu mỗi chặng chậm 1-2 giây thì tổng thời gian phản hồi sẽ lên tới 8 giây, phá vỡ tính tự nhiên của đàm thoại.
-Và thứ ba là vấn đề tài nguyên: làm sao để hệ thống vừa chính xác mà vẫn có thể triển khai cục bộ trên CPU máy chủ phổ thông mà không phụ thuộc vào hạ tầng GPU đám mây đắt đỏ."""
+Thứ hai là độ trễ tích lũy: pipeline gồm 4 chặng nhận dạng, tìm kiếm, đọc hiểu và phát âm nối tiếp nhau, nên thời gian của các chặng cộng dồn lại; nhóm đo thực tế khoảng 12 giây/câu trên Docker CPU.
+Và thứ ba là vấn đề riêng tư và tài nguyên: làm sao để hệ thống vừa chính xác mà vẫn chạy cục bộ trên CPU máy chủ phổ thông, dữ liệu giọng nói không phải gửi lên dịch vụ đám mây."""
 
 s2 = builder.add_content_slide(
     category="Phần 1: Tổng quan & Bài toán",
@@ -97,12 +97,12 @@ for b in [
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-c_s2_3, tf_s2_3 = builder.add_card(s2, Inches(8.8), Inches(1.5), Inches(3.72), Inches(5.35), title="3. Độ Trễ & Rào Cản Phần Cứng", title_color=AMBER)
+c_s2_3, tf_s2_3 = builder.add_card(s2, Inches(8.8), Inches(1.5), Inches(3.72), Inches(5.35), title="3. Chạy Cục Bộ & Rào Cản Phần Cứng", title_color=AMBER)
 for b in [
-    "Độ trễ tích lũy (Cascading Latency): Qua 4 chặng, nếu mỗi khâu trễ 2s -> người dùng phải chờ 8s.",
+    "Độ trễ cộng dồn qua 4 chặng nối tiếp (STT, Retrieval, MRC, TTS).",
     "Ràng buộc GPU: Hầu hết mô hình SOTA (Whisper Large, Diffusion TTS) đòi hỏi GPU máy chủ tốn kém.",
-    "Yêu cầu đồ án: Hệ thống phải chạy mượt mà trên CPU cá nhân phổ thông (Intel i5/i7, 8GB RAM).",
-    "Khống chế độ trễ toàn chu trình dưới 2 giây để đàm thoại tự nhiên."
+    "Yêu cầu đồ án: Hệ thống chạy cục bộ trên CPU cá nhân phổ thông (Intel i5/i7, 8GB RAM), dữ liệu giọng nói không rời máy.",
+    "Đo thực tế: ~12 giây/câu trên Docker CPU (~6 giây khi tắt reranker)."
 ]:
     p = tf_s2_3.add_paragraph()
     p.text = "• " + b
@@ -115,8 +115,8 @@ s3_notes = """Để giải quyết các thách thức trên, nhóm đặt ra m�
 Bốn nguyên lý thiết kế được quán triệt xuyên suốt:
 Một là Tính Module hóa cao: từng phân hệ STT, Retrieval, MRC và TTS được trừu tượng hóa qua các lớp Client/Engine riêng biệt, cho phép kiểm thử độc lập và linh hoạt hoán đổi thuật toán.
 Hai là Khả năng chạy cục bộ trên CPU: nhóm kiên quyết tối ưu hóa kích thước mô hình và thuật toán suy luận để toàn bộ hệ thống có thể chạy trên máy tính phổ thông với 8GB RAM mà không cần GPU rời.
-Ba là Tính chịu lỗi: hệ thống không được phép bị sập khi gặp đầu vào bất thường hay lỗi mạng, luôn có nhánh fallback dự phòng tại chỗ.
-Và bốn là Tối ưu hóa thời gian phản hồi: mục tiêu tổng thời gian xử lý từ lúc người dùng dứt câu hỏi đến khi nghe thấy giọng nói trả lời không vượt quá 2.5 giây."""
+Ba là Tính chịu lỗi: hệ thống có cơ chế dự phòng ở từng phân hệ khi gặp đầu vào bất thường hay lỗi mạng.
+Và bốn là Đo lường thời gian phản hồi: chạy cục bộ trên CPU, nhóm đo thực tế khoảng 12 giây mỗi câu trên Docker CPU, và khoảng 6 giây khi tắt reranker."""
 
 s3 = builder.add_content_slide(
     category="Phần 1: Tổng quan & Bài toán",
@@ -128,9 +128,9 @@ s3 = builder.add_content_slide(
 
 principles = [
     ("1. TÍNH MODULE HÓA CAO (HIGH MODULARITY)", "Kiến trúc hướng dịch vụ, trừu tượng hóa qua các BaseClient Interface.", "Cho phép hoán đổi độc lập các thuật toán (ví dụ: thay BM25 bằng Dense Retriever, thay Matcha bằng VITS) mà không ảnh hưởng toàn hệ thống.", PRIMARY_BLUE),
-    ("2. KHẢ NĂNG CHẠY CỤC BỘ (LOCAL & CPU-FRIENDLY)", "Tối ưu hóa tham số để toàn bộ pipeline chạy ổn định trên CPU máy tính 8GB RAM.", "Hoàn toàn không phụ thuộc vào các API đám mây thương mại trả phí (OpenAI, Google Speech), bảo mật 100% dữ liệu người dùng.", TEAL),
-    ("3. TÍNH CHỊU LỖI & DỰ PHÒNG (FAULT TOLERANCE)", "Thiết kế cơ chế Multi-level Fallback ở từng phân hệ.", "Nếu chưa có checkpoint ViT5 -> Lexical baseline trích câu trả lời; Nếu TTS offline lỗi -> Edge-TTS hoặc Web Speech tự động thay thế; không bao giờ crash.", TECH_BLUE),
-    ("4. PHẢN HỒI THỜI GIAN THỰC (REAL-TIME LATENCY)", "Tối ưu độ trễ ở cả 4 khâu: VAD cắt khoảng lặng, Euler 10 bước TTS; reranker có thể tắt (KB_RERANKER=) để đổi độ chính xác lấy tốc độ.", "Tổng thời gian phản hồi trên CPU Docker khoảng 12 giây/câu (~6 giây khi tắt reranker).", GREEN)
+    ("2. KHẢ NĂNG CHẠY CỤC BỘ (LOCAL & CPU-FRIENDLY)", "Tối ưu hóa tham số để toàn bộ pipeline chạy ổn định trên CPU máy tính 8GB RAM.", "Chạy cục bộ, không dùng API đám mây trả phí (OpenAI, Google Speech); Edge-TTS/gTTS dự phòng cần Internet.", TEAL),
+    ("3. TÍNH CHỊU LỖI & DỰ PHÒNG (FAULT TOLERANCE)", "Thiết kế cơ chế Multi-level Fallback ở từng phân hệ.", "Nếu chưa có checkpoint ViT5 -> Lexical baseline trích câu trả lời; Nếu Matcha-TTS lỗi -> VITS -> Edge-TTS -> gTTS tự động thay thế; có cơ chế dự phòng ở từng phân hệ.", TECH_BLUE),
+    ("4. ĐO LƯỜNG THỜI GIAN PHẢN HỒI (MEASURED LATENCY)", "Giảm tải ở các khâu: VAD cắt khoảng lặng, Euler 10 bước TTS; reranker có thể tắt (KB_RERANKER=) để đổi độ chính xác lấy tốc độ.", "Chạy cục bộ trên CPU; đo thực tế ~12 giây/câu trên Docker CPU (~6 giây khi tắt reranker).", GREEN)
 ]
 
 for idx, (title_p, sub_p, det_p, col_p) in enumerate(principles):
@@ -155,8 +155,8 @@ for idx, (title_p, sub_p, det_p, col_p) in enumerate(principles):
 
 # SLIDE 4
 s4_notes = """Trọng tâm dữ liệu của đề tài là bộ dữ liệu ViMMRC 2.0 do phòng thí nghiệm UIT-NLP Đại học Công nghệ Thông tin ĐHQG-HCM xây dựng. Đây là bộ dữ liệu đọc hiểu tiếng Việt rất chất lượng, được biên soạn từ các bài tập đọc dành cho học sinh phổ thông.
-Toàn bộ 699 bài đọc với 5.273 câu hỏi được chia thành 3 tập Train, Dev và Test. Điểm cốt lõi mà nhóm tuân thủ nghiêm ngặt là tính phân tách tuyệt đối ở cấp độ bài đọc: nghĩa là các bài đọc trong tập Dev và Test hoàn toàn chưa từng xuất hiện trong tập Train, đảm bảo độ rò rỉ dữ liệu bằng không (zero data leakage).
-Khi đào sâu phân tích dữ liệu, nhóm phát hiện hai đặc điểm lớn: Thứ nhất, có những bài đọc rất dài vượt quá 1.000 từ, vượt xa giới hạn độ dài ngữ cảnh 512 token của các mô hình Transformer như ViT5 hay mBART. Thứ hai, các phương án lựa chọn có độ tương đồng từ vựng cao, đòi hỏi mô hình phải nắm bắt được ngữ cảnh tinh vi thay vì chỉ đếm từ khóa thông thường.
+Dữ liệu huấn luyện là bộ gộp ViMMRC 2.0 (5.273 câu) và UIT-ViQuAD2.0 (28.454 câu gốc, còn 21.891 câu sau khi loại câu không có đáp án), tổng cộng 27.164 câu, chia theo bài đọc thành train 21.733, dev 2.715 và test 2.716 câu. Điểm cốt lõi mà nhóm tuân thủ là tính phân tách ở cấp độ bài đọc: các bài đọc trong tập Dev và Test chưa từng xuất hiện trong tập Train, tránh rò rỉ dữ liệu.
+Khi đào sâu phân tích dữ liệu, nhóm phát hiện đặc điểm lớn: có những bài đọc rất dài vượt quá 1.000 từ, vượt xa giới hạn độ dài ngữ cảnh 512 token của các mô hình Transformer như ViT5 hay mBART, nên nhóm cắt 512 token đầu của ngữ cảnh.
 Nhóm đã thực hiện tiền xử lý chuẩn hóa toàn bộ về Unicode NFC, làm sạch các ký tự đặc biệt, lập kho tri thức hai tầng: 5.869 đoạn văn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt, phục vụ truy xuất ngữ cảnh cho toàn bộ hệ thống."""
 
 s4 = builder.add_content_slide(
@@ -167,21 +167,21 @@ s4 = builder.add_content_slide(
     notes_text=s4_notes
 )
 
-headers_s4 = ["Tập Dữ Liệu (Split)", "Số Bài Đọc (Articles)", "Số Câu Hỏi (Questions)", "Tỷ Lệ (%)", "Nguyên Tắc Phân Tách (Partitioning)"]
+headers_s4 = ["Tập Dữ Liệu (Split)", "Nguồn", "Số Câu Hỏi (Questions)", "Tỷ Lệ (%)", "Nguyên Tắc Phân Tách (Partitioning)"]
 rows_s4 = [
-    ["Tập Huấn luyện (Train)", "482 bài đọc", "3.600 câu hỏi", "68.3%", "Tập ngữ cảnh chính để học trọng số BM25 & Logistic"],
-    ["Tập Phát triển (Dev)", "70 bài đọc", "564 câu hỏi", "10.7%", "Tuyệt đối không trùng bài đọc với Train (Disjoint)"],
-    ["Tập Kiểm thử (Test)", "147 bài đọc", "1.109 câu hỏi", "21.0%", "Đánh giá mù năng lực tổng quát hóa (Zero Leakage)"],
-    ["TỔNG CỘNG CẢ BỘ", "699 bài đọc", "5.273 câu hỏi", "100.0%", "Kho truy xuất: 5.869 đoạn + 1,48 triệu đoạn Wikipedia"]
+    ["Tập Huấn luyện (Train)", "ViMMRC 2.0 + UIT-ViQuAD2.0", "21.733 câu hỏi", "80.0%", "Chia theo bài đọc để huấn luyện ViT5"],
+    ["Tập Phát triển (Dev)", "ViMMRC 2.0 + UIT-ViQuAD2.0", "2.715 câu hỏi", "10.0%", "Không trùng bài đọc với Train (Disjoint)"],
+    ["Tập Kiểm thử (Test)", "ViMMRC 2.0 + UIT-ViQuAD2.0", "2.716 câu hỏi", "10.0%", "Đánh giá mù năng lực tổng quát hóa (Zero Leakage)"],
+    ["TỔNG CỘNG CẢ BỘ", "ViMMRC 5.273 + ViQuAD 21.891 (từ 28.454 gốc)", "27.164 câu hỏi", "100.0%", "Kho truy xuất: 5.869 đoạn + 1,48 triệu đoạn Wikipedia"]
 ]
 col_w_s4 = [Inches(2.6), Inches(2.2), Inches(2.2), Inches(1.3), Inches(3.433)]
 builder.add_table(s4, Inches(0.8), Inches(1.5), Inches(11.733), Inches(2.3), headers_s4, rows_s4, col_w_s4)
 
 c_s4_left, tf_s4_l = builder.add_card(s4, Inches(0.8), Inches(4.0), Inches(5.6), Inches(2.85), title="Đặc Điểm & Thách Thức Ngữ Liệu", title_color=PRIMARY_BLUE)
 for b in [
-    "Dữ liệu dùng dạng hỏi đáp tự do: Bài đọc (Passage) + Câu hỏi (Question) + Câu trả lời dạng văn bản (đã bỏ phần trắc nghiệm).",
+    "Dữ liệu dùng dạng hỏi đáp tự do: Bài đọc (Passage) + Câu hỏi (Question) + Câu trả lời dạng văn bản.",
     "Biến thiên độ dài cực lớn: Từ ngắn nhất 120 từ đến bài dài nhất 1.250 từ (vượt trần 512 subword token của Transformer).",
-    "Độ nhiễu phương án: Các lựa chọn sai thường trích xuất cùng đoạn văn với lựa chọn đúng, dễ gây nhiễu cho mô hình đếm từ khóa."
+    "Nguồn gộp: ViMMRC 2.0 (5.273 câu, bài tập đọc phổ thông) + UIT-ViQuAD2.0 (28.454 câu gốc, còn 21.891 sau khi loại câu không có đáp án) = 27.164 câu."
 ]:
     p = tf_s4_l.add_paragraph()
     p.text = "• " + b
@@ -194,7 +194,7 @@ for b in [
     "Chuẩn hóa Unicode NFC: Giải quyết triệt để lỗi mã hóa tổ hợp (NFD) trong tiếng Việt.",
     "Làm sạch ký tự rỗng & điều khiển ẩn: Loại bỏ các khoảng trắng zwnj, tab lỗi trong dữ liệu gốc.",
     "Kho tri thức (build_kb.py): 5.869 đoạn ViMMRC + ViQuAD (kb_index.json) và 1,48 triệu đoạn Wikipedia tiếng Việt (kb_wiki_full).",
-    "Thiết kế cơ chế đánh giá kép: Choice Ranking (chọn 1 trong 4) song song Generative QA (sinh câu tự do)."
+    "Đánh giá theo Generative QA (sinh câu trả lời tự do): EM và token F1 trên 2.716 câu test."
 ]:
     p = tf_s4_r.add_paragraph()
     p.text = "• " + b
@@ -210,7 +210,7 @@ for b in [
 s5_notes = """Kính thưa Thầy Cô, em là Huỳnh Công Lương, xin phép tiếp tục trình bày về Kiến trúc Hệ thống và Phân hệ Nhận dạng Giọng nói.
 Trên màn hình là sơ đồ kiến trúc tổng thể của hệ thống Voice Q&A. Nhóm xây dựng một pipeline 4 chặng hoạt động theo mô hình hướng dịch vụ (Service-Oriented Architecture):
 Khi người dùng bấm thu âm, tín hiệu âm thanh được gửi đến phân hệ STT để chuyển thành câu hỏi dạng chữ. Câu hỏi này được đưa sang phân hệ Retrieval để quét trong kho tri thức hai tầng (ViMMRC + ViQuAD và Wikipedia tiếng Việt) và trả về top các bài đọc có độ khớp cao nhất. Tiếp đó, phân hệ MRC sẽ phân tích câu hỏi cùng ngữ cảnh bài đọc được truy xuất để tìm ra câu trả lời chính xác. Cuối cùng, văn bản câu trả lời đi qua phân hệ TTS để tổng hợp thành giọng nói tự nhiên và phát lại cho người dùng.
-Điểm đặc biệt trong kiến trúc của nhóm là Cơ chế Fallback Đa Tầng: ở từng phân hệ, nhóm đều thiết kế ít nhất một phương án dự phòng cục bộ. Nếu chưa có checkpoint ViT5, bộ trích xuất lexical sẽ trả lời thay; nếu kết nối mạng của Edge-TTS bị ngắt, Matcha-TTS hoặc VITS chạy cục bộ sẽ ngay lập tức thay thế. Nhờ vậy, hệ thống đạt độ tin cậy tuyệt đối trong mọi điều kiện vận hành."""
+Điểm đặc biệt trong kiến trúc của nhóm là Cơ chế Fallback Đa Tầng: ở từng phân hệ, nhóm đều thiết kế ít nhất một giải pháp dự phòng cục bộ. Nếu chưa có checkpoint ViT5, bộ trích xuất lexical sẽ trả lời thay; chuỗi TTS đi theo thứ tự Matcha, VITS, Edge-TTS rồi gTTS. Nhờ vậy, hệ thống có cơ chế dự phòng ở từng phân hệ."""
 
 s5 = builder.add_content_slide(
     category="Phần 2: Kiến trúc & STT",
@@ -221,10 +221,10 @@ s5 = builder.add_content_slide(
 )
 
 steps_s5 = [
-    ("CHẶNG 1: STT", "Faster-Whisper (small)", "Audio 16kHz -> Text Query", "Fallback: Web Speech API", PRIMARY_BLUE),
+    ("CHẶNG 1: STT", "Whisper-small LoRA 50h (CT2 int8)", "Audio 16kHz -> Text Query", "WER 13,77% | CER 6,67% (VietSpeech)", PRIMARY_BLUE),
     ("CHẶNG 2: RETRIEVAL", "BM25 + Dense + Reranker", "Kho 5.869 đoạn + Wikipedia", "Đoạn khớp nhất sau rerank", TEAL),
     ("CHẶNG 3: MRC", "ViT5 (RAG)", "Đọc hiểu & Suy luận đáp án", "Fallback: Lexical Overlap", TECH_BLUE),
-    ("CHẶNG 4: TTS", "Matcha-TTS (Flow Matching)", "Text Answer -> Audio 22kHz", "Fallback: VITS / Edge-TTS", GREEN)
+    ("CHẶNG 4: TTS", "Matcha-TTS (Flow Matching)", "Text Answer -> Audio 22kHz", "Fallback: VITS / Edge-TTS / gTTS", GREEN)
 ]
 
 for idx, (head, eng, dat, fb, col) in enumerate(steps_s5):
@@ -260,10 +260,11 @@ for idx, (head, eng, dat, fb, col) in enumerate(steps_s5):
 # Lower Protocol Card
 c_proto, tf_proto = builder.add_card(s5, Inches(0.8), Inches(5.15), Inches(11.733), Inches(1.7), title="Giao Thức RESTful & Hợp Đồng Dữ Liệu (REST API Contracts)", title_color=PRIMARY_BLUE, bg_color=CARD_ACCENT_BG)
 for b in [
-    "POST /api/stt: Nhận multipart/form-data WAV -> Trả về JSON {text, language, duration, status}.",
-    "POST /api/retrieve: Nhận {query, top_k} -> Trả về Top K bài đọc kèm BM25 score và metadata bài đọc.",
-    "POST /api/answer: Nhận {question, passage} -> Trả về {answer}.",
-    "POST /api/tts: Nhận {text, voice, speed} -> Trả về audio/wav hoặc audio/mpeg kèm base64 streaming."
+    "GET /api/health -> {status, retrieval, retrieval_passages, reader, tts_engine, frontend_served}.",
+    "POST /api/stt (multipart audio) -> {text}.",
+    "POST /api/retrieve {question, top_k?} -> {passages:[{id,text,score}]} trên kb_index.json + kb_wiki_full.",
+    "POST /api/answer {question, passage} -> {answer}.",
+    "POST /api/tts {text, engine?, voice?, rate?} -> file audio."
 ]:
     p = tf_proto.add_paragraph()
     p.text = "• " + b
@@ -273,23 +274,24 @@ for b in [
 
 # SLIDE 6
 s6_notes = """Ở phân hệ Nhận dạng Giọng nói, yêu cầu đặt ra là phải nhận dạng chính xác tiếng Việt có dấu, kể cả khi người dùng nói nhanh hoặc phát âm không chuẩn, nhưng phải nhẹ và chạy nhanh trên CPU.
-Ban đầu, nhóm thử nghiệm mô hình Whisper gốc viết bằng PyTorch của OpenAI. Tuy nhiên, thời gian giải mã cho một câu hỏi 3 giây trên CPU mất tới gần 4 giây, gây trễ rất lớn.
-Để khắc phục, em đã chuyển đổi sang sử dụng Faster-Whisper. Đây là bản cài đặt tối ưu dựa trên thư viện CTranslate2 viết bằng C++. CTranslate2 áp dụng kỹ thuật lượng tử hóa trọng số INT8, ghép các toán tử tính toán ma trận và quản lý bộ nhớ trực tiếp.
-Kết quả đo đạc cho thấy: Faster-Whisper Small với 244 triệu tham số đạt tốc độ suy luận nhanh hơn 4 lần so với bản gốc, tiêu thụ RAM giảm hơn 65%, trong khi tỷ lệ nhận dạng đúng câu hỏi tiếng Việt vẫn tương đương bản FP32 gốc."""
+Ban đầu, nhóm thử nghiệm mô hình Whisper gốc viết bằng PyTorch của OpenAI; trong một lần đo riêng, giải mã một câu hỏi 3 giây trên CPU mất khoảng 3,8 giây.
+Để khắc phục, nhóm dùng Faster-Whisper, bản cài đặt tối ưu dựa trên thư viện CTranslate2 viết bằng C++ với lượng tử hóa trọng số INT8.
+Mô hình đang triển khai là Whisper-small fine-tune LoRA trên 50 giờ VietSpeech, chuyển sang CTranslate2 int8. Trên 1.802 mẫu test VietSpeech, mô hình đạt WER 13,77% và CER 6,67%, trong khi Whisper small gốc đạt 36,76% và 19,43%. Trong Docker CPU, STT mất khoảng 3 giây cho một câu hỏi; đây là cấu hình đo khác với con số 3,8 giây của bản PyTorch."""
 
 s6 = builder.add_content_slide(
     category="Phần 2: Kiến trúc & STT",
-    title="Phân Hệ STT: Faster-Whisper & Tối Ưu Hóa CTranslate2",
+    title="Phân Hệ STT: Whisper-small LoRA 50h & CTranslate2",
     presenter="Huỳnh Công Lương",
     time_str="7:00 - 8:30 (90s)",
     notes_text=s6_notes
 )
 
-c_s6_l, tf_s6_l = builder.add_card(s6, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Tại Sao Lựa Chọn Faster-Whisper?", title_color=PRIMARY_BLUE)
+c_s6_l, tf_s6_l = builder.add_card(s6, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Mô Hình STT Triển Khai & Faster-Whisper", title_color=PRIMARY_BLUE)
 for b in [
     "Kiến trúc Transformer Encoder-Decoder đa nhiệm, được huấn luyện trên 680.000 giờ âm thanh đa ngữ.",
-    "Hỗ trợ bản địa tiếng Việt xuất sắc, nhận diện chính xác dấu thanh và ngữ cảnh câu hỏi.",
-    "Vấn đề của PyTorch Whisper gốc: Tiêu tốn ~1.8GB RAM, độ trễ suy luận trên CPU lên tới 3.8s cho câu hỏi 3s.",
+    "Mô hình triển khai: Whisper-small fine-tune LoRA 50h VietSpeech -> CTranslate2 int8.",
+    "WER 13,77% / CER 6,67% trên 1.802 mẫu test VietSpeech (Whisper small gốc: 36,76% / 19,43%).",
+    "PyTorch Whisper gốc (một lần đo riêng): tiêu tốn ~1.8GB RAM, suy luận trên CPU ~3.8s cho câu hỏi 3s.",
     "Giải pháp CTranslate2: Thư viện C++ tối ưu hóa toán tử ma trận, tích hợp bộ cấp phát bộ nhớ tùy biến riêng.",
     "Lượng tử hóa INT8 (compute_type='int8'): Giảm kích thước trọng số 4 lần mà không suy hao độ chính xác nhận dạng từ."
 ]:
@@ -304,8 +306,8 @@ whisper_stats = [
     ("Tốc độ suy luận (Inference Speed)", "Nhanh gấp 4.1 lần so với Whisper PyTorch gốc"),
     ("Tiêu thụ bộ nhớ RAM", "Giảm 65% (Từ 1.8 GB xuống còn 540 MB)"),
     ("Kích thước mô hình (Weights)", "Model 'small': 244M tham số, điểm cân bằng vàng"),
-    ("Tỷ lệ nhận dạng từ đúng (WER)", "Đạt mức tương đương bản gốc FP32 (độ lệch < 0.2%)"),
-    ("Độ trễ trung bình câu hỏi 3s", "Khoảng 3 giây trên CPU (đo trong Docker)")
+    ("WER / CER (1.802 mẫu test VietSpeech)", "13,77% / 6,67% (Whisper small gốc: 36,76% / 19,43%)"),
+    ("Độ trễ câu hỏi 3s (Docker CPU)", "Khoảng 3 giây trong Docker; khác cấu hình đo 3.8s của PyTorch ở trên")
 ]
 for title_w, val_w in whisper_stats:
     p = tf_s6_r.add_paragraph()
@@ -322,9 +324,9 @@ for title_w, val_w in whisper_stats:
 
 # SLIDE 7
 s7_notes = """Hai kỹ thuật tối ưu hóa quan trọng khác mà em đã triển khai cho phân hệ STT là VAD và Thread-Safe Lazy Loading:
-Khi người dùng bấm mic thu âm, thường có từ 0.5 đến 1 giây khoảng lặng trước khi bắt đầu nói và sau khi dứt lời. Nếu đưa toàn bộ đoạn âm thanh thô đó vào mạng nơ-ron, mô hình vừa tốn tài nguyên giải mã vừa dễ sinh ra các ký tự rác. Em đã tích hợp bộ lọc Silero VAD để tự động cắt tỉa các vùng tĩnh lặng, giúp thời lượng đưa vào giải mã ngắn hơn 35% và tránh được lỗi lặp từ.
+Khi người dùng bấm mic thu âm, thường có từ 0.5 đến 1 giây khoảng lặng trước khi bắt đầu nói và sau khi dứt lời. Nếu đưa toàn bộ đoạn âm thanh thô đó vào mạng nơ-ron, mô hình vừa tốn tài nguyên giải mã vừa dễ sinh ra các ký tự rác. Em đã tích hợp bộ lọc Silero VAD để tự động cắt tỉa các vùng tĩnh lặng, giúp giảm 30-40% thời gian xử lý và tránh được lỗi lặp từ.
 Thứ hai, về mặt kiến trúc phần mềm backend, việc khởi tạo mô hình AI 240 triệu tham số ngay khi chạy lệnh docker compose thường mất từ 15 đến 20 giây, khiến Docker hiểu nhầm là container bị treo và tự động khởi động lại.
-Em đã thiết kế mẫu Thread-Safe Lazy Loading: server có thể khởi động ngay lập tức trong 0.45 giây để sẵn sàng nhận tín hiệu mạng; trọng số mô hình chỉ được nạp an toàn theo luồng ở request đầu tiên và được lưu trữ vĩnh viễn trong RAM suốt vòng đời phục vụ."""
+Em đã thiết kế mẫu Thread-Safe Lazy Loading: server có thể khởi động trong 0.45 giây để sẵn sàng nhận tín hiệu mạng; trọng số mô hình chỉ được nạp an toàn theo luồng ở request đầu tiên và được lưu trữ vĩnh viễn trong RAM suốt vòng đời phục vụ."""
 
 s7 = builder.add_content_slide(
     category="Phần 2: Kiến trúc & STT",
@@ -337,10 +339,10 @@ s7 = builder.add_content_slide(
 c_s7_l, tf_s7_l = builder.add_card(s7, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Bộ Lọc Voice Activity Detection (VAD)", title_color=PRIMARY_BLUE)
 for b in [
     "Vấn đề thực tế: Người dùng thu âm luôn có khoảng lặng 0.5s - 1.0s ở đầu và cuối bản ghi.",
-    "Nguy cơ: Đưa khoảng lặng vào Transformer làm chậm 30% tốc độ và sinh ra hiện tượng lặp từ ma (hallucination).",
+    "Nguy cơ: Đưa khoảng lặng vào Transformer tốn thời gian giải mã và sinh ra hiện tượng lặp từ ma (hallucination).",
     "Giải pháp: Tích hợp mạng nơ-ron Silero VAD siêu nhẹ (chạy dưới 5ms).",
     "Tự động phát hiện biên độ hoạt tính tiếng nói, cắt bỏ toàn bộ vùng im lặng và tạp âm nền.",
-    "Kết quả: Thời lượng âm thanh thực nạp vào Whisper giảm 35%, tăng tốc độ xử lý thêm 30%."
+    "Kết quả: giảm 30-40% thời gian xử lý."
 ]:
     p = tf_s7_l.add_paragraph()
     p.text = "• " + b
@@ -351,8 +353,8 @@ for b in [
 c_s7_r, tf_s7_r = builder.add_card(s7, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Mẫu Thiết Kế Thread-Safe Lazy Loading", title_color=TEAL)
 for b in [
     "Vấn đề: Nạp mô hình lúc server khởi động làm Docker bị nghẽn (hang) 15-20s, dễ bị Healthcheck kill.",
-    "Thiết kế: Áp dụng cơ chế Double-Checked Locking với threading.Lock() trong stt_client.py.",
-    "Server FastAPI khởi động tức thì trong 0.45s, mở cổng mạng 8090 và vượt qua bài test Docker ngay.",
+    "Thiết kế: Áp dụng cơ chế Double-Checked Locking với threading.Lock() trong speech-to-text_Luong/stt_server.py.",
+    "Server FastAPI khởi động trong 0.45s, mở cổng 8090 (Docker map 8090 -> 8000) và vượt qua bài test Docker ngay.",
     "Trọng số mô hình chỉ được nạp ở request đầu tiên khi có người dùng thực tế gọi mic.",
     "Sau khi nạp, mô hình được lưu trong bộ nhớ tĩnh và phục vụ liên tục cho toàn bộ các request sau."
 ]:
@@ -380,7 +382,7 @@ c_s8_1, tf_s8_1 = builder.add_card(s8, Inches(0.8), Inches(1.5), Inches(3.72), I
 for b in [
     "Sử dụng navigator.mediaDevices.getUserMedia({ audio: true }).",
     "Bảo mật: Yêu cầu cấp quyền micro an toàn trên giao thức HTTP localhost và HTTPS.",
-    "Khởi tạo AudioContext kết hợp ScriptProcessor / AudioWorklet để bắt chuỗi mẫu nhị phân thời gian thực."
+    "Khởi tạo AudioContext kết hợp ScriptProcessor / AudioWorklet để bắt chuỗi mẫu nhị phân trong lúc thu âm."
 ]:
     p = tf_s8_1.add_paragraph()
     p.text = "• " + b
@@ -420,7 +422,7 @@ for b in [
 # SLIDE 9
 s9_notes = """Kính thưa Thầy Cô, em là Ngô Trí Huy, xin phép tiếp tục trình bày Phân hệ Truy xuất Ngữ cảnh và Mô hình Đọc hiểu MRC.
 Điểm khác biệt mấu chốt giữa bài toán đọc hiểu lý thuyết trong phòng thí nghiệm và hệ thống thực tế nằm ở Phân hệ Retrieval: Trong bộ dữ liệu chuẩn, câu hỏi luôn gắn chặt với một bài đọc có sẵn. Nhưng trong ứng dụng thực tế, người dùng chỉ đặt câu hỏi bằng một câu ngắn gọn. Hệ thống buộc phải tự tìm kiếm trong kho tài liệu để phát hiện ra đoạn văn nào chứa câu trả lời.
-Thách thức lớn ở đây là sự bất đối xứng về độ dài: câu hỏi của người dùng thường rất ngắn, chỉ vài từ khóa, trong khi mỗi bài đọc là một văn bản hoàn chỉnh dài hàng trăm từ. Hơn nữa, việc tìm kiếm phải hoàn thành trong vòng vài chục mili-giây để nhường thời gian cho mô hình đọc hiểu nơ-ron phía sau."""
+Thách thức lớn ở đây là sự bất đối xứng về độ dài: câu hỏi của người dùng thường rất ngắn, chỉ vài từ khóa, trong khi mỗi bài đọc là một văn bản hoàn chỉnh dài hàng trăm từ. Hơn nữa, tầng 1 BM25 cần nhẹ (khoảng 15 mili-giây) để phần lớn thời gian dành cho reranker và mô hình đọc hiểu phía sau."""
 
 s9 = builder.add_content_slide(
     category="Phần 3: Retrieval & MRC",
@@ -447,7 +449,7 @@ c_s9_r, tf_s9_r = builder.add_card(s9, Inches(6.7), Inches(1.5), Inches(5.833), 
 for b in [
     "Bất cân xứng độ dài: Câu hỏi ngắn 5 - 10 từ vs Bài đọc dài 300 - 800 từ (Query-Document Asymmetry).",
     "Hiện tượng nhiễu từ vựng: Nhiều bài đọc cùng chủ đề (ví dụ: các bài về danh nhân lịch sử) có nhiều từ vựng chung gây phân tán điểm số.",
-    "Giới hạn thời gian (Latency Constraint): Phải hoàn tất truy xuất trong thời gian dưới 50 mili-giây.",
+    "Chi phí thời gian: BM25 tầng 1 ~15 ms; toàn bộ truy xuất lai + reranker ~6 giây/câu.",
     "Giải pháp: Cải tiến giải thuật BM25 kết hợp tăng trọng số từ ghép tiếng Việt (Bigram Boost)."
 ]:
     p = tf_s9_r.add_paragraph()
@@ -457,7 +459,7 @@ for b in [
     p.space_before = Pt(8)
 
 # SLIDE 10
-s10_notes = """Để đạt được tốc độ dưới 50ms nhưng vẫn có độ chính xác cao, em lựa chọn cải tiến thuật toán BM25 thay vì dùng trực tiếp cấu hình mặc định:
+s10_notes = """Để tầng BM25 vừa nhẹ vừa có độ chính xác cao, em lựa chọn cải tiến thuật toán BM25 thay vì dùng trực tiếp cấu hình mặc định:
 Trên công thức BM25, có hai siêu tham số then chốt là k1 điều khiển mức bão hòa tần suất từ và b điều khiển mức độ phạt độ dài tài liệu. Qua các vòng thực nghiệm trên tập Train và Dev, em nhận thấy cấu hình mặc định của Lucene (k1=1.2, b=0.75) chưa tối ưu cho tiếng Việt vì các bài đọc ViMMRC có độ dài chênh lệch rất lớn.
 Em đã tinh chỉnh k1 lên 2.1 để tôn trọng hơn các từ khóa trọng tâm xuất hiện nhiều lần, đồng thời đặt b=1.0 để chuẩn hóa triệt để độ dài văn bản.
 Đặc biệt, tiếng Việt là ngôn ngữ có tính chất từ ghép rất mạnh. Nếu tách rời các từ như 'Văn' và 'Miếu', điểm số sẽ bị loãng. Em đã đề xuất cơ chế Bigram Phrase Boost: thuật toán tự động trích xuất các cặp từ liền kề trong câu hỏi; nếu văn bản chứa đúng cụm từ ghép theo đúng thứ tự, văn bản đó sẽ được cộng thêm 0.4 điểm thưởng nhân với trọng số IDF. Kỹ thuật này đã nâng tỷ lệ định vị chính xác bài đọc lên một tầm cao mới."""
@@ -514,7 +516,7 @@ for b in [
 s11_notes = """Để tinh chỉnh BM25, nhóm làm ablation trên 564 câu hỏi Dev đối chiếu với kho ViMMRC 552 bài đọc ban đầu (trước khi mở rộng kho). Kết quả thực nghiệm được trình bày chi tiết trên bảng:
 Với cấu hình BM25 mặc định, Recall@1 chỉ đạt 64.18%. Sau khi tinh chỉnh k1 và b, chỉ số này tăng lên 68.79%. Và khi bổ sung cơ chế Bigram Phrase Boost, Recall@1 đã tăng vọt lên 71.45%, và Recall@5 đạt tới 83.69%.
 Chỉ số Mean Reciprocal Rank (MRR@5) đạt 0.7624. Điều này đồng nghĩa với việc: trong đại đa số trường hợp, văn bản chứa câu trả lời luôn được xếp ở vị trí thứ nhất hoặc thứ hai.
-Đáng chú ý nhất, thời gian truy xuất trung bình chỉ mất 14.8 mili-giây trên CPU, hoàn toàn đáp ứng yêu cầu khắt khe về hiệu năng thời gian thực của đồ án."""
+Đáng chú ý nhất, thời gian truy xuất BM25 tầng 1 trung bình khoảng 15 mili-giây trên CPU; toàn bộ truy xuất lai cùng reranker mất khoảng 6 giây mỗi câu."""
 
 s11 = builder.add_content_slide(
     category="Phần 3: Retrieval & MRC",
@@ -538,8 +540,8 @@ for b in [
     "Recall@1 đạt 71.45%: Hơn 7 trên 10 câu hỏi người dùng đặt ra được hệ thống định vị chính xác bài đọc ngay ở vị trí xếp hạng số 1.",
     "Recall@5 đạt 83.69%: Khi lấy Top 5 bài đọc đưa vào mô hình đọc hiểu, xác suất chứa bài đọc đúng lên tới gần 84%.",
     "MRR@5 đạt 0.7624: Chỉ số nghịch đảo thứ hạng trung bình rất cao, chứng minh bài đọc đúng luôn tập trung ở thứ hạng 1 và 2.",
-    "Thời gian xử lý chỉ 14.8 mili-giây: Cực kỳ nhẹ nhàng, tiêu tốn chưa đến 1% tổng thời gian phản hồi của pipeline.",
-    "Khả năng mở rộng: Cấu trúc chỉ mục vimmrc_index.json cho phép mở rộng lên hàng nghìn văn bản mà vẫn giữ tốc độ < 30ms."
+    "BM25 tầng 1 ~15 ms; toàn bộ truy xuất lai + reranker ~6 giây/câu.",
+    "Kết quả này là ablation cũ trên kho ViMMRC 552 đoạn; hệ thống hiện tại dùng kho hai tầng 5.869 đoạn + 1,48 triệu đoạn Wikipedia."
 ]:
     p = tf_s11_b.add_paragraph()
     p.text = "✔ " + b
@@ -548,7 +550,7 @@ for b in [
     p.space_before = Pt(6)
 
 # SLIDE 12
-s12_notes = """Mục tiêu của hệ thống là trả lời mọi câu hỏi, nên nhóm bỏ hẳn nhánh trắc nghiệm và dựng một kho tri thức hai tầng cho RAG.
+s12_notes = """Mục tiêu của hệ thống là trả lời mọi câu hỏi tự do, nên nhóm dựng một kho tri thức hai tầng cho RAG.
 Tầng một gồm 5.869 đoạn văn của ViMMRC và ViQuAD. Tầng hai gồm 1,48 triệu đoạn trích từ toàn bộ Wikipedia tiếng Việt, được đánh hai chỉ mục: BM25 bằng bm25s chia shard, và chỉ mục vector dense multilingual-e5-small 384 chiều lưu float16, đọc mmap khoảng 1,1 GB.
 Với mỗi câu hỏi, hệ thống lấy top 3 từ BM25 tầng một, top 3 từ BM25 Wikipedia và top 3 từ dense Wikipedia, tối đa 9 ứng viên. Reranker bge-reranker-v2-m3 dạng cross-encoder chấm điểm chung tất cả, đoạn tầng một được cộng thêm 0,25, đoạn điểm cao nhất thắng.
 Với BM25 hai tầng trước khi thêm reranker, trên tập test 2.545 câu đoạn đúng nằm ở vị trí 1 trong 71,1% câu và trong top 5 ở 85,9% câu. Khi so sánh pipeline cuối trên 200 câu có đoạn trong kho và 200 câu kiến thức mở, F1 câu trả lời của BM25 thuần là 58,0 và 15,4, còn reranker kết hợp ưu tiên kho là 60,7 và 24,3. Mức cộng 0,25 được chọn trên chính các câu này nên hơi lạc quan."""
@@ -599,12 +601,12 @@ for title_m, val_m in mrc_stats:
 
 # SLIDE 13
 s13_notes = """Sau khi truy xuất được đoạn văn, để sinh câu trả lời tự do cho mọi câu hỏi, nhóm đã tích hợp mô hình ViT5-base của VietAI.
-Tuy nhiên, một trở ngại kỹ thuật lớn xuất hiện: ViT5 có giới hạn đầu vào cố định là 512 token. Trong khi đó, rất nhiều bài đọc của ViMMRC có độ dài lên tới 800 đến 1.200 từ. Nếu chúng ta chỉ đơn giản cắt lấy 512 token đầu tiên của bài đọc, rất có thể đoạn văn chứa câu trả lời nằm ở cuối bài sẽ bị mất hoàn toàn.
-Để khắc phục, em đã xây dựng module context_selection: giải thuật sẽ tự động phân tách bài đọc thành các câu độc lập, chấm điểm mức độ liên quan giữa từng câu với câu hỏi của người dùng, sau đó trích xuất và sắp xếp lại các câu giàu thông tin nhất thành một đoạn ngữ cảnh cô đọng dưới 450 tokens. Nhờ vậy, ViT5 luôn tiếp nhận được trọn vẹn bằng chứng cần thiết để sinh ra câu trả lời chính xác."""
+Tuy nhiên, một trở ngại kỹ thuật lớn xuất hiện: ViT5 có giới hạn đầu vào cố định là 512 token. Trong khi đó, rất nhiều bài đọc của ViMMRC có độ dài lên tới 800 đến 1.200 từ. Nếu cắt lấy 512 token đầu của bài đọc, đoạn chứa câu trả lời nằm ở cuối bài có thể bị mất.
+Nhóm đã thử chọn ngữ cảnh theo câu hỏi (question_chunks) nhưng không cải thiện kết quả, nên mặc định cắt 512 token đầu (head). Kết quả của mô hình ViT5: Exact Match 41,05% và token F1 66,55% trên 2.716 câu test của bộ gộp; chạy toàn chuỗi qua retrieval đạt F1 53,9%."""
 
 s13 = builder.add_content_slide(
     category="Phần 3: Retrieval & MRC",
-    title="Phân Hệ MRC: ViT5 Seq2Seq & Heuristic Context Selection",
+    title="Phân Hệ MRC: ViT5 Seq2Seq & Giới Hạn 512 Token",
     presenter="Ngô Trí Huy (Lead)",
     time_str="17:00 - 18:30 (90s)",
     notes_text=s13_notes
@@ -614,7 +616,8 @@ c_s13_l, tf_s13_l = builder.add_card(s13, Inches(0.8), Inches(1.5), Inches(5.6),
 for b in [
     "Kiến trúc Transformer Sequence-to-Sequence (Text-to-Text Transfer Transformer).",
     "Được VietAI tiền huấn luyện chuyên sâu trên kho ngữ liệu tiếng Việt quy mô lớn.",
-    "Nhiệm vụ: Generative QA, test toàn chuỗi F1 53,9 (đoạn đúng: F1 68,6), EM 41,05 trên tập combined.",
+    "Nhiệm vụ: Generative QA. Test 2.716 câu (bộ gộp): EM 41,05 / F1 66,55.",
+    "Toàn chuỗi BM25 -> ViT5: F1 53,9 (đưa đúng đoạn văn: F1 68,6).",
     "Đầu vào: 'context: <ngữ cảnh> question: <câu hỏi>'.",
     "Đầu ra: Tự động sinh chuỗi câu trả lời hoàn chỉnh ngữ pháp tiếng Việt."
 ]:
@@ -624,13 +627,12 @@ for b in [
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-c_s13_r, tf_s13_r = builder.add_card(s13, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Giải Quyết Giới Hạn 512 Token (Context Selection)", title_color=TEAL)
+c_s13_r, tf_s13_r = builder.add_card(s13, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Giới Hạn 512 Token & Chọn Ngữ Cảnh", title_color=TEAL)
 for b in [
-    "Vấn đề 512 Token Ceiling: Bài đọc ViMMRC dài tới 1.200 từ. Cắt cụt ngây thơ ở đầu bài sẽ làm mất bằng chứng ở cuối bài.",
-    "Giải pháp context_selection.py: Phân rã bài đọc thành các câu đơn theo ranh giới câu tiếng Việt.",
-    "Chấm điểm liên quan (Sentence Relevance): Tính điểm khớp TF-IDF/BM25 giữa từng câu với câu hỏi.",
-    "Ghép nối thông minh: Gom các câu có điểm cao nhất vào cửa sổ ngữ cảnh cô đọng < 450 tokens.",
-    "Bảo đảm 100% bằng chứng then chốt luôn nằm trọn trong giới hạn tiếp nhận của ViT5."
+    "Vấn đề 512 Token Ceiling: Bài đọc dài tới 1.200 từ; cắt ở đầu bài có thể làm mất bằng chứng ở cuối bài.",
+    "Đã thử chọn ngữ cảnh theo câu hỏi (question_chunks) nhưng không cải thiện.",
+    "Mặc định cắt 512 token đầu (head).",
+    "Kết quả hiện tại: EM 41,05 / F1 66,55 trên 2.716 câu test; toàn chuỗi F1 53,9."
 ]:
     p = tf_s13_r.add_paragraph()
     p.text = "★ " + b
@@ -752,7 +754,7 @@ for b in [
 # SLIDE 16
 s16_notes = """Đóng góp nghiên cứu nổi bật nhất của nhóm ở phân hệ TTS là đề xuất và huấn luyện thành công frontend tách thanh điệu mang tên vi_tone_v2:
 Tiếng Việt có 6 thanh điệu đặc trưng. Nếu chúng ta để nguyên các nguyên âm mang dấu như á, à, ả, ã, ạ trong từ điển, mô hình TTS sẽ coi đó là những ký tự hoàn toàn độc lập. Điều này khiến không gian biểu diễn bị phân mảnh và mô hình rất khó học được quy luật biến thiên cao độ F0 xuyên suốt.
-Trong giải pháp vi_tone_v2, em đã thiết kế thuật toán bóc tách dấu thanh điệu ra khỏi âm tiết và biến nó thành một token chỉ số riêng biệt đặt ở cuối mỗi âm tiết. Ví dụ từ 'tiếng' được phân rã thành 't - i - e - n - g' và token thanh 2; từ 'Việt' thành 'v - i - e - t' và token thanh 5.
+Trong giải pháp vi_tone_v2, em đã thiết kế thuật toán bóc tách dấu thanh điệu ra khỏi âm tiết và biến nó thành một token chỉ số riêng biệt đặt ở cuối mỗi âm tiết. Mã thanh gồm 0 ngang, 1 sắc, 2 huyền, 3 hỏi, 4 ngã, 5 nặng. Ví dụ từ 'tiếng' được phân rã thành 't i e n g' và token thanh 1; từ 'hồ' thành 'h ô' và token thanh 2; từ 'Việt' thành 'v i e t' và token thanh 5.
 Nhờ cơ chế này, Text Encoder học riêng phần âm vị và phần ngữ điệu cao độ. Kết quả là mô hình nắm bắt rất chính xác đường cong F0, phát âm rõ ràng, không bị nuốt dấu hay lệch tông."""
 
 s16 = builder.add_content_slide(
@@ -765,7 +767,7 @@ s16 = builder.add_content_slide(
 
 c_s16_l, tf_s16_l = builder.add_card(s16, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Vấn Đề Bùng Nổ Từ Điển Ký Tự Có Dấu", title_color=PRIMARY_BLUE)
 for b in [
-    "Tiếng Việt có 6 thanh điệu: 0 (Ngang), 1 (Huyền), 2 (Sắc), 3 (Hỏi), 4 (Ngã), 5 (Nặng).",
+    "Tiếng Việt có 6 thanh điệu: 0 (Ngang), 1 (Sắc), 2 (Huyền), 3 (Hỏi), 4 (Ngã), 5 (Nặng).",
     "Nếu giữ nguyên nguyên âm mang dấu (a, à, á, ả, ã, ạ, ă, ằ, ắ...): Từ vựng ký tự nở rộng gấp 5 lần.",
     "Mô hình coi 'á' và 'à' là hai âm vị xa lạ, không liên kết được bản chất cùng là âm /a/ khác cao độ.",
     "Hậu quả: Không gian biểu diễn bị phân mảnh, dễ phát âm sai dấu hoặc nuốt thanh điệu khi gặp từ ít phổ biến."
@@ -779,9 +781,10 @@ for b in [
 c_s16_r, tf_s16_r = builder.add_card(s16, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Cơ Chế Bóc Tách vi_tone_v2 Của Nhóm", title_color=TEAL)
 tone_samples = [
     ("Nguyên lý:", "Tách thanh điệu thành token độc lập đặt ở cuối mỗi âm tiết."),
-    ("Ví dụ 1:", "'tiếng'  ➔  t - i - e - n - g - [2] (Thanh sắc)"),
-    ("Ví dụ 2:", "'Việt'   ➔  v - i - e - t - [5] (Thanh nặng)"),
-    ("Ví dụ 3:", "'Hồ Chí Minh' ➔  h - o - [1]   c - h - i - [2]   m - i - n - h - [0]"),
+    ("Ví dụ 1:", "'tiếng'  ➔  t i e n g 1 (Thanh sắc)"),
+    ("Ví dụ 2:", "'hồ'  ➔  h ô 2 (Thanh huyền)"),
+    ("Ví dụ 3:", "'Việt'   ➔  v i e t 5 (Thanh nặng)"),
+    ("Ví dụ 4:", "'Hồ Chí Minh' ➔  h ô 2   ch i 1   m i n h 0"),
     ("Lợi ích 1:", "Giảm 70% kích thước từ điển ký tự của Text Encoder."),
     ("Lợi ích 2:", "Text Encoder học riêng âm vị (Phoneme) và đường cong cao độ (Pitch Contour F0)."),
     ("Lợi ích 3:", "Loại bỏ triệt để hiện tượng nhầm lẫn giữa dấu Hỏi và dấu Ngã.")
@@ -795,8 +798,8 @@ for title_t, val_t in tone_samples:
 
 # SLIDE 17
 s17_notes = """Trước khi đưa văn bản vào bộ tổng hợp giọng nói, một mắt xích không thể thiếu là Phân hệ Chuẩn hóa Văn bản Text Normalizer do em xây dựng:
-Trong bài toán Q&A, câu trả lời do mô hình sinh ra thường chứa các định dạng viết tắt, số liệu hoặc nhãn trắc nghiệm như (A), (B). Nếu đưa nguyên ký tự ngoặc đơn vào TTS, mô hình sẽ đọc là 'mở ngoặc b đóng ngoặc', gây khó hiểu cho người dùng.
-Module tts_normalizer đã thiết lập 5 bộ quy tắc chuẩn hóa chuyên sâu: tự động chuyển đổi nhãn phương án thành 'Đáp án B:', đọc chuẩn xác các định dạng ngày tháng lịch sử như ngày mùng bảy tháng năm, mở rộng số thập phân, tiền tệ và phần trăm ra chữ tiếng Việt có dấu.
+Trong bài toán Q&A, câu trả lời do mô hình sinh ra thường chứa các định dạng viết tắt, số liệu, ngày tháng hoặc nhãn liệt kê như (A), (B). Nếu đưa nguyên ký tự ngoặc đơn vào TTS, mô hình sẽ đọc là 'mở ngoặc b đóng ngoặc', gây khó hiểu cho người dùng.
+Module text-to-speech_Duy/src/normalizer.py đã thiết lập 5 bộ quy tắc chuẩn hóa: đọc chuẩn xác các định dạng ngày tháng như ngày mùng bảy tháng năm, mở rộng số thập phân, tiền tệ và phần trăm ra chữ tiếng Việt có dấu, và đổi nhãn liệt kê như (A), (B) thành 'A', 'B'.
 Đồng thời, module tự động chèn các khoảng nghỉ âm học tại vị trí các dấu câu, giúp giọng đọc phát ra có độ ngừng nghỉ và ngữ điệu tự nhiên như người thật."""
 
 s17 = builder.add_content_slide(
@@ -808,10 +811,10 @@ s17 = builder.add_content_slide(
 )
 
 rules = [
-    ("1. Nhãn Phương án Trắc nghiệm", "(B) Hà Nội  hoặc  B. Hà Nội", "Đáp án B: Hà Nội (tránh đọc 'mở ngoặc b đóng ngoặc')"),
-    ("2. Ngày - Tháng - Năm", "07/05/1954", "ngày mùng bảy tháng năm năm một nghìn chín trăm năm mươi tư"),
-    ("3. Số Thập phân & Đơn vị", "3.14  |  50 km/h", "ba phẩy một bốn  |  năm mươi ki-lô-mét trên giờ"),
-    ("4. Tiền tệ & Tỷ lệ phần trăm", "100.000 VNĐ  |  85%", "một trăm nghìn đồng  |  tám mươi lăm phần trăm"),
+    ("1. Ngày - Tháng - Năm", "07/05/1954", "ngày mùng bảy tháng năm năm một nghìn chín trăm năm mươi tư"),
+    ("2. Số Thập phân & Đơn vị", "3.14  |  50 km/h", "ba phẩy một bốn  |  năm mươi ki-lô-mét trên giờ"),
+    ("3. Tiền tệ & Tỷ lệ phần trăm", "100.000 VNĐ  |  85%", "một trăm nghìn đồng  |  tám mươi lăm phần trăm"),
+    ("4. Nhãn Liệt kê", "(A) Nguyễn Du  hoặc  B. Hà Nội", "'A', 'B' (nhãn liệt kê như (A), (B) -> 'A', 'B'; tránh đọc 'mở ngoặc b đóng ngoặc')"),
     ("5. Khoảng Nghỉ Dấu Câu", "Chèn Pause tự động", "150ms tại dấu phẩy (,), 300ms tại dấu chấm (.) tạo nhịp thở")
 ]
 
@@ -858,7 +861,7 @@ c_s18_bot, tf_s18_b = builder.add_card(s18, Inches(0.8), Inches(4.3), Inches(11.
 for b in [
     "Độ Rõ Âm Vị (CER 1.9%): Matcha-TTS phát âm cực kỳ rõ ràng, ít lỗi ký tự hơn VITS hơn 2 lần, bám sát mức trần 0.7% của người thật.",
     "Độ Chuẩn Thanh Điệu (log-F0 2.86 bán cung): Nhờ frontend vi_tone_v2, sai số cao độ giảm sâu, tiệm cận mô hình thương mại Microsoft (2.69).",
-    "Hiệu Năng Thời Gian Thực (RTF 0.52 CPU): Nhanh gấp 2 lần thời gian thực trên CPU i5/i7, tạo 1 giây âm thanh chỉ mất 0.52 giây."
+    "Tốc độ TTS (RTF 0.52 CPU): TTS nhanh hơn thời gian thực trên CPU i5/i7, tạo 1 giây âm thanh chỉ mất 0.52 giây."
 ]:
     p = tf_s18_b.add_paragraph()
     p.text = "★ " + b
@@ -873,7 +876,7 @@ for b in [
 # SLIDE 19
 s19_notes = """Tiếp theo, em xin trình bày về khía cạnh kỹ nghệ phần mềm và tích hợp hệ thống:
 Phía Backend, nhóm sử dụng FastAPI viết bằng Python 3.11. Toàn bộ 4 phân hệ được chuẩn hóa thành các REST API rõ ràng. FastAPI cho phép xử lý bất đồng bộ đa luồng với hiệu năng cao và tự động sinh tài liệu Swagger trực quan.
-Phía Frontend, em xây dựng ứng dụng Angular với kiến trúc Standalone Components hiện đại. Giao diện được thiết kế theo phong cách đàm thoại Chat thông minh: người dùng có thể bấm giữ mic để nói, hoặc chọn bài đọc từ danh mục. Điểm đặc sắc là trên giao diện có thanh trạng thái Pipeline Flow Indicator, thể hiện rõ hệ thống đang xử lý ở bước nào với thời gian thực thi của từng chặng, mang lại trải nghiệm tương tác rất minh bạch và chuyên nghiệp."""
+Phía Frontend, em xây dựng ứng dụng Angular với kiến trúc Standalone Components hiện đại. Giao diện được thiết kế theo phong cách đàm thoại Chat thông minh: người dùng có thể bấm giữ mic để nói, hoặc chọn bài đọc từ danh mục. Điểm đặc sắc là trên giao diện có thanh trạng thái Pipeline Flow Indicator, thể hiện rõ hệ thống đang xử lý ở bước nào, mang lại trải nghiệm tương tác rất minh bạch và chuyên nghiệp."""
 
 s19 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
@@ -897,10 +900,10 @@ for b in [
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-c_s19_r, tf_s19_r = builder.add_card(s19, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Frontend Angular 19/22 Standalone", title_color=TEAL)
+c_s19_r, tf_s19_r = builder.add_card(s19, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Frontend Angular 22 Standalone", title_color=TEAL)
 for b in [
     "Giao diện Chat Voice đàm thoại: Trực quan, tối ưu cho cả máy tính để bàn và thiết bị di động.",
-    "Thành phần Pipeline Flow Indicator: Hiển thị thanh tiến trình 5 bước theo thời gian thực (Mic -> STT -> Retrieval -> MRC -> TTS -> Nghe).",
+    "Thành phần Pipeline Flow Indicator: Hiển thị thanh tiến trình 6 bước (Mic -> STT -> Retrieval -> MRC -> TTS -> Nghe).",
     "Thư viện bài đọc ViMMRC tích hợp: Cho phép người dùng duyệt kho bài đọc, chọn nhanh ngữ cảnh để thử nghiệm câu hỏi.",
     "Web Audio Visualizer: Hiển thị sóng âm thanh động khi người dùng nói vào micro."
 ]:
@@ -944,7 +947,7 @@ for b in [
     "Cô lập cổng dịch vụ: Phục vụ duy nhất trên cổng http://localhost:8090.",
     "Cơ chế Healthcheck tự động: Docker gọi curl -f http://localhost:8090/api/health định kỳ mỗi 30s.",
     "Tự động khởi động lại (restart: unless-stopped) nếu có bất kỳ sự cố bất thường nào xảy ra.",
-    "Đã kiểm thử và chạy ổn định, container vimmrc-qa-voice hiện đang hoạt động hoàn hảo."
+    "Đã kiểm thử và chạy ổn định, container vimmrc-qa-voice chạy ổn định."
 ]:
     p = tf_s20_r.add_paragraph()
     p.text = "★ " + b
@@ -955,7 +958,7 @@ for b in [
 # SLIDE 21
 s21_notes = """Thưa Thầy Cô, một đồ án công nghệ thông tin chất lượng không chỉ nằm ở thuật toán mà còn phải thể hiện qua tính chuẩn mực trong kỹ nghệ phần mềm. Nhóm đã thiết lập bộ kiểm thử tự động toàn diện bằng pytest bao phủ từ mức độ hàm xử lý dữ liệu cho đến các API tích hợp cuối cùng.
 Trước khi đóng gói phiên bản chính thức, toàn bộ 54 trên 54 bài kiểm thử đều vượt qua thành công với tỷ lệ đạt 100%.
-Bộ test này kiểm tra chi tiết từ việc chuẩn hóa dấu câu, khả năng truy xuất chính xác của BM25, khả năng sinh câu trả lời của ViT5, cho đến tính chịu lỗi của cơ chế Fallback khi các dịch vụ bên ngoài bị ngắt. Điều này đảm bảo hệ thống có độ tin cậy rất cao và không bao giờ xảy ra lỗi hồi quy khi tích hợp các nhánh mã nguồn của các thành viên."""
+Bộ test này kiểm tra chi tiết từ việc chuẩn hóa dấu câu, khả năng truy xuất chính xác của BM25, khả năng sinh câu trả lời của ViT5, cho đến tính chịu lỗi của cơ chế Fallback khi các dịch vụ bên ngoài bị ngắt. Điều này giúp phát hiện sớm lỗi hồi quy khi tích hợp các nhánh mã nguồn của các thành viên."""
 
 s21 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
@@ -972,16 +975,16 @@ rows_s21 = [
     ["mrc-model_Huy/tests (4 file)", "18 tests", "Dữ liệu MRC, metric EM/F1, context selection, dataset gộp, smoke train", "18/18 PASSED (100%)"],
     ["tests/test_api_server.py", "5 tests", "REST API Endpoints, Healthcheck, phục vụ giao diện web", "5/5 PASSED (100%)"],
     ["tests/test_pipeline.py", "4 tests", "Chuỗi tích hợp retrieval → MRC → TTS", "4/4 PASSED (100%)"],
-    ["TỔNG CỘNG TOÀN HỆ THỐNG", "54 TESTS", "Thời gian chạy kiểm thử tự động: ~106 giây", "54/54 PASSED (100%)"]
+    ["TỔNG CỘNG TOÀN HỆ THỐNG", "54 TESTS", "Thời gian chạy kiểm thử tự động: ~1–2 phút", "54/54 PASSED (100%)"]
 ]
 col_w_s21 = [Inches(3.2), Inches(1.8), Inches(4.733), Inches(2.0)]
 builder.add_table(s21, Inches(0.8), Inches(1.5), Inches(11.733), Inches(3.2), headers_s21, rows_s21, col_w_s21)
 
 c_s21_bot, tf_s21_b = builder.add_card(s21, Inches(0.8), Inches(4.9), Inches(11.733), Inches(1.95), title="Ý Nghĩa Của Quy Trình Kiểm Thử Tự Động", title_color=PRIMARY_BLUE)
 for b in [
-    "Zero Regression: Ngăn ngừa tuyệt đối lỗi hồi quy khi hợp nhất mã nguồn giữa 3 thành viên từ các nhánh git khác nhau.",
+    "Chống hồi quy: Phát hiện sớm lỗi hồi quy khi hợp nhất mã nguồn giữa 3 thành viên từ các nhánh git khác nhau.",
     "Tính toàn vẹn (Integrity): Mọi thay đổi về thuật toán đều phải vượt qua bộ kiểm thử chuẩn trước khi triển khai vào Docker.",
-    "Độ tin cậy công nghiệp (Production-ready): Đảm bảo hệ thống vận hành liên tục không lỗi trong suốt buổi demo và bảo vệ."
+    "Có cơ chế dự phòng ở từng phân hệ, được kiểm thử bằng các test fallback."
 ]:
     p = tf_s21_b.add_paragraph()
     p.text = "✔ " + b
@@ -1006,7 +1009,7 @@ s22 = builder.add_content_slide(
 
 demo_cards = [
     ("1. VOICE INPUT", "Micro Browser", "Người dùng hỏi: 'Ai là tác giả của Truyện Kiều?' (câu hỏi tự do)", PRIMARY_BLUE),
-    ("2. STT WHISPER", "~3 Giây", "Faster-Whisper nhận dạng chính xác văn bản tiếng Việt có dấu hoàn chỉnh.", TEAL),
+    ("2. STT WHISPER", "~3 Giây", "Whisper-small LoRA 50h (CTranslate2 int8) nhận dạng văn bản tiếng Việt có dấu.", TEAL),
     ("3. RETRIEVAL + RERANKER", "~6 Giây", "BM25 + dense ứng viên → reranker chọn đoạn Wikipedia 'Truyện Kiều'.", TECH_BLUE),
     ("4. MRC VIT5", "~1.4 Giây", "ViT5 đọc đoạn văn và sinh câu trả lời 'Nguyễn Du'.", GREEN),
     ("5. TTS SYNTHESIS", "~1.3 Giây", "Normalizer chuyển đổi -> Matcha-TTS tổng hợp câu nói tự nhiên.", AMBER),
@@ -1050,7 +1053,7 @@ s23 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
     title="Phân Tích Lỗi Thực Tế (Error Analysis) & Các Giới Hạn Của Hệ Thống",
     presenter="Trương Hoàng Duy",
-    time_str="29:15 - 30:00 (45s)",
+    time_str="29:15 - 29:45 (30s)",
     notes_text=s23_notes
 )
 
@@ -1058,7 +1061,7 @@ c_s23_l, tf_s23_l = builder.add_card(s23, Inches(0.8), Inches(1.5), Inches(5.6),
 for b in [
     "Nhiễu Môi Trường Tạp Âm (STT Error): Trong môi trường ồn ào (tiếng còi xe, quán xá), Whisper có thể nhầm lẫn một số phụ âm đầu gần âm.",
     "Khoảng Trống Từ Vựng (Retrieval Lexical Gap): BM25 dựa trên từ khóa; nếu câu hỏi dùng từ đồng nghĩa hoàn toàn (ví dụ: 'thủ phủ' thay vì 'thủ đô') mà văn bản không chứa từ đó -> Điểm BM25 bị thấp.",
-    "Giới hạn Tài nguyên Huấn luyện ViT5: Huấn luyện ViT5 trên tập dữ liệu dài đòi hỏi GPU lớn (A100) để đạt trạng thái hội tụ tối đa ở nhiều epoch.",
+    "Giới hạn ViT5: Đã train thêm 2 epoch: F1 66,02 → 66,55 nhưng dev loss tăng; cải thiện tiếp cần thêm dữ liệu hoặc dò siêu tham số.",
     "Câu hỏi kiến thức chung: Một số câu vẫn sai, ví dụ 'Thủ đô của Việt Nam là gì?' trả về 'Sài Gòn' do đoạn ViQuAD về TP. Hồ Chí Minh ở tầng 1 thắng; F1 kiến thức mở mới ~24.",
     "Lệch giọng địa phương: Mô hình TTS hiện được tối ưu cho giọng chuẩn miền Bắc, chưa đa dạng hóa sang giọng miền Trung và Nam."
 ]:
@@ -1071,7 +1074,7 @@ for b in [
 c_s23_r, tf_s23_r = builder.add_card(s23, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Giới Hạn Phạm Vi Của Hệ Thống Hiện Tại", title_color=PRIMARY_BLUE)
 for b in [
     "Tương tác Đơn Lượt (Single-Turn Q&A): Hệ thống trả lời dứt điểm từng câu hỏi, chưa có cơ chế Session Memory để nhớ ngữ cảnh của các câu hỏi trước đó.",
-    "Cơ sở Tri thức Tĩnh: Kho gồm ViMMRC + ViQuAD và bản Wikipedia tiếng Việt đã tải về, chưa cập nhật tri thức thời gian thực từ Internet.",
+    "Cơ sở Tri thức Tĩnh: Kho gồm ViMMRC + ViQuAD và bản Wikipedia tiếng Việt đã tải về, chưa cập nhật tri thức mới từ Internet.",
     "Định dạng Âm thanh Đầu ra: Hiện mặc định xuất tần số lấy mẫu 22.05kHz, chưa nâng cấp lên 44.1kHz Hi-Fi studio."
 ]:
     p = tf_s23_r.add_paragraph()
@@ -1090,15 +1093,15 @@ s24 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
     title="Tổng Kết Đóng Góp, Định Hướng Phát Triển & Lời Cảm Ơn",
     presenter="Ngô Trí Huy (Lead)",
-    time_str="30:00 - 30:45 (45s)",
+    time_str="29:45 - 30:00 (15s)",
     notes_text=s24_notes
 )
 
 c_s24_l, tf_s24_l = builder.add_card(s24, Inches(0.8), Inches(1.5), Inches(5.6), Inches(4.1), title="Đóng Góp Chính Của Đề Tài", title_color=PRIMARY_BLUE)
 for b in [
-    "Xây dựng thành công hệ thống Voice Q&A tiếng Việt mã nguồn mở hoàn chỉnh đầu tiên dựa trên chuẩn dữ liệu ViMMRC 2.0.",
+    "Xây dựng thành công hệ thống Voice Q&A tiếng Việt mã nguồn mở hoàn chỉnh dựa trên ViMMRC 2.0 và UIT-ViQuAD2.0.",
     "Ứng dụng thành công kỹ thuật tiên tiến Flow Matching (Matcha-TTS ICASSP 2024) và đề xuất frontend vi_tone_v2 tách thanh điệu.",
-    "Chứng minh tính khả thi của việc chạy cục bộ toàn bộ pipeline AI trên CPU thông thường mà không cần GPU đắt đỏ.",
+    "Chứng minh tính khả thi của việc chạy cục bộ toàn bộ pipeline AI trên CPU thông thường mà không cần GPU (Edge-TTS/gTTS dự phòng cần Internet).",
     "Chuẩn mực kỹ nghệ phần mềm: Đóng gói Docker đa tầng 1 lệnh, 54/54 bài kiểm thử tự động đạt 100%."
 ]:
     p = tf_s24_l.add_paragraph()
@@ -1109,7 +1112,7 @@ for b in [
 
 c_s24_r, tf_s24_r = builder.add_card(s24, Inches(6.7), Inches(1.5), Inches(5.833), Inches(4.1), title="Định Hướng Phát Triển Tương Lai", title_color=AMBER)
 for b in [
-    "Chạy GPU: Giảm độ trễ từ ~12 giây/câu xuống mức tương tác thời gian thực.",
+    "Chạy GPU: Giảm độ trễ (hiện ~12 giây/câu trên Docker CPU).",
     "Tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung (hiện F1 kiến thức mở mới ~24).",
     "Thử LLM tiếng Việt (PhoGPT, Vistral, SeaLLMs) để sinh câu trả lời.",
     "Hội thoại Đa Lượt (Multi-Turn Dialogue): Xây dựng bộ nhớ đệm trạng thái hội thoại để hỗ trợ hỏi đáp nối tiếp tự nhiên.",

@@ -1,7 +1,7 @@
 # TÀI LIỆU KỊCH BẢN THUYẾT TRÌNH 30 PHÚT (QUAY VIDEO BÁO CÁO TOÀN DIỆN ĐỒ ÁN)
 ## ĐỀ TÀI: HỆ THỐNG HỎI - ĐÁP BẰNG GIỌNG NÓI TIẾNG VIỆT DỰA TRÊN BỘ DỮ LIỆU ViMMRC 2.0 (ViMMRC VOICE Q&A)
 **Môn học:** Học máy tiên tiến và ứng dụng (Chương trình Cao học Công nghệ Thông tin)  
-**Thời lượng:** 30 phút (khoảng 3.800 - 4.200 từ thuyết minh, nhịp độ 130 từ/phút)  
+**Thời lượng:** 30 phút (khoảng 3.600 từ thuyết minh, nhịp độ ~120 - 125 từ/phút)  
 **Mục tiêu:** Báo cáo chi tiết, chuyên sâu, toàn diện tất cả các khía cạnh: Động lực nghiên cứu, Phân tích dữ liệu ViMMRC 2.0, Kiến trúc 4 phân hệ, Cơ sở lý thuyết toán học (OT-CFM, BM25, ViT5), Kỹ thuật tối ưu hóa phần mềm (Lazy loading, VAD, Normalizer, Docker), Bảng benchmark đối sánh chuẩn quốc tế, Phân tích lỗi và Hướng phát triển.
 
 ---
@@ -14,33 +14,33 @@
 * **Slide 3 (2:30 - 3:45):** Mục tiêu Nghiên cứu & Bộ Tiêu chuẩn Thiết kế Hệ thống
 * **Slide 4 (3:45 - 5:30):** Phân tích Chuyên sâu Bộ Dữ liệu ViMMRC 2.0 + UIT-ViQuAD2.0
 
-#### PHẦN 2: KIẾN TRÚC TỔNG THỂ & PHÂN HỆ STT (6:00) - Huỳnh Công Lương
-* **Slide 5 (5:30 - 7:00):** Kiến trúc End-to-End Pipeline 4 Chặng & Cơ chế Dự phòng
-* **Slide 6 (7:00 - 8:30):** Phân hệ STT - Whisper-small LoRA 50h & Tối ưu CTranslate2
-* **Slide 7 (8:30 - 10:00):** Tối ưu hóa STT: Voice Activity Detection & Thread-Safe Lazy Loading
-* **Slide 8 (10:00 - 11:30):** Xử lý Âm thanh Phía Client (Web Audio API & Chuẩn hóa WAV 16kHz)
+#### PHẦN 2: KIẾN TRÚC TỔNG THỂ & PHÂN HỆ STT (5:30) - Huỳnh Công Lương
+* **Slide 5 (5:30 - 6:45):** Kiến trúc End-to-End Pipeline 4 Chặng & Cơ chế Dự phòng
+* **Slide 6 (6:45 - 8:15):** Phân hệ STT - Whisper-small LoRA 50h & Tối ưu CTranslate2
+* **Slide 7 (8:15 - 9:30):** Tối ưu hóa STT: Voice Activity Detection & Thread-Safe Lazy Loading
+* **Slide 8 (9:30 - 11:00):** Xử lý Âm thanh Phía Client (Web Audio API & Chuẩn hóa WAV 16kHz)
 
-#### PHẦN 3: PHÂN HỆ CỐT LÕI: RETRIEVAL & ĐỌC HIỂU MRC (7:00) - Ngô Trí Huy
-* **Slide 9 (11:30 - 12:45):** Phân hệ Retrieval - Bài toán Tìm kiếm Văn bản Open-Domain
-* **Slide 10 (12:45 - 14:15):** Tinh chỉnh Giải thuật BM25 ($k_1, b$) & Bigram Phrase Boost
-* **Slide 11 (14:15 - 15:30):** Đánh giá Thực nghiệm Phân hệ Retrieval (Recall@1, Recall@5, MRR)
-* **Slide 12 (15:30 - 17:00):** Retrieval: Kho Tri Thức Hai Tầng Cho RAG
-* **Slide 13 (17:00 - 18:30):** Phân hệ MRC - Mô hình ViT5 Seq2Seq & Giới hạn 512 Token
+#### PHẦN 3: PHÂN HỆ CỐT LÕI: RETRIEVAL & ĐỌC HIỂU MRC (6:00) - Ngô Trí Huy
+* **Slide 9 (11:00 - 12:15):** Phân hệ Retrieval - Bài toán Tìm kiếm Văn bản Open-Domain
+* **Slide 10 (12:15 - 13:30):** Tinh chỉnh Giải thuật BM25 ($k_1, b$) & Bigram Phrase Boost
+* **Slide 11 (13:30 - 14:45):** Đánh giá Thực nghiệm Phân hệ Retrieval (Recall@1, Recall@5, MRR)
+* **Slide 12 (14:45 - 16:00):** Retrieval: Kho Tri Thức Hai Tầng Cho RAG
+* **Slide 13 (16:00 - 17:00):** Phân hệ MRC - Mô hình ViT5 Seq2Seq & Giới hạn 512 Token
 
 #### PHẦN 4: PHÂN HỆ TỔNG HỢP TIẾNG NÓI TIÊN TIẾN TTS (6:30) - Trương Hoàng Duy
-* **Slide 14 (18:30 - 19:45):** Phân hệ TTS - Tổng quan & Lựa chọn Kiến trúc Matcha-TTS
-* **Slide 15 (19:45 - 21:15):** Nguyên lý Toán học OT-CFM (Optimal-Transport Flow Matching)
-* **Slide 16 (21:15 - 22:30):** Đóng góp Frontend Tách Thanh Điệu `vi_tone_v2`
-* **Slide 17 (22:30 - 23:45):** Phân hệ Chuẩn hóa Văn bản Tiếng Việt Chuyên biệt (Text Normalizer)
-* **Slide 18 (23:45 - 25:00):** Đánh giá Định lượng & Benchmark Âm học Chi tiết (MCD, F0, CER, RTF)
+* **Slide 14 (17:00 - 18:15):** Phân hệ TTS - Tổng quan & Lựa chọn Kiến trúc Matcha-TTS
+* **Slide 15 (18:15 - 19:45):** Nguyên lý Toán học OT-CFM (Optimal-Transport Flow Matching)
+* **Slide 16 (19:45 - 21:00):** Đóng góp Frontend Tách Thanh Điệu `vi_tone_v2`
+* **Slide 17 (21:00 - 22:15):** Phân hệ Chuẩn hóa Văn bản Tiếng Việt Chuyên biệt (Text Normalizer)
+* **Slide 18 (22:15 - 23:30):** Đánh giá Định lượng & Benchmark Âm học Chi tiết (MCD, F0, CER, RTF)
 
-#### PHẦN 5: KỸ NGHỆ HỆ THỐNG, DEMO & KẾT LUẬN (5:00) - Cả Nhóm
-* **Slide 19 (25:00 - 26:00):** Kiến trúc Phần mềm Full-Stack FastAPI & Angular SPA (Huỳnh Công Lương)
-* **Slide 20 (26:00 - 27:00):** Đóng gói Triển khai Docker Multi-Stage & Healthcheck (Huỳnh Công Lương)
-* **Slide 21 (27:00 - 28:00):** Đảm bảo Chất lượng Kiểm thử (54/54 Automated Tests) (Ngô Trí Huy)
-* **Slide 22 (28:00 - 29:15):** Kịch bản Live Demonstration Chi tiết Từng Bước (Cả Nhóm)
-* **Slide 23 (29:15 - 29:45):** Phân tích Lỗi & Các Giới hạn của Hệ thống (Trương Hoàng Duy)
-* **Slide 24 (29:45 - 30:00):** Tổng kết Đóng góp, Định hướng Phát triển & Lời cảm ơn (Ngô Trí Huy)
+#### PHẦN 5: KỸ NGHỆ HỆ THỐNG, DEMO & KẾT LUẬN (6:30) - Cả Nhóm
+* **Slide 19 (23:30 - 24:30):** Kiến trúc Phần mềm Full-Stack FastAPI & Angular SPA (Huỳnh Công Lương)
+* **Slide 20 (24:30 - 25:30):** Đóng gói Triển khai Docker Multi-Stage & Healthcheck (Huỳnh Công Lương)
+* **Slide 21 (25:30 - 26:30):** Đảm bảo Chất lượng Kiểm thử (54/54 Automated Tests) (Ngô Trí Huy)
+* **Slide 22 (26:30 - 28:00):** Kịch bản Live Demonstration Chi tiết Từng Bước (Cả Nhóm)
+* **Slide 23 (28:00 - 29:00):** Phân tích Lỗi & Các Giới hạn của Hệ thống (Trương Hoàng Duy)
+* **Slide 24 (29:00 - 30:00):** Tổng kết Đóng góp, Định hướng Phát triển & Lời cảm ơn (Ngô Trí Huy)
 
 ---
 
@@ -59,10 +59,9 @@
     * **Huỳnh Công Lương:** Phân hệ STT (Whisper-small LoRA 50h, tối ưu CTranslate2), Web UI (Angular 22) và đóng gói triển khai Docker.
     * **Trương Hoàng Duy:** Nghiên cứu phân hệ TTS Matcha-TTS (Flow Matching) & VITS, Đề xuất frontend tách thanh điệu `vi_tone_v2`, Xây dựng Text Normalizer và Thiết lập bộ benchmark đánh giá âm học.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Kính thưa Thầy Cô trong Hội đồng và các bạn học viên cao học! Hôm nay, nhóm chúng em xin trân trọng trình bày báo cáo chuyên đề đồ án môn học 'Học máy tiên tiến và ứng dụng' với đề tài: **'Xây dựng Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0'**.  
-  > Nhóm nghiên cứu gồm ba thành viên: Em là Ngô Trí Huy, đảm nhận vai trò nhóm trưởng, chịu trách nhiệm chính về Phân hệ Truy xuất, Mô hình Đọc hiểu MRC và tích hợp backend, kho tri thức. Bạn Huỳnh Công Lương chịu trách nhiệm Phân hệ Nhận dạng Giọng nói (Whisper-small fine-tune LoRA), Giao diện Web và Docker. Và bạn Trương Hoàng Duy phụ trách Phân hệ Tổng hợp Tiếng nói Flow Matching cùng Bộ benchmark đánh giá âm học.  
-  > Trong video báo cáo 30 phút này, nhóm sẽ trình bày chi tiết từ bối cảnh khoa học, bài toán dữ liệu, cơ sở lý thuyết toán học của các mô hình, quy trình tối ưu kỹ thuật, kết quả thực nghiệm đối sánh, cho đến phần demo chạy thực tế của hệ thống. Xin kính mời Thầy Cô cùng theo dõi!"
-
+  > "Kính thưa Thầy Cô trong Hội đồng và các bạn học viên cao học! Hôm nay, nhóm chúng em xin báo cáo đồ án môn học 'Học máy tiên tiến và ứng dụng' với đề tài: 'Xây dựng Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0'.  
+  > Nhóm gồm 3 thành viên: em Ngô Trí Huy, nhóm trưởng, phụ trách Phân hệ Truy xuất, Mô hình Đọc hiểu ViT5 và tích hợp backend; bạn Huỳnh Công Lương phụ trách Nhận dạng Giọng nói Whisper-small fine-tune LoRA, Giao diện Web và Docker; bạn Trương Hoàng Duy phụ trách Tổng hợp Tiếng nói Flow Matching cùng Benchmark âm học.  
+  > Trong video 30 phút này, nhóm sẽ trình bày toàn diện từ bối cảnh, dữ liệu, cơ sở toán học, tối ưu kỹ thuật, kết quả thực nghiệm đến demo thực tế. Kính mời Thầy Cô cùng theo dõi!"
 ---
 
 ### SLIDE 2: BỐI CẢNH MRC & THÁCH THỨC VOICE Q&A TIẾNG VIỆT
@@ -76,12 +75,11 @@
     2. **Độ trễ cộng dồn:** Pipeline gồm 4 chặng nối tiếp nên thời gian của các chặng cộng dồn lại; đo thực tế ~12 giây/câu trên Docker CPU.
     3. **Rào cản tài nguyên phần cứng & riêng tư:** Phần lớn các mô hình SOTA yêu cầu GPU đắt tiền (NVIDIA A100/V100). Đồ án đặt mục tiêu chạy cục bộ ngay trên CPU máy tính thông thường, dữ liệu giọng nói không phải gửi lên dịch vụ đám mây.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Thưa Thầy Cô, Machine Reading Comprehension là một trong những trụ cột quan trọng của Xử lý Ngôn ngữ Tự nhiên. Tuy nhiên, việc giới hạn người dùng ở bàn phím và màn hình văn bản đã tước đi cơ hội tiếp cận công nghệ của rất nhiều đối tượng, đặc biệt là người khiếm thị, người cao tuổi, hoặc các tình huống đang điều khiển phương tiện giao thông.  
-  > Khi nâng cấp bài toán đọc hiểu văn bản thành Voice Q&A, chúng ta phải đối mặt với ba nút thắt lớn:  
-  > Thứ nhất là tính chất thanh điệu của tiếng Việt. Tiếng Việt là ngôn ngữ đơn âm tiết có 6 thanh điệu biến thiên cao độ liên tục. Các hệ thống TTS tiếng Anh áp dụng vào tiếng Việt thường phát âm như người nước ngoài hoặc nhầm lẫn dấu hỏi, ngã, nặng.  
-  > Thứ hai là độ trễ cộng dồn: pipeline gồm 4 chặng nhận dạng, tìm kiếm, đọc hiểu và phát âm nối tiếp nhau, nên thời gian của các chặng cộng dồn lại; nhóm đo thực tế khoảng 12 giây/câu trên Docker CPU.  
-  > Và thứ ba là vấn đề riêng tư và tài nguyên: làm sao để hệ thống vừa chính xác mà vẫn chạy cục bộ trên CPU máy chủ phổ thông, dữ liệu giọng nói không phải gửi lên dịch vụ đám mây."
-
+  > "Thưa Thầy Cô, Machine Reading Comprehension là trụ cột quan trọng của Xử lý Ngôn ngữ Tự nhiên. Tuy nhiên, việc giới hạn ở bàn phím và văn bản gây bất tiện trong môi trường rảnh tay như lái xe hoặc với người khiếm thị.  
+  > Khi chuyển sang Voice Q&A tiếng Việt, nhóm đối mặt với 3 thách thức lớn:  
+  > Thứ nhất, tính chất thanh điệu: tiếng Việt có 6 thanh điệu biến thiên cao độ. Mô hình TTS thông thường dễ sai dấu hỏi, ngã, nặng hoặc mất tự nhiên.  
+  > Thứ hai, độ trễ tích lũy: pipeline gồm 4 chặng nối tiếp nhau, tổng thời gian cộng dồn lại; đo thực tế khoảng 12 giây mỗi câu trên Docker CPU.  
+  > Thứ ba, yêu cầu chạy cục bộ: hệ thống cần hoạt động ổn định trên CPU phổ thông để bảo mật dữ liệu giọng nói, không phụ thuộc API trả phí."
 ---
 
 ### SLIDE 3: MỤC TIÊU NGHIÊN CỨU & TIÊU CHÍ THIẾT KẾ
@@ -97,13 +95,11 @@
     3. **Chịu lỗi (Fault Tolerance):** Có cơ chế dự phòng ở từng phân hệ; khi có sự cố ở một nhánh, hệ thống chuyển sang nhánh dự phòng.
     4. **Đo lường thời gian phản hồi (Measured Latency):** Chạy cục bộ trên CPU; đo thực tế ~12 giây/câu trên Docker CPU (~6 giây khi tắt reranker).
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Để giải quyết các thách thức trên, nhóm đặt ra mục tiêu xây dựng một hệ thống Voice Q&A tiếng Việt mã nguồn mở hoàn chỉnh, khép kín từ khâu thu âm đến khâu phát giọng nói.  
-  > Bốn nguyên lý thiết kế được quán triệt xuyên suốt:  
-  > Một là Tính Module hóa cao: từng phân hệ STT, Retrieval, MRC và TTS được trừu tượng hóa qua các lớp Client/Engine riêng biệt, cho phép kiểm thử độc lập và linh hoạt hoán đổi thuật toán.  
-  > Hai là Khả năng chạy cục bộ trên CPU: nhóm kiên quyết tối ưu hóa kích thước mô hình và thuật toán suy luận để toàn bộ hệ thống có thể chạy trên máy tính phổ thông với 8GB RAM mà không cần GPU rời.  
-  > Ba là Tính chịu lỗi: hệ thống có cơ chế dự phòng ở từng phân hệ khi gặp đầu vào bất thường hay lỗi mạng.  
-  > Và bốn là Đo lường thời gian phản hồi: chạy cục bộ trên CPU, nhóm đo thực tế khoảng 12 giây mỗi câu trên Docker CPU, và khoảng 6 giây khi tắt reranker."
-
+  > "Để giải quyết các thách thức đó, nhóm đặt mục tiêu xây dựng một hệ thống Voice Q&A tiếng Việt hoàn chỉnh, khép kín từ thu âm đến phát giọng nói. Bốn nguyên lý thiết kế xuyên suốt gồm:  
+  > Một là Tính Module hóa: từng phân hệ STT, Retrieval, MRC và TTS được trừu tượng hóa qua các lớp Client riêng biệt, cho phép kiểm thử độc lập và linh hoạt nâng cấp thuật toán.  
+  > Hai là Chạy cục bộ trên CPU: tối ưu hóa kích thước mô hình và suy luận để toàn bộ pipeline chạy ổn định trên máy tính phổ thông với 8GB RAM mà không bắt buộc có GPU rời.  
+  > Ba là Tính chịu lỗi: mỗi phân hệ đều có cơ chế dự phòng tự động khi gặp dữ liệu bất thường hoặc gián đoạn mạng.  
+  > Bốn là Đo lường thực tế: nhóm đo đạc chi tiết từng thành phần trên Docker CPU, đạt khoảng 12 giây mỗi câu khi bật reranker và khoảng 6 giây khi tắt reranker."
 ---
 
 ### SLIDE 4: PHÂN TÍCH CHUYÊN SÂU BỘ DỮ LIỆU ViMMRC 2.0
@@ -124,15 +120,13 @@
     * Hiện tượng đáp án rỗng hoặc chứa ký tự điều khiển Unicode ẩn trong dữ liệu thô.
     * Giải pháp: Chuẩn hóa Unicode NFC toàn diện, lọc khoảng trắng thừa, và chuyển dữ liệu sang bài toán Đọc hiểu sinh câu tự do (Generative QA).
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Trọng tâm dữ liệu của đề tài là bộ dữ liệu ViMMRC 2.0 do phòng thí nghiệm UIT-NLP Đại học Công nghệ Thông tin ĐHQG-HCM xây dựng. Đây là bộ dữ liệu đọc hiểu tiếng Việt rất chất lượng, được biên soạn từ các bài tập đọc dành cho học sinh phổ thông.  
-  > Dữ liệu huấn luyện là bộ gộp ViMMRC 2.0 (5.273 câu) và UIT-ViQuAD2.0 (28.454 câu gốc, còn 21.891 câu sau khi loại câu không có đáp án), tổng cộng 27.164 câu, chia theo bài đọc thành train 21.733, dev 2.715 và test 2.716 câu. Điểm cốt lõi mà nhóm tuân thủ là tính phân tách ở cấp độ bài đọc: các bài đọc trong tập Dev và Test chưa từng xuất hiện trong tập Train, tránh rò rỉ dữ liệu.  
-  > Khi đào sâu phân tích dữ liệu, nhóm phát hiện hai đặc điểm lớn: Thứ nhất, có những bài đọc rất dài vượt quá 1.000 từ, vượt xa giới hạn độ dài ngữ cảnh 512 token của các mô hình Transformer như ViT5 hay mBART. Thứ hai, ViMMRC gốc là bộ dữ liệu trắc nghiệm; nhóm đã chuyển sang dạng hỏi - đáp tự do gồm đoạn văn, câu hỏi và câu trả lời dạng văn bản, đồng thời bổ sung ViQuAD để tăng độ đa dạng.  
-  > Nhóm đã thực hiện tiền xử lý chuẩn hóa toàn bộ về Unicode NFC, làm sạch các ký tự đặc biệt, lập kho tri thức hai tầng: 5.869 đoạn văn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt, phục vụ truy xuất ngữ cảnh cho toàn bộ hệ thống."
-
+  > "Trọng tâm dữ liệu của đề tài bắt đầu từ bộ dữ liệu đọc hiểu ViMMRC 2.0 do UIT-NLP công bố, gồm 5.273 câu hỏi trắc nghiệm tiếng Việt dành cho học sinh. Để mở rộng cho bài toán hỏi đáp tự do, nhóm đã gộp ViMMRC 2.0 với bộ dữ liệu UIT-ViQuAD2.0 gồm 21.891 câu hỏi tự luận trên Wikipedia, tạo thành kho dữ liệu tổng cộng 27.164 câu.  
+  > Dữ liệu được phân chia theo bài đọc thành 3 tập: Train 21.733 câu, Dev 2.715 câu và Test 2.716 câu. Nhóm tuân thủ nghiêm ngặt nguyên tắc phân tách ở cấp độ bài đọc: các văn bản trong tập Dev và Test hoàn toàn chưa từng xuất hiện trong tập Train, đảm bảo zero leakage.  
+  > Về tiền xử lý, bài đọc trong dữ liệu có độ dài từ 120 đến hơn 1.200 từ. Nhóm đã chuẩn hóa Unicode NFC, loại bỏ ký tự điều khiển ẩn và lập kho tri thức hai tầng gồm 5.869 đoạn văn ViMMRC và ViQuAD kết hợp 1,48 triệu đoạn Wikipedia tiếng Việt, làm cơ sở tri thức vững chắc cho hệ thống."
 ---
 
 ### SLIDE 5: KIẾN TRÚC END-TO-END PIPELINE 4 CHẶNG
-* **Thời lượng:** 1 phút 30 giây (5:30 - 7:00)
+* **Thời lượng:** 1 phút 15 giây (5:30 - 6:45)
 * **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Sơ đồ luồng dữ liệu 4 Chặng chi tiết:**
@@ -147,15 +141,14 @@
     * MRC: ViT5 GPU/CPU $\rightarrow$ Lexical Baseline (trích xuất đáp án khi chưa có checkpoint ViT5).
     * TTS: Matcha-TTS Local $\rightarrow$ VITS MMS $\rightarrow$ Edge-TTS $\rightarrow$ gTTS.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Kính thưa Thầy Cô, em là Huỳnh Công Lương, xin phép tiếp tục trình bày về Kiến trúc Hệ thống và Phân hệ Nhận dạng Giọng nói.  
-  > Trên màn hình là sơ đồ kiến trúc tổng thể của hệ thống Voice Q&A. Nhóm xây dựng một pipeline 4 chặng hoạt động theo mô hình hướng dịch vụ (Service-Oriented Architecture):  
-  > Khi người dùng bấm thu âm, tín hiệu âm thanh được gửi đến phân hệ STT để chuyển thành câu hỏi dạng chữ. Câu hỏi này được đưa sang phân hệ Retrieval để quét trong kho tri thức hai tầng (ViMMRC + ViQuAD và Wikipedia tiếng Việt) và trả về top các bài đọc có độ khớp cao nhất. Tiếp đó, phân hệ MRC sẽ phân tích câu hỏi cùng ngữ cảnh bài đọc được truy xuất để tìm ra câu trả lời chính xác. Cuối cùng, văn bản câu trả lời đi qua phân hệ TTS để tổng hợp thành giọng nói tự nhiên và phát lại cho người dùng.  
-  > Điểm đặc biệt trong kiến trúc của nhóm là Cơ chế Fallback Đa Tầng: ở từng phân hệ, nhóm đều thiết kế ít nhất một giải pháp dự phòng cục bộ. Nếu chưa có checkpoint ViT5, Lexical Baseline sẽ trích xuất câu trả lời; chuỗi TTS đi theo thứ tự Matcha, VITS, Edge-TTS rồi gTTS. Nhờ vậy, hệ thống có cơ chế dự phòng ở từng phân hệ."
-
+  > "Kính thưa Thầy Cô, em là Huỳnh Công Lương, xin trình bày về Kiến trúc Hệ thống và Phân hệ STT.  
+  > Trên màn hình là kiến trúc 4 chặng:  
+  > Người dùng nói vào mic, âm thanh gửi tới phân hệ STT để chuyển thành văn bản câu hỏi. Câu hỏi đi vào phân hệ Retrieval tìm kiếm trên kho tri thức hai tầng và trả về đoạn văn liên quan nhất. Tiếp đó, phân hệ MRC dùng ViT5 đọc hiểu và sinh câu trả lời tự do. Cuối cùng, phân hệ TTS tổng hợp thành giọng nói tự nhiên phát qua loa.  
+  > Hệ thống có cơ chế Fallback ở từng chặng: chưa nạp checkpoint ViT5 thì dùng bộ trích xuất lexical; chuỗi TTS ưu tiên Matcha-TTS, lỗi sẽ chuyển VITS, Edge-TTS hoặc gTTS, đảm bảo không bao giờ gián đoạn."
 ---
 
 ### SLIDE 6: PHÂN HỆ STT - WHISPER-SMALL LORA 50H & CTRANSLATE2
-* **Thời lượng:** 1 phút 30 giây (7:00 - 8:30)
+* **Thời lượng:** 1 phút 30 giây (6:45 - 8:15)
 * **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Tại sao lựa chọn Whisper & CTranslate2?**
@@ -169,15 +162,14 @@
     * Tiêu thụ bộ nhớ RAM: Giảm từ 1.8GB xuống còn **540MB** khi chạy ở chế độ `compute_type="int8"`.
     * Độ trễ: PyTorch gốc ~3.8s cho câu hỏi 3s (đo riêng) và STT trong Docker CPU ~3 giây; hai con số thuộc hai cấu hình đo khác nhau.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Ở phân hệ Nhận dạng Giọng nói, yêu cầu đặt ra là phải nhận dạng chính xác tiếng Việt có dấu, kể cả khi người dùng nói nhanh hoặc phát âm không chuẩn, nhưng phải nhẹ và chạy nhanh trên CPU.  
-  > Ban đầu, nhóm thử nghiệm mô hình Whisper gốc viết bằng PyTorch của OpenAI. Trong một lần đo riêng, giải mã một câu hỏi 3 giây trên CPU mất khoảng 3,8 giây.  
-  > Để khắc phục, em đã chuyển đổi sang sử dụng **Faster-Whisper**. Đây là bản cài đặt tối ưu dựa trên thư viện CTranslate2 viết bằng C++, áp dụng lượng tử hóa trọng số INT8.  
-  > Mô hình đang triển khai là Whisper-small fine-tune LoRA trên 50 giờ VietSpeech, chuyển sang CTranslate2 int8. Trên 1.802 mẫu test VietSpeech, mô hình đạt WER 13,77% và CER 6,67%, trong khi Whisper small gốc đạt 36,76% và 19,43%. Trong Docker CPU, STT mất khoảng 3 giây cho một câu hỏi; đây là cấu hình đo khác với con số 3,8 giây của bản PyTorch."
-
+  > "Ở phân hệ STT, mục tiêu là nhận dạng tiếng Việt chính xác có dấu trên CPU với mức chiếm dụng bộ nhớ hợp lý.  
+  > Nhóm triển khai mô hình Whisper-small được fine-tune LoRA trên 50 giờ dữ liệu VietSpeech, sau đó chuyển đổi sang CTranslate2 với lượng tử hóa INT8.  
+  > Kết quả đánh giá trên 1.802 mẫu test VietSpeech cho thấy: mô hình đạt tỷ lệ lỗi từ WER 13,77% và tỷ lệ lỗi ký tự CER 6,67%, vượt trội hoàn toàn so với mô hình Whisper-small gốc chưa fine-tune có WER 36,76% và CER 19,43%.  
+  > Về tài nguyên, thư viện CTranslate2 giúp giảm đáng kể bộ nhớ RAM và tăng tốc tính toán ma trận trên CPU. Trong môi trường Docker CPU, thời gian nhận dạng thực tế mất khoảng 3 giây cho một câu hỏi đàm thoại, đáp ứng tốt yêu cầu xử lý cục bộ của đồ án."
 ---
 
 ### SLIDE 7: TỐI ƯU HÓA STT: VAD & THREAD-SAFE LAZY LOADING
-* **Thời lượng:** 1 phút 30 giây (8:30 - 10:00)
+* **Thời lượng:** 1 phút 15 giây (8:15 - 9:30)
 * **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Bộ lọc Voice Activity Detection (VAD Filter):**
@@ -190,15 +182,13 @@
     * Mô hình chỉ thực sự được nạp vào bộ nhớ ở lần gửi request đầu tiên. Sau khi nạp, mô hình được lưu trong bộ nhớ tĩnh và tái sử dụng cho tất cả các request tiếp theo.
     * Kết quả: Server FastAPI khởi động trong **0.45 giây**, vượt kiểm tra Docker Healthcheck.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Hai kỹ thuật tối ưu hóa quan trọng khác mà em đã triển khai cho phân hệ STT là VAD và Thread-Safe Lazy Loading:  
-  > Khi người dùng bấm mic thu âm, thường có từ 0.5 đến 1 giây khoảng lặng trước khi bắt đầu nói và sau khi dứt lời. Nếu đưa toàn bộ đoạn âm thanh thô đó vào mạng nơ-ron, mô hình vừa tốn tài nguyên giải mã vừa dễ sinh ra các ký tự rác. Em đã tích hợp bộ lọc Silero VAD để tự động cắt tỉa các vùng tĩnh lặng, giúp giảm 30-40% thời gian xử lý và tránh được lỗi lặp từ.  
-  > Thứ hai, về mặt kiến trúc phần mềm backend, việc khởi tạo mô hình AI 240 triệu tham số ngay khi chạy lệnh `docker compose` thường mất từ 15 đến 20 giây, khiến Docker hiểu nhầm là container bị treo và tự động khởi động lại.  
-  > Em đã thiết kế mẫu Thread-Safe Lazy Loading: server có thể khởi động trong 0.45 giây để sẵn sàng nhận tín hiệu mạng; trọng số mô hình chỉ được nạp an toàn theo luồng ở request đầu tiên và được lưu trữ vĩnh viễn trong RAM suốt vòng đời phục vụ."
-
+  > "Hai giải pháp tối ưu quan trọng ở phân hệ STT là bộ lọc VAD và cơ chế Lazy Loading:  
+  > Khi người dùng bấm mic thu âm, đoạn âm thanh luôn chứa khoảng lặng trước và sau câu nói. Nếu nạp toàn bộ vào Whisper, mô hình vừa tốn thời gian giải mã vừa dễ bị lặp từ. Nhóm đã tích hợp bộ lọc Silero VAD để tự động cắt tỉa các đoạn im lặng và tạp âm nền, giúp giảm 30 đến 40% thời lượng âm thanh cần đưa vào giải mã.  
+  > Thứ hai, việc nạp mô hình AI ngay khi khởi động server thường mất 15 đến 20 giây, khiến Docker Healthcheck dễ báo timeout. Nhóm áp dụng mẫu thiết kế Thread-Safe Lazy Loading với Lock trong Python: server FastAPI khởi động tức thì trong 0,45 giây để mở cổng mạng; mô hình chỉ nạp vào RAM ở request đầu tiên và được lưu trữ tĩnh phục vụ xuyên suốt phiên làm việc."
 ---
 
 ### SLIDE 8: XỬ LÝ TÍN HIỆU ÂM THANH PHÍA CLIENT
-* **Thời lượng:** 1 phút 30 giây (10:00 - 11:30)
+* **Thời lượng:** 1 phút 30 giây (9:30 - 11:00)
 * **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Thu âm trực tiếp trên trình duyệt qua Web Audio API:**
@@ -212,15 +202,14 @@
     * Giảm dung lượng file tải lên từ 400KB xuống còn **60KB** cho một câu hỏi 2 giây (giảm tải 85% băng thông mạng).
     * Server backend không cần tiêu tốn chu kỳ CPU để gọi các tiến trình `ffmpeg` chuyển đổi định dạng âm thanh.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Để bảo đảm chất lượng tín hiệu đầu vào cho mô hình nhận dạng, khâu xử lý âm thanh phía client đóng vai trò rất quan trọng:  
-  > Thông thường, trình duyệt của người dùng sẽ thu âm qua micro với tần số 44.1kHz hoặc 48kHz dạng Stereo 2 kênh. Nếu gửi trực tiếp dữ liệu thô này lên server, dung lượng file rất lớn và server sẽ phải mất tài nguyên gọi các lệnh ffmpeg phụ trợ để chuyển đổi.  
-  > Em đã viết module xử lý âm thanh trực tiếp trên tầng Client bằng Web Audio API của Angular: tín hiệu từ micro được giải mã, gộp thành 1 kênh mono và thực hiện giải thuật hạ mẫu (downsampling) về đúng chuẩn 16.000 Hz, 16-bit PCM.  
-  > Nhờ vậy, kích thước file âm thanh tải lên mạng giảm hơn 85%, chỉ còn khoảng 60KB cho một câu nói, giúp request truyền lên server gần như tức thì và loại bỏ hoàn toàn độ trễ do chuyển đổi định dạng ở backend."
-
+  > "Khâu xử lý tín hiệu âm thanh phía client đóng vai trò then chốt cho chất lượng nhận dạng:  
+  > Trình duyệt thông thường thu âm qua micro với tần số 44.1kHz hoặc 48kHz dạng Stereo 2 kênh. Nếu tải trực tiếp dữ liệu thô này lên server, dung lượng file rất lớn và server phải mất chu kỳ CPU gọi ffmpeg để giải mã.  
+  > Nhóm đã phát triển module xử lý âm thanh trực tiếp trên Web Client bằng Web Audio API của Angular: tín hiệu từ micro được giải mã qua AudioContext, gộp thành 1 kênh mono và thực hiện hạ mẫu qua OfflineAudioContext về đúng chuẩn 16.000 Hz, 16-bit Linear PCM WAV theo yêu cầu của Whisper.  
+  > Nhờ xử lý trước tại client, kích thước file âm thanh giảm hơn 85%, chỉ còn khoảng 60KB cho một câu nói 2 giây, giúp truyền tải qua mạng gần như tức thời và giải phóng hoàn toàn gánh nặng chuyển đổi định dạng ở backend."
 ---
 
 ### SLIDE 9: PHÂN HỆ RETRIEVAL - TÌM KIẾM VĂN BẢN OPEN-DOMAIN
-* **Thời lượng:** 1 phút 15 giây (11:30 - 12:45)
+* **Thời lượng:** 1 phút 15 giây (11:00 - 12:15)
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Đặt bài toán:**
@@ -232,14 +221,13 @@
     * Câu hỏi người dùng ngắn gọn (thường chỉ 5 - 10 từ), trong khi bài đọc dài từ 300 - 800 từ (vấn đề bất cân xứng độ dài câu hỏi - tài liệu).
     * Chi phí thời gian: BM25 tầng 1 ~15 ms; toàn bộ truy xuất lai + reranker ~6 giây/câu.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Kính thưa Thầy Cô, em là Ngô Trí Huy, xin phép tiếp tục trình bày Phân hệ Truy xuất Ngữ cảnh và Mô hình Đọc hiểu MRC.  
-  > Điểm khác biệt mấu chốt giữa bài toán đọc hiểu lý thuyết trong phòng thí nghiệm và hệ thống thực tế nằm ở Phân hệ Retrieval: Trong bộ dữ liệu chuẩn, câu hỏi luôn gắn chặt với một bài đọc có sẵn. Nhưng trong ứng dụng thực tế, người dùng chỉ đặt câu hỏi bằng một câu ngắn gọn. Hệ thống buộc phải tự tìm kiếm trong kho tài liệu để phát hiện ra đoạn văn nào chứa câu trả lời.  
-  > Thách thức lớn ở đây là sự bất đối xứng về độ dài: câu hỏi của người dùng thường rất ngắn, chỉ vài từ khóa, trong khi mỗi bài đọc là một văn bản hoàn chỉnh dài hàng trăm từ. Hơn nữa, tầng 1 BM25 cần nhẹ (khoảng 15 mili-giây) để phần lớn thời gian dành cho reranker và mô hình đọc hiểu phía sau."
-
+  > "Kính thưa Thầy Cô, em là Ngô Trí Huy, xin tiếp tục trình bày Phân hệ Truy xuất Ngữ cảnh và Mô hình Đọc hiểu MRC.  
+  > Khác với bài toán đọc hiểu lý thuyết nơi câu hỏi luôn có sẵn bài đọc đi kèm, trong hệ thống Voice Q&A thực tế, người dùng chỉ đặt một câu hỏi ngắn gọn. Hệ thống phải tự tìm trong kho tài liệu để xác định đoạn văn chứa câu trả lời.  
+  > Thách thức lớn là sự bất đối xứng độ dài: câu hỏi người dùng chỉ có 5 đến 10 từ khóa, trong khi mỗi đoạn văn dài hàng trăm từ. Hơn nữa, việc tìm kiếm ứng viên ở tầng 1 cần diễn ra rất nhanh, chỉ khoảng 15 mili-giây, để nhường quỹ thời gian cho mô hình reranker và mô hình đọc hiểu nơ-ron phía sau. Nếu truy xuất sai đoạn văn, toàn bộ pipeline phía sau chắc chắn sẽ đưa ra câu trả lời không chính xác."
 ---
 
 ### SLIDE 10: TINH CHỈNH GIẢI THUẬT BM25 & BIGRAM BOOST
-* **Thời lượng:** 1 phút 30 giây (12:45 - 14:15)
+* **Thời lượng:** 1 phút 15 giây (12:15 - 13:30)
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Công thức BM25 cổ điển (Okapi BM25):**
@@ -251,15 +239,13 @@
     * Nhận diện các cụm 2 từ liền kề (Bigram) trong câu hỏi tiếng Việt (ví dụ: *'Điện Biên'*, *'Văn Miếu'*, *'Quốc Tử Giám'*).
     * Nếu tài liệu chứa đúng thứ tự cụm từ ghép, cộng thêm điểm thưởng $0.4 \times \text{IDF}$, giúp phân biệt chính xác ngữ nghĩa của từ ghép tiếng Việt so với từ đơn rời rạc.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Để tầng BM25 vừa nhẹ vừa có độ chính xác cao, em lựa chọn cải tiến thuật toán BM25 thay vì dùng trực tiếp cấu hình mặc định:  
-  > Trên công thức BM25, có hai siêu tham số then chốt là $k_1$ điều khiển mức bão hòa tần suất từ và $b$ điều khiển mức độ phạt độ dài tài liệu. Qua các vòng thực nghiệm trên tập Train và Dev, em nhận thấy cấu hình mặc định của Lucene ($k_1=1.2, b=0.75$) chưa tối ưu cho tiếng Việt vì các bài đọc ViMMRC có độ dài chênh lệch rất lớn.  
-  > Em đã tinh chỉnh $k_1$ lên 2.1 để tôn trọng hơn các từ khóa trọng tâm xuất hiện nhiều lần, đồng thời đặt $b=1.0$ để chuẩn hóa triệt để độ dài văn bản.  
-  > Đặc biệt, tiếng Việt là ngôn ngữ có tính chất từ ghép rất mạnh. Nếu tách rời các từ như 'Văn' và 'Miếu', điểm số sẽ bị loãng. Em đã đề xuất cơ chế Bigram Phrase Boost: thuật toán tự động trích xuất các cặp từ liền kề trong câu hỏi; nếu văn bản chứa đúng cụm từ ghép theo đúng thứ tự, văn bản đó sẽ được cộng thêm 0.4 điểm thưởng nhân với trọng số IDF. Kỹ thuật này đã nâng tỷ lệ định vị chính xác bài đọc lên một tầm cao mới."
-
+  > "Để tầng truy xuất BM25 vừa nhẹ vừa chính xác, em đã cải tiến thuật toán BM25 qua hai bước:  
+  > Thứ nhất, trên công thức Okapi BM25, em tinh chỉnh siêu tham số k1 lên 2,1 để tăng độ bão hòa với các từ khóa trọng tâm lặp lại, và đặt b bằng 1,0 để phạt triệt để độ dài dư thừa của văn bản, thay cho cấu hình mặc định của Lucene vốn chưa tối ưu cho các bài đọc chênh lệch độ dài.  
+  > Thứ hai, tiếng Việt có đặc thù từ ghép rất mạnh; nếu tách rời các từ như 'Điện' và 'Biên', điểm số sẽ bị loãng. Em đề xuất cơ chế Bigram Phrase Boost: trích xuất các cặp từ liền kề trong câu hỏi; nếu đoạn văn chứa đúng cụm từ theo đúng thứ tự, đoạn văn được cộng thêm 0,4 điểm thưởng nhân trọng số IDF. Kỹ thuật này giúp phân biệt rõ nghĩa từ ghép và tăng độ chính xác truy xuất rõ rệt."
 ---
 
 ### SLIDE 11: ĐÁNH GIÁ THỰC NGHIỆM PHÂN HỆ RETRIEVAL
-* **Thời lượng:** 1 phút 15 giây (14:15 - 15:30)
+* **Thời lượng:** 1 phút 15 giây (13:30 - 14:45)
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Tập dữ liệu kiểm thử:** Ablation BM25: **564 câu hỏi** Dev của ViMMRC 2.0 quét qua kho 552 văn bản ban đầu (trước khi mở rộng kho; kết quả kho hiện tại ở Slide 12).
@@ -277,15 +263,14 @@
     * **MRR@5 đạt 0.7624:** Chỉ số nghịch đảo thứ hạng trung bình rất cao, chứng minh bài đọc đúng luôn nằm ở nhóm đầu bảng.
     * **Thời gian xử lý:** BM25 tầng 1 ~15 ms; toàn bộ truy xuất lai + reranker ~6 giây/câu.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Để tinh chỉnh BM25, nhóm làm ablation trên 564 câu hỏi Dev đối chiếu với kho ViMMRC 552 bài đọc ban đầu (trước khi mở rộng kho). Kết quả thực nghiệm được trình bày chi tiết trên bảng:  
-  > Với cấu hình BM25 mặc định, Recall@1 chỉ đạt 64.18%. Sau khi tinh chỉnh $k_1$ và $b$, chỉ số này tăng lên 68.79%. Và khi bổ sung cơ chế Bigram Phrase Boost, Recall@1 đã tăng vọt lên **71.45%**, và Recall@5 đạt tới **83.69%**.  
-  > Chỉ số Mean Reciprocal Rank (MRR@5) đạt 0.7624. Điều này đồng nghĩa với việc: trong đại đa số trường hợp, văn bản chứa câu trả lời luôn được xếp ở vị trí thứ nhất hoặc thứ hai.  
-  > Đáng chú ý nhất, thời gian truy xuất BM25 tầng 1 trung bình khoảng **15 mili-giây** trên CPU; toàn bộ truy xuất lai cùng reranker mất khoảng 6 giây mỗi câu."
-
+  > "Hiệu quả của việc tinh chỉnh BM25 được chứng minh qua thực nghiệm ablation trên 564 câu hỏi Dev đối chiếu với kho ViMMRC 552 bài đọc ban đầu:  
+  > Với BM25 mặc định, Recall@1 đạt 64,18% và Recall@5 đạt 79,96%. Khi tinh chỉnh k1 và b, Recall@1 tăng lên 68,79%. Khi kết hợp thêm Bigram Phrase Boost, Recall@1 đạt 71,45% và Recall@5 đạt tới 83,69%, chỉ số MRR@5 đạt 0,7624.  
+  > Điều này khẳng định rằng trong đại đa số trường hợp, đoạn văn chứa câu trả lời đúng luôn nằm ở vị trí thứ nhất hoặc thứ hai trong danh sách xếp hạng.  
+  > Về tốc độ, thời gian quét BM25 tầng 1 chỉ mất khoảng 15 mili-giây trên CPU. Đây là tiền đề vững chắc trước khi nhóm mở rộng quy mô kho dữ liệu sang kiến trúc hai tầng toàn diện."
 ---
 
 ### SLIDE 12: RETRIEVAL - KHO TRI THỨC HAI TẦNG CHO RAG
-* **Thời lượng:** 1 phút 30 giây (15:30 - 17:00)
+* **Thời lượng:** 1 phút 15 giây (14:45 - 16:00)
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Tầng 1 - Kho chuyên biệt:** 5.869 đoạn văn (passages) từ ViMMRC + ViQuAD, chỉ mục BM25 ($k_1=2.1$, $b=1.0$, bigram boost).
@@ -297,16 +282,14 @@
   * **So sánh pipeline cuối (answer F1, 200 câu có đoạn trong kho / 200 câu kiến thức mở):** BM25 thuần 58,0 / 15,4; BM25 + dense Wikipedia 57,9 / 16,9; **reranker + ưu tiên kho +0,25 (đang dùng) 60,7 / 24,3**. Mức cộng được chọn trên chính các câu này nên hơi lạc quan.
   * **Độ trễ:** truy xuất + reranker ~6 giây / câu trên CPU Docker; tắt reranker (`KB_RERANKER=`) còn ~0,1–1,7 giây với độ chính xác thấp hơn.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Để hệ thống trả lời được câu hỏi tự do chứ không chỉ các bài đọc có sẵn, nhóm xây dựng kho tri thức hai tầng cho RAG.  
-  > Tầng thứ nhất gồm 5.869 đoạn văn từ ViMMRC và ViQuAD, dùng BM25 với cấu hình đã tinh chỉnh và bigram boost. Tầng thứ hai là 1,48 triệu chunk Wikipedia tiếng Việt, mỗi chunk tối đa 800 ký tự, được lập hai chỉ mục: BM25 bằng bm25s chia shard và vector dense multilingual-e5-small 384 chiều, lưu float16 đọc qua mmap khoảng 1,1 GB.  
-  > Với mỗi câu hỏi, hệ thống lấy top 3 từ BM25 tầng một, top 3 từ BM25 Wikipedia và top 3 từ dense Wikipedia, tối đa 9 ứng viên. Reranker bge-reranker-v2-m3 dạng cross-encoder chấm điểm chung, đoạn tầng một được cộng thêm 0,25 và đoạn điểm cao nhất thắng.  
-  > Với BM25 hai tầng, trước khi thêm reranker, trên tập test 2.545 câu hỏi Recall@1 đạt 71,1% và Recall@5 đạt 85,9%. Riêng ViQuAD là 73,2% và 88,9%, còn ViMMRC là 59,4% và 69,2%.  
-  > Ở pipeline cuối, F1 câu trả lời trên 200 câu có đoạn trong kho và 200 câu kiến thức mở là 58,0 và 15,4 với BM25 thuần, còn reranker kết hợp ưu tiên kho là 60,7 và 24,3. Mức cộng 0,25 được chọn trên chính các câu này nên con số hơi lạc quan. Truy xuất cùng reranker mất khoảng 6 giây mỗi câu trên CPU."
-
+  > "Để trả lời các câu hỏi kiến thức mở, nhóm đã xây dựng kho tri thức hai tầng cho RAG:  
+  > Tầng 1 gồm 5.869 đoạn văn chọn lọc từ ViMMRC và ViQuAD. Tầng 2 gồm 1,48 triệu đoạn trích từ Wikipedia tiếng Việt, được đánh chỉ mục kép: BM25 chia shard và chỉ mục vector dense multilingual-e5-small 384 chiều lưu float16 khoảng 1,1 GB.  
+  > Với mỗi câu hỏi, hệ thống lấy top 3 từ BM25 tầng 1, top 3 từ BM25 Wikipedia và top 3 từ dense Wikipedia, tổng cộng tối đa 9 ứng viên. Reranker cross-encoder bge-reranker-v2-m3 chấm điểm chung tất cả ứng viên, trong đó đoạn tầng 1 được cộng ưu tiên 0,25 điểm.  
+  > Đánh giá trên tập test 2.545 câu, BM25 hai tầng đạt Recall@1 71,1% và Recall@5 85,9%. Khi có reranker, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4 lên 24,3, và câu có trong kho tăng từ 58,0 lên 60,7, chứng minh năng lực vượt trội của kiến trúc lai."
 ---
 
 ### SLIDE 13: PHÂN HỆ MRC - MÔ HÌNH ViT5 SEQ2SEQ & GIỚI HẠN 512 TOKEN
-* **Thời lượng:** 1 phút 30 giây (17:00 - 18:30)
+* **Thời lượng:** 1 phút 00 giây (16:00 - 17:00)
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Mô hình Seq2Seq ViT5 (`VietAI/vit5-base`):**
@@ -318,14 +301,13 @@
     * Cắt cụt ngây thơ (naive truncation) ở đầu hoặc đuôi sẽ làm mất đoạn văn chứa đáp án.
   * **Chọn ngữ cảnh:** Đã thử chọn ngữ cảnh theo câu hỏi (`question_chunks`) nhưng không cải thiện; mặc định cắt 512 token đầu (head).
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Sau bước truy xuất, nhóm tích hợp mô hình **ViT5** của VietAI (bản `vit5-combined-cont`) để sinh câu trả lời tự do. Trên tập test dữ liệu kết hợp, mô hình đạt EM 41,05 và F1 66,55; khi chạy end-to-end từ truy xuất đến đọc hiểu, F1 là 53,9, còn với đoạn văn đúng thì F1 đạt 68,6.  
-  > Tuy nhiên, một trở ngại kỹ thuật lớn xuất hiện: ViT5 có giới hạn đầu vào cố định là 512 token. Trong khi đó, rất nhiều bài đọc của ViMMRC có độ dài lên tới 800 đến 1.200 từ. Nếu cắt lấy 512 token đầu của bài đọc, đoạn chứa câu trả lời nằm ở cuối bài có thể bị mất.  
-  > Nhóm đã thử chọn ngữ cảnh theo câu hỏi (question_chunks) nhưng không cải thiện kết quả, nên mặc định cắt 512 token đầu (head)."
-
+  > "Sau khi có đoạn văn ngữ cảnh, nhóm sử dụng mô hình ViT5-base của VietAI để đọc hiểu và sinh câu trả lời tự do, không cần các phương án trắc nghiệm sẵn có.  
+  > Về giới hạn ngữ cảnh 512 token: nhiều bài đọc dài từ 800 đến 1.200 từ. Nhóm đã thử nghiệm chọn lọc phân đoạn ngữ cảnh theo câu hỏi nhưng độ chính xác không cải thiện, do đó nhóm chọn giải pháp chuẩn hóa lấy 512 token đầu của đoạn văn.  
+  > Kết quả huấn luyện mô hình ViT5 trên bộ dữ liệu mở rộng đạt Exact Match 41,05% và token F1 66,55% trên 2.716 câu test độc lập. Khi chạy toàn chuỗi từ khâu truy xuất đến sinh câu trả lời, F1 toàn chuỗi đạt 53,9%, khẳng định mô hình sinh câu trả lời chuẩn xác và mạch lạc."
 ---
 
 ### SLIDE 14: PHÂN HỆ TTS - LỰA CHỌN KIẾN TRÚC MATCHA-TTS
-* **Thời lượng:** 1 phút 15 giây (18:30 - 19:45)
+* **Thời lượng:** 1 phút 15 giây (17:00 - 18:15)
 * **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Tầm quan trọng của phân hệ TTS trong Voice Q&A:**
@@ -338,15 +320,14 @@
     * Dựa trên **Conditional Flow Matching (CFM)** kết hợp Đường vận chuyển tối ưu (Optimal Transport).
     * Đạt chất lượng âm thanh tương đương Diffusion nhưng chỉ cần **10 bước giải mã vi phân ODE**, chạy siêu tốc trên CPU.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Kính thưa Thầy Cô, em là Trương Hoàng Duy, xin phép báo cáo về Phân hệ Tổng hợp Tiếng nói (TTS) và Bộ benchmark đánh giá âm học.  
-  > Phân hệ TTS đóng vai trò quyết định đến cảm xúc và trải nghiệm người dùng. Một câu trả lời chính xác nhưng giọng đọc méo mó, sai ngữ điệu tiếng Việt sẽ gây khó chịu cho người nghe.  
-  > Khi nghiên cứu tổng quan các kiến trúc TTS: các mô hình Diffusion như Grad-TTS cho chất lượng rất tốt nhưng lại quá chậm vì phải qua hàng trăm bước lặp khử nhiễu; trong khi các mô hình VITS thì lại học phân phối tiềm ẩn phức tạp, khó kiểm soát cao độ.  
-  > Nhóm đã quyết định lựa chọn và làm chủ kiến trúc mới nhất: **Matcha-TTS** – công trình vừa được công bố tại hội nghị ICASSP 2024. Matcha-TTS sử dụng công nghệ Flow Matching, cho phép tổng hợp Mel-spectrogram với chất lượng của Diffusion nhưng tốc độ nhanh vượt bậc, chỉ cần 10 bước tính toán trên CPU thông thường."
-
+  > "Kính thưa Thầy Cô, em là Trương Hoàng Duy, xin báo cáo về Phân hệ Tổng hợp Tiếng nói (TTS) và Bộ benchmark đánh giá âm học.  
+  > Phân hệ TTS là điểm chạm trực tiếp quyết định cảm nhận của người dùng. Một câu trả lời chính xác nhưng giọng đọc khô cứng hay sai thanh điệu sẽ làm giảm trải nghiệm tương tác.  
+  > Tổng quan các thế hệ TTS: Tacotron2 hay FastSpeech2 dễ bị nhòe phổ Mel; mô hình VITS có cấu trúc tiềm ẩn phức tạp, khó kiểm soát cao độ; trong khi các mô hình Diffusion như Grad-TTS tuy hay nhưng cần 50 đến 100 bước khử nhiễu lặp lại, quá chậm để chạy trên CPU.  
+  > Nhóm đã làm chủ kiến trúc mới nhất: Matcha-TTS từ hội nghị ICASSP 2024. Dựa trên Flow Matching, Matcha-TTS cho chất lượng âm thanh tự nhiên như Diffusion nhưng giải mã cực nhanh, chỉ cần 10 bước tính toán trên CPU thông thường."
 ---
 
 ### SLIDE 15: NGUYÊN LÝ TOÁN HỌC CONDITIONAL FLOW MATCHING (OT-CFM)
-* **Thời lượng:** 1 phút 30 giây (19:45 - 21:15)
+* **Thời lượng:** 1 phút 30 giây (18:15 - 19:45)
 * **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Mục tiêu của Flow Matching:** Học một trường vector biến thiên theo thời gian $v_t(x)$ để biến đổi phân phối tiên nghiệm nhiễu chuẩn Gaussian $p_0 = \mathcal{N}(0, I)$ thành phân phối dữ liệu Mel-spectrogram đích $q(x_1)$.
@@ -360,15 +341,14 @@
   * **Hàm mất mát huấn luyện (Loss Function):**
     $$\mathcal{L}_{\text{CFM}}(\theta) = \mathbb{E}_{t, q(x_1), p(x_0)} \left\| v_t(\psi_t(x_0); \theta) - (x_1 - (1 - \sigma_{\min})x_0) \right\|^2$$
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Về bản chất toán học, sự khác biệt lớn nhất giữa Flow Matching và Diffusion truyền thống nằm ở đường đi của xác suất:  
-  > Trong Diffusion tiêu chuẩn, quá trình khuếch tán và khử nhiễu là một quá trình ngẫu nhiên vi phân SDE, tạo ra quỹ đạo đường cong rất ngoằn ngoèo trong không gian vector. Do đó, muốn tìm lại dữ liệu gốc, mô hình phải bước từng bước rất nhỏ, mất từ 50 đến 100 bước lặp mới không bị lệch quỹ đạo.  
-  > Ngược lại, Matcha-TTS áp dụng lý thuyết Optimal Transport: ép trường vector đạo hàm phải di chuyển theo đường thẳng ngắn nhất nối giữa điểm nhiễu $x_0$ và điểm Mel-spectrogram đích $x_1$.  
-  > Nhờ quỹ đạo là đường thẳng tuyến tính, phương trình vi phân ODE có thể giải bằng bộ giải Euler đơn giản chỉ trong đúng 10 bước tính toán. Đây chính là bí quyết giúp Matcha-TTS vừa giữ được chất lượng âm thanh tự nhiên như Diffusion, vừa đạt được tốc độ nhanh gấp nhiều lần để chạy được trên CPU."
-
+  > "Về nguyên lý toán học, sự khác biệt lớn nhất giữa Flow Matching và Diffusion nằm ở quỹ đạo xác suất:  
+  > Trong Diffusion tiêu chuẩn, quá trình khuếch tán vi phân SDE tạo ra quỹ đạo cong uốn lượn ngẫu nhiên trong không gian vector, buộc mô hình phải bước từng bước rất nhỏ để không lệch hướng, tốn hàng chục bước lặp.  
+  > Ngược lại, Matcha-TTS áp dụng lý thuyết Optimal Transport Conditional Flow Matching: ép trường vector đạo hàm di chuyển theo đường thẳng tối ưu nối trực tiếp từ nhiễu Gaussian x0 đến Mel-spectrogram đích x1.  
+  > Vì quỹ đạo là đường thẳng tuyến tính, phương trình vi phân ODE có thể giải bằng phương pháp Euler chỉ trong đúng 10 bước lặp. Nhờ đó, Matcha-TTS giữ được độ chi tiết âm thanh của Diffusion nhưng tốc độ suy luận nhanh gấp nhiều lần, hoàn toàn khả thi khi chạy trên CPU."
 ---
 
 ### SLIDE 16: ĐÓNG GÓP FRONTEND TÁCH THANH ĐIỆU `vi_tone_v2`
-* **Thời lượng:** 1 phút 15 giây (21:15 - 22:30)
+* **Thời lượng:** 1 phút 15 giây (19:45 - 21:00)
 * **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Vấn đề thanh điệu trong biểu diễn văn bản tiếng Việt:**
@@ -382,15 +362,14 @@
     * Mô hình học biểu diễn cao độ F0 tập trung vào các token thanh điệu, giúp kiểm soát đường bao F0 nhất quán.
     * Giảm hiện tượng mất dấu, nhầm lẫn thanh điệu (đặc biệt giữa dấu Hỏi và dấu Ngã).
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Đóng góp nghiên cứu nổi bật nhất của nhóm ở phân hệ TTS là đề xuất và huấn luyện thành công frontend tách thanh điệu mang tên `vi_tone_v2`:  
-  > Tiếng Việt có 6 thanh điệu đặc trưng. Nếu chúng ta để nguyên các nguyên âm mang dấu như `á`, `à`, `ả`, `ã`, `ạ` trong từ điển, mô hình TTS sẽ coi đó là những ký tự hoàn toàn độc lập. Điều này khiến không gian biểu diễn bị phân mảnh và mô hình rất khó học được quy luật biến thiên cao độ F0 xuyên suốt.  
-  > Trong giải pháp `vi_tone_v2`, em đã thiết kế thuật toán bóc tách dấu thanh điệu ra khỏi âm tiết và biến nó thành một token chỉ số riêng biệt đặt ở cuối mỗi âm tiết. Mã thanh gồm 0 ngang, 1 sắc, 2 huyền, 3 hỏi, 4 ngã, 5 nặng. Ví dụ từ 'tiếng' được phân rã thành 't i e n g' và token thanh 1; từ 'hồ' thành 'h ô' và token thanh 2; từ 'Việt' thành 'v i e t' và token thanh 5.  
-  > Nhờ cơ chế này, Text Encoder học riêng phần âm vị và phần ngữ điệu cao độ. Kết quả là mô hình nắm bắt rất chính xác đường cong F0, phát âm rõ ràng, không bị nuốt dấu hay lệch tông."
-
+  > "Đóng góp trọng tâm của nhóm ở phân hệ TTS là đề xuất frontend tách thanh điệu vi_tone_v2:  
+  > Tiếng Việt có 6 thanh điệu. Nếu để nguyên nguyên âm có dấu trong từ điển, từ vựng ký tự nở rộng gấp nhiều lần và mô hình coi các biến thể là ký tự rời rạc, rất khó học quy luật biến thiên cao độ F0.  
+  > Giải pháp vi_tone_v2 bóc tách thanh điệu thành token độc lập ở cuối mỗi âm tiết: 0 ngang, 1 sắc, 2 huyền, 3 hỏi, 4 ngã, 5 nặng. Ví dụ 'tiếng' tách thành 't i e n g' và token 1; 'hồ' thành 'h ô' và token 2; 'Việt' thành 'v i e t' và token 5.  
+  > Nhờ vậy, Text Encoder học tách biệt giữa âm vị và cao độ F0, giảm 70% kích thước từ điển và loại bỏ triệt để hiện tượng lẫn lộn dấu hỏi, dấu ngã."
 ---
 
 ### SLIDE 17: PHÂN HỆ CHUẨN HÓA VĂN BẢN (TEXT NORMALIZER)
-* **Thời lượng:** 1 phút 15 giây (22:30 - 23:45)
+* **Thời lượng:** 1 phút 15 giây (21:00 - 22:15)
 * **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Tại sao cần Text Normalizer chuyên biệt cho Q&A?**
@@ -407,15 +386,14 @@
     5. **Xử lý dấu câu & Nhịp thở (Pause Insertion):**
        * Tự động bổ sung khoảng nghỉ 150ms tại các dấu phẩy và 300ms tại dấu chấm để giọng đọc có nhịp thở tự nhiên.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Trước khi đưa văn bản vào bộ tổng hợp giọng nói, một mắt xích không thể thiếu là Phân hệ Chuẩn hóa Văn bản Text Normalizer do em xây dựng:  
-  > Trong bài toán Q&A, câu trả lời do mô hình sinh ra thường chứa các định dạng viết tắt, số liệu ngày tháng hoặc nhãn liệt kê như `(A)`, `(B)`. Nếu đưa nguyên ký tự ngoặc đơn vào TTS, mô hình sẽ đọc là 'mở ngoặc b đóng ngoặc', gây khó hiểu cho người dùng.  
-  > Module `text-to-speech_Duy/src/normalizer.py` đã thiết lập 5 bộ quy tắc chuẩn hóa: đọc chuẩn xác các định dạng ngày tháng như ngày mùng bảy tháng năm, mở rộng số thập phân, tiền tệ và phần trăm ra chữ tiếng Việt có dấu, và đổi nhãn liệt kê như (A), (B) thành 'A', 'B'.  
-  > Đồng thời, module tự động chèn các khoảng nghỉ âm học tại vị trí các dấu câu, giúp giọng đọc phát ra có độ ngừng nghỉ và ngữ điệu tự nhiên như người thật."
-
+  > "Trước khi tổng hợp âm thanh, văn bản câu trả lời đi qua module Text Normalizer chuyên biệt:  
+  > Câu trả lời do mô hình sinh ra thường chứa số liệu, ngày tháng lịch sử hoặc ký hiệu viết tắt. Nếu đưa nguyên văn bản thô vào TTS, mô hình sẽ đọc sai hoặc ngắt nghỉ không đúng chỗ.  
+  > Module normalizer của nhóm thiết lập 5 bộ quy tắc chuẩn hóa: đọc chuẩn các định dạng ngày tháng như ngày mùng bảy tháng năm, mở rộng số thập phân, tiền tệ và phần trăm ra chữ tiếng Việt có dấu, đồng thời chuyển đổi các nhãn liệt kê dạng ngoặc đơn thành chữ cái rõ ràng.  
+  > Đặc biệt, module tự động chèn các khoảng nghỉ âm học 150 mili-giây tại dấu phẩy và 300 mili-giây tại dấu chấm, giúp giọng đọc phát ra có nhịp thở và ngữ điệu tự nhiên như người thật."
 ---
 
 ### SLIDE 18: ĐÁNH GIÁ & BENCHMARK ÂM HỌC ĐỊNH LƯỢNG
-* **Thời lượng:** 1 phút 15 giây (23:45 - 25:00)
+* **Thời lượng:** 1 phút 15 giây (22:15 - 23:30)
 * **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Thiết lập Benchmark chuẩn quốc tế:**
@@ -435,16 +413,14 @@
     * **Độ chuẩn thanh điệu (Pitch accuracy):** log-F0 RMSE của Matcha đạt **2.86 bán cung**, bám rất sát mô hình thương mại Microsoft Edge-TTS (2.69) và vượt trội so với VITS (4.31).
     * **Hiệu năng CPU:** RTF đạt **0.52**, nghĩa là trên CPU máy tính thông thường, mô hình chỉ mất 0.52 giây để tạo ra 1 giây âm thanh, tức là TTS nhanh hơn thời gian thực.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Để đánh giá chất lượng phân hệ TTS một cách khoa học, em đã xây dựng một bộ công cụ đo lường âm học tự động, so sánh trực tiếp sản phẩm của nhóm với giọng đọc của phát thanh viên người thật và hai mô hình nền tảng là VITS của Meta và Edge-TTS của Microsoft.  
-  > Kết quả trên bảng chứng minh những ưu thế vượt trội của Matcha-TTS kết hợp frontend tách thanh điệu:  
-  > Về độ rõ chữ: khi cho mô hình nhận dạng giọng nói ASR nghe lại âm thanh do Matcha-TTS sinh ra, tỷ lệ lỗi ký tự CER chỉ là 1.9%, vượt trội so với mức 4.3% của VITS và tiệm cận mức trần 0.7% của người thật.  
-  > Về độ chuẩn cao độ: sai số log-F0 của Matcha chỉ là 2.86 bán cung, gần như tương đương với mô hình nơ-ron thương mại của Microsoft là 2.69, và tốt hơn VITS rất nhiều.  
-  > Về tốc độ: hệ số RTF trên CPU đạt 0.52, hoàn toàn phá vỡ định kiến cho rằng các mô hình họ Flow/Diffusion chỉ có thể chạy trên GPU. Mô hình của nhóm hoàn toàn có thể triển khai trên các thiết bị máy tính thông thường."
-
+  > "Nhóm đã thiết lập bộ benchmark âm học định lượng chuẩn quốc tế, so sánh trực tiếp Matcha-TTS với giọng phát thanh viên người thật và hai mô hình nền tảng VITS của Meta và Edge-TTS của Microsoft:  
+  > Về độ rõ chữ: khi dùng mô hình nhận dạng ASR PhoWhisper kiểm chứng lại, tỷ lệ lỗi ký tự CER của Matcha-TTS chỉ là 1,9%, vượt trội so với mức 4,3% của VITS và bám sát mức trần 0,7% của người thật.  
+  > Về độ chuẩn cao độ: sai số log-F0 của Matcha đạt 2,86 bán cung, tiệm cận mô hình thương mại Edge-TTS là 2,69 bán cung và tốt hơn nhiều so với VITS.  
+  > Về tốc độ: hệ số RTF trên CPU đạt 0,52, nghĩa là chỉ mất khoảng nửa giây để tổng hợp một câu nói dài một giây, hoàn toàn đáp ứng yêu cầu đàm thoại thời gian thực mà không cần GPU."
 ---
 
 ### SLIDE 19: KIẾN TRÚC PHẦN MỀM FULL-STACK FASTAPI & ANGULAR
-* **Thời lượng:** 1 phút 00 giây (25:00 - 26:00)
+* **Thời lượng:** 1 phút 00 giây (23:30 - 24:30)
 * **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Backend (FastAPI - Python 3.11):**
@@ -456,14 +432,13 @@
     * Thành phần hiển thị **Pipeline Flow Indicator**: Trực quan hóa trạng thái từng bước đang diễn ra (Thu âm $\rightarrow$ STT $\rightarrow$ Retrieval $\rightarrow$ MRC $\rightarrow$ TTS $\rightarrow$ Nghe audio) giúp người dùng nắm bắt tiến độ xử lý.
     * Tích hợp thư viện bài đọc ViMMRC cho phép người dùng chọn nhanh ngữ cảnh mẫu để thử nghiệm.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Tiếp theo, em xin trình bày về khía cạnh kỹ nghệ phần mềm và tích hợp hệ thống:  
-  > Phía Backend, nhóm sử dụng FastAPI viết bằng Python 3.11. Toàn bộ 4 phân hệ được chuẩn hóa thành các REST API rõ ràng. FastAPI cho phép xử lý bất đồng bộ đa luồng với hiệu năng cao và tự động sinh tài liệu Swagger trực quan.  
-  > Phía Frontend, em xây dựng ứng dụng Angular với kiến trúc Standalone Components hiện đại. Giao diện được thiết kế theo phong cách đàm thoại Chat thông minh: người dùng có thể bấm giữ mic để nói, hoặc chọn bài đọc từ danh mục. Điểm đặc sắc là trên giao diện có thanh trạng thái Pipeline Flow Indicator, thể hiện rõ hệ thống đang xử lý ở bước nào, mang lại trải nghiệm tương tác rất minh bạch và chuyên nghiệp."
-
+  > "Về khía cạnh kỹ nghệ phần mềm, nhóm đã tích hợp toàn bộ hệ thống thành một ứng dụng Full-stack hoàn chỉnh:  
+  > Phía Backend, nhóm sử dụng FastAPI viết bằng Python 3.11. Toàn bộ 4 phân hệ được chuẩn hóa thành các REST API rõ ràng, hỗ trợ xử lý bất đồng bộ và tự động sinh tài liệu Swagger UI.  
+  > Phía Frontend, em xây dựng ứng dụng Angular với kiến trúc Standalone Components hiện đại. Giao diện Chat Voice trực quan hỗ trợ tương tác micro và hiển thị thanh trạng thái Pipeline Flow Indicator theo thời gian thực, giúp người dùng theo dõi minh bạch từng bước xử lý từ nhận dạng giọng nói đến phát âm thanh."
 ---
 
 ### SLIDE 20: ĐÓNG GÓI TRIỂN KHAI DOCKER MULTI-STAGE
-* **Thời lượng:** 1 phút 00 giây (26:00 - 27:00)
+* **Thời lượng:** 1 phút 00 giây (24:30 - 25:30)
 * **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Chiến lược Đóng gói Multi-Stage Build (`Dockerfile`):**
@@ -474,15 +449,14 @@
     * Tích hợp sẵn cơ chế **Docker Healthcheck**: Tự động gọi endpoint `/api/health` định kỳ 30s để giám sát sức khỏe container.
     * Hệ thống chạy độc lập, cô lập trên cổng máy chủ **8090** (Docker map 8090 → 8000), không xung đột tài nguyên với hệ điều hành máy chủ.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Để giải quyết bài toán môi trường triển khai 'chạy được trên máy em nhưng lỗi trên máy thầy', nhóm đã đóng gói toàn bộ hệ thống thành Docker container hoàn chỉnh theo kỹ thuật Multi-stage build:  
-  > Giai đoạn 1 sử dụng image Node 22 Alpine để biên dịch ứng dụng Angular, tối ưu hóa toàn bộ mã nguồn web thành các file tĩnh.  
-  > Giai đoạn 2 sử dụng image Python 3.11-slim siêu nhẹ, cài đặt ffmpeg, thư viện xử lý âm thanh và đặc biệt là phiên bản PyTorch CPU-only chỉ nặng 180MB thay vì phải kéo toàn bộ bộ cài CUDA 2.5GB.  
-  > Toàn bộ quá trình triển khai được cấu hình tự động qua `docker-compose.yml`. Người dùng hoặc giám khảo chỉ cần cài Docker và gõ duy nhất một lệnh `docker compose up -d`, container sẽ tự dựng và sẵn sàng phục vụ trên cổng 8090 kèm theo cơ chế Healthcheck tự động giám sát."
-
+  > "Để đảm bảo tính tái lập và triển khai thuận tiện, nhóm đã đóng gói toàn bộ hệ thống vào container Docker theo kỹ thuật Multi-Stage build:  
+  > Stage 1 dùng Node 22 Alpine để biên dịch mã nguồn Angular thành các file tĩnh tối ưu.  
+  > Stage 2 dùng image Python 3.11-slim siêu nhẹ, cài đặt ffmpeg, thư viện âm thanh và phiên bản PyTorch CPU-only chỉ nặng 180MB thay vì bản CUDA 2,5GB.  
+  > Quá trình triển khai được cấu hình tự động qua docker-compose. Chỉ bằng một lệnh 'docker compose up -d', toàn bộ hệ thống sẽ khởi chạy và sẵn sàng phục vụ trên cổng 8090 kèm theo cơ chế Healthcheck tự động định kỳ giám sát."
 ---
 
 ### SLIDE 21: ĐẢM BẢO CHẤT LƯỢNG KIỂM THỬ PHẦN MỀM
-* **Thời lượng:** 1 phút 00 giây (27:00 - 28:00)
+* **Thời lượng:** 1 phút 00 giây (25:30 - 26:30)
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Quy trình Kiểm thử Phần mềm Toàn diện (Testing Suite):**
@@ -497,14 +471,13 @@
       * 4 tests: Chuỗi tích hợp retrieval → MRC → TTS.
     * Đảm bảo tính toàn vẹn (Integrity), phát hiện sớm lỗi hồi quy khi hợp nhất mã nguồn giữa các thành viên.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Thưa Thầy Cô, một đồ án công nghệ thông tin chất lượng không chỉ nằm ở thuật toán mà còn phải thể hiện qua tính chuẩn mực trong kỹ nghệ phần mềm. Nhóm đã thiết lập bộ kiểm thử tự động toàn diện bằng pytest bao phủ từ mức độ hàm xử lý dữ liệu cho đến các API tích hợp cuối cùng.  
-  > Trước khi đóng gói phiên bản chính thức, toàn bộ **54 trên 54 bài kiểm thử** đều vượt qua thành công với tỷ lệ đạt 100%.  
-  > Bộ test này kiểm tra chi tiết từ việc chuẩn hóa dấu câu, khả năng truy xuất chính xác của BM25, tính đúng đắn của metric EM/F1 và ViT5 context chunking, cho đến tính chịu lỗi của cơ chế Fallback khi các dịch vụ bên ngoài bị ngắt. Điều này giúp phát hiện sớm lỗi hồi quy khi tích hợp các nhánh mã nguồn của các thành viên."
-
+  > "Nhóm áp dụng quy trình kiểm thử tự động toàn diện bằng framework pytest để đảm bảo tính ổn định của toàn bộ mã nguồn.  
+  > Trước khi đóng gói phiên bản chính thức, toàn bộ 54 trên 54 bài kiểm thử tự động đều đạt tỷ lệ 100% thành công.  
+  > Bộ test kiểm tra đa tầng từ chuẩn hóa văn bản, giải thuật BM25, mô hình đọc hiểu ViT5, động cơ tổng hợp TTS đến các endpoint API của server. Nhờ kiểm thử chặt chẽ, nhóm loại bỏ hoàn toàn lỗi hồi quy khi tích hợp mã nguồn giữa các thành viên, đảm bảo hệ thống vận hành bền bỉ và sẵn sàng cho môi trường thực tế."
 ---
 
 ### SLIDE 22: KỊCH BẢN LIVE DEMO HỆ THỐNG THỰC TẾ
-* **Thời lượng:** 1 phút 15 giây (28:00 - 29:15)
+* **Thời lượng:** 1 phút 30 giây (26:30 - 28:00)
 * **Người trình bày:** Cả Nhóm (Thao tác màn hình thực tế)
 * **Nội dung hiển thị:**
   * **Kịch bản Demo trực tiếp trên giao diện Web (`http://localhost:8090`):**
@@ -516,16 +489,15 @@
     * **Bước 6 (Audio Output):** Trình duyệt tự động phát giọng nói câu trả lời rõ ràng, truyền cảm.
   * **Tổng thời gian xử lý toàn pipeline:** **khoảng 12 giây** trên CPU (đo trên Docker, `OMP_NUM_THREADS=4`: STT ~3 s, truy xuất + reranker ~6 s, ViT5 ~1,4 s, TTS ~1,3 s); tắt reranker (`KB_RERANKER=`) còn khoảng 6 giây nhưng độ chính xác thấp hơn. Câu "Sông dài nhất thế giới là sông nào?" cũng trả lời đúng "Sông Amazon" trong Docker.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Sau đây, nhóm xin kính mời Thầy Cô và các bạn cùng theo dõi kịch bản vận hành thực tế của hệ thống được quay trực tiếp trên giao diện Web:  
-  > Khi người dùng bấm giữ nút micro và hỏi: 'Ai là tác giả của Truyện Kiều?'.  
-  > Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản trong khoảng 3 giây. Bộ truy xuất lấy ứng viên từ BM25 tầng một, BM25 Wikipedia và dense Wikipedia, rồi reranker bge-reranker-v2-m3 chọn ra đoạn Wikipedia nói về Truyện Kiều.  
-  > Tiếp đó, mô hình ViT5 đọc đoạn văn vừa truy xuất và sinh ra câu trả lời 'Nguyễn Du'. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.  
-  > Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời mất khoảng 12 giây khi chạy hoàn toàn trên CPU Docker; nếu tắt reranker thì còn khoảng 6 giây nhưng độ chính xác thấp hơn."
-
+  > "Sau đây, nhóm xin kính mời Thầy Cô và các bạn cùng theo dõi kịch bản chạy thử nghiệm thực tế của hệ thống:  
+  > Người dùng bấm giữ nút micro trên giao diện web và hỏi: 'Ai là tác giả của Truyện Kiều?'.  
+  > Ngay khi nhả mic, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản trong khoảng 3 giây. Bộ truy xuất lập tức lấy các ứng viên từ BM25 tầng 1, BM25 Wikipedia và dense Wikipedia, sau đó reranker bge-reranker-v2-m3 định vị chính xác đoạn Wikipedia nói về Truyện Kiều.  
+  > Mô hình ViT5 tiếp nhận ngữ cảnh và sinh ra câu trả lời 'Nguyễn Du'. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát âm thanh câu trả lời bằng giọng đọc nơ-ron tự nhiên qua loa.  
+  > Tổng thời gian xử lý toàn chu trình mất khoảng 12 giây khi chạy hoàn toàn trên CPU Docker; nếu tắt reranker thì thời gian phản hồi rút ngắn còn khoảng 6 giây."
 ---
 
 ### SLIDE 23: PHÂN TÍCH LỖI THỰC TẾ & GIỚI HẠN HIỆN TẠI
-* **Thời lượng:** 30 giây (29:15 - 29:45)
+* **Thời lượng:** 1 phút 00 giây (28:00 - 29:00)
 * **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Phân tích các trường hợp lỗi điển hình (Error Analysis):**
@@ -536,16 +508,14 @@
   * **Giới hạn phạm vi hiện tại:**
     * Hệ thống hiện tập trung tối ưu cho tương tác đơn lượt (Single-turn Q&A), chưa ghi nhớ ngữ cảnh lịch sử của các lượt đàm thoại trước đó.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Bên cạnh những kết quả tích cực, nhóm cũng thẳng thắn nhìn nhận những giới hạn còn tồn tại qua quá trình phân tích lỗi thực tế:  
-  > Thứ nhất, ở phân hệ STT, khi môi trường có tiếng ồn phức tạp hoặc người dùng nói quá nhỏ, mô hình đôi khi nhận dạng sai phụ âm hoặc nuốt từ nối.  
-  > Thứ hai, ở phân hệ Retrieval, do BM25 bản chất là giải thuật so khớp từ vựng (lexical matching), nếu câu hỏi sử dụng các từ đồng nghĩa hoàn toàn mà không xuất hiện trong bài đọc gốc thì điểm số truy xuất sẽ bị ảnh hưởng.  
-  > Thứ ba, một số câu hỏi kiến thức chung vẫn trả lời sai, ví dụ hỏi thủ đô của Việt Nam thì hệ thống trả lời Sài Gòn vì một đoạn ViQuAD tầng một về Thành phố Hồ Chí Minh thắng; F1 trên câu kiến thức mở mới khoảng 24.  
-  > Thứ tư, hệ thống hiện tại được thiết kế tối ưu cho hội thoại đơn lượt, nghĩa là trả lời dứt điểm từng câu hỏi chứ chưa lưu trữ bộ nhớ trạng thái để trò chuyện nối tiếp nhiều lượt theo ngữ cảnh quá khứ."
-
+  > "Nhóm cũng phân tích các trường hợp lỗi và giới hạn thực tế:  
+  > Thứ nhất, ở phân hệ STT, trong môi trường ồn hoặc người nói quá nhỏ, mô hình đôi khi nhận dạng sai phụ âm đầu hoặc mất từ nối.  
+  > Thứ hai, ở phân hệ Retrieval, BM25 so khớp từ khóa nên nếu câu hỏi dùng từ đồng nghĩa vắng bóng trong văn bản thì điểm số bị ảnh hưởng; một số câu kiến thức mở còn sai do đoạn tầng 1 lấn át điểm số.  
+  > Thứ ba, hệ thống hiện tối ưu cho hội thoại đơn lượt, trả lời từng câu độc lập chứ chưa lưu trữ trạng thái để trò chuyện đa lượt."
 ---
 
 ### SLIDE 24: TỔNG KẾT, HƯỚNG PHÁT TRIỂN & LỜI CẢM ƠN
-* **Thời lượng:** 15 giây (29:45 - 30:00)
+* **Thời lượng:** 1 phút 00 giây (29:00 - 30:00)
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Tổng kết các đóng góp chính của đề tài:**
@@ -558,7 +528,6 @@
     * Thử LLM tiếng Việt (như PhoGPT, Vistral, SeaLLMs) để sinh câu trả lời.
   * **Lời cảm ơn Thầy Cô và Hội đồng đánh giá.**
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Kính thưa Thầy Cô trong Hội đồng,  
-  > Nhìn lại toàn bộ quá trình nghiên cứu, đề tài của nhóm đã hoàn thành trọn vẹn tất cả các mục tiêu đề ra: từ việc nghiên cứu lý thuyết, xử lý dữ liệu chuẩn ViMMRC 2.0, làm chủ các mô hình học máy tiên tiến như Matcha-TTS Flow Matching, tinh chỉnh BM25, cho đến việc đóng gói một sản phẩm phần mềm hoàn chỉnh chạy cục bộ ổn định và đạt chuẩn kiểm thử 100%.  
-  > Trong giai đoạn tới, nhóm định hướng sẽ chạy hệ thống trên GPU để giảm độ trễ, tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung, đồng thời thử các LLM tiếng Việt để sinh câu trả lời.  
-  > Nhóm chúng em xin gửi lời cảm ơn chân thành và sâu sắc nhất tới Thầy Cô đã tận tình hướng dẫn, truyền thụ kiến thức và tạo điều kiện cho nhóm thực hiện đồ án này. Rất mong nhận được những nhận xét, góp ý quý báu từ Thầy Cô! Xin trân trọng cảm ơn!"
+  > "Nhìn lại quá trình nghiên cứu, đề tài đã hoàn thành các mục tiêu: xây dựng hệ thống Voice Q&A tiếng Việt khép kín trên ViMMRC và ViQuAD, làm chủ Matcha-TTS Flow Matching với frontend vi_tone_v2, chạy cục bộ ổn định trên CPU và đóng gói Docker 100%.  
+  > Định hướng tương lai: nhóm sẽ triển khai trên GPU để giảm độ trễ dưới 2 giây, tinh chỉnh reranker cho câu hỏi kiến thức mở, và thử nghiệm mô hình LLM tiếng Việt để nâng cao năng lực suy luận.  
+  > Nhóm em xin chân thành cảm ơn sự hướng dẫn tận tình của Thầy Cô! Rất mong nhận được góp ý quý báu từ Hội đồng. Em xin trân trọng cảm ơn!"

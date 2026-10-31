@@ -32,6 +32,17 @@ old_retriever = Retriever([{"id": "p1", "passage": "Nội dung đoạn văn."}],
 
 `retrieve(question)` trả về **chuỗi passage** tốt nhất, hoặc `""` nếu câu hỏi không có từ nào trùng với corpus. `search(question, top_k)` trả danh sách `{id, passage, score}` xếp theo BM25; nếu đồng điểm giữ thứ tự corpus. Corpus đầu vào là danh sách `{id: str, passage: str}` với ID duy nhất. Index JSON lưu corpus và tham số BM25; chỉ dùng từ nguồn đáng tin cậy. `OPTIMIZED_CONFIG` là cấu hình mặc định; `BASELINE_CONFIG` tái lập BM25 cũ. Tokenizer chuẩn hóa Unicode NFC, không tách từ tiếng Việt theo âm tiết ghép hoặc xử lý đồng nghĩa.
 
+## Kho tri thức triển khai (RAG)
+
+Hệ thống chạy thật (`scripts/api_server.py`, Docker) dùng `kb_retriever.load_any`, không dùng index demo ở trên:
+
+- Tầng 1 `data/kb_index.json`: 5.869 đoạn ViMMRC + ViQuAD, `Retriever` BM25 (k1 2.1, b 1.0, bigram boost 0.4).
+- Tầng 2 `data/kb_wiki_full/shard_*`: 1,48 triệu đoạn Wikipedia tiếng Việt, BM25 `bm25s` (dựng bằng
+  `python build_kb.py --wiki --wiki-full`) và chỉ mục vector e5-small (`python build_dense.py ../data/kb_wiki_full`).
+- Mỗi câu hỏi lấy top-3 của BM25 tầng 1, BM25 Wikipedia và vector Wikipedia; `bge-reranker-v2-m3` chấm chung,
+  đoạn tầng 1 được cộng 0,25. Biến môi trường: `QA_INDEX`, `KB_WIKI`, `KB_RERANKER` (để trống thì về luật
+  BM25 `KB_WIKI_RATIO=0.4`). Đánh giá: `scripts/eval_dense.py --reranker BAAI/bge-reranker-v2-m3`.
+
 ## Chuẩn bị và đánh giá ViMMRC
 
 Từ gốc repository, sau khi đã có các file dữ liệu cục bộ:

@@ -8,7 +8,7 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
 | Module | Trạng thái | File chính | Hợp đồng vào/ra | Chạy standalone | Test |
 |---|---|---|---|---|---|
 | STT | Xong (Faster-Whisper). Checkpoint fine-tune Whisper-small-vi (50h) có trên Drive nhóm, tải về `speech-to-text_Luong/checkpoints/whisper-small-vi-50h-ct2/` (không commit vào git) | `speech-to-text_Luong/stt_server.py` | `POST /api/stt` (multipart audio) → `{text}` | `WHISPER_MODEL=<path checkpoint> uvicorn stt_server:app --port 8001` (bỏ `WHISPER_MODEL` → model "small" gốc chưa fine-tune) | chưa có test riêng |
-| Retrieval (RAG) | Xong. KB 2 tầng: `data/kb_index.json` (552 ViMMRC + 5.317 ViQuAD) + `data/kb_wiki_full` (1,48 triệu đoạn Wikipedia tiếng Việt, bm25s shard, dùng khi điểm wiki > 0,5 × điểm KB). Dựng bằng `build_kb.py`; data không commit. Dev R@1 70,7% / R@5 85,1%, ~30 ms/câu | `retrieval-model_Huy/kb_retriever.py` (`load_any`), `retrieval_client.py` | `Retriever.search(q, top_k) -> list[{id,passage,score}]`; `Retriever.retrieve(q) -> str` (API phụ, chỉ `test_retrieval.py` dùng) | `retrieval_cli.py` | `retrieval-model_Huy/test_retrieval.py` |
+| Retrieval (RAG) | Xong. KB 2 tầng: `data/kb_index.json` (552 ViMMRC + 5.317 ViQuAD) + `data/kb_wiki_full` (1,48 triệu đoạn Wikipedia tiếng Việt, bm25s shard + chỉ mục dense multilingual-e5-small 384 chiều float16 ~1,1 GB). Mỗi câu lấy top-3 KB BM25 + top-3 wiki BM25 + top-3 wiki dense, reranker bge-reranker-v2-m3 chấm chung (+0,25 cho đoạn KB), điểm cao nhất thắng. Dựng bằng `build_kb.py`/`build_dense.py`; data không commit. BM25 hai tầng (trước reranker): dev R@1 70,7% / R@5 85,1% | `retrieval-model_Huy/kb_retriever.py` (`load_any`), `retrieval_client.py` | `Retriever.search(q, top_k) -> list[{id,passage,score}]`; `Retriever.retrieve(q) -> str` (API phụ, chỉ `test_retrieval.py` dùng) | `retrieval_cli.py` | `retrieval-model_Huy/test_retrieval.py` |
 | MRC (ViT5) | Đã fine-tune trên bộ dữ liệu mở rộng (xem dưới): **Exact Match 41,05%, token F1 66,55%** trên test (27.164 câu, không so được với số liệu ViMMRC thuần cũ). Checkpoint dùng trong Docker: `mrc-model_Huy/checkpoints/vit5-combined-cont/` (train tiếp 2 epoch từ `vit5-combined`, F1 66,02%), không commit (quá lớn) | `mrc-model_Huy/mrc_client.py` | `answer_question(question, passage) -> str` | `MRC_CHECKPOINT=<path> uvicorn scripts.api_server:app`, hoặc `MRCClient(checkpoint_dir)` trực tiếp | `mrc-model_Huy/tests/` |
 | Lexical baseline (MRC) | Xong, dùng khi chưa có checkpoint ViT5 | `mrc_client.LexicalBaselineClient` | `answer_question(question, passage) -> str` | không cần setup | cùng `mrc-model_Huy/tests/` |
 | TTS | Xong: Matcha-TTS mặc định (cần `checkpoints/matcha_vi.pt` + `scripts/setup_matcha.py`), VITS/Edge/gTTS, lỗi thì fallback gTTS | `text-to-speech_Duy/synthesize.py` | `synthesize(text, engine?, voice?) -> đường dẫn audio` | `python synthesize.py --text "..."` | `text-to-speech_Duy/tests/` |
@@ -57,9 +57,9 @@ B 16,0 (đang dùng)**; chọn theo độ tự tin ViT5 (margin 0) → A 44,7 / 
 **Reranker** (`KB_RERANKER=BAAI/bge-reranker-v2-m3`, `reports/rerank_routing_e2e.json`): chấm chung top-3 của KB BM25, wiki
 BM25 và wiki dense, cộng +0,25 cho đoạn KB → **A 60,7 / B 24,3 — đang dùng** (+0,5: 61,7 / 23,8; không cộng: 55,1 / 27,4).
 Mức cộng chọn trên chính 400 câu đo nên hơi lạc quan. Giá: reranker ~4,5 s/câu trên CPU. Xếp hạng chung bằng cosine cho cả hai tầng: B 20,7 nhưng A tụt còn 32–45, không dùng.
-Độ trễ Docker CPU (`OMP_NUM_THREADS=4`): STT ~3 s, truy xuất ~0,1 s, ViT5 1,4–4 s, Matcha 1–4 s.
+Độ trễ Docker CPU (`OMP_NUM_THREADS=4`): STT ~3 s, truy xuất + reranker ~6 s, ViT5 ~1,4 s, Matcha ~1,3 s → tổng khoảng 12 s/câu. Tắt reranker (`KB_RERANKER=`): truy xuất ~0,1–1,7 s (tổng ~6 s), độ chính xác thấp hơn.
 
-Đã thử, không áp dụng: reranker bge-v2-m3 (+1,5 R@1, chậm ~1 s/câu), đọc top-3 lấy điểm cao nhất (kém hơn),
+Đã thử, không áp dụng: đọc top-3 lấy điểm cao nhất (kém hơn),
 `question_chunks` lúc suy luận (không tăng). STT: Whisper-small-vi-50h (`eval_stt.py`, WER 8,1% trên gTTS).
 
 ## Dữ liệu huấn luyện MRC đã mở rộng

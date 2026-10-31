@@ -6,7 +6,7 @@ Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC
 
 ## Chạy hệ thống tích hợp
 
-Backend FastAPI phục vụ STT (Whisper), BM25 retrieval (kho hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt), MRC (ViT5 sinh câu trả lời tự do), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
+Backend FastAPI phục vụ STT (Whisper), retrieval lai BM25 + dense + reranker bge-reranker-v2-m3 (kho hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt), MRC (ViT5 sinh câu trả lời tự do), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
 
 Từ thư mục gốc:
 
@@ -133,7 +133,7 @@ python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đ
 | Thành phần        | Vai trò                                   | Gợi ý công nghệ                          |
 |--------------------|---------------------------------------------|--------------------------------------------|
 | STT                | Audio → Text                               | Whisper, FPT.AI STT, Google STT           |
-| Retrieval          | Chọn đoạn văn liên quan (nếu nhiều passage) | BM25, sentence-embedding + vector search  |
+| Retrieval          | Chọn đoạn văn liên quan (nếu nhiều passage) | BM25 + dense (multilingual-e5-small) + reranker bge-reranker-v2-m3 |
 | MRC Model          | Trả lời câu hỏi dựa trên passage           | PhoBERT/ViBERT fine-tune trên ViMMRC 2.0  |
 | TTS                | Text → Audio                                | FPT.AI TTS, Google TTS, Coqui TTS, VAIS   |
 | Giao diện          | Ghi âm & phát audio                         | Web app (mic + speaker)                   |

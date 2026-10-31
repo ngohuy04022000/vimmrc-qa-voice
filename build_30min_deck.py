@@ -130,7 +130,7 @@ principles = [
     ("1. TÍNH MODULE HÓA CAO (HIGH MODULARITY)", "Kiến trúc hướng dịch vụ, trừu tượng hóa qua các BaseClient Interface.", "Cho phép hoán đổi độc lập các thuật toán (ví dụ: thay BM25 bằng Dense Retriever, thay Matcha bằng VITS) mà không ảnh hưởng toàn hệ thống.", PRIMARY_BLUE),
     ("2. KHẢ NĂNG CHẠY CỤC BỘ (LOCAL & CPU-FRIENDLY)", "Tối ưu hóa tham số để toàn bộ pipeline chạy ổn định trên CPU máy tính 8GB RAM.", "Hoàn toàn không phụ thuộc vào các API đám mây thương mại trả phí (OpenAI, Google Speech), bảo mật 100% dữ liệu người dùng.", TEAL),
     ("3. TÍNH CHỊU LỖI & DỰ PHÒNG (FAULT TOLERANCE)", "Thiết kế cơ chế Multi-level Fallback ở từng phân hệ.", "Nếu chưa có checkpoint ViT5 -> Lexical baseline trích câu trả lời; Nếu TTS offline lỗi -> Edge-TTS hoặc Web Speech tự động thay thế; không bao giờ crash.", TECH_BLUE),
-    ("4. PHẢN HỒI THỜI GIAN THỰC (REAL-TIME LATENCY)", "Tối ưu hóa từng mili-giây ở cả 4 khâu: VAD cắt khoảng lặng, BM25 dưới 15ms, Euler 10 bước TTS.", "Tổng thời gian phản hồi từ lúc người dùng dứt lời đến khi nghe câu trả lời đạt ngưỡng < 2 giây.", GREEN)
+    ("4. PHẢN HỒI THỜI GIAN THỰC (REAL-TIME LATENCY)", "Tối ưu độ trễ ở cả 4 khâu: VAD cắt khoảng lặng, Euler 10 bước TTS; reranker có thể tắt (KB_RERANKER=) để đổi độ chính xác lấy tốc độ.", "Tổng thời gian phản hồi trên CPU Docker khoảng 12 giây/câu (~6 giây khi tắt reranker).", GREEN)
 ]
 
 for idx, (title_p, sub_p, det_p, col_p) in enumerate(principles):
@@ -222,7 +222,7 @@ s5 = builder.add_content_slide(
 
 steps_s5 = [
     ("CHẶNG 1: STT", "Faster-Whisper (small)", "Audio 16kHz -> Text Query", "Fallback: Web Speech API", PRIMARY_BLUE),
-    ("CHẶNG 2: RETRIEVAL", "BM25 Tinh chỉnh", "Kho 5.869 đoạn + Wikipedia", "Top 5 bài đọc khớp nhất", TEAL),
+    ("CHẶNG 2: RETRIEVAL", "BM25 + Dense + Reranker", "Kho 5.869 đoạn + Wikipedia", "Đoạn khớp nhất sau rerank", TEAL),
     ("CHẶNG 3: MRC", "ViT5 (RAG)", "Đọc hiểu & Suy luận đáp án", "Fallback: Lexical Overlap", TECH_BLUE),
     ("CHẶNG 4: TTS", "Matcha-TTS (Flow Matching)", "Text Answer -> Audio 22kHz", "Fallback: VITS / Edge-TTS", GREEN)
 ]
@@ -549,9 +549,9 @@ for b in [
 
 # SLIDE 12
 s12_notes = """Mục tiêu của hệ thống là trả lời mọi câu hỏi, nên nhóm bỏ hẳn nhánh trắc nghiệm và dựng một kho tri thức hai tầng cho RAG.
-Tầng một gồm 5.869 đoạn văn của ViMMRC và ViQuAD. Tầng hai gồm 1,48 triệu đoạn trích từ toàn bộ Wikipedia tiếng Việt, đánh chỉ mục BM25 bằng bm25s, chia shard và đọc đoạn văn từ đĩa nên chỉ tốn khoảng 760 MB RAM.
-Wikipedia chỉ được dùng khi điểm BM25 của nó vượt 0,5 lần điểm của tầng một, ngưỡng này được dò trên tập dev.
-Trên tập test 2.545 câu, đoạn đúng nằm ở vị trí 1 trong 71,1% câu và trong top 5 ở 85,9% câu, mỗi câu khoảng 35 mili-giây."""
+Tầng một gồm 5.869 đoạn văn của ViMMRC và ViQuAD. Tầng hai gồm 1,48 triệu đoạn trích từ toàn bộ Wikipedia tiếng Việt, được đánh hai chỉ mục: BM25 bằng bm25s chia shard, và chỉ mục vector dense multilingual-e5-small 384 chiều lưu float16, đọc mmap khoảng 1,1 GB.
+Với mỗi câu hỏi, hệ thống lấy top 3 từ BM25 tầng một, top 3 từ BM25 Wikipedia và top 3 từ dense Wikipedia, tối đa 9 ứng viên. Reranker bge-reranker-v2-m3 dạng cross-encoder chấm điểm chung tất cả, đoạn tầng một được cộng thêm 0,25, đoạn điểm cao nhất thắng.
+Với BM25 hai tầng trước khi thêm reranker, trên tập test 2.545 câu đoạn đúng nằm ở vị trí 1 trong 71,1% câu và trong top 5 ở 85,9% câu. Khi so sánh pipeline cuối trên 200 câu có đoạn trong kho và 200 câu kiến thức mở, F1 câu trả lời của BM25 thuần là 58,0 và 15,4, còn reranker kết hợp ưu tiên kho là 60,7 và 24,3. Mức cộng 0,25 được chọn trên chính các câu này nên hơi lạc quan."""
 
 s12 = builder.add_content_slide(
     category="Phần 3: Retrieval & MRC",
@@ -564,10 +564,10 @@ s12 = builder.add_content_slide(
 c_s12_l, tf_s12_l = builder.add_card(s12, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Kiến Trúc Kho Tri Thức", title_color=PRIMARY_BLUE)
 for b in [
     "Tầng 1: 5.869 đoạn văn ViMMRC + ViQuAD (BM25, k1=2.1, b=1.0, bigram boost).",
-    "Tầng 2: 1,48 triệu đoạn Wikipedia tiếng Việt (≤800 ký tự/đoạn), bm25s chia shard, mmap.",
-    "Định tuyến: dùng Wikipedia khi điểm wiki > 0,5 × điểm tầng 1 (dò trên dev).",
-    "Đoạn văn đọc từ đĩa theo offset: ~760 MB RAM cho toàn bộ kho.",
-    "Đã thử reranker bge-reranker-v2-m3: +1,5 điểm R@1 nhưng chậm ~1 s/câu nên không dùng."
+    "Tầng 2: 1,48 triệu đoạn Wikipedia tiếng Việt (≤800 ký tự/đoạn), có cả chỉ mục BM25 (bm25s, chia shard) và vector dense (multilingual-e5-small, 384 chiều, float16 mmap ~1,1 GB).",
+    "Ứng viên: top-3 BM25 tầng 1 + top-3 BM25 Wikipedia + top-3 dense Wikipedia (≤9).",
+    "Reranker bge-reranker-v2-m3 (cross-encoder) chấm chung; đoạn tầng 1 được cộng +0,25, điểm cao nhất thắng.",
+    "Đoạn văn đọc từ đĩa theo offset, không nạp toàn bộ kho vào RAM."
 ]:
     p = tf_s12_l.add_paragraph()
     p.text = "• " + b
@@ -575,12 +575,14 @@ for b in [
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-c_s12_r, tf_s12_r = builder.add_card(s12, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Kết Quả Trên Tập Test (2.545 câu)", title_color=TEAL)
+c_s12_r, tf_s12_r = builder.add_card(s12, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Kết Quả Đánh Giá Retrieval", title_color=TEAL)
 mrc_stats = [
-    ("Recall@1 / Recall@5 (tất cả)", "71,1% / 85,9%"),
+    ("Test 2.545 câu, BM25 hai tầng (trước reranker): R@1 / R@5", "71,1% / 85,9%"),
     ("Câu hỏi ViQuAD (2.156 câu)", "R@1 73,2% / R@5 88,9%"),
     ("Câu hỏi ViMMRC (389 câu)", "R@1 59,4% / R@5 69,2%"),
-    ("Thời gian truy xuất / câu", "~35 mili-giây trên CPU")
+    ("Answer F1, 200 câu trong kho / 200 câu mở: BM25 thuần", "58,0 / 15,4"),
+    ("Answer F1: reranker + ưu tiên kho +0,25 (đang dùng)", "60,7 / 24,3"),
+    ("Thời gian truy xuất + reranker / câu", "~6 giây trên CPU")
 ]
 for title_m, val_m in mrc_stats:
     p = tf_s12_r.add_paragraph()
@@ -952,7 +954,7 @@ for b in [
 
 # SLIDE 21
 s21_notes = """Thưa Thầy Cô, một đồ án công nghệ thông tin chất lượng không chỉ nằm ở thuật toán mà còn phải thể hiện qua tính chuẩn mực trong kỹ nghệ phần mềm. Nhóm đã thiết lập bộ kiểm thử tự động toàn diện bằng pytest bao phủ từ mức độ hàm xử lý dữ liệu cho đến các API tích hợp cuối cùng.
-Trước khi đóng gói phiên bản chính thức, toàn bộ 55 trên 55 bài kiểm thử đều vượt qua thành công với tỷ lệ đạt 100%.
+Trước khi đóng gói phiên bản chính thức, toàn bộ 54 trên 54 bài kiểm thử đều vượt qua thành công với tỷ lệ đạt 100%.
 Bộ test này kiểm tra chi tiết từ việc chuẩn hóa dấu câu, khả năng truy xuất chính xác của BM25, khả năng sinh câu trả lời của ViT5, cho đến tính chịu lỗi của cơ chế Fallback khi các dịch vụ bên ngoài bị ngắt. Điều này đảm bảo hệ thống có độ tin cậy rất cao và không bao giờ xảy ra lỗi hồi quy khi tích hợp các nhánh mã nguồn của các thành viên."""
 
 s21 = builder.add_content_slide(
@@ -965,11 +967,11 @@ s21 = builder.add_content_slide(
 
 headers_s21 = ["Bộ Kiểm Thử (Test Suite)", "Số Lượng Tests", "Phạm Vi Kiểm Định (Test Scope)", "Trạng Thái (Status)"]
 rows_s21 = [
-    ["test_tts_normalizer.py", "14 tests", "Chuẩn hóa trắc nghiệm, ngày tháng, tiền tệ, số liệu, chèn ngắt nhịp", "14/14 PASSED (100%)"],
-    ["test_retrieval.py", "10 tests", "BM25 scoring, Bigram boost, Tokenizer, Lập chỉ mục kho bài đọc", "10/10 PASSED (100%)"],
-    ["test_mrc_model.py", "12 tests", "Dữ liệu MRC, metric EM/F1, ViT5 Context chunking", "12/12 PASSED (100%)"],
-    ["test_tts_engine.py", "11 tests", "Matcha-TTS synthesis, VITS MMS, Edge-TTS fallback logic", "11/11 PASSED (100%)"],
-    ["test_stt_and_server.py", "8 tests", "Audio PCM conversion, REST API Endpoints, Healthcheck", "8/8 PASSED (100%)"],
+    ["text-to-speech_Duy/tests (2 file)", "12 tests", "Matcha/VITS/Edge-TTS fallback, normalizer, tokenizer vi_tone_v2", "12/12 PASSED (100%)"],
+    ["retrieval-model_Huy/test_retrieval.py", "15 tests", "BM25 scoring, Bigram boost, Tokenizer, Lập chỉ mục kho bài đọc", "15/15 PASSED (100%)"],
+    ["mrc-model_Huy/tests (4 file)", "18 tests", "Dữ liệu MRC, metric EM/F1, context selection, dataset gộp, smoke train", "18/18 PASSED (100%)"],
+    ["tests/test_api_server.py", "5 tests", "REST API Endpoints, Healthcheck, phục vụ giao diện web", "5/5 PASSED (100%)"],
+    ["tests/test_pipeline.py", "4 tests", "Chuỗi tích hợp retrieval → MRC → TTS", "4/4 PASSED (100%)"],
     ["TỔNG CỘNG TOÀN HỆ THỐNG", "54 TESTS", "Thời gian chạy kiểm thử tự động: ~106 giây", "54/54 PASSED (100%)"]
 ]
 col_w_s21 = [Inches(3.2), Inches(1.8), Inches(4.733), Inches(2.0)]
@@ -990,9 +992,9 @@ for b in [
 # SLIDE 22
 s22_notes = """Sau đây, nhóm xin kính mời Thầy Cô và các bạn cùng theo dõi kịch bản vận hành thực tế của hệ thống được quay trực tiếp trên giao diện Web:
 Khi người dùng bấm giữ nút micro và hỏi: 'Ai là tác giả của Truyện Kiều?'.
-Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản trong khoảng 3 giây. Bộ truy xuất BM25 lập tức quét kho tri thức và vì kho ViMMRC + ViQuAD không có đoạn khớp, hệ thống lấy đoạn Wikipedia nói về Truyện Kiều.
+Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản trong khoảng 3 giây. Bộ truy xuất lấy ứng viên từ BM25 tầng một, BM25 Wikipedia và dense Wikipedia, rồi reranker bge-reranker-v2-m3 chọn ra đoạn Wikipedia nói về Truyện Kiều.
 Tiếp đó, mô hình ViT5 đọc đoạn văn và sinh câu trả lời Nguyễn Du. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.
-Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời mất khoảng 6 giây khi chạy hoàn toàn trên CPU."""
+Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời mất khoảng 12 giây khi chạy hoàn toàn trên CPU Docker; nếu tắt reranker thì còn khoảng 6 giây nhưng độ chính xác thấp hơn."""
 
 s22 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
@@ -1005,10 +1007,10 @@ s22 = builder.add_content_slide(
 demo_cards = [
     ("1. VOICE INPUT", "Micro Browser", "Người dùng hỏi: 'Ai là tác giả của Truyện Kiều?' (câu hỏi tự do)", PRIMARY_BLUE),
     ("2. STT WHISPER", "~3 Giây", "Faster-Whisper nhận dạng chính xác văn bản tiếng Việt có dấu hoàn chỉnh.", TEAL),
-    ("3. BM25 RETRIEVAL", "~0.1 Giây", "Kho ViMMRC + ViQuAD không đủ khớp → lấy đoạn Wikipedia 'Lục bát' nói về Truyện Kiều.", TECH_BLUE),
+    ("3. RETRIEVAL + RERANKER", "~6 Giây", "BM25 + dense ứng viên → reranker chọn đoạn Wikipedia 'Truyện Kiều'.", TECH_BLUE),
     ("4. MRC VIT5", "~1.4 Giây", "ViT5 đọc đoạn văn và sinh câu trả lời 'Nguyễn Du'.", GREEN),
     ("5. TTS SYNTHESIS", "~1.3 Giây", "Normalizer chuyển đổi -> Matcha-TTS tổng hợp câu nói tự nhiên.", AMBER),
-    ("6. PLAYBACK AUDIO", "Tổng ~6 Giây", "Trình duyệt tự động phát câu trả lời giọng đọc nơ-ron qua loa.", PRIMARY_BLUE)
+    ("6. PLAYBACK AUDIO", "Tổng ~12 Giây", "Trình duyệt tự động phát câu trả lời giọng đọc nơ-ron qua loa.", PRIMARY_BLUE)
 ]
 
 for idx, (head_d, time_d, desc_d, col_d) in enumerate(demo_cards):
@@ -1041,7 +1043,8 @@ for idx, (head_d, time_d, desc_d, col_d) in enumerate(demo_cards):
 s23_notes = """Bên cạnh những kết quả tích cực, nhóm cũng thẳng thắn nhìn nhận những giới hạn còn tồn tại qua quá trình phân tích lỗi thực tế:
 Thứ nhất, ở phân hệ STT, khi môi trường có tiếng ồn phức tạp hoặc người dùng nói quá nhỏ, mô hình đôi khi nhận dạng sai phụ âm hoặc nuốt từ nối.
 Thứ hai, ở phân hệ Retrieval, do BM25 bản chất là giải thuật so khớp từ vựng (lexical matching), nếu câu hỏi sử dụng các từ đồng nghĩa hoàn toàn mà không xuất hiện trong bài đọc gốc thì điểm số truy xuất sẽ bị ảnh hưởng.
-Thứ ba, hệ thống hiện tại được thiết kế tối ưu cho hội thoại đơn lượt, nghĩa là trả lời dứt điểm từng câu hỏi chứ chưa lưu trữ bộ nhớ trạng thái để trò chuyện nối tiếp nhiều lượt theo ngữ cảnh quá khứ."""
+Thứ ba, một số câu hỏi kiến thức chung vẫn trả lời sai, ví dụ hỏi thủ đô của Việt Nam thì hệ thống trả lời Sài Gòn vì một đoạn ViQuAD tầng một về Thành phố Hồ Chí Minh thắng; F1 trên câu kiến thức mở mới khoảng 24.
+Thứ tư, hệ thống hiện tại được thiết kế tối ưu cho hội thoại đơn lượt, nghĩa là trả lời dứt điểm từng câu hỏi chứ chưa lưu trữ bộ nhớ trạng thái để trò chuyện nối tiếp nhiều lượt theo ngữ cảnh quá khứ."""
 
 s23 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
@@ -1056,6 +1059,7 @@ for b in [
     "Nhiễu Môi Trường Tạp Âm (STT Error): Trong môi trường ồn ào (tiếng còi xe, quán xá), Whisper có thể nhầm lẫn một số phụ âm đầu gần âm.",
     "Khoảng Trống Từ Vựng (Retrieval Lexical Gap): BM25 dựa trên từ khóa; nếu câu hỏi dùng từ đồng nghĩa hoàn toàn (ví dụ: 'thủ phủ' thay vì 'thủ đô') mà văn bản không chứa từ đó -> Điểm BM25 bị thấp.",
     "Giới hạn Tài nguyên Huấn luyện ViT5: Huấn luyện ViT5 trên tập dữ liệu dài đòi hỏi GPU lớn (A100) để đạt trạng thái hội tụ tối đa ở nhiều epoch.",
+    "Câu hỏi kiến thức chung: Một số câu vẫn sai, ví dụ 'Thủ đô của Việt Nam là gì?' trả về 'Sài Gòn' do đoạn ViQuAD về TP. Hồ Chí Minh ở tầng 1 thắng; F1 kiến thức mở mới ~24.",
     "Lệch giọng địa phương: Mô hình TTS hiện được tối ưu cho giọng chuẩn miền Bắc, chưa đa dạng hóa sang giọng miền Trung và Nam."
 ]:
     p = tf_s23_l.add_paragraph()
@@ -1079,7 +1083,7 @@ for b in [
 # SLIDE 24
 s24_notes = """Kính thưa Thầy Cô trong Hội đồng,
 Nhìn lại toàn bộ quá trình nghiên cứu, đề tài của nhóm đã hoàn thành trọn vẹn tất cả các mục tiêu đề ra: từ việc nghiên cứu lý thuyết, xử lý dữ liệu chuẩn ViMMRC 2.0, làm chủ các mô hình học máy tiên tiến như Matcha-TTS Flow Matching, tinh chỉnh BM25, cho đến việc đóng gói một sản phẩm phần mềm hoàn chỉnh chạy cục bộ ổn định và đạt chuẩn kiểm thử 100%.
-Trong giai đoạn tới, nhóm định hướng sẽ nâng cấp hệ thống sang kiến trúc Hybrid Retrieval kết hợp nhúng ngữ nghĩa vector và tích hợp các LLMs tiếng Việt để phát triển thành một trợ lý ảo thông minh đa lượt toàn diện.
+Trong giai đoạn tới, nhóm định hướng sẽ chạy hệ thống trên GPU để giảm độ trễ, tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung, đồng thời thử các LLM tiếng Việt để sinh câu trả lời.
 Nhóm chúng em xin gửi lời cảm ơn chân thành và sâu sắc nhất tới Thầy Cô đã tận tình hướng dẫn, truyền thụ kiến thức và tạo điều kiện cho nhóm thực hiện đồ án này. Rất mong nhận được những nhận xét, góp ý quý báu từ Thầy Cô! Xin trân trọng cảm ơn!"""
 
 s24 = builder.add_content_slide(
@@ -1105,8 +1109,9 @@ for b in [
 
 c_s24_r, tf_s24_r = builder.add_card(s24, Inches(6.7), Inches(1.5), Inches(5.833), Inches(4.1), title="Định Hướng Phát Triển Tương Lai", title_color=AMBER)
 for b in [
-    "Kiến trúc Hybrid Dense Retrieval: Kết hợp BM25 với mô hình Bi-Encoder tiếng Việt và Reranker nơ-ron để bù đắp khoảng trống từ vựng.",
-    "Tích hợp Large Language Models (LLMs): Khảo sát các mô hình tiếng Việt (PhoGPT, Vistral, SeaLLMs) để suy luận đa chặng.",
+    "Chạy GPU: Giảm độ trễ từ ~12 giây/câu xuống mức tương tác thời gian thực.",
+    "Tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung (hiện F1 kiến thức mở mới ~24).",
+    "Thử LLM tiếng Việt (PhoGPT, Vistral, SeaLLMs) để sinh câu trả lời.",
     "Hội thoại Đa Lượt (Multi-Turn Dialogue): Xây dựng bộ nhớ đệm trạng thái hội thoại để hỗ trợ hỏi đáp nối tiếp tự nhiên.",
     "Ứng dụng thực tiễn: Triển khai thử nghiệm tại Kiosk trường học và các thiết bị hỗ trợ người khiếm thị."
 ]:

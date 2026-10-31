@@ -134,10 +134,10 @@
 * **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Sơ đồ luồng dữ liệu 4 Chặng chi tiết:**
-    $$\text{User Mic} \xrightarrow{\text{Audio}} \text{[STT: Faster-Whisper]} \xrightarrow{\text{Text Query}} \text{[Retrieval: BM25]} \xrightarrow{\text{Passage}} \text{[MRC: ViT5]} \xrightarrow{\text{Answer Text}} \text{[TTS: Matcha/VITS]} \xrightarrow{\text{Audio}} \text{Speaker}$$
+    $$\text{User Mic} \xrightarrow{\text{Audio}} \text{[STT: Faster-Whisper]} \xrightarrow{\text{Text Query}} \text{[Retrieval: BM25 + Dense + Reranker]} \xrightarrow{\text{Passage}} \text{[MRC: ViT5]} \xrightarrow{\text{Answer Text}} \text{[TTS: Matcha/VITS]} \xrightarrow{\text{Audio}} \text{Speaker}$$
   * **Giao thức truyền thông liên phân hệ:**
     * Phân hệ STT tiếp nhận `multipart/form-data` audio/wav $\rightarrow$ trả về JSON `{text, language, duration}`.
-    * Phân hệ Retrieval nhận `{query, top_k}` $\rightarrow$ quét qua chỉ mục `vimmrc_index.json` $\rightarrow$ trả về Top 5 văn bản kèm BM25 score.
+    * Phân hệ Retrieval nhận `{query, top_k}` $\rightarrow$ quét qua chỉ mục `vimmrc_index.json` $\rightarrow$ trả về các đoạn văn xếp hạng cao nhất (BM25 + dense, reranker chấm chung).
     * Phân hệ MRC nhận `POST /api/answer {question, passage}` $\rightarrow$ trả về `{answer}`.
     * Phân hệ TTS nhận `{text, voice, speed}` $\rightarrow$ chuyển qua normalizer $\rightarrow$ tạo sóng âm WAV/MP3.
   * **Cơ chế Fallback Đa Tầng:**
@@ -285,19 +285,19 @@
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Tầng 1 - Kho chuyên biệt:** 5.869 đoạn văn (passages) từ ViMMRC + ViQuAD, chỉ mục BM25 ($k_1=2.1$, $b=1.0$, bigram boost).
-  * **Tầng 2 - Wikipedia tiếng Việt:** 1,48 triệu chunk (mỗi chunk ≤ 800 ký tự), chỉ mục `bm25s` chia shard, nạp bằng mmap, tiêu tốn khoảng 760 MB RAM.
-  * **Cơ chế định tuyến (Routing):** dùng kết quả Wikipedia khi điểm Wikipedia > 0,5 × điểm tầng 1 (ngưỡng được tinh chỉnh trên tập dev).
-  * **Kết quả trên tập test 2.545 câu hỏi:**
+  * **Tầng 2 - Wikipedia tiếng Việt:** 1,48 triệu chunk (mỗi chunk ≤ 800 ký tự) với cả chỉ mục BM25 (`bm25s` chia shard) và chỉ mục vector dense (`multilingual-e5-small`, 384 chiều, float16 mmap ~1,1 GB).
+  * **Ứng viên và reranker:** mỗi câu hỏi lấy top-3 BM25 tầng 1 + top-3 BM25 Wikipedia + top-3 dense Wikipedia (≤ 9 ứng viên); reranker `bge-reranker-v2-m3` (cross-encoder) chấm chung, đoạn tầng 1 được cộng +0,25, điểm cao nhất thắng.
+  * **BM25 hai tầng (trước khi thêm reranker), test 2.545 câu hỏi:**
     * Tổng thể: **R@1 71,1%**, **R@5 85,9%**.
     * ViQuAD: R@1 73,2% / R@5 88,9%; ViMMRC: R@1 59,4% / R@5 69,2%.
-    * Thời gian truy xuất: khoảng **35 ms / câu hỏi** trên CPU.
-  * **Đã thử nhưng không áp dụng:** reranker `bge-reranker-v2-m3` tăng +1,5 R@1 nhưng mất khoảng 1 giây / câu hỏi nên không được đưa vào hệ thống.
+  * **So sánh pipeline cuối (answer F1, 200 câu có đoạn trong kho / 200 câu kiến thức mở):** BM25 thuần 58,0 / 15,4; BM25 + dense Wikipedia 57,9 / 16,9; **reranker + ưu tiên kho +0,25 (đang dùng) 60,7 / 24,3**. Mức cộng được chọn trên chính các câu này nên hơi lạc quan.
+  * **Độ trễ:** truy xuất + reranker ~6 giây / câu trên CPU Docker; tắt reranker (`KB_RERANKER=`) còn ~0,1–1,7 giây với độ chính xác thấp hơn.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Để hệ thống trả lời được câu hỏi tự do chứ không chỉ các bài đọc có sẵn, nhóm xây dựng kho tri thức hai tầng cho RAG.  
-  > Tầng thứ nhất gồm 5.869 đoạn văn từ ViMMRC và ViQuAD, dùng BM25 với cấu hình đã tinh chỉnh và bigram boost. Tầng thứ hai là 1,48 triệu chunk Wikipedia tiếng Việt, mỗi chunk tối đa 800 ký tự, được lập chỉ mục bằng bm25s chia shard và nạp qua mmap nên chỉ tốn khoảng 760 MB RAM.  
-  > Hệ thống dùng Wikipedia khi điểm Wikipedia lớn hơn 0,5 lần điểm của tầng thứ nhất; ngưỡng này được tinh chỉnh trên tập dev.  
-  > Trên tập test 2.545 câu hỏi, Recall@1 đạt 71,1% và Recall@5 đạt 85,9%. Riêng ViQuAD là 73,2% và 88,9%, còn ViMMRC là 59,4% và 69,2%. Thời gian truy xuất khoảng 35 mili-giây mỗi câu hỏi trên CPU.  
-  > Nhóm cũng đã thử reranker bge-reranker-v2-m3: Recall@1 tăng thêm 1,5 điểm nhưng mất khoảng 1 giây mỗi câu hỏi, nên nhóm quyết định không áp dụng."
+  > Tầng thứ nhất gồm 5.869 đoạn văn từ ViMMRC và ViQuAD, dùng BM25 với cấu hình đã tinh chỉnh và bigram boost. Tầng thứ hai là 1,48 triệu chunk Wikipedia tiếng Việt, mỗi chunk tối đa 800 ký tự, được lập hai chỉ mục: BM25 bằng bm25s chia shard và vector dense multilingual-e5-small 384 chiều, lưu float16 đọc qua mmap khoảng 1,1 GB.  
+  > Với mỗi câu hỏi, hệ thống lấy top 3 từ BM25 tầng một, top 3 từ BM25 Wikipedia và top 3 từ dense Wikipedia, tối đa 9 ứng viên. Reranker bge-reranker-v2-m3 dạng cross-encoder chấm điểm chung, đoạn tầng một được cộng thêm 0,25 và đoạn điểm cao nhất thắng.  
+  > Với BM25 hai tầng, trước khi thêm reranker, trên tập test 2.545 câu hỏi Recall@1 đạt 71,1% và Recall@5 đạt 85,9%. Riêng ViQuAD là 73,2% và 88,9%, còn ViMMRC là 59,4% và 69,2%.  
+  > Ở pipeline cuối, F1 câu trả lời trên 200 câu có đoạn trong kho và 200 câu kiến thức mở là 58,0 và 15,4 với BM25 thuần, còn reranker kết hợp ưu tiên kho là 60,7 và 24,3. Mức cộng 0,25 được chọn trên chính các câu này nên con số hơi lạc quan. Truy xuất cùng reranker mất khoảng 6 giây mỗi câu trên CPU."
 
 ---
 
@@ -489,16 +489,16 @@
     * Áp dụng framework kiểm thử tự động **pytest** cho toàn bộ backend.
     * Kiểm thử phủ khắp cả 3 cấp độ: Unit Tests (hàm xử lý), Module Integration Tests (từng phân hệ) và End-to-End System Tests (toàn bộ pipeline API).
   * **Kết quả Kiểm định Chất lượng:**
-    * **55 / 55 Bài kiểm thử tự động ĐẠT 100% (Passed)** trong 14.52 giây:
-      * 14 tests: Phân hệ Chuẩn hóa Text Normalizer tiếng Việt.
-      * 10 tests: Phân hệ Truy xuất BM25, Tokenizer và Lập chỉ mục.
-      * 12 tests: Dữ liệu MRC, metric EM/F1, ViT5 context chunking.
-      * 11 tests: Phân hệ TTS Matcha-TTS, VITS và Fallback Logic.
-      * 8 tests: Phân hệ STT Audio Conversion và Server API Endpoints.
+    * **54 / 54 Bài kiểm thử tự động ĐẠT 100% (Passed)** trong 14.52 giây:
+      * 12 tests: Phân hệ TTS (Matcha/VITS/Edge-TTS fallback, normalizer, tokenizer vi_tone_v2).
+      * 15 tests: Phân hệ Truy xuất BM25, Tokenizer và Lập chỉ mục.
+      * 18 tests: Dữ liệu MRC, metric EM/F1, context selection, dataset gộp, smoke train.
+      * 5 tests: Server API Endpoints và Healthcheck.
+      * 4 tests: Chuỗi tích hợp retrieval → MRC → TTS.
     * Đảm bảo tính toàn vẹn (Integrity), không bị hồi quy (Zero Regression) khi hợp nhất mã nguồn giữa các thành viên.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Thưa Thầy Cô, một đồ án công nghệ thông tin chất lượng không chỉ nằm ở thuật toán mà còn phải thể hiện qua tính chuẩn mực trong kỹ nghệ phần mềm. Nhóm đã thiết lập bộ kiểm thử tự động toàn diện bằng pytest bao phủ từ mức độ hàm xử lý dữ liệu cho đến các API tích hợp cuối cùng.  
-  > Trước khi đóng gói phiên bản chính thức, toàn bộ **55 trên 55 bài kiểm thử** đều vượt qua thành công với tỷ lệ đạt 100%.  
+  > Trước khi đóng gói phiên bản chính thức, toàn bộ **54 trên 54 bài kiểm thử** đều vượt qua thành công với tỷ lệ đạt 100%.  
   > Bộ test này kiểm tra chi tiết từ việc chuẩn hóa dấu câu, khả năng truy xuất chính xác của BM25, tính đúng đắn của metric EM/F1 và ViT5 context chunking, cho đến tính chịu lỗi của cơ chế Fallback khi các dịch vụ bên ngoài bị ngắt. Điều này đảm bảo hệ thống có độ tin cậy rất cao và không bao giờ xảy ra lỗi hồi quy khi tích hợp các nhánh mã nguồn của các thành viên."
 
 ---
@@ -510,17 +510,17 @@
   * **Kịch bản Demo trực tiếp trên giao diện Web (`http://localhost:8090`):**
     * **Bước 1 (Voice Input):** Bấm micro và đặt câu hỏi âm thanh: *"Ai là tác giả của Truyện Kiều?"* (câu hỏi tự do, không kèm phương án).
     * **Bước 2 (STT Processing):** Faster-Whisper nhận dạng chính xác chuỗi văn bản tiếng Việt có dấu trong khoảng 3 giây.
-    * **Bước 3 (Retrieval Processing):** BM25 quét kho tri thức hai tầng và lấy đoạn Wikipedia nói về Truyện Kiều (kho ViMMRC + ViQuAD không có đoạn khớp).
+    * **Bước 3 (Retrieval Processing):** BM25 + dense lấy ứng viên từ kho tri thức hai tầng, reranker chọn đoạn Wikipedia "Truyện Kiều" (~6 giây).
     * **Bước 4 (MRC Processing):** ViT5 đọc đoạn văn đã truy xuất và sinh ra câu trả lời *"Nguyễn Du"*.
     * **Bước 5 (TTS Processing):** Text Normalizer chuẩn hóa câu trả lời *"Nguyễn Du"* và Matcha-TTS tổng hợp thành âm thanh trong khoảng 1,3 giây.
     * **Bước 6 (Audio Output):** Trình duyệt tự động phát giọng nói câu trả lời rõ ràng, truyền cảm.
-  * **Tổng thời gian xử lý toàn pipeline:** **khoảng 6 giây** trên CPU (đo trên Docker: STT ~3 s, truy xuất ~0,1 s, ViT5 ~1,4 s, TTS ~1,3 s).
+  * **Tổng thời gian xử lý toàn pipeline:** **khoảng 12 giây** trên CPU (đo trên Docker, `OMP_NUM_THREADS=4`: STT ~3 s, truy xuất + reranker ~6 s, ViT5 ~1,4 s, TTS ~1,3 s); tắt reranker (`KB_RERANKER=`) còn khoảng 6 giây nhưng độ chính xác thấp hơn. Câu "Sông dài nhất thế giới là sông nào?" cũng trả lời đúng "Sông Amazon" trong Docker.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Sau đây, nhóm xin kính mời Thầy Cô và các bạn cùng theo dõi kịch bản vận hành thực tế của hệ thống được quay trực tiếp trên giao diện Web:  
   > Khi người dùng bấm giữ nút micro và hỏi: 'Ai là tác giả của Truyện Kiều?'.  
-  > Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản trong khoảng 3 giây. Bộ truy xuất BM25 lập tức quét kho tri thức và vì kho ViMMRC + ViQuAD không có đoạn khớp, hệ thống lấy đoạn Wikipedia nói về Truyện Kiều.  
+  > Ngay khi người dùng nhả chuột, phân hệ STT nhận tín hiệu âm thanh và chuyển thành văn bản trong khoảng 3 giây. Bộ truy xuất lấy ứng viên từ BM25 tầng một, BM25 Wikipedia và dense Wikipedia, rồi reranker bge-reranker-v2-m3 chọn ra đoạn Wikipedia nói về Truyện Kiều.  
   > Tiếp đó, mô hình ViT5 đọc đoạn văn vừa truy xuất và sinh ra câu trả lời 'Nguyễn Du'. Cuối cùng, phân hệ TTS chuẩn hóa văn bản và phát ra giọng đọc nơ-ron tự nhiên qua loa.  
-  > Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời mất khoảng 6 giây khi chạy hoàn toàn trên CPU."
+  > Toàn bộ quá trình từ lúc kết thúc câu hỏi đến khi nghe thấy tiếng trả lời mất khoảng 12 giây khi chạy hoàn toàn trên CPU Docker; nếu tắt reranker thì còn khoảng 6 giây nhưng độ chính xác thấp hơn."
 
 ---
 
@@ -531,14 +531,16 @@
   * **Phân tích các trường hợp lỗi điển hình (Error Analysis):**
     1. *Lỗi do tiếng ồn môi trường lớn (STT Error):* Trong môi trường quán cà phê hoặc tiếng còi xe, Whisper có thể nhận dạng sai một số phụ âm đầu hoặc mất từ nối.
     2. *Lỗi ngữ nghĩa trừu tượng (Retrieval Lexical Gap):* BM25 dựa trên tần suất từ khóa, nếu câu hỏi dùng từ đồng nghĩa hoàn toàn (ví dụ: 'thủ phủ' thay vì 'thủ đô') thì điểm BM25 có thể bị thấp.
-    3. *Hạn chế phần cứng huấn luyện ViT5:* Quá trình tinh chỉnh (Fine-tuning) mô hình sinh ViT5 đòi hỏi tài nguyên GPU lớn để đạt độ hội tụ cực đại.
+    3. *Câu hỏi kiến thức chung vẫn có thể sai:* ví dụ "Thủ đô của Việt Nam là gì?" trả về "Sài Gòn" vì một đoạn ViQuAD tầng 1 về TP. Hồ Chí Minh thắng; F1 trên câu kiến thức mở mới ~24.
+    4. *Hạn chế phần cứng huấn luyện ViT5:* Quá trình tinh chỉnh (Fine-tuning) mô hình sinh ViT5 đòi hỏi tài nguyên GPU lớn để đạt độ hội tụ cực đại.
   * **Giới hạn phạm vi hiện tại:**
     * Hệ thống hiện tập trung tối ưu cho tương tác đơn lượt (Single-turn Q&A), chưa ghi nhớ ngữ cảnh lịch sử của các lượt đàm thoại trước đó.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Bên cạnh những kết quả tích cực, nhóm cũng thẳng thắn nhìn nhận những giới hạn còn tồn tại qua quá trình phân tích lỗi thực tế:  
   > Thứ nhất, ở phân hệ STT, khi môi trường có tiếng ồn phức tạp hoặc người dùng nói quá nhỏ, mô hình đôi khi nhận dạng sai phụ âm hoặc nuốt từ nối.  
   > Thứ hai, ở phân hệ Retrieval, do BM25 bản chất là giải thuật so khớp từ vựng (lexical matching), nếu câu hỏi sử dụng các từ đồng nghĩa hoàn toàn mà không xuất hiện trong bài đọc gốc thì điểm số truy xuất sẽ bị ảnh hưởng.  
-  > Thứ ba, hệ thống hiện tại được thiết kế tối ưu cho hội thoại đơn lượt, nghĩa là trả lời dứt điểm từng câu hỏi chứ chưa lưu trữ bộ nhớ trạng thái để trò chuyện nối tiếp nhiều lượt theo ngữ cảnh quá khứ."
+  > Thứ ba, một số câu hỏi kiến thức chung vẫn trả lời sai, ví dụ hỏi thủ đô của Việt Nam thì hệ thống trả lời Sài Gòn vì một đoạn ViQuAD tầng một về Thành phố Hồ Chí Minh thắng; F1 trên câu kiến thức mở mới khoảng 24.  
+  > Thứ tư, hệ thống hiện tại được thiết kế tối ưu cho hội thoại đơn lượt, nghĩa là trả lời dứt điểm từng câu hỏi chứ chưa lưu trữ bộ nhớ trạng thái để trò chuyện nối tiếp nhiều lượt theo ngữ cảnh quá khứ."
 
 ---
 
@@ -551,11 +553,12 @@
     * Ứng dụng thành công kỹ thuật Flow Matching tiên tiến (Matcha-TTS) và đóng góp frontend tách thanh điệu `vi_tone_v2` cho tiếng Việt.
     * Triển khai hoàn chỉnh ứng dụng Full-stack, chạy mượt mà trên CPU thông thường và đóng gói Docker tự động hóa 100%.
   * **Định hướng phát triển tương lai:**
-    * Nâng cấp bộ tìm kiếm sang kiến trúc lai **Hybrid Retrieval**: Kết hợp BM25 với Dense Retrieval (Mô hình Bi-Encoder tiếng Việt) và Reranker nơ-ron.
-    * Tích hợp các mô hình ngôn ngữ lớn (LLMs tiếng Việt như PhoGPT, Vistral, SeaLLMs) để hỗ trợ suy luận đa chặng và đàm thoại đa lượt.
+    * Chạy GPU để giảm độ trễ (hiện ~12 giây/câu trên CPU Docker).
+    * Tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung.
+    * Thử LLM tiếng Việt (như PhoGPT, Vistral, SeaLLMs) để sinh câu trả lời.
   * **Lời cảm ơn Thầy Cô và Hội đồng đánh giá.**
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Kính thưa Thầy Cô trong Hội đồng,  
   > Nhìn lại toàn bộ quá trình nghiên cứu, đề tài của nhóm đã hoàn thành trọn vẹn tất cả các mục tiêu đề ra: từ việc nghiên cứu lý thuyết, xử lý dữ liệu chuẩn ViMMRC 2.0, làm chủ các mô hình học máy tiên tiến như Matcha-TTS Flow Matching, tinh chỉnh BM25, cho đến việc đóng gói một sản phẩm phần mềm hoàn chỉnh chạy cục bộ ổn định và đạt chuẩn kiểm thử 100%.  
-  > Trong giai đoạn tới, nhóm định hướng sẽ nâng cấp hệ thống sang kiến trúc Hybrid Retrieval kết hợp nhúng ngữ nghĩa vector và tích hợp các LLMs tiếng Việt để phát triển thành một trợ lý ảo thông minh đa lượt toàn diện.  
+  > Trong giai đoạn tới, nhóm định hướng sẽ chạy hệ thống trên GPU để giảm độ trễ, tinh chỉnh reranker và định tuyến cho câu hỏi kiến thức chung, đồng thời thử các LLM tiếng Việt để sinh câu trả lời.  
   > Nhóm chúng em xin gửi lời cảm ơn chân thành và sâu sắc nhất tới Thầy Cô đã tận tình hướng dẫn, truyền thụ kiến thức và tạo điều kiện cho nhóm thực hiện đồ án này. Rất mong nhận được những nhận xét, góp ý quý báu từ Thầy Cô! Xin trân trọng cảm ơn!"

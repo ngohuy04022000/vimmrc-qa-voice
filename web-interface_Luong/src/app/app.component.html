@@ -1,65 +1,266 @@
 <main class="app-shell">
+  <!-- SIDEBAR NAVIGATION -->
   <aside class="sidebar">
     <div class="brand">
-      <span class="brand-mark">V</span>
-      <span><strong>VietRead Voice</strong><small>Đọc hiểu bằng giọng nói</small></span>
+      <div class="brand-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <strong>VietRead Voice</strong>
+        <small>Hỏi đáp Đọc hiểu Đa phương thức</small>
+      </div>
     </div>
 
     <nav aria-label="Điều hướng chính">
-      <button class="nav-item" [class.active]="activeView() === 'chat'" type="button" (click)="setView('chat')"><span>▣</span><b>Hỏi đáp đọc hiểu</b></button>
-      <button class="nav-item" [class.active]="activeView() === 'library'" type="button" (click)="setView('library')"><span>▤</span><b>Thư viện đoạn văn</b></button>
-      <button class="nav-item" [class.active]="activeView() === 'history'" type="button" (click)="setView('history')"><span>◷</span><b>Lịch sử học tập</b></button>
-      <button class="nav-item" [class.active]="activeView() === 'report'" type="button" (click)="setView('report')"><span>▥</span><b>Báo cáo kết quả</b></button>
+      <button class="nav-item" [class.active]="activeView() === 'chat'" type="button" (click)="setView('chat')">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+        <b>Hỏi đáp đọc hiểu</b>
+      </button>
+
+      <button class="nav-item" [class.active]="activeView() === 'library'" type="button" (click)="setView('library')">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+        </span>
+        <b>Thư viện đoạn văn</b>
+      </button>
+
+      <button class="nav-item" [class.active]="activeView() === 'history'" type="button" (click)="setView('history')">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </span>
+        <b>Lịch sử học tập</b>
+      </button>
+
+      <button class="nav-item" [class.active]="activeView() === 'report'" type="button" (click)="setView('report')">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+        </span>
+        <b>Báo cáo kết quả</b>
+      </button>
     </nav>
 
     <div class="sidebar-footer">
-      <span class="cap">◇</span>
-      <span><strong>VietRead Voice</strong><small>AI for Better Learning</small></span>
+      <div class="system-chip">
+        <span class="dot-online"></span>
+        <div>
+          <span class="chip-title">Hệ thống Trực tuyến</span>
+          <small class="chip-desc">Docker CPU • ViMMRC 2.0</small>
+        </div>
+      </div>
     </div>
   </aside>
 
+  <!-- MAIN CONVERSATION / VIEW AREA -->
   @if (activeView() === 'chat') {
   <section class="conversation" id="chat">
     <header class="topbar">
-      <span class="topbar-icon">◌</span>
-      <div><h1>Hỏi đáp đọc hiểu</h1><p>Đặt câu hỏi bằng giọng nói hoặc văn bản, AI sẽ giúp bạn đọc hiểu chính xác.</p></div>
-      <span class="learning">⌁ Học tập tốt hơn mỗi ngày</span>
+      <div class="topbar-main">
+        <div class="topbar-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Hỏi đáp đọc hiểu tiếng Việt</h1>
+          <p>Mô hình tích hợp Whisper LoRA • BM25/e5/Reranker • ViT5 • Matcha-TTS</p>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <span class="status-pill">
+          <i class="live-dot"></i> Kho 5.869 đoạn + 1.48M Wiki
+        </span>
+        <button type="button" class="btn-new-chat" (click)="newChat()" title="Làm mới hội thoại">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          <span>Hội thoại mới</span>
+        </button>
+      </div>
     </header>
 
+    <!-- CHAT LOG CONTAINER -->
     <section class="chat" #chatLog>
       @if (messages().length === 0) {
         <div class="welcome">
-          <span class="welcome-mark">V</span>
-          <p>Xin chào! Hãy chọn một đoạn văn, sau đó đặt câu hỏi bằng giọng nói hoặc văn bản.</p>
+          <div class="welcome-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </div>
+          <h2>Xin chào! Hãy đặt câu hỏi cho hệ thống</h2>
+          <p class="welcome-sub">
+            Bạn có thể hỏi bằng <strong>giọng nói tiếng Việt</strong> hoặc <strong>nhập văn bản</strong>. Hệ thống sẽ tự động truy xuất đoạn văn phù hợp và trả lời bằng giọng đọc tự nhiên.
+          </p>
+
+          <div class="starter-label">GỢI Ý CÂU HỎI NHANH</div>
           <div class="starter-grid">
-            <button type="button" (click)="typedQuestion = 'Nội dung chính của đoạn văn là gì?'">Nội dung chính là gì?</button>
-            <button type="button" (click)="typedQuestion = 'Ý nghĩa của đoạn văn này là gì?'">Giải thích ý nghĩa</button>
+            <button type="button" class="starter-card" (click)="quickAsk('Ai là tác giả của Truyện Kiều?')">
+              <span class="starter-icon">📖</span>
+              <div class="starter-body">
+                <strong>Ai là tác giả của Truyện Kiều?</strong>
+                <small>Văn học cổ điển • Nguyễn Du</small>
+              </div>
+            </button>
+            <button type="button" class="starter-card" (click)="quickAsk('Nội dung chính của đoạn văn là gì?')">
+              <span class="starter-icon">💡</span>
+              <div class="starter-body">
+                <strong>Nội dung chính của đoạn văn là gì?</strong>
+                <small>Đọc hiểu ý chính văn bản</small>
+              </div>
+            </button>
+            <button type="button" class="starter-card" (click)="quickAsk('Di sản văn hóa có ý nghĩa như thế nào đối với dân tộc?')">
+              <span class="starter-icon">🏛</span>
+              <div class="starter-body">
+                <strong>Ý nghĩa của di sản văn hóa?</strong>
+                <small>Lịch sử & Bản sắc Việt Nam</small>
+              </div>
+            </button>
+            <button type="button" class="starter-card" (click)="quickAsk('Trí tuệ nhân tạo hỗ trợ học tập như thế nào?')">
+              <span class="starter-icon">🤖</span>
+              <div class="starter-body">
+                <strong>Trí tuệ nhân tạo trong giáo dục?</strong>
+                <small>Công nghệ AI & Cá nhân hóa</small>
+              </div>
+            </button>
           </div>
         </div>
       }
+
       @for (msg of messages(); track msg.id) {
         @if (msg.role === 'user') {
-          <article class="user-message">
-            @if (msg.audioUrl) { <span class="voice-badge">▥</span> }
-            <p>{{ msg.text }}</p>
+          <article class="user-row">
+            <div class="user-message">
+              <div class="user-bubble-top">
+                <span class="user-badge">
+                  @if (msg.source === 'voice' || msg.audioUrl) {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                      <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                    </svg>
+                    Giọng nói
+                  } @else {
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="2" y="4" width="20" height="16" rx="2" ry="2"/>
+                      <line x1="6" y1="8" x2="6" y2="8"/>
+                      <line x1="10" y1="8" x2="10" y2="8"/>
+                      <line x1="14" y1="8" x2="14" y2="8"/>
+                      <line x1="18" y1="8" x2="18" y2="8"/>
+                    </svg>
+                    Văn bản
+                  }
+                </span>
+                @if (msg.time) { <span class="message-time">{{ msg.time }}</span> }
+              </div>
+              <p class="user-text">{{ msg.text }}</p>
+            </div>
           </article>
         } @else {
           <article class="answer-row">
-            <span class="assistant-avatar">V</span>
+            <div class="assistant-avatar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
             <div class="answer-card">
-              <span class="answer-label">Câu trả lời</span>
-              <p class="answer-text">{{ msg.text }}</p>
+              <div class="answer-header">
+                <div class="answer-tag">
+                  <span class="sparkle-icon">✨</span>
+                  <span>Câu trả lời từ ViT5</span>
+                </div>
+                <div class="answer-actions">
+                  @if (msg.time) { <span class="message-time">{{ msg.time }}</span> }
+                  <button type="button" class="btn-icon" (click)="copyText(msg.text, msg.id)" title="Sao chép câu trả lời">
+                    @if (copiedMessageId() === msg.id) {
+                      <span class="copied-badge">✓ Đã chép</span>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                    }
+                  </button>
+                </div>
+              </div>
+
+              <div class="answer-body">
+                <p class="answer-text">{{ msg.text }}</p>
+              </div>
+
               @if (msg.passage) {
-                <blockquote>
-                  <strong>Bằng chứng từ đoạn văn</strong>
-                  <span>{{ msg.passage.text }}</span>
+                <blockquote class="evidence-quote">
+                  <div class="evidence-header">
+                    <span class="evidence-title">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                      </svg>
+                      Bằng chứng từ đoạn văn
+                    </span>
+                    @if (msg.passage.score !== undefined) {
+                      <span class="confidence-pill">Độ tin cậy: {{ (msg.passage.score * 100).toFixed(0) }}%</span>
+                    }
+                  </div>
+                  <span class="evidence-content">{{ msg.passage.text }}</span>
                 </blockquote>
               }
+
               @if (msg.audioUrl) {
-                <div class="audio-bar">
-                  <button type="button" (click)="replay(msg.audioUrl)" aria-label="Phát câu trả lời">▶</button>
-                  <span class="waveform">▂▅▃▇▆▂▅▇▃▆▂▇▅▃▁▅▆▂</span>
-                  <small>Nghe câu trả lời</small>
+                <div class="audio-bar" [class.playing]="isPlaying(msg.audioUrl)">
+                  <button type="button" class="btn-play" (click)="toggleAudio(msg.audioUrl)" aria-label="Phát hoặc tạm dừng câu trả lời">
+                    @if (isPlaying(msg.audioUrl)) {
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <rect x="6" y="4" width="4" height="16" rx="1"/>
+                        <rect x="14" y="4" width="4" height="16" rx="1"/>
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                      </svg>
+                    }
+                  </button>
+
+                  <div class="equalizer" [class.active]="isPlaying(msg.audioUrl)">
+                    <span class="bar b1"></span>
+                    <span class="bar b2"></span>
+                    <span class="bar b3"></span>
+                    <span class="bar b4"></span>
+                    <span class="bar b5"></span>
+                    <span class="bar b6"></span>
+                    <span class="bar b7"></span>
+                    <span class="bar b8"></span>
+                    <span class="bar b9"></span>
+                    <span class="bar b10"></span>
+                    <span class="bar b11"></span>
+                    <span class="bar b12"></span>
+                  </div>
+
+                  <span class="audio-label">
+                    {{ isPlaying(msg.audioUrl) ? 'Đang phát âm thanh...' : 'Nghe giọng đọc Matcha-TTS' }}
+                  </span>
                 </div>
               }
             </div>
@@ -68,88 +269,268 @@
       }
     </section>
 
+    <!-- ERROR BANNER -->
     @if (error()) {
-      <div class="error" role="alert"><strong>Không thể xử lý:</strong> {{ error() }}</div>
+      <div class="error-banner" role="alert">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <span>{{ error() }}</span>
+        <button type="button" class="btn-close-error" (click)="error.set(null)">✕</button>
+      </div>
     }
 
+    <!-- COMPOSER CONTROLS -->
     <footer class="composer">
       <form class="typed" (ngSubmit)="sendTyped()">
-        <span class="input-mic">♬</span>
-        <input name="question" [(ngModel)]="typedQuestion" [disabled]="busy || step() === 'recording'" placeholder="Nhấn Thu âm để nói câu hỏi của bạn, hoặc nhập văn bản..." />
-        <button class="send" type="submit" [disabled]="busy || !typedQuestion.trim()"><span>➤</span> Gửi</button>
+        <span class="input-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+        </span>
+        <input
+          name="question"
+          [(ngModel)]="typedQuestion"
+          [disabled]="busy || step() === 'recording'"
+          placeholder="Nhập câu hỏi hoặc nhấn biểu tượng Thu âm bên phải..."
+          autocomplete="off"
+        />
+        @if (typedQuestion.trim()) {
+          <button type="button" class="btn-clear-input" (click)="typedQuestion = ''" title="Xóa văn bản">✕</button>
+        }
+        <button class="send" type="submit" [disabled]="busy || !typedQuestion.trim()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+          <span>Gửi</span>
+        </button>
       </form>
-      <button type="button" class="mic" [class.recording]="step() === 'recording'" [disabled]="busy" (click)="toggleRecording()" [attr.aria-label]="step() === 'recording' ? 'Dừng thu âm' : 'Bắt đầu thu âm'">
-        <span>{{ step() === 'recording' ? '■' : '♬' }}</span><small>{{ step() === 'recording' ? 'Dừng' : 'Thu âm' }}</small>
+
+      <button
+        type="button"
+        class="mic"
+        [class.recording]="step() === 'recording'"
+        [disabled]="busy"
+        (click)="toggleRecording()"
+        [attr.aria-label]="step() === 'recording' ? 'Dừng thu âm' : 'Bắt đầu thu âm'"
+      >
+        <span class="mic-circle">
+          @if (step() === 'recording') {
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12" rx="2"/>
+            </svg>
+          } @else {
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          }
+        </span>
+        <small>{{ step() === 'recording' ? 'Dừng' : 'Thu âm' }}</small>
       </button>
     </footer>
     <p class="mobile-status">{{ stepLabels[step()] }}</p>
   </section>
 
+  <!-- RIGHT INSIGHTS & CONTEXT ASIDE -->
   <aside class="insights">
+    <!-- PIPELINE PROGRESS PANEL -->
     <section class="tool-panel pipeline-panel">
-      <header><span class="panel-icon">AI</span><div><h2>Quy trình xử lý của AI</h2><p>Từ giọng nói đến câu trả lời</p></div></header>
+      <header>
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+        </div>
+        <div>
+          <h2>Tiến trình xử lý của AI</h2>
+          <p>Chuỗi pipeline 5 bước từ giọng nói đến câu trả lời</p>
+        </div>
+      </header>
+
       <ol class="pipeline">
         @for (item of flowSteps; track item.key; let index = $index) {
           <li [class]="flowState(item.key)">
             <span class="step-number">{{ index + 1 }}</span>
-            <span class="step-icon">{{ item.icon }}</span>
-            <span class="step-copy"><strong>{{ index + 1 }}. {{ item.name }}</strong><small>{{ item.description }}</small></span>
-            <span class="step-result">{{ flowState(item.key) === 'done' ? '✓' : flowState(item.key) === 'active' ? '•••' : '' }}</span>
+            <span class="step-tag">{{ item.tag }}</span>
+            <span class="step-copy">
+              <strong>{{ item.name }}</strong>
+              <small>{{ item.description }}</small>
+            </span>
+            <span class="step-status">
+              @if (flowState(item.key) === 'done') {
+                <span class="badge-done">✓</span>
+              } @else if (flowState(item.key) === 'active') {
+                <span class="badge-active">
+                  <span class="pulse-dot"></span>
+                </span>
+              } @else {
+                <span class="badge-wait">○</span>
+              }
+            </span>
           </li>
         }
       </ol>
-      <p class="processing-status"><span [class.live]="step() !== 'idle'">●</span> {{ stepLabels[step()] }}</p>
+
+      <div class="pipeline-footer-status">
+        <span class="live-indicator" [class.active]="step() !== 'idle'"></span>
+        <span>{{ stepLabels[step()] }}</span>
+      </div>
     </section>
 
+    <!-- CONTEXT PASSAGE PANEL -->
     <section class="tool-panel passage-panel" id="passage">
-      <header><span class="panel-icon">▤</span><div><h2>Đoạn văn ngữ cảnh</h2><p>Dán văn bản hoặc để AI tự truy xuất</p></div></header>
-      <textarea rows="7" [(ngModel)]="passageInput" placeholder="Dán đoạn văn cần đọc hiểu vào đây..."></textarea>
+      <header>
+        <div class="panel-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <div>
+          <h2>Đoạn văn ngữ cảnh</h2>
+          <p>Tùy chọn nhập đoạn văn riêng hoặc để AI tự truy xuất</p>
+        </div>
+      </header>
+
+      @if (passageInput.trim()) {
+        <div class="custom-badge-bar">
+          <span class="badge-custom-active">Đang áp dụng đoạn văn tùy chỉnh</span>
+          <button type="button" class="btn-clear-passage" (click)="clearCustomPassage()" title="Xóa để dùng kho tự động">
+            ✕ Dùng kho tự động
+          </button>
+        </div>
+      }
+
+      <textarea
+        rows="6"
+        [(ngModel)]="passageInput"
+        placeholder="Dán đoạn văn cần đọc hiểu vào đây (nếu để trống, hệ thống sẽ tự động tìm kiếm đoạn văn phù hợp nhất trong kho 5.869 tài liệu + Wikipedia)..."
+      ></textarea>
+
       @if (latestPassage(); as passage) {
         <div class="selected-passage">
-          <strong>Đoạn văn được chọn</strong>
-          @if (passage.score !== undefined) { <span class="score">{{ (passage.score * 100).toFixed(0) }}%</span> }
+          <div class="selected-header">
+            <strong>Đoạn văn được chọn</strong>
+            @if (passage.score !== undefined) {
+              <span class="score-badge">{{ (passage.score * 100).toFixed(0) }}%</span>
+            }
+          </div>
           <p>{{ passage.text }}</p>
         </div>
-      } @else {
-        <p class="passage-hint">Để trống để hệ thống tự tìm đoạn văn phù hợp nhất.</p>
+      } @else if (!passageInput.trim()) {
+        <p class="passage-hint">
+          <span class="info-icon">ℹ</span> Mặc định hệ thống tự động chạy BM25 + dense e5 + BGE Reranker trên kho tri thức.
+        </p>
       }
     </section>
   </aside>
   } @else {
+    <!-- OTHER VIEWS: LIBRARY, HISTORY, REPORT -->
     <section class="page-view">
       @if (activeView() === 'library') {
         <header class="page-header">
-          <div><span class="eyebrow">THƯ VIỆN HỌC TẬP</span><h1>Thư viện đoạn văn</h1><p>Chọn ngữ liệu có sẵn hoặc thêm đoạn văn của riêng bạn để bắt đầu hỏi đáp.</p></div>
-          <span class="page-count">{{ libraryPassages.length }} đoạn văn</span>
+          <div>
+            <span class="eyebrow">KHO NGỮ LIỆU ĐỌC HIỂU</span>
+            <h1>Thư viện đoạn văn</h1>
+            <p>Chọn các đoạn ngữ liệu tiêu chuẩn hoặc thêm đoạn văn của riêng bạn để thực hành hỏi đáp.</p>
+          </div>
+          <span class="page-count">{{ libraryPassages.length }} bài đọc có sẵn</span>
         </header>
 
         <div class="page-content library-view">
-          <label class="search-box"><span>⌕</span><input [(ngModel)]="librarySearch" placeholder="Tìm theo tiêu đề, chủ đề hoặc nội dung..." /></label>
+          <!-- Category Filter Pills -->
+          <div class="category-pills">
+            @for (cat of categories; track cat) {
+              <button
+                type="button"
+                class="pill-btn"
+                [class.active]="selectedCategory() === cat"
+                (click)="setCategory(cat)"
+              >
+                {{ cat }}
+              </button>
+            }
+          </div>
+
+          <label class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input [(ngModel)]="librarySearch" placeholder="Tìm kiếm theo tiêu đề, chủ đề hoặc nội dung đoạn trích..." />
+          </label>
+
           <div class="passage-grid">
             @for (passage of filteredPassages(); track passage.id) {
               <article class="passage-card">
-                <div class="card-meta"><span>{{ passage.category }}</span><small>{{ passage.level }}</small></div>
+                <div class="card-meta">
+                  <span class="meta-cat">{{ passage.category }}</span>
+                  <small class="meta-level">{{ passage.level }}</small>
+                </div>
                 <h2>{{ passage.title }}</h2>
                 <p>{{ passage.text }}</p>
-                <button type="button" (click)="usePassage(passage)">Đọc hiểu đoạn này <span>→</span></button>
+                <button type="button" class="btn-use-passage" (click)="usePassage(passage)">
+                  <span>Đọc hiểu đoạn này</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </button>
               </article>
             } @empty {
-              <div class="empty-state"><span>⌕</span><h2>Không tìm thấy đoạn văn</h2><p>Thử một từ khóa khác hoặc thêm đoạn văn của bạn.</p></div>
+              <div class="empty-state">
+                <span class="empty-icon">🔍</span>
+                <h2>Không tìm thấy đoạn văn phù hợp</h2>
+                <p>Thử tìm với từ khóa khác hoặc chuyển sang danh mục "Tất cả".</p>
+              </div>
             }
           </div>
 
           <section class="custom-passage">
-            <div><span class="panel-icon">＋</span><h2>Đoạn văn của bạn</h2><p>Dán nội dung bất kỳ để đặt câu hỏi ngay.</p></div>
-            <textarea rows="6" [(ngModel)]="passageInput" placeholder="Nhập hoặc dán đoạn văn tại đây..."></textarea>
-            <button type="button" [disabled]="!passageInput.trim()" (click)="useCustomPassage()">Sử dụng đoạn văn</button>
+            <div class="custom-intro">
+              <div class="panel-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </div>
+              <div>
+                <h2>Thêm đoạn văn của bạn</h2>
+                <p>Dán nội dung bất kỳ để hệ thống hỗ trợ đọc hiểu ngay lập tức.</p>
+              </div>
+            </div>
+            <textarea rows="4" [(ngModel)]="passageInput" placeholder="Nhập hoặc dán nội dung đoạn văn bạn muốn đọc hiểu vào đây..."></textarea>
+            <button type="button" [disabled]="!passageInput.trim()" (click)="useCustomPassage()">
+              Áp dụng đoạn văn này
+            </button>
           </section>
         </div>
       }
 
       @if (activeView() === 'history') {
         <header class="page-header">
-          <div><span class="eyebrow">HOẠT ĐỘNG GẦN ĐÂY</span><h1>Lịch sử học tập</h1><p>Xem lại câu hỏi, câu trả lời và đoạn văn đã sử dụng trong phiên này.</p></div>
-          <button class="secondary-action danger" type="button" [disabled]="learningSessions().length === 0" (click)="clearHistory()">Xóa lịch sử</button>
+          <div>
+            <span class="eyebrow">NHẬT KÝ HỎI ĐÁP</span>
+            <h1>Lịch sử học tập</h1>
+            <p>Xem lại các câu hỏi, câu trả lời và bằng chứng đoạn văn đã thực hiện trong phiên hiện tại.</p>
+          </div>
+          <button class="secondary-action danger" type="button" [disabled]="learningSessions().length === 0" (click)="clearHistory()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            <span>Xóa lịch sử</span>
+          </button>
         </header>
 
         <div class="page-content history-view">
@@ -157,57 +538,137 @@
             <article class="history-card">
               <div class="history-index">{{ learningSessions().length - index }}</div>
               <div class="history-main">
-                <div class="history-meta"><span>{{ session.question.audioUrl ? 'Câu hỏi giọng nói' : 'Câu hỏi văn bản' }}</span><small>#{{ session.id }}</small></div>
+                <div class="history-meta">
+                  <span class="meta-mode">
+                    {{ session.question.source === 'voice' || session.question.audioUrl ? '🎙 Giọng nói' : '⌨ Văn bản' }}
+                  </span>
+                  <small>Lượt #{{ session.id }} • {{ session.question.time || 'Vừa xong' }}</small>
+                </div>
                 <h2>{{ session.question.text }}</h2>
                 @if (session.answer) {
-                  <p>{{ session.answer.text }}</p>
+                  <p class="history-answer">{{ session.answer.text }}</p>
                   <div class="history-actions">
-                    @if (session.answer.audioUrl) { <button type="button" (click)="replay(session.answer.audioUrl)">▶ Nghe lại</button> }
-                    @if (session.answer.passage) { <button type="button" (click)="usePassage(session.answer.passage)">Mở đoạn văn</button> }
+                    @if (session.answer.audioUrl) {
+                      <button type="button" class="btn-history-play" (click)="toggleAudio(session.answer.audioUrl)">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                          <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                        <span>Nghe lại giọng đọc</span>
+                      </button>
+                    }
+                    @if (session.answer.passage) {
+                      <button type="button" class="btn-history-link" (click)="usePassage(session.answer.passage)">
+                        <span>Xem đoạn trích</span>
+                      </button>
+                    }
                   </div>
                 } @else {
-                  <p class="pending-answer">Câu hỏi chưa có câu trả lời.</p>
+                  <p class="pending-answer">Câu hỏi đang chờ xử lý...</p>
                 }
               </div>
             </article>
           } @empty {
-            <div class="empty-state history-empty"><span>◷</span><h2>Chưa có lịch sử học tập</h2><p>Các câu hỏi và câu trả lời trong phiên sẽ xuất hiện tại đây.</p><button type="button" (click)="setView('chat')">Đặt câu hỏi đầu tiên</button></div>
+            <div class="empty-state history-empty">
+              <span class="empty-icon">🕒</span>
+              <h2>Chưa có lịch sử học tập</h2>
+              <p>Các câu hỏi bạn đặt trong phiên sẽ được lưu trữ tự động tại đây để tiện tra cứu.</p>
+              <button type="button" (click)="setView('chat')">Bắt đầu đặt câu hỏi ngay</button>
+            </div>
           }
         </div>
       }
 
       @if (activeView() === 'report') {
         <header class="page-header">
-          <div><span class="eyebrow">TỔNG QUAN HỌC TẬP</span><h1>Báo cáo kết quả</h1><p>Theo dõi hoạt động hỏi đáp và mức độ sử dụng trợ lý đọc hiểu.</p></div>
-          <span class="page-count">Phiên hiện tại</span>
+          <div>
+            <span class="eyebrow">PHÂN TÍCH HIỆU SUẤT</span>
+            <h1>Báo cáo kết quả học tập</h1>
+            <p>Theo dõi hoạt động đọc hiểu, tỷ lệ tương tác giọng nói và số lượng tài liệu đã khám phá.</p>
+          </div>
+          <span class="page-count">Phiên làm việc hiện tại</span>
         </header>
 
         <div class="page-content report-view">
           <section class="metric-grid">
-            <article><span class="metric-icon blue">?</span><small>Tổng câu hỏi</small><strong>{{ reportMetrics().questions }}</strong><p>Câu hỏi đã gửi</p></article>
-            <article><span class="metric-icon green">✓</span><small>Đã trả lời</small><strong>{{ reportMetrics().answered }}</strong><p>Phản hồi hoàn tất</p></article>
-            <article><span class="metric-icon pink">♬</span><small>Hỏi bằng giọng nói</small><strong>{{ reportMetrics().voiceQuestions }}</strong><p>Được nhận dạng bởi Whisper</p></article>
-            <article><span class="metric-icon amber">▤</span><small>Đoạn văn đã học</small><strong>{{ reportMetrics().passages }}</strong><p>Ngữ cảnh khác nhau</p></article>
+            <article class="metric-card">
+              <div class="metric-header">
+                <small>Tổng số câu hỏi</small>
+                <span class="metric-icon blue">?</span>
+              </div>
+              <strong>{{ reportMetrics().questions }}</strong>
+              <p>Câu hỏi đã gửi trong phiên</p>
+            </article>
+
+            <article class="metric-card">
+              <div class="metric-header">
+                <small>Đã trả lời thành công</small>
+                <span class="metric-icon green">✓</span>
+              </div>
+              <strong>{{ reportMetrics().answered }}</strong>
+              <p>Hoàn tất qua pipeline ViT5</p>
+            </article>
+
+            <article class="metric-card">
+              <div class="metric-header">
+                <small>Hỏi bằng giọng nói</small>
+                <span class="metric-icon pink">🎙</span>
+              </div>
+              <strong>{{ reportMetrics().voiceQuestions }}</strong>
+              <p>Nhận dạng qua Whisper LoRA</p>
+            </article>
+
+            <article class="metric-card">
+              <div class="metric-header">
+                <small>Đoạn văn đã học</small>
+                <span class="metric-icon amber">📚</span>
+              </div>
+              <strong>{{ reportMetrics().passages }}</strong>
+              <p>Ngữ cảnh tri thức khác nhau</p>
+            </article>
           </section>
 
           <section class="report-panels">
             <article class="activity-panel">
-              <div class="section-heading"><div><h2>Hoạt động trong phiên</h2><p>Tiến độ xử lý câu hỏi của bạn</p></div><span>{{ reportMetrics().answered }}/{{ reportMetrics().questions }}</span></div>
-              <div class="progress-track"><span [style.width.%]="reportMetrics().questions ? reportMetrics().answered / reportMetrics().questions * 100 : 0"></span></div>
-              <div class="report-breakdown"><span><i class="dot green"></i>Hoàn thành <b>{{ reportMetrics().answered }}</b></span><span><i class="dot blue"></i>Đang chờ <b>{{ reportMetrics().questions - reportMetrics().answered }}</b></span></div>
+              <div class="section-heading">
+                <div>
+                  <h2>Tiến độ phiên học</h2>
+                  <p>Tỷ lệ câu hỏi đã được đọc hiểu và phản hồi</p>
+                </div>
+                <span class="progress-ratio">{{ reportMetrics().answered }}/{{ reportMetrics().questions }}</span>
+              </div>
+              <div class="progress-track">
+                <span [style.width.%]="reportMetrics().questions ? (reportMetrics().answered / reportMetrics().questions * 100) : 0"></span>
+              </div>
+              <div class="report-breakdown">
+                <span><i class="dot green"></i> Hoàn thành: <b>{{ reportMetrics().answered }}</b></span>
+                <span><i class="dot blue"></i> Đang chờ: <b>{{ reportMetrics().questions - reportMetrics().answered }}</b></span>
+              </div>
             </article>
+
             <article class="skills-panel">
-              <div class="section-heading"><div><h2>Kỹ năng đã luyện tập</h2><p>Các hình thức tương tác trong phiên</p></div></div>
+              <div class="section-heading">
+                <div>
+                  <h2>Kỹ năng thực hành</h2>
+                  <p>Các phương thức đã sử dụng</p>
+                </div>
+              </div>
               <ul>
-                <li><span>Nhận dạng giọng nói</span><b>{{ reportMetrics().voiceQuestions }} lượt</b></li>
-                <li><span>Đọc hiểu ngữ cảnh</span><b>{{ reportMetrics().answered }} lượt</b></li>
-                <li><span>Khám phá đoạn văn</span><b>{{ reportMetrics().passages }} bài</b></li>
+                <li><span>Nhận dạng giọng nói tiếng Việt</span><b>{{ reportMetrics().voiceQuestions }} lượt</b></li>
+                <li><span>Đọc hiểu ngữ cảnh chuyên sâu</span><b>{{ reportMetrics().answered }} lượt</b></li>
+                <li><span>Khám phá tri thức đoạn văn</span><b>{{ reportMetrics().passages }} bài</b></li>
               </ul>
             </article>
           </section>
 
           @if (reportMetrics().questions === 0) {
-            <div class="report-tip"><span>◎</span><div><strong>Bắt đầu tạo báo cáo của bạn</strong><p>Đặt câu hỏi bằng văn bản hoặc giọng nói, dữ liệu học tập sẽ được cập nhật tự động.</p></div><button type="button" (click)="setView('chat')">Bắt đầu học</button></div>
+            <div class="report-tip">
+              <span class="tip-icon">💡</span>
+              <div>
+                <strong>Bắt đầu tạo dữ liệu học tập</strong>
+                <p>Hãy đặt câu hỏi đầu tiên bằng văn bản hoặc giọng nói để hệ thống tự động ghi nhận báo cáo.</p>
+              </div>
+              <button type="button" (click)="setView('chat')">Bắt đầu học ngay</button>
+            </div>
           }
         </div>
       }

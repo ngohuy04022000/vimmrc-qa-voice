@@ -12,4 +12,6 @@ export interface ChatMessage {
   text: string;
   audioUrl?: string;
   passage?: Passage;
+  time?: string;
+  source?: 'voice' | 'text';
 }

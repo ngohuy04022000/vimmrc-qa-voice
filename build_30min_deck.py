@@ -147,7 +147,7 @@ for idx, (title_p, sub_p, det_p, col_p) in enumerate(principles):
     p1.font.color.rgb = TEXT_DARK
     p1.space_before = Pt(2)
     p2 = tf_p.add_paragraph()
-    p2.text = "➔ " + det_p
+    p2.text = "→ " + det_p
     p2.font.size = Pt(10)
     p2.font.color.rgb = TEXT_MUTED
     p2.space_before = Pt(1)
@@ -178,7 +178,7 @@ builder.add_table(s4, Inches(0.8), Inches(1.5), Inches(11.733), Inches(2.3), hea
 c_s4_left, tf_s4_l = builder.add_card(s4, Inches(0.8), Inches(4.0), Inches(5.6), Inches(2.85), title="Đặc Điểm & Thách Thức Ngữ Liệu", title_color=PRIMARY_BLUE)
 for b in [
     "Dữ liệu dùng dạng hỏi đáp tự do: Bài đọc (Passage) + Câu hỏi (Question) + Câu trả lời dạng văn bản.",
-    "Biến thiên độ dài cực lớn: Từ ngắn nhất 120 từ đến bài dài nhất 1.250 từ (vượt trần 512 subword token của Transformer).",
+    "Độ dài bài đọc biến thiên: Từ khoảng 120 từ đến hơn 1.200 từ (vượt giới hạn 512 subword token của Transformer).",
     "Nguồn gộp: ViMMRC 2.0 (5.273 câu, bài tập đọc phổ thông) + UIT-ViQuAD2.0 (28.454 câu gốc, còn 21.891 sau khi loại câu không có đáp án) = 27.164 câu."
 ]:
     p = tf_s4_l.add_paragraph()
@@ -189,7 +189,7 @@ for b in [
 
 c_s4_right, tf_s4_r = builder.add_card(s4, Inches(6.7), Inches(4.0), Inches(5.833), Inches(2.85), title="Quy Trình Chuẩn Hóa & Tiền Xử Lý", title_color=TEAL)
 for b in [
-    "Chuẩn hóa Unicode NFC: Giải quyết triệt để lỗi mã hóa tổ hợp (NFD) trong tiếng Việt.",
+    "Chuẩn hóa Unicode NFC: Đồng bộ mã hóa ký tự tiếng Việt giữa các nguồn dữ liệu.",
     "Làm sạch ký tự rỗng & điều khiển ẩn: Loại bỏ các khoảng trắng zwnj, tab lỗi trong dữ liệu gốc.",
     "Kho tri thức (build_kb.py): 5.869 đoạn ViMMRC + ViQuAD (kb_index.json) và 1,48 triệu đoạn Wikipedia tiếng Việt (kb_wiki_full).",
     "Đánh giá theo Generative QA (sinh câu trả lời tự do): EM và token F1 trên 2.716 câu test."
@@ -244,13 +244,13 @@ for idx, (head, eng, dat, fb, col) in enumerate(steps_s5):
     p_eng.space_before = Pt(4)
 
     p_dat = ctf.add_paragraph()
-    p_dat.text = "➔ " + dat
+    p_dat.text = "→ " + dat
     p_dat.font.size = Pt(10.5)
     p_dat.font.color.rgb = TEXT_MUTED
     p_dat.space_before = Pt(8)
 
     p_fb = ctf.add_paragraph()
-    p_fb.text = "🛡 " + fb
+    p_fb.text = "• " + fb
     p_fb.font.size = Pt(10)
     p_fb.font.color.rgb = PRIMARY_BLUE
     p_fb.space_before = Pt(8)
@@ -273,7 +273,7 @@ for b in [
 # SLIDE 6
 s6_notes = """Ở phân hệ STT, mục tiêu là nhận dạng tiếng Việt chính xác có dấu trên CPU với mức chiếm dụng bộ nhớ hợp lý.
 Nhóm triển khai mô hình Whisper-small được fine-tune LoRA trên 50 giờ dữ liệu VietSpeech, sau đó chuyển đổi sang CTranslate2 với lượng tử hóa INT8.
-Kết quả đánh giá trên 1.802 mẫu test VietSpeech cho thấy: mô hình đạt tỷ lệ lỗi từ WER 13,77% và tỷ lệ lỗi ký tự CER 6,67%, vượt trội hoàn toàn so với mô hình Whisper-small gốc chưa fine-tune có WER 36,76% và CER 19,43%.
+Kết quả đánh giá trên 1.802 mẫu test VietSpeech cho thấy: mô hình đạt tỷ lệ lỗi từ WER 13,77% và tỷ lệ lỗi ký tự CER 6,67%, giảm hơn 22,9 điểm phần trăm WER so với mô hình Whisper-small gốc chưa fine-tune có WER 36,76% và CER 19,43%.
 Về tài nguyên, thư viện CTranslate2 giúp giảm đáng kể bộ nhớ RAM và tăng tốc tính toán ma trận trên CPU. Trong môi trường Docker CPU, thời gian nhận dạng thực tế mất khoảng 3 giây cho một câu hỏi đàm thoại, đáp ứng tốt yêu cầu xử lý cục bộ của đồ án."""
 
 s6 = builder.add_content_slide(
@@ -309,21 +309,21 @@ whisper_stats = [
 ]
 for title_w, val_w in whisper_stats:
     p = tf_s6_r.add_paragraph()
-    p.text = f"★ {title_w}:"
+    p.text = f"• {title_w}:"
     p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = PRIMARY_BLUE
     p.space_before = Pt(8)
     p_v = tf_s6_r.add_paragraph()
-    p_v.text = f"  ➔ {val_w}"
+    p_v.text = f"  → {val_w}"
     p_v.font.size = Pt(10.5)
     p_v.font.color.rgb = TEXT_DARK
     p_v.space_before = Pt(2)
 
 # SLIDE 7
 s7_notes = """Hai giải pháp tối ưu quan trọng ở phân hệ STT là bộ lọc VAD và cơ chế Lazy Loading:
-Khi người dùng bấm mic thu âm, đoạn âm thanh luôn chứa khoảng lặng trước và sau câu nói. Nếu nạp toàn bộ vào Whisper, mô hình vừa tốn thời gian giải mã vừa dễ bị lặp từ. Nhóm đã tích hợp bộ lọc Silero VAD để tự động cắt tỉa các đoạn im lặng và tạp âm nền, giúp giảm 30 đến 40% thời lượng âm thanh cần đưa vào giải mã.
-Thứ hai, việc nạp mô hình AI ngay khi khởi động server thường mất 15 đến 20 giây, khiến Docker Healthcheck dễ báo timeout. Nhóm áp dụng mẫu thiết kế Thread-Safe Lazy Loading với Lock trong Python: server FastAPI khởi động tức thì trong 0,45 giây để mở cổng mạng; mô hình chỉ nạp vào RAM ở request đầu tiên và được lưu trữ tĩnh phục vụ xuyên suốt phiên làm việc."""
+Khi người dùng bấm mic thu âm, đoạn âm thanh luôn chứa khoảng lặng trước và sau câu nói. Nếu nạp toàn bộ vào Whisper, mô hình vừa tốn thời gian giải mã vừa dễ bị lặp từ. Nhóm đã bật bộ lọc VAD tích hợp trong Faster-Whisper để tự động cắt các đoạn im lặng và tạp âm nền, giúp giảm 30 đến 40% thời lượng âm thanh cần đưa vào giải mã.
+Thứ hai, việc nạp mô hình AI ngay khi khởi động server thường mất 15 đến 20 giây, khiến Docker Healthcheck dễ báo timeout. Nhóm áp dụng mẫu thiết kế Thread-Safe Lazy Loading với Lock trong Python: server FastAPI khởi động nhanh trong khoảng 0,45 giây để mở cổng mạng; mô hình chỉ nạp vào RAM ở request đầu tiên và được lưu trữ tĩnh phục vụ xuyên suốt phiên làm việc."""
 
 s7 = builder.add_content_slide(
     category="Phần 2: Kiến trúc & STT",
@@ -336,10 +336,10 @@ s7 = builder.add_content_slide(
 c_s7_l, tf_s7_l = builder.add_card(s7, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Bộ Lọc Voice Activity Detection (VAD)", title_color=PRIMARY_BLUE)
 for b in [
     "Vấn đề thực tế: Người dùng thu âm luôn có khoảng lặng 0.5s - 1.0s ở đầu và cuối bản ghi.",
-    "Nguy cơ: Đưa khoảng lặng vào Transformer tốn thời gian giải mã và sinh ra hiện tượng lặp từ ma (hallucination).",
-    "Giải pháp: Tích hợp mạng nơ-ron Silero VAD siêu nhẹ (chạy dưới 5ms).",
-    "Tự động phát hiện biên độ hoạt tính tiếng nói, cắt bỏ toàn bộ vùng im lặng và tạp âm nền.",
-    "Kết quả: giảm 30-40% thời gian xử lý."
+    "Nguy cơ: Đưa khoảng lặng vào Transformer tốn thời gian giải mã và dễ gây hiện tượng lặp từ (hallucination).",
+    "Giải pháp: Bật bộ lọc VAD tích hợp trong Faster-Whisper (vad_filter=True, dựa trên Silero VAD).",
+    "Tự động phát hiện biên độ hoạt tính tiếng nói, cắt bỏ vùng im lặng và tạp âm nền trước khi giải mã.",
+    "Kết quả: Giảm 30-40% thời lượng âm thanh cần đưa vào bộ giải mã."
 ]:
     p = tf_s7_l.add_paragraph()
     p.text = "• " + b
@@ -457,7 +457,7 @@ for b in [
 
 # SLIDE 10
 s10_notes = """Để tầng truy xuất BM25 vừa nhẹ vừa chính xác, em đã cải tiến thuật toán BM25 qua hai bước:
-Thứ nhất, trên công thức Okapi BM25, em tinh chỉnh siêu tham số k1 lên 2,1 để tăng độ bão hòa với các từ khóa trọng tâm lặp lại, và đặt b bằng 1,0 để phạt triệt để độ dài dư thừa của văn bản, thay cho cấu hình mặc định của Lucene vốn chưa tối ưu cho các bài đọc chênh lệch độ dài.
+Thứ nhất, trên công thức Okapi BM25, em tinh chỉnh siêu tham số k1 lên 2,1 để tăng độ bão hòa với các từ khóa trọng tâm lặp lại, và đặt b bằng 1,0 để chuẩn hóa mạnh theo độ dài của văn bản, thay cho cấu hình mặc định của Lucene vốn chưa tối ưu cho các bài đọc chênh lệch độ dài.
 Thứ hai, tiếng Việt có đặc thù từ ghép rất mạnh; nếu tách rời các từ như 'Điện' và 'Biên', điểm số sẽ bị loãng. Em đề xuất cơ chế Bigram Phrase Boost: trích xuất các cặp từ liền kề trong câu hỏi; nếu đoạn văn chứa đúng cụm từ theo đúng thứ tự, đoạn văn được cộng thêm 0,4 điểm thưởng nhân trọng số IDF. Kỹ thuật này giúp phân biệt rõ nghĩa từ ghép và tăng độ chính xác truy xuất rõ rệt."""
 
 s10 = builder.add_content_slide(
@@ -477,11 +477,15 @@ p_f.font.color.rgb = TECH_BLUE
 p_f.alignment = PP_ALIGN.CENTER
 p_f.space_before = Pt(4)
 
-p_det = tf_s10_t.add_paragraph()
-p_det.text = "• Tinh chỉnh k1 = 2.1 (Mặc định 1.2): Tăng độ bão hòa tần suất từ khóa, ưu tiên các bài đọc có từ khóa chuyên biệt lặp lại.\n• Tinh chỉnh b = 1.0 (Mặc định 0.75): Phạt tối đa độ dài dư thừa, triệt tiêu ưu thế giả tạo của các bài đọc quá dài."
-p_det.font.size = Pt(10.5)
-p_det.font.color.rgb = TEXT_DARK
-p_det.space_before = Pt(4)
+for det_line in [
+    "• Tinh chỉnh k1 = 2.1 (Mặc định 1.2): Tăng độ bão hòa tần suất từ khóa, ưu tiên các bài đọc có từ khóa chuyên biệt lặp lại.",
+    "• Tinh chỉnh b = 1.0 (Mặc định 0.75): Chuẩn hóa mạnh theo độ dài đoạn văn, hạn chế việc các bài đọc dài chiếm ưu thế điểm số."
+]:
+    p_det = tf_s10_t.add_paragraph()
+    p_det.text = det_line
+    p_det.font.size = Pt(10.5)
+    p_det.font.color.rgb = TEXT_DARK
+    p_det.space_before = Pt(3)
 
 c_s10_l, tf_s10_l = builder.add_card(s10, Inches(0.8), Inches(3.45), Inches(5.6), Inches(3.4), title="Đặc Thù Từ Ghép Tiếng Việt", title_color=TEAL)
 for b in [
@@ -503,7 +507,7 @@ for b in [
     "Giúp hệ thống phân biệt chính xác giữa 'nhà trường' với 'trường hợp' hoặc 'nhà cửa'."
 ]:
     p = tf_s10_r.add_paragraph()
-    p.text = "★ " + b
+    p.text = "• " + b
     p.font.size = Pt(10.5)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(6)
@@ -540,7 +544,7 @@ for b in [
     "Kết quả này là ablation cũ trên kho ViMMRC 552 đoạn; hệ thống hiện tại dùng kho hai tầng 5.869 đoạn + 1,48 triệu đoạn Wikipedia."
 ]:
     p = tf_s11_b.add_paragraph()
-    p.text = "✔ " + b
+    p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(6)
@@ -549,7 +553,7 @@ for b in [
 s12_notes = """Để trả lời các câu hỏi kiến thức mở, nhóm đã xây dựng kho tri thức hai tầng cho RAG:
 Tầng 1 gồm 5.869 đoạn văn chọn lọc từ ViMMRC và ViQuAD. Tầng 2 gồm 1,48 triệu đoạn trích từ Wikipedia tiếng Việt, được đánh chỉ mục kép: BM25 chia shard và chỉ mục vector dense multilingual-e5-small 384 chiều lưu float16 khoảng 1,1 GB.
 Với mỗi câu hỏi, hệ thống lấy top 3 từ BM25 tầng 1, top 3 từ BM25 Wikipedia và top 3 từ dense Wikipedia, tổng cộng tối đa 9 ứng viên. Reranker cross-encoder bge-reranker-v2-m3 chấm điểm chung tất cả ứng viên, trong đó đoạn tầng 1 được cộng ưu tiên 0,25 điểm.
-Đánh giá trên tập test 2.545 câu, BM25 hai tầng đạt Recall@1 71,1% và Recall@5 85,9%. Khi có reranker, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4 lên 24,3, và câu có trong kho tăng từ 58,0 lên 60,7, chứng minh năng lực vượt trội của kiến trúc lai."""
+Đánh giá trên tập test 2.545 câu, BM25 hai tầng đạt Recall@1 71,1% và Recall@5 85,9%. Khi có reranker, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4 lên 24,3, và câu có trong kho tăng từ 58,0 lên 60,7, cho thấy hiệu quả rõ rệt của kiến trúc truy xuất lai hai tầng."""
 
 s12 = builder.add_content_slide(
     category="Phần 3: Retrieval & MRC",
@@ -584,13 +588,13 @@ mrc_stats = [
 ]
 for title_m, val_m in mrc_stats:
     p = tf_s12_r.add_paragraph()
-    p.text = f"★ {title_m}:"
+    p.text = f"• {title_m}:"
     p.font.size = Pt(11)
     p.font.bold = True
     p.font.color.rgb = PRIMARY_BLUE
     p.space_before = Pt(8)
     p_v = tf_s12_r.add_paragraph()
-    p_v.text = f"  ➔ {val_m}"
+    p_v.text = f"  → {val_m}"
     p_v.font.size = Pt(10.5)
     p_v.font.color.rgb = TEXT_DARK
     p_v.space_before = Pt(2)
@@ -631,7 +635,7 @@ for b in [
     "Kết quả hiện tại: EM 41,05 / F1 66,55 trên 2.716 câu test; toàn chuỗi F1 53,9."
 ]:
     p = tf_s13_r.add_paragraph()
-    p.text = "★ " + b
+    p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
@@ -670,7 +674,7 @@ c_s14_2, tf_s14_2 = builder.add_card(s14, Inches(4.8), Inches(1.5), Inches(3.72)
 for b in [
     "Grad-TTS / Diff-TTS: Dựa trên quá trình khử nhiễu ngẫu nhiên phân tán.",
     "Ưu điểm: Âm thanh trong trẻo, tự nhiên, phổ Mel sắc nét.",
-    "Nhược điểm chí mạng: Tốc độ cực chậm. Cần từ 50 đến 100 bước lặp SDE/ODE, bắt buộc phải có GPU rời."
+    "Nhược điểm lớn: Tốc độ suy luận chậm, thường cần 50 đến 100 bước lặp SDE/ODE nên khó chạy nhanh trên CPU."
 ]:
     p = tf_s14_2.add_paragraph()
     p.text = "• " + b
@@ -680,13 +684,13 @@ for b in [
 
 c_s14_3, tf_s14_3 = builder.add_card(s14, Inches(8.8), Inches(1.5), Inches(3.72), Inches(5.35), title="3. Matcha-TTS (ICASSP 2024)", title_color=GREEN)
 for b in [
-    "Đột phá Flow Matching: Kết hợp chất lượng đỉnh cao của Diffusion với tốc độ của mô hình giải tích.",
-    "Đường vận chuyển tối ưu: Chỉ cần đúng 10 bước Euler trên CPU.",
+    "Kỹ thuật Flow Matching: Kết hợp chất lượng âm thanh của Diffusion với quỹ đạo giải tích gọn nhẹ.",
+    "Đường vận chuyển tối ưu: Giải ODE nhanh (10 bước Euler trong benchmark trên CPU).",
     "Đạt hệ số RTF 0.52 trên CPU thông thường mà không cần GPU.",
-    "Lựa chọn tối ưu nhất cho hệ thống Voice Q&A đàm thoại."
+    "Phù hợp cho hệ thống Voice Q&A chạy cục bộ trên CPU."
 ]:
     p = tf_s14_3.add_paragraph()
-    p.text = "★ " + b
+    p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
@@ -742,7 +746,7 @@ for b in [
     "Hội tụ ổn định, không gặp hiện tượng sụp đổ phân phối (Mode Collapse) như GAN."
 ]:
     p = tf_s15_r.add_paragraph()
-    p.text = "★ " + b
+    p.text = "• " + b
     p.font.size = Pt(10.5)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(6)
@@ -751,7 +755,7 @@ for b in [
 s16_notes = """Đóng góp trọng tâm của nhóm ở phân hệ TTS là đề xuất frontend tách thanh điệu vi_tone_v2:
 Tiếng Việt có 6 thanh điệu. Nếu để nguyên nguyên âm có dấu trong từ điển, từ vựng ký tự nở rộng gấp nhiều lần và mô hình coi các biến thể là ký tự rời rạc, rất khó học quy luật biến thiên cao độ F0.
 Giải pháp vi_tone_v2 bóc tách thanh điệu thành token độc lập ở cuối mỗi âm tiết: 0 ngang, 1 sắc, 2 huyền, 3 hỏi, 4 ngã, 5 nặng. Ví dụ 'tiếng' tách thành 't i e n g' và token 1; 'hồ' thành 'h ô' và token 2; 'Việt' thành 'v i e t' và token 5.
-Nhờ vậy, Text Encoder học tách biệt giữa âm vị và cao độ F0, giảm 70% kích thước từ điển và loại bỏ triệt để hiện tượng lẫn lộn dấu hỏi, dấu ngã."""
+Nhờ vậy, Text Encoder học tách biệt giữa âm vị và cao độ F0, giảm 70% kích thước từ điển và giảm rõ rệt hiện tượng lẫn lộn dấu hỏi, dấu ngã."""
 
 s16 = builder.add_content_slide(
     category="Phần 4: Phân hệ TTS Tiên tiến",
@@ -777,17 +781,17 @@ for b in [
 c_s16_r, tf_s16_r = builder.add_card(s16, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Cơ Chế Bóc Tách vi_tone_v2 Của Nhóm", title_color=TEAL)
 tone_samples = [
     ("Nguyên lý:", "Tách thanh điệu thành token độc lập đặt ở cuối mỗi âm tiết."),
-    ("Ví dụ 1:", "'tiếng'  ➔  t i e n g 1 (Thanh sắc)"),
-    ("Ví dụ 2:", "'hồ'  ➔  h ô 2 (Thanh huyền)"),
-    ("Ví dụ 3:", "'Việt'   ➔  v i e t 5 (Thanh nặng)"),
-    ("Ví dụ 4:", "'Hồ Chí Minh' ➔  h ô 2   ch i 1   m i n h 0"),
+    ("Ví dụ 1:", "'tiếng'  →  t i e n g 1 (Thanh sắc)"),
+    ("Ví dụ 2:", "'hồ'  →  h ô 2 (Thanh huyền)"),
+    ("Ví dụ 3:", "'Việt'   →  v i e t 5 (Thanh nặng)"),
+    ("Ví dụ 4:", "'Hồ Chí Minh' →  h ô 2   ch i 1   m i n h 0"),
     ("Lợi ích 1:", "Giảm 70% kích thước từ điển ký tự của Text Encoder."),
     ("Lợi ích 2:", "Text Encoder học riêng âm vị (Phoneme) và đường cong cao độ (Pitch Contour F0)."),
-    ("Lợi ích 3:", "Loại bỏ triệt để hiện tượng nhầm lẫn giữa dấu Hỏi và dấu Ngã.")
+    ("Lợi ích 3:", "Giảm rõ rệt hiện tượng nhầm lẫn giữa dấu Hỏi và dấu Ngã.")
 ]
 for title_t, val_t in tone_samples:
     p = tf_s16_r.add_paragraph()
-    p.text = f"★ {title_t} {val_t}"
+    p.text = f"• {title_t} {val_t}"
     p.font.size = Pt(10.5)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(6)
@@ -795,8 +799,8 @@ for title_t, val_t in tone_samples:
 # SLIDE 17
 s17_notes = """Trước khi tổng hợp âm thanh, văn bản câu trả lời đi qua module Text Normalizer chuyên biệt:
 Câu trả lời do mô hình sinh ra thường chứa số liệu, ngày tháng lịch sử hoặc ký hiệu viết tắt. Nếu đưa nguyên văn bản thô vào TTS, mô hình sẽ đọc sai hoặc ngắt nghỉ không đúng chỗ.
-Module normalizer của nhóm thiết lập 5 bộ quy tắc chuẩn hóa: đọc chuẩn các định dạng ngày tháng như ngày mùng bảy tháng năm, mở rộng số thập phân, tiền tệ và phần trăm ra chữ tiếng Việt có dấu, đồng thời chuyển đổi các nhãn liệt kê dạng ngoặc đơn thành chữ cái rõ ràng.
-Đặc biệt, module tự động chèn các khoảng nghỉ âm học 150 mili-giây tại dấu phẩy và 300 mili-giây tại dấu chấm, giúp giọng đọc phát ra có nhịp thở và ngữ điệu tự nhiên như người thật."""
+Module normalizer của nhóm thiết lập 5 bộ quy tắc chuẩn hóa: đọc các định dạng ngày tháng như ngày bảy tháng năm, mở rộng số thập phân, tiền tệ và phần trăm ra chữ tiếng Việt có dấu, đồng thời chuyển đổi các nhãn đáp án dạng ngoặc đơn thành cụm từ rõ ràng.
+Ngoài ra, bước hậu xử lý tự động chèn các khoảng nghỉ âm học 150 mili-giây tại dấu phẩy và 400 mili-giây tại dấu chấm, giúp giọng đọc phát ra có nhịp ngắt câu tự nhiên."""
 
 s17 = builder.add_content_slide(
     category="Phần 4: Phân hệ TTS Tiên tiến",
@@ -807,11 +811,11 @@ s17 = builder.add_content_slide(
 )
 
 rules = [
-    ("1. Ngày - Tháng - Năm", "07/05/1954", "ngày mùng bảy tháng năm năm một nghìn chín trăm năm mươi tư"),
+    ("1. Ngày - Tháng - Năm", "07/05/1954", "ngày bảy tháng năm năm một nghìn chín trăm năm mươi tư"),
     ("2. Số Thập phân & Đơn vị", "3.14  |  50 km/h", "ba phẩy một bốn  |  năm mươi ki-lô-mét trên giờ"),
     ("3. Tiền tệ & Tỷ lệ phần trăm", "100.000 VNĐ  |  85%", "một trăm nghìn đồng  |  tám mươi lăm phần trăm"),
-    ("4. Nhãn Liệt kê", "(A) Nguyễn Du  hoặc  B. Hà Nội", "'A', 'B' (nhãn liệt kê như (A), (B) -> 'A', 'B'; tránh đọc 'mở ngoặc b đóng ngoặc')"),
-    ("5. Khoảng Nghỉ Dấu Câu", "Chèn Pause tự động", "150ms tại dấu phẩy (,), 300ms tại dấu chấm (.) tạo nhịp thở")
+    ("4. Nhãn Đáp án / Liệt kê", "(A) Nguyễn Du  hoặc  B. Hà Nội", "'Đáp án A: Nguyễn Du', 'Đáp án B: Hà Nội' (tránh đọc 'mở ngoặc đóng ngoặc')"),
+    ("5. Khoảng Nghỉ Dấu Câu", "Chèn Pause theo cụm dấu câu", "150ms tại dấu phẩy (,), 250ms tại (; :), 400ms tại dấu chấm (. ! ?) tạo nhịp nghỉ")
 ]
 
 for idx, (head_r, raw_r, out_r) in enumerate(rules):
@@ -823,14 +827,14 @@ for idx, (head_r, raw_r, out_r) in enumerate(rules):
     p0.font.bold = True
     p0.font.color.rgb = PRIMARY_BLUE
     p1 = tf_r.add_paragraph()
-    p1.text = f"Đầu vào thô: {raw_r}   ➔   Chuẩn hóa: {out_r}"
+    p1.text = f"Đầu vào thô: {raw_r}   →   Chuẩn hóa: {out_r}"
     p1.font.size = Pt(10.5)
     p1.font.color.rgb = TEXT_DARK
     p1.space_before = Pt(2)
 
 # SLIDE 18
 s18_notes = """Nhóm đã thiết lập bộ benchmark âm học định lượng chuẩn quốc tế, so sánh trực tiếp Matcha-TTS với giọng phát thanh viên người thật và hai mô hình nền tảng VITS của Meta và Edge-TTS của Microsoft:
-Về độ rõ chữ: khi dùng mô hình nhận dạng ASR PhoWhisper kiểm chứng lại, tỷ lệ lỗi ký tự CER của Matcha-TTS chỉ là 1,9%, vượt trội so với mức 4,3% của VITS và bám sát mức trần 0,7% của người thật.
+Về độ rõ chữ: khi dùng mô hình nhận dạng ASR PhoWhisper kiểm chứng lại, tỷ lệ lỗi ký tự CER của Matcha-TTS đạt 1,9%, thấp hơn hơn 2 lần so với mức 4,3% của VITS và gần mức trần 0,7% của người thật.
 Về độ chuẩn cao độ: sai số log-F0 của Matcha đạt 2,86 bán cung, tiệm cận mô hình thương mại Edge-TTS là 2,69 bán cung và tốt hơn nhiều so với VITS.
 Về tốc độ: hệ số RTF trên CPU đạt 0,52, nghĩa là chỉ mất khoảng nửa giây để tổng hợp một câu nói dài một giây, hoàn toàn đáp ứng yêu cầu đàm thoại thời gian thực mà không cần GPU."""
 
@@ -854,12 +858,12 @@ builder.add_table(s18, Inches(0.8), Inches(1.5), Inches(11.733), Inches(2.5), he
 
 c_s18_bot, tf_s18_b = builder.add_card(s18, Inches(0.8), Inches(4.3), Inches(11.733), Inches(2.55), title="Phân Tích Chuyên Sâu 3 Chỉ Số Âm Học Then Chốt", title_color=PRIMARY_BLUE)
 for b in [
-    "Độ Rõ Âm Vị (CER 1.9%): Matcha-TTS phát âm cực kỳ rõ ràng, ít lỗi ký tự hơn VITS hơn 2 lần, bám sát mức trần 0.7% của người thật.",
+    "Độ Rõ Âm Vị (CER 1.9%): Matcha-TTS phát âm rõ chữ, tỷ lệ lỗi ký tự thấp hơn VITS hơn 2 lần và gần mức trần 0.7% của người thật.",
     "Độ Chuẩn Thanh Điệu (log-F0 2.86 bán cung): Nhờ frontend vi_tone_v2, sai số cao độ giảm sâu, tiệm cận mô hình thương mại Microsoft (2.69).",
     "Tốc độ TTS (RTF 0.52 CPU): TTS nhanh hơn thời gian thực trên CPU i5/i7, tạo 1 giây âm thanh chỉ mất 0.52 giây."
 ]:
     p = tf_s18_b.add_paragraph()
-    p.text = "★ " + b
+    p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(6)
@@ -911,7 +915,7 @@ for b in [
 # SLIDE 20
 s20_notes = """Để đảm bảo tính tái lập và triển khai thuận tiện, nhóm đã đóng gói toàn bộ hệ thống vào container Docker theo kỹ thuật Multi-Stage build:
 Stage 1 dùng Node 22 Alpine để biên dịch mã nguồn Angular thành các file tĩnh tối ưu.
-Stage 2 dùng image Python 3.11-slim siêu nhẹ, cài đặt ffmpeg, thư viện âm thanh và phiên bản PyTorch CPU-only chỉ nặng 180MB thay vì bản CUDA 2,5GB.
+Stage 2 dùng image Python 3.11-slim gọn nhẹ, cài đặt ffmpeg, thư viện âm thanh và phiên bản PyTorch CPU-only nặng khoảng 180MB thay vì bản CUDA 2,5GB.
 Quá trình triển khai được cấu hình tự động qua docker-compose. Chỉ bằng một lệnh 'docker compose up -d', toàn bộ hệ thống sẽ khởi chạy và sẵn sàng phục vụ trên cổng 8090 kèm theo cơ chế Healthcheck tự động định kỳ giám sát."""
 
 s20 = builder.add_content_slide(
@@ -927,8 +931,8 @@ for b in [
     "Stage 1: node:22-alpine: Biên dịch mã nguồn Angular, áp dụng Tree-shaking và nén tĩnh thư mục dist/.",
     "Stage 2: python:3.11-slim: Image chạy production sạch sẽ, cài đặt ffmpeg và libsndfile1.",
     "Tối ưu PyTorch CPU Wheel: Chỉ cài phiên bản torch cpu-only (~180MB) thay vì bản CUDA (~2.5GB).",
-    "Kích thước Image cuối cùng cực kỳ nhỏ gọn, giảm 70% dung lượng lưu trữ so với build truyền thống.",
-    "Độc lập 100% với môi trường máy chủ chủ quản (Zero dependency on host OS)."
+    "Kích thước Image gọn hơn đáng kể, giảm khoảng 70% dung lượng lưu trữ so với build kèm CUDA.",
+    "Độc lập với môi trường máy chủ (không phụ thuộc phiên bản Python hay Node cài sẵn trên host)."
 ]:
     p = tf_s20_l.add_paragraph()
     p.text = "• " + b
@@ -945,19 +949,19 @@ for b in [
     "Đã kiểm thử và chạy ổn định, container vimmrc-qa-voice chạy ổn định."
 ]:
     p = tf_s20_r.add_paragraph()
-    p.text = "★ " + b
+    p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
 # SLIDE 21
 s21_notes = """Nhóm áp dụng quy trình kiểm thử tự động toàn diện bằng framework pytest để đảm bảo tính ổn định của toàn bộ mã nguồn.
-Trước khi đóng gói phiên bản chính thức, toàn bộ 54 trên 54 bài kiểm thử tự động đều đạt tỷ lệ 100% thành công.
-Bộ test kiểm tra đa tầng từ chuẩn hóa văn bản, giải thuật BM25, mô hình đọc hiểu ViT5, động cơ tổng hợp TTS đến các endpoint API của server. Nhờ kiểm thử chặt chẽ, nhóm loại bỏ hoàn toàn lỗi hồi quy khi tích hợp mã nguồn giữa các thành viên, đảm bảo hệ thống vận hành bền bỉ và sẵn sàng cho môi trường thực tế."""
+Trước khi đóng gói phiên bản chính thức, bộ 54 bài kiểm thử tự động đều vượt qua kiểm định (53 passed, 1 skipped cho test accelerate trên CPU).
+Bộ test kiểm tra đa tầng từ chuẩn hóa văn bản, giải thuật BM25, mô hình đọc hiểu ViT5, động cơ tổng hợp TTS đến các endpoint API của server. Nhờ kiểm thử chặt chẽ, nhóm phát hiện sớm lỗi hồi quy khi tích hợp mã nguồn giữa các thành viên, giúp hệ thống vận hành ổn định."""
 
 s21 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
-    title="Đảm Bảo Chất Lượng: 54/54 Automated Tests Đạt 100%",
+    title="Đảm Bảo Chất Lượng: Bộ 54 Bài Kiểm Thử Tự Động (Pytest)",
     presenter="Ngô Trí Huy (Lead)",
     time_str="25:30 - 26:30 (60s)",
     notes_text=s21_notes
@@ -967,10 +971,10 @@ headers_s21 = ["Bộ Kiểm Thử (Test Suite)", "Số Lượng Tests", "Phạm 
 rows_s21 = [
     ["text-to-speech_Duy/tests (2 file)", "12 tests", "Matcha/VITS/Edge-TTS fallback, normalizer, tokenizer vi_tone_v2", "12/12 PASSED (100%)"],
     ["retrieval-model_Huy/test_retrieval.py", "15 tests", "BM25 scoring, Bigram boost, Tokenizer, Lập chỉ mục kho bài đọc", "15/15 PASSED (100%)"],
-    ["mrc-model_Huy/tests (4 file)", "18 tests", "Dữ liệu MRC, metric EM/F1, context selection, dataset gộp, smoke train", "18/18 PASSED (100%)"],
+    ["mrc-model_Huy/tests (4 file)", "18 tests", "Dữ liệu MRC, metric EM/F1, context selection, dataset gộp, smoke train", "17 PASSED, 1 SKIPPED (CPU)"],
     ["tests/test_api_server.py", "5 tests", "REST API Endpoints, Healthcheck, phục vụ giao diện web", "5/5 PASSED (100%)"],
     ["tests/test_pipeline.py", "4 tests", "Chuỗi tích hợp retrieval → MRC → TTS", "4/4 PASSED (100%)"],
-    ["TỔNG CỘNG TOÀN HỆ THỐNG", "54 TESTS", "Thời gian chạy kiểm thử tự động: ~1–2 phút", "54/54 PASSED (100%)"]
+    ["TỔNG CỘNG TOÀN HỆ THỐNG", "54 TESTS", "Thời gian chạy kiểm thử tự động: ~1–2 phút", "53 PASSED, 1 SKIPPED"]
 ]
 col_w_s21 = [Inches(3.2), Inches(1.8), Inches(4.733), Inches(2.0)]
 builder.add_table(s21, Inches(0.8), Inches(1.5), Inches(11.733), Inches(3.2), headers_s21, rows_s21, col_w_s21)
@@ -982,7 +986,7 @@ for b in [
     "Có cơ chế dự phòng ở từng phân hệ, được kiểm thử bằng các test fallback."
 ]:
     p = tf_s21_b.add_paragraph()
-    p.text = "✔ " + b
+    p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(4)
@@ -1025,7 +1029,7 @@ for idx, (head_d, time_d, desc_d, col_d) in enumerate(demo_cards):
     p0.font.color.rgb = col_d
 
     p_t = ctf.add_paragraph()
-    p_t.text = "⏱ Thời gian: " + time_d
+    p_t.text = "Thời gian: " + time_d
     p_t.font.size = Pt(11)
     p_t.font.bold = True
     p_t.font.color.rgb = TEXT_DARK
@@ -1072,7 +1076,7 @@ for b in [
     "Định dạng Âm thanh Đầu ra: Hiện mặc định xuất tần số lấy mẫu 22.05kHz, chưa nâng cấp lên 44.1kHz Hi-Fi studio."
 ]:
     p = tf_s23_r.add_paragraph()
-    p.text = "★ " + b
+    p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
@@ -1095,10 +1099,10 @@ for b in [
     "Xây dựng thành công hệ thống Voice Q&A tiếng Việt mã nguồn mở hoàn chỉnh dựa trên ViMMRC 2.0 và UIT-ViQuAD2.0.",
     "Ứng dụng thành công kỹ thuật tiên tiến Flow Matching (Matcha-TTS ICASSP 2024) và đề xuất frontend vi_tone_v2 tách thanh điệu.",
     "Chứng minh tính khả thi của việc chạy cục bộ toàn bộ pipeline AI trên CPU thông thường mà không cần GPU (Edge-TTS/gTTS dự phòng cần Internet).",
-    "Chuẩn mực kỹ nghệ phần mềm: Đóng gói Docker đa tầng 1 lệnh, 54/54 bài kiểm thử tự động đạt 100%."
+    "Chuẩn mực kỹ nghệ phần mềm: Đóng gói Docker đa tầng 1 lệnh, bộ 54 bài kiểm thử tự động (53 passed, 1 skipped trên CPU)."
 ]:
     p = tf_s24_l.add_paragraph()
-    p.text = "✔ " + b
+    p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
@@ -1112,7 +1116,7 @@ for b in [
     "Ứng dụng thực tiễn: Triển khai thử nghiệm tại Kiosk trường học và các thiết bị hỗ trợ người khiếm thị."
 ]:
     p = tf_s24_r.add_paragraph()
-    p.text = "➔ " + b
+    p.text = "→ " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)

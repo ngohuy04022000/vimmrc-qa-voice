@@ -28,33 +28,32 @@
 
 ## 2. Kết quả đối soát số liệu thực nghiệm chuẩn xác nhất
 
-Dựa trên việc đối sánh chéo giữa Báo cáo cuối kỳ của Lương (`Nhom09_BaocaoCK_ML.docx`), Báo cáo TTS của Duy (`Duy_1_TT15-20p_Bao_Cao_Matcha_TTS.docx`), mã nguồn Docker thực tế và nhật ký nghiệm thu `STATUS.md`:
+Dựa trên việc đối sánh chéo giữa Báo cáo cuối kỳ của Lương (`Nhom09_BaocaoCK_ML.docx`), Báo cáo TTS của Duy (`Duy_1_TT15-20p_Bao_Cao_Matcha_TTS.docx`), mã nguồn Docker thực tế và nhật ký trạng thái `STATUS.md`:
 
 1. **Phân hệ STT (Whisper-small LoRA 50h):**
    - Bộ dữ liệu: VietSpeech 50 giờ (41.212 mẫu Train, 1.797 mẫu Validation, 1.802 mẫu Test cố định).
    - Huấn luyện: Mixed precision BF16 trên GPU NVIDIA RTX 5060 Ti (16 GB VRAM), LoRA $r=16, \alpha=32$, learning rate $1\times 10^{-4}$, best step 2.750.
-   - Kết quả test: **WER 13,77%** (giảm 23,00 điểm % / 62,56% tương đối so với Whisper gốc 36,76%); **CER 6,67%** (giảm 12,76 điểm % / 65,65% tương đối so với Whisper gốc 19,43%). So với bản 20h (WER 15,20%, CER 7,29%), bản 50h giảm thêm 9,47% WER.
-   - Triển khai: `faster-whisper` / `CTranslate2` INT8 trên CPU, nhanh gấp **4,1 lần** so với PyTorch FP32, RAM chỉ ~450 MB; tích hợp bộ lọc `vad_filter=True` cắt hoàn toàn khoảng lặng vô nghĩa và hiện tượng lặp hallucination.
+   - Kết quả test: **WER 13,77%** (giảm 23,00 điểm % / 62,56% tương đối so với Whisper gốc 36,76%); **CER 6,67%** (giảm 12,76 điểm % / 65,65% tương đối so với Whisper gốc 19,43%). So với bản 20h (WER 15,20%, CER 7,29%), bản 50h giảm thêm 9,46% WER tương đối.
+   - Triển khai: `faster-whisper` / `CTranslate2` INT8 trên CPU, nhanh gấp **4,1 lần** so với PyTorch FP32, RAM khoảng 450–540 MB; tích hợp bộ lọc `vad_filter=True` giúp cắt khoảng lặng và giảm hiện tượng lặp từ.
 
 2. **Phân hệ Retrieval (Kho tri thức hai tầng RAG):**
-   - Kho tài liệu: **Tầng 1** gồm 5.869 đoạn văn (ViMMRC 2.0 + UIT-ViQuAD2.0); **Tầng 2** gồm 1.481.873 đoạn văn Wikipedia tiếng Việt.
-   - BM25 Tinh chỉnh: $k_1 = 2.1, b = 1.0$ kết hợp Bigram Phrase Boost (+0.4) đạt **Recall@1: 71,45%**, **Recall@5: 86,88%**, **MRR: 0,7719** trên 564 câu dev ViMMRC (vượt trội so với BM25 mặc định 64,18% / 79,96%).
-   - RAG hai tầng trên 2.545 câu test: **Recall@1: 71,1%**, **Recall@5: 85,9%**.
-   - Pipeline cuối với `bge-reranker-v2-m3` (+0,25 ưu tiên tầng 1): Answer F1 trên 200 câu trong kho đạt **60,7%**; trên 200 câu kiến thức mở Wikipedia đạt **24,3%** (vượt xa BM25 thuần 15,4%).
+   - Kho tài liệu: **Tầng 1** gồm 5.869 đoạn văn (552 ViMMRC + 5.317 ViQuAD); **Tầng 2** gồm 1,48 triệu đoạn văn Wikipedia tiếng Việt.
+   - BM25 Tinh chỉnh: $k_1 = 2.1, b = 1.0$ kết hợp Bigram Phrase Boost (+0,4). Trên ablation kho ViMMRC 552 đoạn (564 câu dev), đạt **Recall@1: 71,45%** (so với cấu hình mặc định Lucene 64,18%).
+   - RAG hai tầng trên 2.545 câu test (trước reranker): **Recall@1: 71,1%**, **Recall@5: 85,9%**.
+   - Pipeline cuối với `bge-reranker-v2-m3` (+0,25 ưu tiên tầng 1): Answer F1 trên 200 câu trong kho đạt **60,7%**; trên 200 câu kiến thức mở Wikipedia đạt **24,3%** (so với BM25 thuần 58,0% / 15,4%).
 
 3. **Phân hệ Đọc hiểu Máy MRC (ViT5-base Seq2Seq sinh câu trả lời tự do):**
-   - Bộ dữ liệu gộp: ViMMRC 2.0 (5.273 câu) + UIT-ViQuAD2.0 (21.891 câu) = **27.164 câu hỏi**.
-   - Phân chia zero-leakage theo bài đọc: Train 21.733 câu (~80%), Dev 2.715 câu (~10%), Test 2.716 câu (~10%).
-   - Cơ chế: Sinh câu trả lời tự do ngắn gọn, đúng trọng tâm trực tiếp từ ngữ cảnh, **loại bỏ hoàn toàn giả định trắc nghiệm 4 lựa chọn (ChoiceRanker)**.
-   - Kết quả test: **Exact Match (EM): 41,05%**, **Token F1: 66,55%** (Dev: EM 42,62%, F1 67,92%).
+   - Bộ dữ liệu gộp: ViMMRC 2.0 (5.273 câu) + UIT-ViQuAD2.0 (21.891 câu có đáp án từ 28.454 câu gốc) = **27.164 câu hỏi**.
+   - Phân chia theo bài đọc (không trùng bài đọc giữa các tập): Train 21.733 câu (~80%), Dev 2.715 câu (~10%), Test 2.716 câu (~10%).
+   - Cơ chế: Sinh câu trả lời tự do ngắn gọn trực tiếp từ ngữ cảnh, không cần các phương án lựa chọn trắc nghiệm.
+   - Kết quả test (2.716 câu): **Exact Match (EM): 41,05%**, **Token F1: 66,55%**. Toàn chuỗi BM25 → ViT5 (test 2.545 câu): **EM 32,3%, F1 53,9%** (đưa đoạn văn đúng: **F1 68,6%**).
 
 4. **Phân hệ Tổng hợp Tiếng nói TTS (Matcha-TTS Flow Matching OT-CFM):**
    - Kiến trúc: 1D CNN + Transformer + Optimal-Transport Conditional Flow Matching (OT-CFM) + Vocoder HiFi-GAN tinh chỉnh 50.000 bước.
-   - Cải tiến: Frontend tách thanh điệu `vi_tone_v2` (từ điển 41 âm vị + token thanh điệu 0–5); thuật toán Monotonic Alignment Search (MAS) tối ưu hóa bằng Numba JIT.
-   - Kết quả âm học:
-     - 10 bước Euler ODE: **CER: 0,85%** (hoặc 1,9% qua PhoWhisper), **log-F0 RMSE: 0,91 bán cung** (F0 RMSE 22,1 Hz), **MCD: 3,12 dB**, **RTF: 0,52 – 0,53** trên CPU (nhanh gấp 2 lần thời gian thực).
-     - 20 bước Euler ODE: CER: 0,80%, log-F0 RMSE: 0,88 bán cung, MCD: 3,05 dB, RTF: 0,64.
-     - So sánh: VITS MMS đạt CER 4,7%, log-F0 4,29 bán cung, MCD 4,40 dB. Mức trần người thật đạt CER 0,7%.
+   - Cải tiến: Frontend tách thanh điệu `vi_tone_v2` (từ điển 41 ký hiệu gồm chữ cái và token thanh điệu 0–5); thuật toán Monotonic Alignment Search (MAS) viết bằng Numba.
+   - Kết quả benchmark chuẩn trong kho mã nguồn (`text-to-speech_Duy/scripts/benchmark.py`, đối sánh trên 10 câu tham chiếu giọng người thật InfoRe1):
+     - **Matcha-TTS:** **MCD: 5,35 dB**, **F0 RMSE: 70,4 Hz**, **log-F0 RMSE: 2,86 bán cung**, **CER (ASR PhoWhisper): 1,9%**, **RTF: 0,52** trên CPU.
+     - **So sánh:** VITS MMS đạt MCD 4,45 dB, F0 RMSE 84,1 Hz, log-F0 4,31 bán cung, CER 4,3%, RTF 0,38; Edge-TTS đạt MCD 4,63 dB, F0 RMSE 48,3 Hz, log-F0 2,69 bán cung, CER 1,0%, RTF 0,13; Giọng người thật đạt CER trần 0,7%.
 
 5. **Hiệu năng Triển khai Hệ thống (Docker CPU):**
    - Đo đạc thực tế trên Docker CPU (`OMP_NUM_THREADS=4`):
@@ -62,5 +61,5 @@ Dựa trên việc đối sánh chéo giữa Báo cáo cuối kỳ của Lương
      - Retrieval RAG + Reranker: ~6,0 giây.
      - ViT5 Reader sinh đáp án: ~1,4 giây.
      - TTS Matcha tổng hợp âm thanh: ~1,3 giây.
-     - **Tổng thời gian toàn chu trình:** **khoảng 12 giây/câu**; nếu tắt reranker còn **khoảng 6 giây/câu**.
-   - Đảm bảo chất lượng: **54/54 automated test cases passed** (1 test CPU accelerate skipped).
+     - **Tổng thời gian toàn chu trình:** **khoảng 12 giây/câu**; nếu tắt reranker (`KB_RERANKER=`) còn **khoảng 6 giây/câu**.
+   - Đảm bảo chất lượng: **54 bài kiểm thử tự động** (`53 passed, 1 skipped` cho test `accelerate` trên CPU).

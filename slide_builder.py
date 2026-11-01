@@ -73,11 +73,14 @@ class SlideDeckBuilder:
         tx_box = slide.shapes.add_textbox(Inches(0.8), Inches(1.7), Inches(11.733), Inches(1.8))
         tf = tx_box.text_frame
         tf.word_wrap = True
-        p = tf.paragraphs[0]
-        p.text = title
-        p.font.size = Pt(28)
-        p.font.bold = True
-        p.font.color.rgb = WHITE
+        for t_idx, t_line in enumerate(title.split("\n")):
+            p = tf.paragraphs[0] if t_idx == 0 else tf.add_paragraph()
+            p.text = t_line
+            p.font.size = Pt(28)
+            p.font.bold = True
+            p.font.color.rgb = WHITE
+            if t_idx > 0:
+                p.space_before = Pt(4)
 
         # Subtitle
         if subtitle:

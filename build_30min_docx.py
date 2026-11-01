@@ -318,18 +318,18 @@ for i, s in enumerate(slides_data):
     r0_tname.font.size = Pt(9.0)
     r0_tname.font.bold = True
 
-    r0_time = p0.add_run(f"⏱ {s['dur']}\n\n")
+    r0_time = p0.add_run(f"Thời gian: {s['dur']}\n\n")
     r0_time.font.name = "Calibri"
     r0_time.font.size = Pt(9.0)
     r0_time.font.color.rgb = RGBColor(0x25, 0x63, 0xEB)
 
-    r0_spk = p0.add_run(f"🎤 {s['speaker']}\n\n")
+    r0_spk = p0.add_run(f"Trình bày: {s['speaker']}\n\n")
     r0_spk.font.name = "Calibri"
     r0_spk.font.size = Pt(9.0)
     r0_spk.font.bold = True
     r0_spk.font.color.rgb = RGBColor(0x05, 0x96, 0x69)
 
-    r0_wc = p0.add_run(f"📝 {s['wc']} từ ({s['est_str']})")
+    r0_wc = p0.add_run(f"Độ dài: {s['wc']} từ ({s['est_str']})")
     r0_wc.font.name = "Calibri"
     r0_wc.font.size = Pt(8.5)
     r0_wc.font.color.rgb = RGBColor(0x6B, 0x72, 0x80)
@@ -420,84 +420,84 @@ appendix_data = [
         "Tỷ lệ lỗi từ (WER) /\nTỷ lệ lỗi ký tự (CER)",
         "WER: 13.77%\nCER: 6.67%\n(Test 1.802 mẫu VietSpeech)",
         "Whisper-small gốc (zero-shot):\nWER: 36.76%\nCER: 19.43%",
-        "Fine-tune LoRA 50h giúp giảm hơn 22,9% WER trên tiếng Việt âm học thực tế; nhận dạng chuẩn xác dấu thanh điệu."
+        "Fine-tune LoRA 50h giúp giảm 23,0 điểm % WER (62,6% tương đối) trên tiếng Việt thực tế; nhận dạng rõ dấu thanh."
     ),
     (
         "Tối ưu STT\n(CTranslate2 INT8 vs PyTorch FP32)",
         "Tốc độ suy luận CPU &\nDung lượng RAM",
-        "Nhanh gấp 4.1 lần\nRAM: ~450 MB (CT2 int8)",
-        "PyTorch gốc FP32:\nThời gian ~12.5s / câu\nRAM: ~1.2 GB",
-        "Lượng hóa INT8 cho phép STT chạy mượt mà ngay trên Docker CPU, giải mã câu hỏi giọng nói ~3 giây."
+        "Nhanh gấp 4.1 lần\nRAM: ~450 - 540 MB (CT2 int8)",
+        "PyTorch gốc FP32:\nRAM: ~1.2 - 1.8 GB",
+        "Lượng hóa INT8 giúp STT chạy ổn định trên Docker CPU, nhận dạng câu hỏi giọng nói trong ~3 giây."
     ),
     (
-        "Lọc khoảng lặng STT\n(Silero VAD - faster-whisper)",
-        "Tỷ lệ cắt khoảng lặng &\nNgăn lặp hallucination",
-        "vad_filter=True\nCắt bỏ 100% khoảng lặng vô nghĩa",
-        "Không dùng VAD:\nWhisper dễ bị hallucination lặp câu khi có nhiễu nền",
-        "Giúp phân hệ STT hoạt động ổn định trong môi trường thực tế, loại bỏ nhiễu micro và âm thanh thừa trước khi giải mã."
+        "Lọc khoảng lặng STT\n(VAD tích hợp faster-whisper)",
+        "Cắt khoảng lặng &\nGiảm lặp từ",
+        "vad_filter=True\nCắt khoảng lặng đầu/cuối câu",
+        "Không dùng VAD:\nWhisper dễ lặp từ khi có đoạn im lặng dài",
+        "Giúp phân hệ STT giảm 30 - 40% thời lượng âm thanh cần giải mã và hoạt động ổn định hơn."
     ),
     (
-        "Retrieval BM25 Tinh chỉnh\n(Kho ViMMRC 552 bài đọc)",
-        "Recall@1 / Recall@5 /\nMRR (Dev 564 câu)",
-        "Recall@1: 71.45%\nRecall@5: 86.88%\nMRR: 0.7719",
-        "BM25 mặc định (k1=1.2, b=0.75):\nRecall@1: 64.18%\nRecall@5: 79.96%\nMRR: 0.7042",
-        "Tinh chỉnh k1=2.1, b=1.0 kết hợp Bigram Phrase Boost (+0.4) giúp tăng vượt bậc +7.27% Recall@1."
+        "Retrieval BM25 Tinh chỉnh\n(Ablation kho ViMMRC 552 bài đọc)",
+        "Recall@1 / Recall@5 /\nMRR@5 (Dev 564 câu)",
+        "Recall@1: 71.45%\nRecall@5: 83.69%\nMRR@5: 0.7624",
+        "BM25 Lucene (k1=1.2, b=0.75):\nRecall@1: 64.18%\nRecall@5: 79.96%\nMRR@5: 0.7042",
+        "Tinh chỉnh k1=2.1, b=1.0 kết hợp Bigram Phrase Boost (+0.4) giúp tăng +7.27 điểm % Recall@1."
     ),
     (
         "Kho Tri thức Hai Tầng RAG\n(Two-Tier Knowledge Base)",
         "Quy mô kho tài liệu &\nĐộ phủ tri thức",
-        "Tầng 1: 5.869 đoạn (ViMMRC + ViQuAD)\nTầng 2: 1.481.873 đoạn Wikipedia",
-        "Kho đơn tầng:\nChỉ trả lời được câu hỏi thuộc bài đọc đóng",
-        "Cho phép hệ thống vừa trả lời câu hỏi chuyên biệt trong tập dữ liệu, vừa mở rộng trả lời kiến thức bách khoa mở."
+        "Tầng 1: 5.869 đoạn (ViMMRC + ViQuAD)\nTầng 2: 1,48 triệu đoạn Wikipedia",
+        "Kho đơn tầng:\nChỉ trả lời câu hỏi thuộc bài đọc có sẵn",
+        "Hỗ trợ trả lời cả câu hỏi thuộc bộ dữ liệu đọc hiểu lẫn câu hỏi kiến thức bách khoa mở."
     ),
     (
         "Retrieval Kho Hai Tầng\n(BM25 hai tầng - 2.545 câu test)",
         "Recall@1 / Recall@5\n(Test 2.545 câu)",
         "Recall@1: 71.1%\nRecall@5: 85.9%",
-        "Baseline 1 tầng:\nChỉ đo trên tập đóng",
-        "Tìm đúng đoạn văn trả lời ngay ở Top 1 đạt hơn 71% và Top 5 đạt gần 86% trên toàn bộ tập test."
+        "Dev 2.570 câu:\nRecall@1: 70.7%\nRecall@5: 85.1%",
+        "Định vị đúng đoạn văn chứa câu trả lời ngay ở Top 1 đạt 71,1% và Top 5 đạt 85,9%."
     ),
     (
         "Pipeline cuối RAG\n(bge-reranker-v2-m3 + ưu tiên tầng 1)",
         "Answer F1 (ViT5):\n200 câu trong kho /\n200 câu kiến thức mở",
-        "F1 tầng 1: 60.7%\nF1 kiến thức mở: 24.3%",
-        "BM25 thuần (không reranker):\nF1 tầng 1: 58.0%\nF1 kiến thức mở: 15.4%",
-        "Reranker giúp cải thiện rõ rệt ở câu kiến thức mở (+8.9% F1), định vị chính xác đoạn Wikipedia liên quan."
+        "F1 trong kho: 60.7%\nF1 kiến thức mở: 24.3%",
+        "BM25 thuần (không reranker):\nF1 trong kho: 58.0%\nF1 kiến thức mở: 15.4%",
+        "Reranker chấm chung tối đa 9 ứng viên giúp cải thiện rõ câu hỏi kiến thức mở (+8.9 điểm % F1)."
     ),
     (
         "Đọc hiểu MRC (ViT5-base)\n(Tập gộp 27.164 câu)",
         "Exact Match (EM) &\nToken F1 (Test 2.716 câu)",
-        "Exact Match: 41.05%\nToken F1: 66.55%\n(Dev: EM 42.62%, F1 67.92%)",
-        "Trích câu khớp nhất (Lexical Extractive fallback):\nEM: ~21.5%, F1: ~43.2%",
-        "ViT5 sinh câu trả lời tự do ngắn gọn, đúng trọng tâm thay vì trích xuất cả câu dài; không cần đáp án trắc nghiệm sẵn."
+        "Exact Match: 41.05%\nToken F1: 66.55%\n(Toàn chuỗi BM25->ViT5: F1 53.9%)",
+        "Trích câu khớp nhất (LexicalBaselineClient):\nDùng làm dự phòng khi chưa nạp checkpoint",
+        "ViT5 sinh câu trả lời tự do ngắn gọn trực tiếp từ ngữ cảnh; với đoạn văn đúng (Gold) đạt F1 68.6%."
     ),
     (
         "Tổng hợp Tiếng nói (TTS)\n(Matcha-TTS Flow Matching)",
-        "Tỷ lệ lỗi chữ (CER) &\nĐộ biến thiên cao độ (F0)",
-        "CER: 0.85% (1.9% PhoWhisper)\nlog-F0: 0.91 bán cung (2.86 semitones)\nMCD: 3.12 - 6.12 dB",
-        "VITS: CER 4.7% / log-F0 4.29 bán cung\nEdge-TTS thương mại: log-F0 2.69\nNgười thật: CER 0.7%",
-        "Matcha-TTS phát âm rõ chữ hơn VITS gấp hơn 5 lần; thanh điệu tự nhiên, tiệm cận mô hình thương mại Edge-TTS."
+        "Tỷ lệ lỗi ký tự (CER) &\nSai số cao độ (F0)",
+        "CER (PhoWhisper): 1.9%\nlog-F0 RMSE: 2.86 bán cung\nF0 RMSE: 70.4 Hz | MCD: 5.35 dB",
+        "VITS MMS: CER 4.3%, log-F0 4.31, MCD 4.45\nEdge-TTS: CER 1.0%, log-F0 2.69, MCD 4.63\nNgười thật (tham chiếu): CER 0.7%",
+        "Matcha-TTS có tỷ lệ lỗi ký tự thấp hơn VITS hơn 2 lần; đường cao độ thanh điệu ổn định nhờ vi_tone_v2."
     ),
     (
-        "Tốc độ Tổng hợp TTS\n(Matcha-TTS trên Docker CPU)",
+        "Tốc độ Tổng hợp TTS\n(Matcha-TTS trên CPU)",
         "Real-Time Factor (RTF)\n(10 bước Euler ODE)",
-        "RTF: 0.52\n(CPU Intel Core i5/i7)",
-        "Yêu cầu Real-Time chuẩn: RTF < 1.0\nFastSpeech 2: RTF ~0.45",
-        "Tổng hợp âm thanh nhanh gấp 2 lần thời gian thực trên CPU, chỉ mất ~1.3 giây cho câu trả lời trung bình."
+        "RTF: 0.52\n(CPU thông thường)",
+        "Ngưỡng thời gian thực: RTF < 1.0\nVITS MMS: RTF 0.38",
+        "Tổng hợp âm thanh nhanh hơn thời gian thực trên CPU (~1.3 giây cho một câu trả lời trung bình)."
     ),
     (
         "Độ trễ toàn chu trình\n(Voice-to-Voice Latency)",
         "Thời gian từ khi nhả mic\nđến khi nghe loa",
         "Toàn trình: ~12 giây (Docker CPU)\n(Tắt reranker: ~6 giây)",
-        "Yêu cầu chạy cục bộ CPU:\nKhông dùng GPU rời, không API đám mây trả phí",
-        "STT ~3s, Truy xuất + Reranker ~6s, ViT5 sinh đáp án ~1.4s, TTS phát âm ~1.3s. Hoạt động độc lập, bảo mật dữ liệu."
+        "Chạy cục bộ trên CPU:\nKhông bắt buộc GPU rời, không dùng API trả phí",
+        "STT ~3s, Truy xuất + Reranker ~6s, ViT5 ~1.4s, TTS ~1.3s (Edge-TTS/gTTS dự phòng cần Internet)."
     ),
     (
         "Kiểm thử Phần mềm\n(Automated Test Suites)",
-        "Tỷ lệ Test Pass &\nBao phủ phân hệ",
-        "54/54 passed (100%)\n(1 skipped accelerate CPU)",
-        "Dự án không có kiểm thử tự động",
-        "Bao phủ toàn diện REST API, Audio Normalizer, Text Normalizer, Thread-Safe Lazy Loading, Cơ chế Fallback đa tầng."
+        "Số lượng bài kiểm thử &\nĐộ bao phủ",
+        "54 bài kiểm thử tự động\n(53 passed, 1 skipped trên CPU)",
+        "Chạy tự động qua pytest",
+        "Bao phủ REST API, Retrieval, Context Selection, MRC, Text Normalizer, Tokenizer và cơ chế Fallback."
     )
 ]
 

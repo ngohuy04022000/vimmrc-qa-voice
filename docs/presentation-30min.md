@@ -27,7 +27,7 @@
 * **Slide 12 (14:45 - 16:00):** Retrieval: Kho Tri Thức Hai Tầng Cho RAG
 * **Slide 13 (16:00 - 17:00):** Phân hệ MRC - Mô hình ViT5 Seq2Seq & Giới hạn 512 Token
 
-#### PHẦN 4: PHÂN HỆ TỔNG HỢP TIẾNG NÓI TIÊN TIẾN TTS (6:30) - Trương Hoàng Duy
+#### PHẦN 4: PHÂN HỆ TỔNG HỢP TIẾNG NÓI TTS (6:30) - Trương Hoàng Duy
 * **Slide 14 (17:00 - 18:15):** Phân hệ TTS - Tổng quan & Lựa chọn Kiến trúc Matcha-TTS
 * **Slide 15 (18:15 - 19:45):** Nguyên lý Toán học OT-CFM (Optimal-Transport Flow Matching)
 * **Slide 16 (19:45 - 21:00):** Đóng góp Frontend Tách Thanh Điệu `vi_tone_v2`
@@ -37,7 +37,7 @@
 #### PHẦN 5: KỸ NGHỆ HỆ THỐNG, DEMO & KẾT LUẬN (6:30) - Cả Nhóm
 * **Slide 19 (23:30 - 24:30):** Kiến trúc Phần mềm Full-Stack FastAPI & Angular SPA (Huỳnh Công Lương)
 * **Slide 20 (24:30 - 25:30):** Đóng gói Triển khai Docker Multi-Stage & Healthcheck (Huỳnh Công Lương)
-* **Slide 21 (25:30 - 26:30):** Đảm bảo Chất lượng Kiểm thử (54/54 Automated Tests) (Ngô Trí Huy)
+* **Slide 21 (25:30 - 26:30):** Đảm bảo Chất lượng Kiểm thử (54 Bài Kiểm thử Tự động) (Ngô Trí Huy)
 * **Slide 22 (26:30 - 28:00):** Kịch bản Live Demonstration Chi tiết Từng Bước (Cả Nhóm)
 * **Slide 23 (28:00 - 29:00):** Phân tích Lỗi & Các Giới hạn của Hệ thống (Trương Hoàng Duy)
 * **Slide 24 (29:00 - 30:00):** Tổng kết Đóng góp, Định hướng Phát triển & Lời cảm ơn (Ngô Trí Huy)
@@ -87,8 +87,8 @@
 * **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Mục tiêu khoa học & kỹ thuật:**
-    * Xây dựng pipeline Voice-to-Voice hoàn chỉnh cho tiếng Việt, dựa trên chuẩn dữ liệu ViMMRC 2.0.
-    * Ứng dụng mô hình tạo sinh âm thanh tiên tiến nhất hiện nay: Conditional Flow Matching (Matcha-TTS).
+    * Xây dựng pipeline Voice-to-Voice hoàn chỉnh cho tiếng Việt, dựa trên bộ dữ liệu ViMMRC 2.0 và UIT-ViQuAD2.0.
+    * Ứng dụng mô hình tổng hợp giọng nói Conditional Flow Matching (Matcha-TTS, ICASSP 2024).
   * **4 Tiêu chí thiết kế hệ thống (Design Principles):**
     1. **Tính Module hóa (High Modularity):** Mỗi phân hệ độc lập, giao tiếp qua API chuẩn, dễ dàng thay thế nâng cấp từng thành phần.
     2. **Khả năng chạy Cục bộ (Local & CPU-friendly):** Toàn bộ pipeline chạy cục bộ ổn định trên CPU máy tính thông thường, không dùng API trả phí bên ngoài (Edge-TTS/gTTS dự phòng cần Internet).
@@ -164,7 +164,7 @@
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Ở phân hệ STT, mục tiêu là nhận dạng tiếng Việt chính xác có dấu trên CPU với mức chiếm dụng bộ nhớ hợp lý.  
   > Nhóm triển khai mô hình Whisper-small được fine-tune LoRA trên 50 giờ dữ liệu VietSpeech, sau đó chuyển đổi sang CTranslate2 với lượng tử hóa INT8.  
-  > Kết quả đánh giá trên 1.802 mẫu test VietSpeech cho thấy: mô hình đạt tỷ lệ lỗi từ WER 13,77% và tỷ lệ lỗi ký tự CER 6,67%, vượt trội hoàn toàn so với mô hình Whisper-small gốc chưa fine-tune có WER 36,76% và CER 19,43%.  
+  > Kết quả đánh giá trên 1.802 mẫu test VietSpeech cho thấy: mô hình đạt tỷ lệ lỗi từ WER 13,77% và tỷ lệ lỗi ký tự CER 6,67%, giảm hơn 22,9 điểm phần trăm WER so với mô hình Whisper-small gốc chưa fine-tune có WER 36,76% và CER 19,43%.  
   > Về tài nguyên, thư viện CTranslate2 giúp giảm đáng kể bộ nhớ RAM và tăng tốc tính toán ma trận trên CPU. Trong môi trường Docker CPU, thời gian nhận dạng thực tế mất khoảng 3 giây cho một câu hỏi đàm thoại, đáp ứng tốt yêu cầu xử lý cục bộ của đồ án."
 ---
 
@@ -173,7 +173,7 @@
 * **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Bộ lọc Voice Activity Detection (VAD Filter):**
-    * Tích hợp thuật toán **Silero VAD** siêu nhẹ chạy trước bộ giải mã Whisper.
+    * Bật bộ lọc VAD tích hợp trong Faster-Whisper (`vad_filter=True`, dựa trên Silero VAD).
     * Tự động phát hiện và cắt bỏ các khoảng lặng (silence) ở đầu/cuối đoạn thu âm và lọc tiếng ồn môi trường nền.
     * Giảm 30-40% thời gian xử lý.
   * **Mẫu thiết kế Thread-Safe Lazy Loading:**
@@ -183,8 +183,8 @@
     * Kết quả: Server FastAPI khởi động trong **0.45 giây**, vượt kiểm tra Docker Healthcheck.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Hai giải pháp tối ưu quan trọng ở phân hệ STT là bộ lọc VAD và cơ chế Lazy Loading:  
-  > Khi người dùng bấm mic thu âm, đoạn âm thanh luôn chứa khoảng lặng trước và sau câu nói. Nếu nạp toàn bộ vào Whisper, mô hình vừa tốn thời gian giải mã vừa dễ bị lặp từ. Nhóm đã tích hợp bộ lọc Silero VAD để tự động cắt tỉa các đoạn im lặng và tạp âm nền, giúp giảm 30 đến 40% thời lượng âm thanh cần đưa vào giải mã.  
-  > Thứ hai, việc nạp mô hình AI ngay khi khởi động server thường mất 15 đến 20 giây, khiến Docker Healthcheck dễ báo timeout. Nhóm áp dụng mẫu thiết kế Thread-Safe Lazy Loading với Lock trong Python: server FastAPI khởi động tức thì trong 0,45 giây để mở cổng mạng; mô hình chỉ nạp vào RAM ở request đầu tiên và được lưu trữ tĩnh phục vụ xuyên suốt phiên làm việc."
+  > Khi người dùng bấm mic thu âm, đoạn âm thanh luôn chứa khoảng lặng trước và sau câu nói. Nếu nạp toàn bộ vào Whisper, mô hình vừa tốn thời gian giải mã vừa dễ bị lặp từ. Nhóm đã bật bộ lọc VAD tích hợp trong Faster-Whisper để tự động cắt các đoạn im lặng và tạp âm nền, giúp giảm 30 đến 40% thời lượng âm thanh cần đưa vào giải mã.  
+  > Thứ hai, việc nạp mô hình AI ngay khi khởi động server thường mất 15 đến 20 giây, khiến Docker Healthcheck dễ báo timeout. Nhóm áp dụng mẫu thiết kế Thread-Safe Lazy Loading với Lock trong Python: server FastAPI khởi động nhanh trong khoảng 0,45 giây để mở cổng mạng; mô hình chỉ nạp vào RAM ở request đầu tiên và được lưu trữ tĩnh phục vụ xuyên suốt phiên làm việc."
 ---
 
 ### SLIDE 8: XỬ LÝ TÍN HIỆU ÂM THANH PHÍA CLIENT
@@ -240,7 +240,7 @@
     * Nếu tài liệu chứa đúng thứ tự cụm từ ghép, cộng thêm điểm thưởng $0.4 \times \text{IDF}$, giúp phân biệt chính xác ngữ nghĩa của từ ghép tiếng Việt so với từ đơn rời rạc.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Để tầng truy xuất BM25 vừa nhẹ vừa chính xác, em đã cải tiến thuật toán BM25 qua hai bước:  
-  > Thứ nhất, trên công thức Okapi BM25, em tinh chỉnh siêu tham số k1 lên 2,1 để tăng độ bão hòa với các từ khóa trọng tâm lặp lại, và đặt b bằng 1,0 để phạt triệt để độ dài dư thừa của văn bản, thay cho cấu hình mặc định của Lucene vốn chưa tối ưu cho các bài đọc chênh lệch độ dài.  
+  > Thứ nhất, trên công thức Okapi BM25, em tinh chỉnh siêu tham số k1 lên 2,1 để tăng độ bão hòa với các từ khóa trọng tâm lặp lại, và đặt b bằng 1,0 để chuẩn hóa mạnh theo độ dài của văn bản, thay cho cấu hình mặc định của Lucene vốn chưa tối ưu cho các bài đọc chênh lệch độ dài.  
   > Thứ hai, tiếng Việt có đặc thù từ ghép rất mạnh; nếu tách rời các từ như 'Điện' và 'Biên', điểm số sẽ bị loãng. Em đề xuất cơ chế Bigram Phrase Boost: trích xuất các cặp từ liền kề trong câu hỏi; nếu đoạn văn chứa đúng cụm từ theo đúng thứ tự, đoạn văn được cộng thêm 0,4 điểm thưởng nhân trọng số IDF. Kỹ thuật này giúp phân biệt rõ nghĩa từ ghép và tăng độ chính xác truy xuất rõ rệt."
 ---
 
@@ -285,7 +285,7 @@
   > "Để trả lời các câu hỏi kiến thức mở, nhóm đã xây dựng kho tri thức hai tầng cho RAG:  
   > Tầng 1 gồm 5.869 đoạn văn chọn lọc từ ViMMRC và ViQuAD. Tầng 2 gồm 1,48 triệu đoạn trích từ Wikipedia tiếng Việt, được đánh chỉ mục kép: BM25 chia shard và chỉ mục vector dense multilingual-e5-small 384 chiều lưu float16 khoảng 1,1 GB.  
   > Với mỗi câu hỏi, hệ thống lấy top 3 từ BM25 tầng 1, top 3 từ BM25 Wikipedia và top 3 từ dense Wikipedia, tổng cộng tối đa 9 ứng viên. Reranker cross-encoder bge-reranker-v2-m3 chấm điểm chung tất cả ứng viên, trong đó đoạn tầng 1 được cộng ưu tiên 0,25 điểm.  
-  > Đánh giá trên tập test 2.545 câu, BM25 hai tầng đạt Recall@1 71,1% và Recall@5 85,9%. Khi có reranker, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4 lên 24,3, và câu có trong kho tăng từ 58,0 lên 60,7, chứng minh năng lực vượt trội của kiến trúc lai."
+  > Đánh giá trên tập test 2.545 câu, BM25 hai tầng đạt Recall@1 71,1% và Recall@5 85,9%. Khi có reranker, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4 lên 24,3, và câu có trong kho tăng từ 58,0 lên 60,7, cho thấy hiệu quả rõ rệt của kiến trúc truy xuất lai hai tầng."
 ---
 
 ### SLIDE 13: PHÂN HỆ MRC - MÔ HÌNH ViT5 SEQ2SEQ & GIỚI HẠN 512 TOKEN
@@ -316,9 +316,9 @@
     * *Thời kỳ 1: Concatenative / Parametric (Festival, Tacotron2):* Ghép nối thô, chất lượng Mel-spectrogram mờ nhòe.
     * *Thời kỳ 2: Non-autoregressive & VAE (FastSpeech2, VITS):* Tốc độ nhanh hơn nhưng mô hình VITS huấn luyện rất nặng, cấu trúc phức tạp.
     * *Thời kỳ 3: Denoising Diffusion (Diff-TTS, Grad-TTS):* Chất lượng âm thanh vượt bậc nhưng tốc độ cực chậm, cần từ 50 đến 100 bước khử nhiễu lặp lại.
-  * **Bước đột phá: Matcha-TTS (ICASSP 2024):**
+  * **Lựa chọn kiến trúc: Matcha-TTS (ICASSP 2024):**
     * Dựa trên **Conditional Flow Matching (CFM)** kết hợp Đường vận chuyển tối ưu (Optimal Transport).
-    * Đạt chất lượng âm thanh tương đương Diffusion nhưng chỉ cần **10 bước giải mã vi phân ODE**, chạy siêu tốc trên CPU.
+    * Đạt chất lượng âm thanh gần với Diffusion nhưng giải ODE nhanh (10 bước Euler trong benchmark trên CPU).
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Kính thưa Thầy Cô, em là Trương Hoàng Duy, xin báo cáo về Phân hệ Tổng hợp Tiếng nói (TTS) và Bộ benchmark đánh giá âm học.  
   > Phân hệ TTS là điểm chạm trực tiếp quyết định cảm nhận của người dùng. Một câu trả lời chính xác nhưng giọng đọc khô cứng hay sai thanh điệu sẽ làm giảm trải nghiệm tương tác.  
@@ -365,7 +365,7 @@
   > "Đóng góp trọng tâm của nhóm ở phân hệ TTS là đề xuất frontend tách thanh điệu vi_tone_v2:  
   > Tiếng Việt có 6 thanh điệu. Nếu để nguyên nguyên âm có dấu trong từ điển, từ vựng ký tự nở rộng gấp nhiều lần và mô hình coi các biến thể là ký tự rời rạc, rất khó học quy luật biến thiên cao độ F0.  
   > Giải pháp vi_tone_v2 bóc tách thanh điệu thành token độc lập ở cuối mỗi âm tiết: 0 ngang, 1 sắc, 2 huyền, 3 hỏi, 4 ngã, 5 nặng. Ví dụ 'tiếng' tách thành 't i e n g' và token 1; 'hồ' thành 'h ô' và token 2; 'Việt' thành 'v i e t' và token 5.  
-  > Nhờ vậy, Text Encoder học tách biệt giữa âm vị và cao độ F0, giảm 70% kích thước từ điển và loại bỏ triệt để hiện tượng lẫn lộn dấu hỏi, dấu ngã."
+  > Nhờ vậy, Text Encoder học tách biệt giữa âm vị và cao độ F0, giảm 70% kích thước từ điển và giảm rõ rệt hiện tượng lẫn lộn dấu hỏi, dấu ngã."
 ---
 
 ### SLIDE 17: PHÂN HỆ CHUẨN HÓA VĂN BẢN (TEXT NORMALIZER)
@@ -376,20 +376,20 @@
     * Đầu ra của mô hình MRC thường chứa các ký hiệu logic, số liệu và định dạng viết tắt mà mô hình TTS không thể phát âm trực tiếp hoặc phát âm sai.
   * **5 Bộ quy tắc chuẩn hóa tiếng Việt (`text-to-speech_Duy/src/normalizer.py`):**
     1. **Định dạng Ngày - Tháng - Năm:**
-       * `07/05/1954` $\rightarrow$ `ngày mùng bảy tháng năm năm một nghìn chín trăm năm mươi tư`.
+       * `07/05/1954` $\rightarrow$ `ngày bảy tháng năm năm một nghìn chín trăm năm mươi tư`.
     2. **Số thập phân & Đơn vị đo lường:**
        * `3.14` $\rightarrow$ `ba phẩy một bốn`; `50 km/h` $\rightarrow$ `năm mươi ki-lô-mét trên giờ`.
     3. **Tiền tệ & Ký hiệu phần trăm:**
        * `100.000 VNĐ` $\rightarrow$ `một trăm nghìn đồng`; `85%` $\rightarrow$ `tám mươi lăm phần trăm`.
-    4. **Nhãn liệt kê:**
-       * Nhãn liệt kê như `(A)`, `(B)` $\rightarrow$ `A`, `B`.
-    5. **Xử lý dấu câu & Nhịp thở (Pause Insertion):**
-       * Tự động bổ sung khoảng nghỉ 150ms tại các dấu phẩy và 300ms tại dấu chấm để giọng đọc có nhịp thở tự nhiên.
+    4. **Nhãn đáp án / liệt kê:**
+       * Nhãn như `(A)`, `B.` $\rightarrow$ `Đáp án A:`, `Đáp án B:`.
+    5. **Xử lý dấu câu & Khoảng nghỉ (Pause Insertion):**
+       * Tự động chèn khoảng nghỉ 150ms tại dấu phẩy, 250ms tại dấu chấm phẩy/hai chấm và 400ms tại dấu chấm câu.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Trước khi tổng hợp âm thanh, văn bản câu trả lời đi qua module Text Normalizer chuyên biệt:  
   > Câu trả lời do mô hình sinh ra thường chứa số liệu, ngày tháng lịch sử hoặc ký hiệu viết tắt. Nếu đưa nguyên văn bản thô vào TTS, mô hình sẽ đọc sai hoặc ngắt nghỉ không đúng chỗ.  
-  > Module normalizer của nhóm thiết lập 5 bộ quy tắc chuẩn hóa: đọc chuẩn các định dạng ngày tháng như ngày mùng bảy tháng năm, mở rộng số thập phân, tiền tệ và phần trăm ra chữ tiếng Việt có dấu, đồng thời chuyển đổi các nhãn liệt kê dạng ngoặc đơn thành chữ cái rõ ràng.  
-  > Đặc biệt, module tự động chèn các khoảng nghỉ âm học 150 mili-giây tại dấu phẩy và 300 mili-giây tại dấu chấm, giúp giọng đọc phát ra có nhịp thở và ngữ điệu tự nhiên như người thật."
+  > Module normalizer của nhóm thiết lập 5 bộ quy tắc chuẩn hóa: đọc các định dạng ngày tháng như ngày bảy tháng năm, mở rộng số thập phân, tiền tệ và phần trăm ra chữ tiếng Việt có dấu, đồng thời chuyển đổi các nhãn đáp án dạng ngoặc đơn thành cụm từ rõ ràng.  
+  > Ngoài ra, bước hậu xử lý tự động chèn các khoảng nghỉ âm học 150 mili-giây tại dấu phẩy và 400 mili-giây tại dấu chấm, giúp giọng đọc phát ra có nhịp ngắt câu tự nhiên."
 ---
 
 ### SLIDE 18: ĐÁNH GIÁ & BENCHMARK ÂM HỌC ĐỊNH LƯỢNG
@@ -409,12 +409,12 @@
 | **Edge-TTS (Hoài My Neural)** | 4.63 | **48.3** | 2.69 | 1.0% | 0.13 | Cloud Neural, phụ thuộc Internet |
 
   * **Phân tích chi tiết:**
-    * **Độ rõ âm vị (Intelligibility):** Matcha-TTS đạt CER chỉ **1.9%**, tốt hơn VITS gấp hơn 2 lần, chứng minh âm thanh phát âm cực kỳ rõ ràng, không bị nuốt phụ âm.
-    * **Độ chuẩn thanh điệu (Pitch accuracy):** log-F0 RMSE của Matcha đạt **2.86 bán cung**, bám rất sát mô hình thương mại Microsoft Edge-TTS (2.69) và vượt trội so với VITS (4.31).
+    * **Độ rõ âm vị (Intelligibility):** Matcha-TTS đạt CER **1.9%**, thấp hơn VITS hơn 2 lần, cho thấy phát âm rõ chữ và ít mất phụ âm.
+    * **Độ chuẩn thanh điệu (Pitch accuracy):** log-F0 RMSE của Matcha đạt **2.86 bán cung**, gần với mô hình thương mại Microsoft Edge-TTS (2.69) và tốt hơn so với VITS (4.31).
     * **Hiệu năng CPU:** RTF đạt **0.52**, nghĩa là trên CPU máy tính thông thường, mô hình chỉ mất 0.52 giây để tạo ra 1 giây âm thanh, tức là TTS nhanh hơn thời gian thực.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Nhóm đã thiết lập bộ benchmark âm học định lượng chuẩn quốc tế, so sánh trực tiếp Matcha-TTS với giọng phát thanh viên người thật và hai mô hình nền tảng VITS của Meta và Edge-TTS của Microsoft:  
-  > Về độ rõ chữ: khi dùng mô hình nhận dạng ASR PhoWhisper kiểm chứng lại, tỷ lệ lỗi ký tự CER của Matcha-TTS chỉ là 1,9%, vượt trội so với mức 4,3% của VITS và bám sát mức trần 0,7% của người thật.  
+  > Về độ rõ chữ: khi dùng mô hình nhận dạng ASR PhoWhisper kiểm chứng lại, tỷ lệ lỗi ký tự CER của Matcha-TTS đạt 1,9%, thấp hơn hơn 2 lần so với mức 4,3% của VITS và gần mức trần 0,7% của người thật.  
   > Về độ chuẩn cao độ: sai số log-F0 của Matcha đạt 2,86 bán cung, tiệm cận mô hình thương mại Edge-TTS là 2,69 bán cung và tốt hơn nhiều so với VITS.  
   > Về tốc độ: hệ số RTF trên CPU đạt 0,52, nghĩa là chỉ mất khoảng nửa giây để tổng hợp một câu nói dài một giây, hoàn toàn đáp ứng yêu cầu đàm thoại thời gian thực mà không cần GPU."
 ---
@@ -451,7 +451,7 @@
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Để đảm bảo tính tái lập và triển khai thuận tiện, nhóm đã đóng gói toàn bộ hệ thống vào container Docker theo kỹ thuật Multi-Stage build:  
   > Stage 1 dùng Node 22 Alpine để biên dịch mã nguồn Angular thành các file tĩnh tối ưu.  
-  > Stage 2 dùng image Python 3.11-slim siêu nhẹ, cài đặt ffmpeg, thư viện âm thanh và phiên bản PyTorch CPU-only chỉ nặng 180MB thay vì bản CUDA 2,5GB.  
+  > Stage 2 dùng image Python 3.11-slim gọn nhẹ, cài đặt ffmpeg, thư viện âm thanh và phiên bản PyTorch CPU-only nặng khoảng 180MB thay vì bản CUDA 2,5GB.  
   > Quá trình triển khai được cấu hình tự động qua docker-compose. Chỉ bằng một lệnh 'docker compose up -d', toàn bộ hệ thống sẽ khởi chạy và sẵn sàng phục vụ trên cổng 8090 kèm theo cơ chế Healthcheck tự động định kỳ giám sát."
 ---
 
@@ -463,17 +463,17 @@
     * Áp dụng framework kiểm thử tự động **pytest** cho toàn bộ backend.
     * Kiểm thử phủ khắp cả 3 cấp độ: Unit Tests (hàm xử lý), Module Integration Tests (từng phân hệ) và End-to-End System Tests (toàn bộ pipeline API).
   * **Kết quả Kiểm định Chất lượng:**
-    * **54 / 54 Bài kiểm thử tự động ĐẠT 100% (Passed)** (thời gian chạy ~1–2 phút, đo được 57–109 giây):
-      * 12 tests: Phân hệ TTS (Matcha/VITS/Edge-TTS fallback, normalizer, tokenizer vi_tone_v2).
-      * 15 tests: Phân hệ Truy xuất BM25, Tokenizer và Lập chỉ mục.
-      * 18 tests: Dữ liệu MRC, metric EM/F1, context selection, dataset gộp, smoke train.
-      * 5 tests: Server API Endpoints và Healthcheck.
-      * 4 tests: Chuỗi tích hợp retrieval → MRC → TTS.
+    * **Bộ 54 bài kiểm thử tự động (53 passed, 1 skipped trên CPU)** (thời gian chạy ~1–2 phút):
+      * 12 tests: Phân hệ TTS (Matcha/VITS/Edge-TTS fallback, normalizer, tokenizer vi_tone_v2) — 12/12 passed.
+      * 15 tests: Phân hệ Truy xuất BM25, Tokenizer và Lập chỉ mục — 15/15 passed.
+      * 18 tests: Dữ liệu MRC, metric EM/F1, context selection, dataset gộp, smoke train — 17 passed, 1 skipped (`accelerate` trên CPU).
+      * 5 tests: Server API Endpoints và Healthcheck — 5/5 passed.
+      * 4 tests: Chuỗi tích hợp retrieval → MRC → TTS — 4/4 passed.
     * Đảm bảo tính toàn vẹn (Integrity), phát hiện sớm lỗi hồi quy khi hợp nhất mã nguồn giữa các thành viên.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Nhóm áp dụng quy trình kiểm thử tự động toàn diện bằng framework pytest để đảm bảo tính ổn định của toàn bộ mã nguồn.  
-  > Trước khi đóng gói phiên bản chính thức, toàn bộ 54 trên 54 bài kiểm thử tự động đều đạt tỷ lệ 100% thành công.  
-  > Bộ test kiểm tra đa tầng từ chuẩn hóa văn bản, giải thuật BM25, mô hình đọc hiểu ViT5, động cơ tổng hợp TTS đến các endpoint API của server. Nhờ kiểm thử chặt chẽ, nhóm loại bỏ hoàn toàn lỗi hồi quy khi tích hợp mã nguồn giữa các thành viên, đảm bảo hệ thống vận hành bền bỉ và sẵn sàng cho môi trường thực tế."
+  > Trước khi đóng gói phiên bản chính thức, bộ 54 bài kiểm thử tự động đều vượt qua kiểm định (53 passed, 1 skipped cho test accelerate trên CPU).  
+  > Bộ test kiểm tra đa tầng từ chuẩn hóa văn bản, giải thuật BM25, mô hình đọc hiểu ViT5, động cơ tổng hợp TTS đến các endpoint API của server. Nhờ kiểm thử chặt chẽ, nhóm phát hiện sớm lỗi hồi quy khi tích hợp mã nguồn giữa các thành viên, giúp hệ thống vận hành ổn định."
 ---
 
 ### SLIDE 22: KỊCH BẢN LIVE DEMO HỆ THỐNG THỰC TẾ

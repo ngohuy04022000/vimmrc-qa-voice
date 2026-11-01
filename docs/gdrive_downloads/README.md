@@ -3,9 +3,9 @@
 **Nguồn:** Google Drive Folder Nhóm 09: `https://drive.google.com/drive/folders/1bgbQJ5EbuziZGWjN-IQtV1oYLbw7xOHS?usp=drive_link`  
 **Ngày đồng bộ:** 01/11/2026  
 **Thành viên nhóm:**
-- **Ngô Trí Huy (Nhóm trưởng):** Phân hệ Retrieval (BM25 + Dense + Reranker), Kho tri thức hai tầng RAG, Mô hình MRC (ViT5-base Seq2Seq sinh câu trả lời tự do), Tích hợp hệ thống.
-- **Huỳnh Công Lương:** Phân hệ STT (Whisper-small LoRA 50h, CTranslate2 INT8, VAD), Giao diện Web (Angular 22 SPA), Đóng gói Docker Container.
-- **Trương Hoàng Duy:** Phân hệ TTS (Matcha-TTS Flow Matching OT-CFM, Vocoder HiFi-GAN), Frontend tách thanh điệu `vi_tone_v2`, Text Normalizer & Benchmark Âm học.
+- **Ngô Trí Huy**
+- **Huỳnh Công Lương**
+- **Trương Hoàng Duy**
 
 ---
 

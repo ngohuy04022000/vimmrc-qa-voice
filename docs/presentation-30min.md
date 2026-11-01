@@ -8,39 +8,39 @@
 
 ### MỤC LỤC & PHÂN BỔ THỜI GIAN 24 SLIDE (TỔNG: 30 PHÚT)
 
-#### PHẦN 1: TỔNG QUAN, BÀI TOÁN & DỮ LIỆU ViMMRC 2.0 (5:30) - Ngô Trí Huy
+#### PHẦN 1: TỔNG QUAN, BÀI TOÁN & DỮ LIỆU ViMMRC 2.0 (5:30)
 * **Slide 1 (0:00 - 1:15):** Giới thiệu Đề tài, Hội đồng & Phân công Thành viên
 * **Slide 2 (1:15 - 2:30):** Bối cảnh MRC, Voice Q&A & Thách thức Âm học Tiếng Việt
 * **Slide 3 (2:30 - 3:45):** Mục tiêu Nghiên cứu & Bộ Tiêu chuẩn Thiết kế Hệ thống
 * **Slide 4 (3:45 - 5:30):** Phân tích Chuyên sâu Bộ Dữ liệu ViMMRC 2.0 + UIT-ViQuAD2.0
 
-#### PHẦN 2: KIẾN TRÚC TỔNG THỂ & PHÂN HỆ STT (5:30) - Huỳnh Công Lương
+#### PHẦN 2: KIẾN TRÚC TỔNG THỂ & PHÂN HỆ STT (5:30)
 * **Slide 5 (5:30 - 6:45):** Kiến trúc End-to-End Pipeline 4 Chặng & Cơ chế Dự phòng
 * **Slide 6 (6:45 - 8:15):** Phân hệ STT - Whisper-small LoRA 50h & Tối ưu CTranslate2
 * **Slide 7 (8:15 - 9:30):** Tối ưu hóa STT: Voice Activity Detection & Thread-Safe Lazy Loading
-* **Slide 8 (9:30 - 11:00):** Xử lý Âm thanh Phía Client (Web Audio API & Chuẩn hóa WAV 16kHz)
+* **Slide 8 (9:30 - 11:00):** Xử lý Âm thanh Phía Client
 
-#### PHẦN 3: PHÂN HỆ CỐT LÕI: RETRIEVAL & ĐỌC HIỂU MRC (6:00) - Ngô Trí Huy
+#### PHẦN 3: PHÂN HỆ CỐT LÕI: RETRIEVAL & ĐỌC HIỂU MRC (6:00)
 * **Slide 9 (11:00 - 12:15):** Phân hệ Retrieval - Bài toán Tìm kiếm Văn bản Open-Domain
 * **Slide 10 (12:15 - 13:30):** Tinh chỉnh Giải thuật BM25 ($k_1, b$) & Bigram Phrase Boost
-* **Slide 11 (13:30 - 14:45):** Đánh giá Thực nghiệm Phân hệ Retrieval (Recall@1, Recall@5, MRR)
+* **Slide 11 (13:30 - 14:45):** Đánh giá Thực nghiệm Phân hệ Retrieval
 * **Slide 12 (14:45 - 16:00):** Retrieval: Kho Tri Thức Hai Tầng Cho RAG
 * **Slide 13 (16:00 - 17:00):** Phân hệ MRC - Mô hình ViT5 Seq2Seq & Giới hạn 512 Token
 
-#### PHẦN 4: PHÂN HỆ TỔNG HỢP TIẾNG NÓI TTS (6:30) - Trương Hoàng Duy
+#### PHẦN 4: PHÂN HỆ TỔNG HỢP TIẾNG NÓI TTS (6:30)
 * **Slide 14 (17:00 - 18:15):** Phân hệ TTS - Tổng quan & Lựa chọn Kiến trúc Matcha-TTS
-* **Slide 15 (18:15 - 19:45):** Nguyên lý Toán học OT-CFM (Optimal-Transport Flow Matching)
+* **Slide 15 (18:15 - 19:45):** Nguyên lý Toán học OT-CFM
 * **Slide 16 (19:45 - 21:00):** Đóng góp Frontend Tách Thanh Điệu `vi_tone_v2`
-* **Slide 17 (21:00 - 22:15):** Phân hệ Chuẩn hóa Văn bản Tiếng Việt Chuyên biệt (Text Normalizer)
-* **Slide 18 (22:15 - 23:30):** Đánh giá Định lượng & Benchmark Âm học Chi tiết (MCD, F0, CER, RTF)
+* **Slide 17 (21:00 - 22:15):** Phân hệ Chuẩn hóa Văn bản Tiếng Việt Chuyên biệt
+* **Slide 18 (22:15 - 23:30):** Đánh giá Định lượng & Benchmark Âm học Chi tiết
 
-#### PHẦN 5: KỸ NGHỆ HỆ THỐNG, DEMO & KẾT LUẬN (6:30) - Cả Nhóm
-* **Slide 19 (23:30 - 24:30):** Kiến trúc Phần mềm Full-Stack FastAPI & Angular SPA (Huỳnh Công Lương)
-* **Slide 20 (24:30 - 25:30):** Đóng gói Triển khai Docker Multi-Stage & Healthcheck (Huỳnh Công Lương)
-* **Slide 21 (25:30 - 26:30):** Đảm bảo Chất lượng Kiểm thử (54 Bài Kiểm thử Tự động) (Ngô Trí Huy)
-* **Slide 22 (26:30 - 28:00):** Kịch bản Live Demonstration Chi tiết Từng Bước (Cả Nhóm)
-* **Slide 23 (28:00 - 29:00):** Phân tích Lỗi & Các Giới hạn của Hệ thống (Trương Hoàng Duy)
-* **Slide 24 (29:00 - 30:00):** Tổng kết Đóng góp, Định hướng Phát triển & Lời cảm ơn (Ngô Trí Huy)
+#### PHẦN 5: KỸ NGHỆ HỆ THỐNG, DEMO & KẾT LUẬN (6:30)
+* **Slide 19 (23:30 - 24:30):** Kiến trúc Phần mềm Full-Stack FastAPI & Angular SPA
+* **Slide 20 (24:30 - 25:30):** Đóng gói Triển khai Docker Multi-Stage & Healthcheck
+* **Slide 21 (25:30 - 26:30):** Đảm bảo Chất lượng Kiểm thử (54 Bài Kiểm thử Tự động)
+* **Slide 22 (26:30 - 28:00):** Kịch bản Live Demonstration Chi tiết Từng Bước
+* **Slide 23 (28:00 - 29:00):** Phân tích Lỗi & Các Giới hạn của Hệ thống
+* **Slide 24 (29:00 - 30:00):** Tổng kết Đóng góp, Định hướng Phát triển & Lời cảm ơn
 
 ---
 
@@ -48,25 +48,23 @@
 
 ### SLIDE 1: GIỚI THIỆU ĐỀ TÀI, HỘI ĐỒNG & NHÓM THỰC HIỆN
 * **Thời lượng:** 1 phút 15 giây (0:00 - 1:15)
-* **Người trình bày:** Ngô Trí Huy (Nhóm trưởng)
 * **Nội dung hiển thị:**
   * **Trường / Viện:** Chương trình Đào tạo Thạc sĩ Công nghệ Thông tin
   * **Môn học:** Học máy tiên tiến và ứng dụng
   * **Tên đề tài:** HỆ THỐNG HỎI - ĐÁP BẰNG GIỌNG NÓI TIẾNG VIỆT DỰA TRÊN BỘ DỮ LIỆU ViMMRC 2.0 (ViMMRC VOICE Q&A SYSTEM)
   * **Giảng viên hướng dẫn:** [Tên Thầy / Cô hướng dẫn]
-  * **Thành viên nhóm & Phân công trách nhiệm:**
-    * **Ngô Trí Huy (Nhóm trưởng):** Truy xuất BM25 + dense + reranker, kho tri thức hai tầng, mô hình MRC ViT5, tích hợp backend và kho tri thức.
-    * **Huỳnh Công Lương:** Phân hệ STT (Whisper-small LoRA 50h, tối ưu CTranslate2), Web UI (Angular 22) và đóng gói triển khai Docker.
-    * **Trương Hoàng Duy:** Nghiên cứu phân hệ TTS Matcha-TTS (Flow Matching) & VITS, Đề xuất frontend tách thanh điệu `vi_tone_v2`, Xây dựng Text Normalizer và Thiết lập bộ benchmark đánh giá âm học.
+  * **Thành viên thực hiện:**
+    * **Ngô Trí Huy**
+    * **Huỳnh Công Lương**
+    * **Trương Hoàng Duy**
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Kính thưa Thầy Cô trong Hội đồng và các bạn học viên cao học! Hôm nay, nhóm chúng em xin báo cáo đồ án môn học 'Học máy tiên tiến và ứng dụng' với đề tài: 'Xây dựng Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0'.  
-  > Nhóm gồm 3 thành viên: em Ngô Trí Huy, nhóm trưởng, phụ trách Phân hệ Truy xuất, Mô hình Đọc hiểu ViT5 và tích hợp backend; bạn Huỳnh Công Lương phụ trách Nhận dạng Giọng nói Whisper-small fine-tune LoRA, Giao diện Web và Docker; bạn Trương Hoàng Duy phụ trách Tổng hợp Tiếng nói Flow Matching cùng Benchmark âm học.  
+  > Nhóm gồm 3 thành viên: em Ngô Trí Huy, bạn Huỳnh Công Lương và bạn Trương Hoàng Duy.  
   > Trong video 30 phút này, nhóm sẽ trình bày toàn diện từ bối cảnh, dữ liệu, cơ sở toán học, tối ưu kỹ thuật, kết quả thực nghiệm đến demo thực tế. Kính mời Thầy Cô cùng theo dõi!"
 ---
 
 ### SLIDE 2: BỐI CẢNH MRC & THÁCH THỨC VOICE Q&A TIẾNG VIỆT
 * **Thời lượng:** 1 phút 15 giây (1:15 - 2:30)
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Sự phát triển của Machine Reading Comprehension (MRC):** Từ mô hình trích xuất (Span Extraction) đến sinh sinh chuỗi (Seq2Seq), nhưng hầu hết tương tác text-to-text.
   * **Thực tiễn nhu cầu:** Tương tác giọng nói tự nhiên trong môi trường rảnh tay (lái xe, trợ lý ảo gia đình, hỗ trợ người khuyết tật thị giác, cổng thông tin trường học).
@@ -84,7 +82,6 @@
 
 ### SLIDE 3: MỤC TIÊU NGHIÊN CỨU & TIÊU CHÍ THIẾT KẾ
 * **Thời lượng:** 1 phút 15 giây (2:30 - 3:45)
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Mục tiêu khoa học & kỹ thuật:**
     * Xây dựng pipeline Voice-to-Voice hoàn chỉnh cho tiếng Việt, dựa trên bộ dữ liệu ViMMRC 2.0 và UIT-ViQuAD2.0.
@@ -104,7 +101,6 @@
 
 ### SLIDE 4: PHÂN TÍCH CHUYÊN SÂU BỘ DỮ LIỆU ViMMRC 2.0
 * **Thời lượng:** 1 phút 45 giây (3:45 - 5:30)
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Nguồn dữ liệu: ViMMRC 2.0 + UIT-ViQuAD2.0:**
     * ViMMRC 2.0 (5.273 câu): bộ dữ liệu đọc hiểu tiếng Việt dành cho học sinh do nhóm UIT-NLP công bố; bản gốc là trắc nghiệm, dự án chuyển sang dạng hỏi - đáp tự do (đoạn văn + câu hỏi + câu trả lời dạng văn bản).
@@ -127,7 +123,6 @@
 
 ### SLIDE 5: KIẾN TRÚC END-TO-END PIPELINE 4 CHẶNG
 * **Thời lượng:** 1 phút 15 giây (5:30 - 6:45)
-* **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Sơ đồ luồng dữ liệu 4 Chặng chi tiết:**
     $$\text{User Mic} \xrightarrow{\text{Audio}} \text{[STT: Whisper-small LoRA 50h, CT2 int8]} \xrightarrow{\text{Text Query}} \text{[Retrieval: BM25 + Dense + Reranker]} \xrightarrow{\text{Passage}} \text{[MRC: ViT5]} \xrightarrow{\text{Answer Text}} \text{[TTS: Matcha/VITS]} \xrightarrow{\text{Audio}} \text{Speaker}$$
@@ -149,7 +144,6 @@
 
 ### SLIDE 6: PHÂN HỆ STT - WHISPER-SMALL LORA 50H & CTRANSLATE2
 * **Thời lượng:** 1 phút 30 giây (6:45 - 8:15)
-* **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Tại sao lựa chọn Whisper & CTranslate2?**
     * OpenAI Whisper là kiến trúc Encoder-Decoder Transformer đa nhiệm được huấn luyện trên 680.000 giờ âm thanh đa ngôn ngữ.
@@ -170,7 +164,6 @@
 
 ### SLIDE 7: TỐI ƯU HÓA STT: VAD & THREAD-SAFE LAZY LOADING
 * **Thời lượng:** 1 phút 15 giây (8:15 - 9:30)
-* **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Bộ lọc Voice Activity Detection (VAD Filter):**
     * Bật bộ lọc VAD tích hợp trong Faster-Whisper (`vad_filter=True`, dựa trên Silero VAD).
@@ -189,7 +182,6 @@
 
 ### SLIDE 8: XỬ LÝ TÍN HIỆU ÂM THANH PHÍA CLIENT
 * **Thời lượng:** 1 phút 30 giây (9:30 - 11:00)
-* **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Thu âm trực tiếp trên trình duyệt qua Web Audio API:**
     * Sử dụng `navigator.mediaDevices.getUserMedia({ audio: true })`.
@@ -210,7 +202,6 @@
 
 ### SLIDE 9: PHÂN HỆ RETRIEVAL - TÌM KIẾM VĂN BẢN OPEN-DOMAIN
 * **Thời lượng:** 1 phút 15 giây (11:00 - 12:15)
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Đặt bài toán:**
     * Trong cấu trúc ViMMRC gốc, mỗi câu hỏi luôn đi kèm sẵn với một bài đọc cố định.
@@ -228,7 +219,6 @@
 
 ### SLIDE 10: TINH CHỈNH GIẢI THUẬT BM25 & BIGRAM BOOST
 * **Thời lượng:** 1 phút 15 giây (12:15 - 13:30)
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Công thức BM25 cổ điển (Okapi BM25):**
     $$\text{Score}(D, Q) = \sum_{i=1}^{N} \text{IDF}(q_i) \cdot \frac{f(q_i, D) \cdot (k_1 + 1)}{f(q_i, D) + k_1 \cdot \left(1 - b + b \cdot \frac{|D|}{\text{avgdl}}\right)}$$
@@ -246,7 +236,6 @@
 
 ### SLIDE 11: ĐÁNH GIÁ THỰC NGHIỆM PHÂN HỆ RETRIEVAL
 * **Thời lượng:** 1 phút 15 giây (13:30 - 14:45)
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Tập dữ liệu kiểm thử:** Ablation BM25: **564 câu hỏi** Dev của ViMMRC 2.0 quét qua kho 552 văn bản ban đầu (trước khi mở rộng kho; kết quả kho hiện tại ở Slide 12).
   * **Bảng so sánh đối chứng hiệu năng truy xuất:**
@@ -271,7 +260,6 @@
 
 ### SLIDE 12: RETRIEVAL - KHO TRI THỨC HAI TẦNG CHO RAG
 * **Thời lượng:** 1 phút 15 giây (14:45 - 16:00)
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Tầng 1 - Kho chuyên biệt:** 5.869 đoạn văn (passages) từ ViMMRC + ViQuAD, chỉ mục BM25 ($k_1=2.1$, $b=1.0$, bigram boost).
   * **Tầng 2 - Wikipedia tiếng Việt:** 1,48 triệu chunk (mỗi chunk ≤ 800 ký tự) với cả chỉ mục BM25 (`bm25s` chia shard) và chỉ mục vector dense (`multilingual-e5-small`, 384 chiều, float16 mmap ~1,1 GB).
@@ -290,7 +278,6 @@
 
 ### SLIDE 13: PHÂN HỆ MRC - MÔ HÌNH ViT5 SEQ2SEQ & GIỚI HẠN 512 TOKEN
 * **Thời lượng:** 1 phút 00 giây (16:00 - 17:00)
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Mô hình Seq2Seq ViT5 (`VietAI/vit5-base`):**
     * Kiến trúc Transformer T5 được tiền huấn luyện chuyên sâu cho tiếng Việt bởi VietAI.
@@ -308,7 +295,6 @@
 
 ### SLIDE 14: PHÂN HỆ TTS - LỰA CHỌN KIẾN TRÚC MATCHA-TTS
 * **Thời lượng:** 1 phút 15 giây (17:00 - 18:15)
-* **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Tầm quan trọng của phân hệ TTS trong Voice Q&A:**
     * Là điểm chạm cuối cùng (Last-mile Touchpoint) với người dùng. Dù STT và MRC có chính xác nhưng nếu giọng đọc khô cứng, vấp từ hoặc sai thanh điệu thì trải nghiệm sẽ thất bại.
@@ -328,7 +314,6 @@
 
 ### SLIDE 15: NGUYÊN LÝ TOÁN HỌC CONDITIONAL FLOW MATCHING (OT-CFM)
 * **Thời lượng:** 1 phút 30 giây (18:15 - 19:45)
-* **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Mục tiêu của Flow Matching:** Học một trường vector biến thiên theo thời gian $v_t(x)$ để biến đổi phân phối tiên nghiệm nhiễu chuẩn Gaussian $p_0 = \mathcal{N}(0, I)$ thành phân phối dữ liệu Mel-spectrogram đích $q(x_1)$.
   * **Phương trình Vi phân Thường (ODE):**
@@ -349,7 +334,6 @@
 
 ### SLIDE 16: ĐÓNG GÓP FRONTEND TÁCH THANH ĐIỆU `vi_tone_v2`
 * **Thời lượng:** 1 phút 15 giây (19:45 - 21:00)
-* **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Vấn đề thanh điệu trong biểu diễn văn bản tiếng Việt:**
     * Tiếng Việt có 6 thanh điệu: Ngang (0), Sắc (1), Huyền (2), Hỏi (3), Ngã (4), Nặng (5).
@@ -370,7 +354,6 @@
 
 ### SLIDE 17: PHÂN HỆ CHUẨN HÓA VĂN BẢN (TEXT NORMALIZER)
 * **Thời lượng:** 1 phút 15 giây (21:00 - 22:15)
-* **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Tại sao cần Text Normalizer chuyên biệt cho Q&A?**
     * Đầu ra của mô hình MRC thường chứa các ký hiệu logic, số liệu và định dạng viết tắt mà mô hình TTS không thể phát âm trực tiếp hoặc phát âm sai.
@@ -394,7 +377,6 @@
 
 ### SLIDE 18: ĐÁNH GIÁ & BENCHMARK ÂM HỌC ĐỊNH LƯỢNG
 * **Thời lượng:** 1 phút 15 giây (22:15 - 23:30)
-* **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Thiết lập Benchmark chuẩn quốc tế:**
     * Tập dữ liệu kiểm thử: 10 câu mẫu tham chiếu từ giọng thu âm của phát thanh viên chuyên nghiệp (tập InfoRe1).
@@ -421,7 +403,6 @@
 
 ### SLIDE 19: KIẾN TRÚC PHẦN MỀM FULL-STACK FASTAPI & ANGULAR
 * **Thời lượng:** 1 phút 00 giây (23:30 - 24:30)
-* **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Backend (FastAPI - Python 3.11):**
     * Thiết kế theo kiến trúc hướng dịch vụ với OpenAPI / Swagger UI tự động.
@@ -439,7 +420,6 @@
 
 ### SLIDE 20: ĐÓNG GÓI TRIỂN KHAI DOCKER MULTI-STAGE
 * **Thời lượng:** 1 phút 00 giây (24:30 - 25:30)
-* **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị:**
   * **Chiến lược Đóng gói Multi-Stage Build (`Dockerfile`):**
     * **Stage 1 - Build Frontend (`node:22-alpine`):** Biên dịch mã nguồn Angular, áp dụng Tree-shaking và Minification, tạo ra thư mục tĩnh tĩnh siêu nhẹ `dist/`.
@@ -457,7 +437,6 @@
 
 ### SLIDE 21: ĐẢM BẢO CHẤT LƯỢNG KIỂM THỬ PHẦN MỀM
 * **Thời lượng:** 1 phút 00 giây (25:30 - 26:30)
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Quy trình Kiểm thử Phần mềm Toàn diện (Testing Suite):**
     * Áp dụng framework kiểm thử tự động **pytest** cho toàn bộ backend.
@@ -478,7 +457,6 @@
 
 ### SLIDE 22: KỊCH BẢN LIVE DEMO HỆ THỐNG THỰC TẾ
 * **Thời lượng:** 1 phút 30 giây (26:30 - 28:00)
-* **Người trình bày:** Cả Nhóm (Thao tác màn hình thực tế)
 * **Nội dung hiển thị:**
   * **Kịch bản Demo trực tiếp trên giao diện Web (`http://localhost:8090`):**
     * **Bước 1 (Voice Input):** Bấm micro và đặt câu hỏi âm thanh: *"Ai là tác giả của Truyện Kiều?"* (câu hỏi tự do).
@@ -498,7 +476,6 @@
 
 ### SLIDE 23: PHÂN TÍCH LỖI THỰC TẾ & GIỚI HẠN HIỆN TẠI
 * **Thời lượng:** 1 phút 00 giây (28:00 - 29:00)
-* **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị:**
   * **Phân tích các trường hợp lỗi điển hình (Error Analysis):**
     1. *Lỗi do tiếng ồn môi trường lớn (STT Error):* Trong môi trường quán cà phê hoặc tiếng còi xe, Whisper có thể nhận dạng sai một số phụ âm đầu hoặc mất từ nối.
@@ -516,7 +493,6 @@
 
 ### SLIDE 24: TỔNG KẾT, HƯỚNG PHÁT TRIỂN & LỜI CẢM ƠN
 * **Thời lượng:** 1 phút 00 giây (29:00 - 30:00)
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị:**
   * **Tổng kết các đóng góp chính của đề tài:**
     * Xây dựng thành công hệ thống Voice Q&A tiếng Việt mã nguồn mở hoàn chỉnh dựa trên ViMMRC 2.0 và UIT-ViQuAD2.0.

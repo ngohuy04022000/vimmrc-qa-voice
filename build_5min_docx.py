@@ -33,7 +33,6 @@ with open(MD_PATH, "r", encoding="utf-8") as f:
 slide_pattern = (
     r'### SLIDE (\d+):\s*([^\n]+)\n'
     r'\* \*\*Thời lượng dự kiến:\*\*\s*([^\n]+)\n'
-    r'\* \*\*Người trình bày:\*\*\s*([^\n]+)\n'
     r'\* \*\*Nội dung hiển thị trên Slide:\*\*\n'
     r'(.*?)\n'
     r'\* \*\*Kịch bản thuyết trình \(Speaker Script\):\*\*\n'
@@ -45,9 +44,9 @@ for m in re.finditer(slide_pattern, md_text, re.DOTALL):
     num = int(m.group(1))
     title = m.group(2).strip()
     dur = m.group(3).strip()
-    speaker = m.group(4).strip()
-    bullets_raw = m.group(5).strip()
-    script_raw = m.group(6).strip()
+    speaker = ""
+    bullets_raw = m.group(4).strip()
+    script_raw = m.group(5).strip()
 
     # Clean script lines
     script_lines = []
@@ -80,7 +79,7 @@ for m in re.finditer(slide_pattern, md_text, re.DOTALL):
     })
 
 print(f"Parsed {len(slides_data)} slides from {MD_PATH}")
-assert len(slides_data) == 6, f"Expected 6 slides, got {len(slides_data)}"
+assert len(slides_data) == 7, f"Expected 7 slides, got {len(slides_data)}"
 
 # ==============================================================================
 # 2. HELPER FUNCTIONS FOR DOCX FORMATTING
@@ -167,7 +166,7 @@ run_sub1.font.color.rgb = RGBColor(0x1F, 0x3A, 0x5F)
 p_sub2 = doc.add_paragraph()
 p_sub2.paragraph_format.space_before = Pt(0)
 p_sub2.paragraph_format.space_after = Pt(10)
-run_sub2 = p_sub2.add_run("Môn: Học máy tiên tiến và ứng dụng · Học viên thực hiện: Ngô Trí Huy, Huỳnh Công Lương, Trương Hoàng Duy · Khung thời lượng: 5 - 10 Phút (~6:30)")
+run_sub2 = p_sub2.add_run("Môn: Học máy tiên tiến và ứng dụng · Thành viên thực hiện: Ngô Trí Huy, Huỳnh Công Lương, Trương Hoàng Duy · Khung thời lượng: 5 - 10 Phút (~7:00)")
 run_sub2.font.name = "Calibri"
 run_sub2.font.size = Pt(10)
 run_sub2.font.color.rgb = RGBColor(0x4B, 0x55, 0x63)
@@ -178,16 +177,16 @@ run_sub2.font.color.rgb = RGBColor(0x4B, 0x55, 0x63)
 h2_1 = doc.add_paragraph()
 h2_1.paragraph_format.space_before = Pt(8)
 h2_1.paragraph_format.space_after = Pt(4)
-run_h2_1 = h2_1.add_run("1. Tổng quan phân công & phân bổ thời lượng 6 Slide (Tổng: 6:30 | Khung 5 - 10 Phút)")
+run_h2_1 = h2_1.add_run("1. Tổng quan phân bổ thời lượng 7 Slide (Tổng: 7:15 | Khung 5 - 10 Phút)")
 run_h2_1.font.name = "Calibri"
 run_h2_1.font.size = Pt(12.5)
 run_h2_1.font.bold = True
 run_h2_1.font.color.rgb = RGBColor(0x1F, 0x3A, 0x5F)
 
-t0_headers = ["Slide", "Nội dung", "Thời gian", "Người trình bày", "Số chữ lời thoại", "Ước tính nói (2,2 chữ/s)"]
-t0_widths = [Inches(0.55), Inches(3.54), Inches(1.34), Inches(2.05), Inches(1.18), Inches(1.77)]
+t0_headers = ["Slide", "Nội dung", "Thời gian", "Số chữ lời thoại", "Ước tính nói (2,2 chữ/s)"]
+t0_widths = [Inches(0.65), Inches(4.54), Inches(1.54), Inches(1.50), Inches(2.10)]
 
-t0 = doc.add_table(rows=1 + len(slides_data) + 1, cols=6)
+t0 = doc.add_table(rows=1 + len(slides_data) + 1, cols=5)
 t0.style = "Table Grid"
 t0.alignment = WD_TABLE_ALIGNMENT.CENTER
 
@@ -211,7 +210,6 @@ for i, s in enumerate(slides_data):
         str(s['num']),
         s['title'],
         s['dur'],
-        s['speaker'],
         str(s['wc']),
         s['est_str']
     ]
@@ -222,7 +220,7 @@ for i, s in enumerate(slides_data):
         if bg_color != "FFFFFF":
             set_cell_background(cell, bg_color)
         set_cell_margins(cell, top=50, bottom=50, left=80, right=80)
-        is_center = ci in [0, 4, 5]
+        is_center = ci in [0, 3, 4]
         format_cell_text(cell, txt, font_size=9.0, bold=(ci == 0))
         if is_center:
             cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -230,20 +228,19 @@ for i, s in enumerate(slides_data):
 # Total row
 row_tot = t0.rows[-1]
 set_row_cant_split(row_tot)
-for ci in range(6):
+for ci in range(5):
     set_cell_background(row_tot.cells[ci], "E2E8F0")
     row_tot.cells[ci].width = t0_widths[ci]
     set_cell_margins(row_tot.cells[ci], top=70, bottom=70, left=80, right=80)
 
 format_cell_text(row_tot.cells[0], "", font_size=9.5, bold=True)
-format_cell_text(row_tot.cells[1], "TỔNG TOÀN BỘ 6 SLIDE", font_size=9.5, bold=True)
-format_cell_text(row_tot.cells[2], "6:30 (390s)", font_size=9.5, bold=True)
+format_cell_text(row_tot.cells[1], "TỔNG TOÀN BỘ 7 SLIDE", font_size=9.5, bold=True)
+format_cell_text(row_tot.cells[2], "7:15 (435s)", font_size=9.5, bold=True)
 row_tot.cells[2].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-format_cell_text(row_tot.cells[3], "Ngô Trí Huy (Đại diện nhóm)", font_size=9.5, bold=True)
-format_cell_text(row_tot.cells[4], f"{total_wc} từ", font_size=9.5, bold=True)
+format_cell_text(row_tot.cells[3], f"{total_wc} từ", font_size=9.5, bold=True)
+row_tot.cells[3].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
+format_cell_text(row_tot.cells[4], f"~{total_wc/130:.1f} phút (130 wpm)", font_size=9.5, bold=True)
 row_tot.cells[4].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-format_cell_text(row_tot.cells[5], f"~{total_wc/130:.1f} phút (130 wpm)", font_size=9.5, bold=True)
-row_tot.cells[5].paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 # ------------------------------------------------------------------------------
 # SECTION 2: DETAILED SCRIPT TABLE (TABLE 1)
@@ -253,14 +250,14 @@ doc.add_page_break()
 h2_2 = doc.add_paragraph()
 h2_2.paragraph_format.space_before = Pt(8)
 h2_2.paragraph_format.space_after = Pt(4)
-run_h2_2 = h2_2.add_run("2. Kịch bản chi tiết từng slide (6 Slide - Lời thoại & Nội dung trình chiếu)")
+run_h2_2 = h2_2.add_run("2. Kịch bản chi tiết từng slide (7 Slide - Lời thoại & Nội dung trình chiếu)")
 run_h2_2.font.name = "Calibri"
 run_h2_2.font.size = Pt(12.5)
 run_h2_2.font.bold = True
 run_h2_2.font.color.rgb = RGBColor(0x1F, 0x3A, 0x5F)
 
 t1_headers = [
-    "Slide · Thời gian · Người nói",
+    "Slide · Thời lượng",
     "Nội dung hiển thị trên slide",
     "Lời thoại (đọc thành tiếng - Verbatim Script)"
 ]
@@ -310,12 +307,6 @@ for i, s in enumerate(slides_data):
     r0_time.font.name = "Calibri"
     r0_time.font.size = Pt(9.0)
     r0_time.font.color.rgb = RGBColor(0x25, 0x63, 0xEB)
-
-    r0_spk = p0.add_run(f"Trình bày: {s['speaker']}\n\n")
-    r0_spk.font.name = "Calibri"
-    r0_spk.font.size = Pt(9.0)
-    r0_spk.font.bold = True
-    r0_spk.font.color.rgb = RGBColor(0x05, 0x96, 0x69)
 
     r0_wc = p0.add_run(f"Độ dài: {s['wc']} từ ({s['est_str']})")
     r0_wc.font.name = "Calibri"

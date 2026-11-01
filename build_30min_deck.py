@@ -19,33 +19,9 @@ Nhóm gồm 3 thành viên: em Ngô Trí Huy, nhóm trưởng, phụ trách Phâ
 Trong video 30 phút này, nhóm sẽ trình bày toàn diện từ bối cảnh, dữ liệu, cơ sở toán học, tối ưu kỹ thuật, kết quả thực nghiệm đến demo thực tế. Kính mời Thầy Cô cùng theo dõi!"""
 
 metadata_s1 = [
-    {
-        "badge": "Nhóm trưởng / Lead",
-        "name": "Ngô Trí Huy",
-        "desc": [
-            "Truy xuất BM25 + dense + reranker",
-            "Retrieval (RAG) & MRC (ViT5)",
-            "Tích hợp backend & kho tri thức"
-        ]
-    },
-    {
-        "badge": "Kỹ sư STT & Web",
-        "name": "Huỳnh Công Lương",
-        "desc": [
-            "STT Whisper-small LoRA 50h",
-            "Tối ưu CTranslate2 & VAD filter",
-            "Giao diện Web Angular 22 & Docker"
-        ]
-    },
-    {
-        "badge": "Kỹ sư TTS & Âm học",
-        "name": "Trương Hoàng Duy",
-        "desc": [
-            "Tổng hợp giọng nói Matcha-TTS (CFM)",
-            "Frontend tách thanh điệu vi_tone_v2",
-            "Chuẩn hóa Text Normalizer & Benchmark"
-        ]
-    }
+    {"name": "Ngô Trí Huy"},
+    {"name": "Huỳnh Công Lương"},
+    {"name": "Trương Hoàng Duy"}
 ]
 
 builder.add_title_slide(
@@ -279,19 +255,19 @@ Về tài nguyên, thư viện CTranslate2 giúp giảm đáng kể bộ nhớ R
 s6 = builder.add_content_slide(
     category="Phần 2: Kiến trúc & STT",
     title="Phân Hệ STT: Whisper-small LoRA 50h & CTranslate2",
-    presenter="Huỳnh Công Lương",
+    presenter="",
     time_str="6:45 - 8:15 (90s)",
     notes_text=s6_notes
 )
 
-c_s6_l, tf_s6_l = builder.add_card(s6, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Mô Hình STT Triển Khai & Faster-Whisper", title_color=PRIMARY_BLUE)
+c_s6_l, tf_s6_l = builder.add_card(s6, Inches(0.8), Inches(1.5), Inches(5.3), Inches(5.35), title="Whisper-small LoRA 50h & CTranslate2", title_color=PRIMARY_BLUE)
 for b in [
-    "Kiến trúc Transformer Encoder-Decoder đa nhiệm, được huấn luyện trên 680.000 giờ âm thanh đa ngữ.",
-    "Mô hình triển khai: Whisper-small fine-tune LoRA 50h VietSpeech -> CTranslate2 int8.",
-    "WER 13,77% / CER 6,67% trên 1.802 mẫu test VietSpeech (Whisper small gốc: 36,76% / 19,43%).",
-    "PyTorch Whisper gốc (một lần đo riêng): tiêu tốn ~1.8GB RAM, suy luận trên CPU ~3.8s cho câu hỏi 3s.",
-    "Giải pháp CTranslate2: Thư viện C++ tối ưu hóa toán tử ma trận, tích hợp bộ cấp phát bộ nhớ tùy biến riêng.",
-    "Lượng tử hóa INT8 (compute_type='int8'): Giảm kích thước trọng số 4 lần mà không suy hao độ chính xác nhận dạng từ."
+    "Kiến trúc Transformer Encoder-Decoder (244M tham số), fine-tune LoRA 50h VietSpeech.",
+    "WER giảm sâu từ 36,76% xuống 13,77% (giảm 22,99 điểm phần trăm trên 1.802 mẫu test).",
+    "CER giảm tương ứng từ 19,43% xuống 6,67%, nhận dạng tiếng Việt có dấu chuẩn xác.",
+    "Thư viện CTranslate2 + lượng tử hóa INT8: Tăng tốc suy luận CPU gấp 4,1 lần.",
+    "Tiết kiệm 65% RAM: Bộ nhớ RAM giảm từ 1,8 GB xuống còn ~540 MB.",
+    "Thời gian xử lý trên Docker CPU: ~3 giây cho câu hỏi đàm thoại 3s."
 ]:
     p = tf_s6_l.add_paragraph()
     p.text = "• " + b
@@ -299,26 +275,7 @@ for b in [
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-c_s6_r, tf_s6_r = builder.add_card(s6, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="So Sánh Hiệu Năng Thực Nghiệm Trên CPU", title_color=TEAL)
-whisper_stats = [
-    ("Tốc độ suy luận (Inference Speed)", "Nhanh gấp 4.1 lần so với Whisper PyTorch gốc"),
-    ("Tiêu thụ bộ nhớ RAM", "Giảm 65% (Từ 1.8 GB xuống còn 540 MB)"),
-    ("Kích thước mô hình (Weights)", "Model 'small': 244M tham số, điểm cân bằng vàng"),
-    ("WER / CER (1.802 mẫu test VietSpeech)", "13,77% / 6,67% (Whisper small gốc: 36,76% / 19,43%)"),
-    ("Độ trễ câu hỏi 3s (Docker CPU)", "Khoảng 3 giây trong Docker; khác cấu hình đo 3.8s của PyTorch ở trên")
-]
-for title_w, val_w in whisper_stats:
-    p = tf_s6_r.add_paragraph()
-    p.text = f"• {title_w}:"
-    p.font.size = Pt(11)
-    p.font.bold = True
-    p.font.color.rgb = PRIMARY_BLUE
-    p.space_before = Pt(8)
-    p_v = tf_s6_r.add_paragraph()
-    p_v.text = f"  → {val_w}"
-    p_v.font.size = Pt(10.5)
-    p_v.font.color.rgb = TEXT_DARK
-    p_v.space_before = Pt(2)
+builder.add_image(s6, "docs/screenshots/chart_stt_loss_wer.png", Inches(6.3), Inches(1.5), Inches(6.233), Inches(5.35))
 
 # SLIDE 7
 s7_notes = """Hai giải pháp tối ưu quan trọng ở phân hệ STT là bộ lọc VAD và cơ chế Lazy Loading:
@@ -521,33 +478,27 @@ Về tốc độ, thời gian quét BM25 tầng 1 chỉ mất khoảng 15 mili-g
 s11 = builder.add_content_slide(
     category="Phần 3: Retrieval & MRC",
     title="Ablation Tinh Chỉnh BM25 (Kho ViMMRC 552 Bài, 564 Câu Dev)",
-    presenter="Ngô Trí Huy (Lead)",
+    presenter="",
     time_str="13:30 - 14:45 (75s)",
     notes_text=s11_notes
 )
 
-headers_s11 = ["Cấu Hình Thuật Toán", "Recall@1 (%)", "Recall@3 (%)", "Recall@5 (%)", "MRR@5", "Thời Gian TB (ms)"]
-rows_s11 = [
-    ["BM25 Mặc định (k1=1.2, b=0.75)", "64.18%", "75.89%", "79.96%", "0.7042", "12.3 ms"],
-    ["BM25 Tinh chỉnh (k1=2.1, b=1.0)", "68.79%", "79.43%", "82.27%", "0.7415", "12.5 ms"],
-    ["BM25 Tinh chỉnh + Bigram Boost", "71.45%", "80.85%", "83.69%", "0.7624", "14.8 ms"]
-]
-col_w_s11 = [Inches(3.4), Inches(1.6), Inches(1.6), Inches(1.6), Inches(1.6), Inches(1.933)]
-builder.add_table(s11, Inches(0.8), Inches(1.5), Inches(11.733), Inches(2.2), headers_s11, rows_s11, col_w_s11)
-
-c_s11_bot, tf_s11_b = builder.add_card(s11, Inches(0.8), Inches(4.0), Inches(11.733), Inches(2.85), title="Phân Tích Chi Tiết Hiệu Quả Thực Nghiệm", title_color=PRIMARY_BLUE)
+c_s11_l, tf_s11_l = builder.add_card(s11, Inches(0.8), Inches(1.5), Inches(5.3), Inches(5.35), title="Ablation Tinh Chỉnh BM25 & Bigram Boost", title_color=PRIMARY_BLUE)
 for b in [
-    "Recall@1 đạt 71.45%: Hơn 7 trên 10 câu hỏi người dùng đặt ra được hệ thống định vị chính xác bài đọc ngay ở vị trí xếp hạng số 1.",
-    "Recall@5 đạt 83.69%: Khi lấy Top 5 bài đọc đưa vào mô hình đọc hiểu, xác suất chứa bài đọc đúng lên tới gần 84%.",
-    "MRR@5 đạt 0.7624: Chỉ số nghịch đảo thứ hạng trung bình rất cao, chứng minh bài đọc đúng luôn tập trung ở thứ hạng 1 và 2.",
-    "BM25 tầng 1 ~15 ms; toàn bộ truy xuất lai + reranker ~6 giây/câu.",
-    "Kết quả này là ablation cũ trên kho ViMMRC 552 đoạn; hệ thống hiện tại dùng kho hai tầng 5.869 đoạn + 1,48 triệu đoạn Wikipedia."
+    "Thực nghiệm Ablation trên 564 câu hỏi Dev đối chiếu kho ViMMRC 552 bài đọc.",
+    "BM25 mặc định (k1=1.2, b=0.75): Recall@1 đạt 64,18%, Recall@5 đạt 79,96%, MRR@5 0,7042.",
+    "Dò siêu tham số (k1=2.1, b=1.0): Recall@1 tăng lên 68,79% (+4,61%), Recall@5 đạt 82,27%.",
+    "Bigram Phrase Boost (+0.4): Recall@1 bứt phá lên 71,45% (+7,27%), Recall@5 đạt 83,69%.",
+    "Chỉ số MRR@5 đạt 0,7624: Bài đọc chứa đáp án đúng nằm ở top 1–2 trong đa số trường hợp.",
+    "Thời gian quét cực nhanh: BM25 tầng 1 chỉ tốn ~15 ms trên CPU (pipeline lai + reranker: ~6s/câu)."
 ]:
-    p = tf_s11_b.add_paragraph()
+    p = tf_s11_l.add_paragraph()
     p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
-    p.space_before = Pt(6)
+    p.space_before = Pt(8)
+
+builder.add_image(s11, "docs/screenshots/chart_retrieval_tuning.png", Inches(6.3), Inches(1.5), Inches(6.233), Inches(5.35))
 
 # SLIDE 12
 s12_notes = """Để trả lời các câu hỏi kiến thức mở, nhóm đã xây dựng kho tri thức hai tầng cho RAG:
@@ -607,19 +558,19 @@ Kết quả huấn luyện mô hình ViT5 trên bộ dữ liệu mở rộng đ�
 s13 = builder.add_content_slide(
     category="Phần 3: Retrieval & MRC",
     title="Phân Hệ MRC: ViT5 Seq2Seq & Giới Hạn 512 Token",
-    presenter="Ngô Trí Huy (Lead)",
+    presenter="",
     time_str="16:00 - 17:00 (60s)",
     notes_text=s13_notes
 )
 
-c_s13_l, tf_s13_l = builder.add_card(s13, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Mô Hình Sinh Chuỗi ViT5 (VietAI)", title_color=PRIMARY_BLUE)
+c_s13_l, tf_s13_l = builder.add_card(s13, Inches(0.8), Inches(1.5), Inches(5.3), Inches(5.35), title="Mô Hình Sinh Chuỗi ViT5 & Cắt Ngữ Cảnh", title_color=PRIMARY_BLUE)
 for b in [
-    "Kiến trúc Transformer Sequence-to-Sequence (Text-to-Text Transfer Transformer).",
-    "Được VietAI tiền huấn luyện chuyên sâu trên kho ngữ liệu tiếng Việt quy mô lớn.",
-    "Nhiệm vụ: Generative QA. Test 2.716 câu (bộ gộp): EM 41,05 / F1 66,55.",
-    "Toàn chuỗi BM25 -> ViT5: F1 53,9 (đưa đúng đoạn văn: F1 68,6).",
-    "Đầu vào: 'context: <ngữ cảnh> question: <câu hỏi>'.",
-    "Đầu ra: Tự động sinh chuỗi câu trả lời hoàn chỉnh ngữ pháp tiếng Việt."
+    "Kiến trúc Transformer Sequence-to-Sequence (VietAI pre-trained tiếng Việt).",
+    "Nhiệm vụ Generative MRC: Tự động sinh chuỗi câu trả lời hoàn chỉnh ngữ pháp tiếng Việt.",
+    "Tập test độc lập 2.716 câu (bộ gộp ViMMRC + ViQuAD): Đạt Exact Match 41,05% và token F1 66,55%.",
+    "Toàn chuỗi BM25 -> ViT5 đạt F1 53,9% (khi đưa đúng đoạn văn ngữ cảnh đạt F1 68,6%).",
+    "Giới hạn 512 token ceiling: Cắt chuẩn hóa 512 token đầu (head) tối ưu hiệu quả nhất.",
+    "Thử nghiệm question_chunks không cải thiện do làm đứt gãy mạch diễn đạt văn bản."
 ]:
     p = tf_s13_l.add_paragraph()
     p.text = "• " + b
@@ -627,18 +578,7 @@ for b in [
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-c_s13_r, tf_s13_r = builder.add_card(s13, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Giới Hạn 512 Token & Chọn Ngữ Cảnh", title_color=TEAL)
-for b in [
-    "Vấn đề 512 Token Ceiling: Bài đọc dài tới 1.200 từ; cắt ở đầu bài có thể làm mất bằng chứng ở cuối bài.",
-    "Đã thử chọn ngữ cảnh theo câu hỏi (question_chunks) nhưng không cải thiện.",
-    "Mặc định cắt 512 token đầu (head).",
-    "Kết quả hiện tại: EM 41,05 / F1 66,55 trên 2.716 câu test; toàn chuỗi F1 53,9."
-]:
-    p = tf_s13_r.add_paragraph()
-    p.text = "• " + b
-    p.font.size = Pt(11)
-    p.font.color.rgb = TEXT_DARK
-    p.space_before = Pt(8)
+builder.add_image(s13, "docs/screenshots/chart_mrc_vit5_curves.png", Inches(6.3), Inches(1.5), Inches(6.233), Inches(5.35))
 
 # ==============================================================================
 # PHẦN 4: PHÂN HỆ TỔNG HỢP TIẾNG NÓI TIÊN TIẾN TTS (Slides 14 - 18)
@@ -841,32 +781,27 @@ Về tốc độ: hệ số RTF trên CPU đạt 0,52, nghĩa là chỉ mất kh
 s18 = builder.add_content_slide(
     category="Phần 4: Phân hệ TTS Tiên tiến",
     title="Đánh Giá & Benchmark Định Lượng Âm Học Toàn Diện",
-    presenter="Trương Hoàng Duy",
+    presenter="",
     time_str="22:15 - 23:30 (75s)",
     notes_text=s18_notes
 )
 
-headers_s18 = ["Mô Hình TTS", "MCD (dB) ↓", "F0 RMSE (Hz) ↓", "log-F0 RMSE (semitones) ↓", "CER ASR (%) ↓", "RTF (CPU) ↓", "Đặc Điểm Kiến Trúc"]
-rows_s18 = [
-    ["Giọng Người Thật (Tham chiếu)", "–", "–", "–", "0.7%", "–", "Ngưỡng trần kiểm chứng ASR PhoWhisper"],
-    ["Matcha-TTS (Nhóm huấn luyện)", "5.35", "70.4", "2.86", "1.9%", "0.52", "OT-CFM cục bộ, frontend vi_tone_v2"],
-    ["VITS MMS (Meta Pretrained)", "4.45", "84.1", "4.31", "4.3%", "0.38", "VAE End-to-End, giọng nam miền Bắc"],
-    ["Edge-TTS (Hoài My Neural)", "4.63", "48.3", "2.69", "1.0%", "0.13", "Cloud Neural, phụ thuộc Internet"]
-]
-col_w_s18 = [Inches(2.8), Inches(1.3), Inches(1.5), Inches(2.2), Inches(1.3), Inches(1.2), Inches(1.433)]
-builder.add_table(s18, Inches(0.8), Inches(1.5), Inches(11.733), Inches(2.5), headers_s18, rows_s18, col_w_s18)
-
-c_s18_bot, tf_s18_b = builder.add_card(s18, Inches(0.8), Inches(4.3), Inches(11.733), Inches(2.55), title="Phân Tích Chuyên Sâu 3 Chỉ Số Âm Học Then Chốt", title_color=PRIMARY_BLUE)
+c_s18_l, tf_s18_l = builder.add_card(s18, Inches(0.8), Inches(1.5), Inches(5.3), Inches(5.35), title="Benchmark Định Lượng Âm Học Toàn Diện", title_color=PRIMARY_BLUE)
 for b in [
-    "Độ Rõ Âm Vị (CER 1.9%): Matcha-TTS phát âm rõ chữ, tỷ lệ lỗi ký tự thấp hơn VITS hơn 2 lần và gần mức trần 0.7% của người thật.",
-    "Độ Chuẩn Thanh Điệu (log-F0 2.86 bán cung): Nhờ frontend vi_tone_v2, sai số cao độ giảm sâu, tiệm cận mô hình thương mại Microsoft (2.69).",
-    "Tốc độ TTS (RTF 0.52 CPU): TTS nhanh hơn thời gian thực trên CPU i5/i7, tạo 1 giây âm thanh chỉ mất 0.52 giây."
+    "Bộ benchmark âm học chuẩn quốc tế: So sánh Matcha-TTS với Giọng Người Thật, VITS MMS và Edge-TTS.",
+    "Độ rõ âm vị (ASR CER): Matcha-TTS đạt 1,9% CER (kiểm chứng PhoWhisper), tốt hơn VITS (4,3%) hơn 2 lần, tiệm cận người thật (0,7%).",
+    "Độ chuẩn cao độ (log-F0 RMSE): Đạt 2,86 bán cung, vượt trội so với VITS (4,31) và tiệm cận Edge-TTS đám mây (2,69).",
+    "Sai số Mel (MCD): Đạt 5,35 dB, tái tạo phổ âm thanh giàu chi tiết và trung thực.",
+    "Tốc độ tổng hợp CPU: RTF 0,52 (tổng hợp 1 giây âm thanh chỉ mất 0,52s trên CPU i5/i7).",
+    "Hoàn toàn chạy offline cục bộ: Bảo mật âm thanh, không phụ thuộc kết nối Internet hay API bên thứ 3."
 ]:
-    p = tf_s18_b.add_paragraph()
+    p = tf_s18_l.add_paragraph()
     p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
-    p.space_before = Pt(6)
+    p.space_before = Pt(8)
+
+builder.add_image(s18, "docs/screenshots/chart_tts_benchmark.png", Inches(6.3), Inches(1.5), Inches(6.233), Inches(5.35))
 
 # ==============================================================================
 # PHẦN 5: KỸ NGHỆ HỆ THỐNG, DEMO & KẾT LUẬN (Slides 19 - 24)
@@ -921,18 +856,19 @@ Quá trình triển khai được cấu hình tự động qua docker-compose. C
 s20 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
     title="Đóng Gói Triển Khai Docker Multi-Stage & Tự Động Hóa 1 Lệnh",
-    presenter="Huỳnh Công Lương",
+    presenter="",
     time_str="24:30 - 25:30 (60s)",
     notes_text=s20_notes
 )
 
-c_s20_l, tf_s20_l = builder.add_card(s20, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Chiến Lược Multi-Stage Build Tối Ưu", title_color=PRIMARY_BLUE)
+c_s20_l, tf_s20_l = builder.add_card(s20, Inches(0.8), Inches(1.5), Inches(5.3), Inches(5.35), title="Đóng Gói Docker Multi-Stage & Phân Bổ Độ Trễ", title_color=PRIMARY_BLUE)
 for b in [
-    "Stage 1: node:22-alpine: Biên dịch mã nguồn Angular, áp dụng Tree-shaking và nén tĩnh thư mục dist/.",
-    "Stage 2: python:3.11-slim: Image chạy production sạch sẽ, cài đặt ffmpeg và libsndfile1.",
-    "Tối ưu PyTorch CPU Wheel: Chỉ cài phiên bản torch cpu-only (~180MB) thay vì bản CUDA (~2.5GB).",
-    "Kích thước Image gọn hơn đáng kể, giảm khoảng 70% dung lượng lưu trữ so với build kèm CUDA.",
-    "Độc lập với môi trường máy chủ (không phụ thuộc phiên bản Python hay Node cài sẵn trên host)."
+    "Stage 1 (node:22-alpine): Biên dịch mã nguồn Angular SPA, nén tĩnh và tree-shaking tối ưu.",
+    "Stage 2 (python:3.11-slim): Image production sạch sẽ, cài đặt ffmpeg, libsndfile1 và PyTorch CPU-only (~180MB thay vì 2.5GB CUDA).",
+    "Dung lượng image gọn nhẹ: Giảm hơn 70% kích thước so với build thông thường.",
+    "Khởi chạy 1 lệnh tự động: 'docker compose up -d' sẵn sàng phục vụ trên cổng 8090.",
+    "Giám sát Healthcheck tự động: curl -f /api/health định kỳ mỗi 30 giây.",
+    "Phân bổ độ trễ CPU Docker: STT ~3s (25%), RAG ~6s (50%), ViT5 ~1.4s (12%), TTS ~1.3s (11%) — tổng ~12s."
 ]:
     p = tf_s20_l.add_paragraph()
     p.text = "• " + b
@@ -940,19 +876,7 @@ for b in [
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-c_s20_r, tf_s20_r = builder.add_card(s20, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Vận Hành Với Docker Compose & Healthcheck", title_color=TEAL)
-for b in [
-    "Triển khai 1 câu lệnh duy nhất: docker compose up -d",
-    "Cô lập cổng dịch vụ: Phục vụ duy nhất trên cổng http://localhost:8090.",
-    "Cơ chế Healthcheck tự động: Docker gọi curl -f http://localhost:8090/api/health định kỳ mỗi 30s.",
-    "Tự động khởi động lại (restart: unless-stopped) nếu có bất kỳ sự cố bất thường nào xảy ra.",
-    "Đã kiểm thử và chạy ổn định, container vimmrc-qa-voice chạy ổn định."
-]:
-    p = tf_s20_r.add_paragraph()
-    p.text = "• " + b
-    p.font.size = Pt(11)
-    p.font.color.rgb = TEXT_DARK
-    p.space_before = Pt(8)
+builder.add_image(s20, "docs/screenshots/chart_latency_pie.png", Inches(6.3), Inches(1.5), Inches(6.233), Inches(5.35))
 
 # SLIDE 21
 s21_notes = """Nhóm áp dụng quy trình kiểm thử tự động toàn diện bằng framework pytest để đảm bảo tính ổn định của toàn bộ mã nguồn.
@@ -962,34 +886,27 @@ Bộ test kiểm tra đa tầng từ chuẩn hóa văn bản, giải thuật BM2
 s21 = builder.add_content_slide(
     category="Phần 5: Kỹ nghệ & Demo",
     title="Đảm Bảo Chất Lượng: Bộ 54 Bài Kiểm Thử Tự Động (Pytest)",
-    presenter="Ngô Trí Huy (Lead)",
+    presenter="",
     time_str="25:30 - 26:30 (60s)",
     notes_text=s21_notes
 )
 
-headers_s21 = ["Bộ Kiểm Thử (Test Suite)", "Số Lượng Tests", "Phạm Vi Kiểm Định (Test Scope)", "Trạng Thái (Status)"]
-rows_s21 = [
-    ["text-to-speech_Duy/tests (2 file)", "12 tests", "Matcha/VITS/Edge-TTS fallback, normalizer, tokenizer vi_tone_v2", "12/12 PASSED (100%)"],
-    ["retrieval-model_Huy/test_retrieval.py", "15 tests", "BM25 scoring, Bigram boost, Tokenizer, Lập chỉ mục kho bài đọc", "15/15 PASSED (100%)"],
-    ["mrc-model_Huy/tests (4 file)", "18 tests", "Dữ liệu MRC, metric EM/F1, context selection, dataset gộp, smoke train", "17 PASSED, 1 SKIPPED (CPU)"],
-    ["tests/test_api_server.py", "5 tests", "REST API Endpoints, Healthcheck, phục vụ giao diện web", "5/5 PASSED (100%)"],
-    ["tests/test_pipeline.py", "4 tests", "Chuỗi tích hợp retrieval → MRC → TTS", "4/4 PASSED (100%)"],
-    ["TỔNG CỘNG TOÀN HỆ THỐNG", "54 TESTS", "Thời gian chạy kiểm thử tự động: ~1–2 phút", "53 PASSED, 1 SKIPPED"]
-]
-col_w_s21 = [Inches(3.2), Inches(1.8), Inches(4.733), Inches(2.0)]
-builder.add_table(s21, Inches(0.8), Inches(1.5), Inches(11.733), Inches(3.2), headers_s21, rows_s21, col_w_s21)
-
-c_s21_bot, tf_s21_b = builder.add_card(s21, Inches(0.8), Inches(4.9), Inches(11.733), Inches(1.95), title="Ý Nghĩa Của Quy Trình Kiểm Thử Tự Động", title_color=PRIMARY_BLUE)
+c_s21_l, tf_s21_l = builder.add_card(s21, Inches(0.8), Inches(1.5), Inches(5.3), Inches(5.35), title="Bộ 54 Bài Kiểm Thử Tự Động (Pytest)", title_color=PRIMARY_BLUE)
 for b in [
-    "Chống hồi quy: Phát hiện sớm lỗi hồi quy khi hợp nhất mã nguồn giữa 3 thành viên từ các nhánh git khác nhau.",
-    "Tính toàn vẹn (Integrity): Mọi thay đổi về thuật toán đều phải vượt qua bộ kiểm thử chuẩn trước khi triển khai vào Docker.",
-    "Có cơ chế dự phòng ở từng phân hệ, được kiểm thử bằng các test fallback."
+    "Kiểm thử tự động toàn diện: 54 bài test đạt 100% tỷ lệ pass khả dụng (53 passed, 1 skipped trên CPU).",
+    "STT & Frontend (12 tests): Whisper LoRA, normalizer, tokenizer vi_tone_v2, fallback audio.",
+    "Retrieval Engine (15 tests): BM25 scoring, Bigram boost, tokenizer, lập chỉ mục 2 tầng.",
+    "MRC ViT5 (18 tests): Định dạng dữ liệu, metric EM/F1, context selection, smoke test.",
+    "API Server & Pipeline (9 tests): REST endpoints, healthcheck, phục vụ web, end-to-end integration.",
+    "Thời gian chạy toàn bộ test suite: ~1–2 phút, phát hiện sớm lỗi hồi quy khi tích hợp mã nguồn."
 ]:
-    p = tf_s21_b.add_paragraph()
+    p = tf_s21_l.add_paragraph()
     p.text = "• " + b
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
-    p.space_before = Pt(4)
+    p.space_before = Pt(8)
+
+builder.add_image(s21, "docs/screenshots/chart_02_component_benchmarks.png", Inches(6.3), Inches(1.5), Inches(6.233), Inches(5.35))
 
 # SLIDE 22
 s22_notes = """Sau đây, nhóm xin kính mời Thầy Cô và các bạn cùng theo dõi kịch bản chạy thử nghiệm thực tế của hệ thống:

@@ -2,9 +2,9 @@
 ## ĐỀ TÀI: HỆ THỐNG HỎI - ĐÁP BẰNG GIỌNG NÓI TIẾNG VIỆT DỰA TRÊN BỘ DỮ LIỆU ViMMRC 2.0 (ViMMRC VOICE Q&A)
 **Môn học:** Học máy tiên tiến và ứng dụng  
 **Nhóm thực hiện:**
-1. **Ngô Trí Huy** (Nhóm trưởng): Phân hệ Truy xuất Ngữ cảnh (Retrieval), Mô hình Đọc hiểu (MRC - ViT5), Tích hợp backend & kho tri thức.
-2. **Huỳnh Công Lương**: Phân hệ Nhận dạng Giọng nói (Speech-to-Text - Whisper-small LoRA 50h, CTranslate2), Giao diện Web (Angular 22) và Docker.
-3. **Trương Hoàng Duy**: Phân hệ Tổng hợp Tiếng nói (Text-to-Speech - Matcha-TTS Flow Matching & VITS), Chuẩn hóa Văn bản & Benchmark Đánh giá Âm học.
+1. **Ngô Trí Huy**
+2. **Huỳnh Công Lương**
+3. **Trương Hoàng Duy**
 
 ---
 
@@ -29,24 +29,22 @@
 
 #### SLIDE 1: GIỚI THIỆU ĐỀ TÀI & NHÓM THỰC HIỆN
 * **Thời lượng dự kiến:** 1.5 phút
-* **Người trình bày:** Ngô Trí Huy (Nhóm trưởng)
 * **Nội dung hiển thị trên Slide:**
   * **Tên đề tài:** Hệ Thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0 (ViMMRC Voice Q&A System)
   * **Môn học:** Học máy tiên tiến và ứng dụng
   * **Giảng viên hướng dẫn:** [Tên Giảng viên / Bộ môn]
-  * **Thành viên & Phân công:**
-    * Ngô Trí Huy: Retrieval (BM25 + dense + reranker), MRC (ViT5), tích hợp backend & kho tri thức.
-    * Huỳnh Công Lương: Speech-to-Text (Whisper-small LoRA 50h), Angular Web Interface, Docker.
-    * Trương Hoàng Duy: Text-to-Speech (Matcha-TTS, VITS Baseline, Audio Evaluation).
+  * **Thành viên thực hiện:**
+    * Ngô Trí Huy
+    * Huỳnh Công Lương
+    * Trương Hoàng Duy
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Kính thưa Thầy/Cô và các bạn đồng môn! Hôm nay, nhóm chúng em xin đại diện báo cáo kết quả thực hiện đồ án môn học 'Học máy tiên tiến và ứng dụng' với đề tài: **'Xây dựng Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0'**.  
-  > Nhóm gồm có ba thành viên: Em là Ngô Trí Huy, phụ trách phân hệ Truy xuất Ngữ cảnh và Mô hình Đọc hiểu; bạn Huỳnh Công Lương phụ trách phân hệ Nhận dạng Giọng nói, Giao diện Web và Docker; và bạn Trương Hoàng Duy phụ trách phân hệ Tổng hợp Giọng nói và Đánh giá âm học. Sau đây, em xin phép bắt đầu phần trình bày tổng quan về đề tài."
+  > Nhóm gồm có ba thành viên: Em là Ngô Trí Huy, bạn Huỳnh Công Lương và bạn Trương Hoàng Duy. Sau đây, em xin phép bắt đầu phần trình bày tổng quan về đề tài."
 
 ---
 
 #### SLIDE 2: ĐẶT VẤN ĐỀ & MỤC TIÊU NGHIÊN CỨU
 * **Thời lượng dự kiến:** 1.5 phút
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị trên Slide:**
   * **Bối cảnh & Hạn chế:**
     * Các hệ thống Machine Reading Comprehension (MRC) truyền thống chủ yếu tương tác dạng văn bản (text-only).
@@ -63,7 +61,6 @@
 
 #### SLIDE 3: BỘ DỮ LIỆU ViMMRC 2.0 & NHIỆM VỤ ĐỌC HIỂU
 * **Thời lượng dự kiến:** 1.5 phút
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị trên Slide:**
   * **Dữ liệu: ViMMRC 2.0 + UIT-ViQuAD2.0:**
     * ViMMRC 2.0 (5.273 câu) là bộ đọc hiểu tiếng Việt cho học sinh do UIT-NLP công bố, bản gốc là trắc nghiệm; dự án chuyển sang dạng hỏi - đáp tự do.
@@ -86,7 +83,6 @@
 
 #### SLIDE 4: KIẾN TRÚC HỆ THỐNG TỔNG THỂ (PIPELINE 4 CHẶNG)
 * **Thời lượng dự kiến:** 1.5 phút
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị trên Slide:**
   * **Sơ đồ luồng xử lý End-to-End:**
     $$\text{Micro (Audio)} \xrightarrow{\text{STT}} \text{Văn bản câu hỏi} \xrightarrow{\text{Retrieval}} \text{Đoạn văn liên quan} \xrightarrow{\text{MRC}} \text{Đáp án} \xrightarrow{\text{TTS}} \text{Loa (Audio)}$$
@@ -105,7 +101,6 @@
 
 #### SLIDE 5: PHÂN HỆ 1 - NHẬN DẠNG TIẾNG NÓI (SPEECH-TO-TEXT)
 * **Thời lượng dự kiến:** 1.5 phút
-* **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị trên Slide:**
   * **Công nghệ cốt lõi:**
     * **Mô hình triển khai:** Whisper-small fine-tune LoRA 50h VietSpeech → CTranslate2 int8; **WER 13,77% / CER 6,67%** trên 1.802 mẫu test VietSpeech (Whisper small gốc: 36,76% / 19,43%).
@@ -124,7 +119,6 @@
 
 #### SLIDE 6: PHÂN HỆ 2 - TRUY XUẤT NGỮ CẢNH (PASSAGE RETRIEVAL)
 * **Thời lượng dự kiến:** 1.5 phút
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị trên Slide:**
   * **Bài toán:** Trong kịch bản thực tế, người dùng chỉ đặt câu hỏi mà không cung cấp bài đọc. Hệ thống phải tự tìm bài đọc liên quan nhất trong toàn bộ kho tài liệu.
   * **Truy xuất lai BM25 + Dense + Reranker:**
@@ -144,7 +138,6 @@
 
 #### SLIDE 7: PHÂN HỆ 3 - MÔ HÌNH ĐỌC HIỂU (MRC MODEL)
 * **Thời lượng dự kiến:** 2 phút
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị trên Slide:**
   * **ViT5 Sequence-to-Sequence (hỏi - đáp tự do):**
     * Kiến trúc Transformer T5 tiếng Việt (`vit5-combined-cont`), nhận `POST /api/answer {question, passage}` và trả về `{answer}`.
@@ -160,7 +153,6 @@
 
 #### SLIDE 8: PHÂN HỆ 4 - TỔNG HỢP TIẾNG NÓI (TEXT-TO-SPEECH)
 * **Thời lượng dự kiến:** 2 phút
-* **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị trên Slide:**
   * **Mô hình chủ đạo: Matcha-TTS (ICASSP 2024):**
     * Dựa trên **Optimal-Transport Conditional Flow Matching (OT-CFM)**: giải phương trình vi phân thường (ODE) theo quỹ đạo thẳng từ nhiễu Gaussian tới Mel-spectrogram.
@@ -178,7 +170,6 @@
 
 #### SLIDE 9: ĐÁNH GIÁ & BENCHMARK ĐỊNH LƯỢNG PHÂN HỆ TTS
 * **Thời lượng dự kiến:** 1.5 phút
-* **Người trình bày:** Trương Hoàng Duy
 * **Nội dung hiển thị trên Slide:**
   * **Bảng so sánh đối sánh thực nghiệm (trên 10 câu mẫu tham chiếu giọng người thật InfoRe1):**
 
@@ -202,7 +193,6 @@
 
 #### SLIDE 10: TÍCH HỢP HỆ THỐNG, GIAO DIỆN WEB & DOCKER
 * **Thời lượng dự kiến:** 1.5 phút
-* **Người trình bày:** Huỳnh Công Lương
 * **Nội dung hiển thị trên Slide:**
   * **Kiến trúc Full-Stack Thống nhất:**
     * **Backend (FastAPI):** Tích hợp cả 4 phân hệ qua REST API `/api/stt`, `/api/retrieve`, `/api/answer`, `/api/tts` và `/api/health`.
@@ -222,7 +212,6 @@
 
 #### SLIDE 11: KỊCH BẢN DEMO HỆ THỐNG THỰC TẾ
 * **Thời lượng dự kiến:** 2 phút
-* **Người trình bày:** Nhóm thực hiện (Demo trực tiếp hoặc video clip)
 * **Nội dung hiển thị trên Slide:**
   * **Tình huống Demo minh họa:**
     * **Đầu vào giọng nói:** Người dùng bấm micro và hỏi: *"Ai là tác giả của Truyện Kiều?"* (câu hỏi tự do).
@@ -241,7 +230,6 @@
 
 #### SLIDE 12: TỔNG KẾT, GIỚI HẠN & HƯỚNG PHÁT TRIỂN
 * **Thời lượng dự kiến:** 1.5 phút
-* **Người trình bày:** Ngô Trí Huy
 * **Nội dung hiển thị trên Slide:**
   * **Các kết quả đạt được:**
     * Xây dựng hoàn chỉnh hệ thống Voice Q&A tiếng Việt dựa trên ViMMRC 2.0 và UIT-ViQuAD2.0.

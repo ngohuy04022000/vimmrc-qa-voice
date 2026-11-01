@@ -33,7 +33,6 @@ with open(MD_PATH, "r", encoding="utf-8") as f:
 slide_pattern = (
     r'### SLIDE (\d+):\s*([^\n]+)\n'
     r'\* \*\*Thời lượng:\*\*\s*([^\n]+)\n'
-    r'\* \*\*Người trình bày:\*\*\s*([^\n]+)\n'
     r'\* \*\*Nội dung hiển thị:\*\*\n'
     r'(.*?)\n'
     r'\* \*\*Kịch bản thuyết trình \(Speaker Script\):\*\*\n'
@@ -45,9 +44,9 @@ for m in re.finditer(slide_pattern, md_text, re.DOTALL):
     num = int(m.group(1))
     title = m.group(2).strip()
     dur = m.group(3).strip()
-    speaker = m.group(4).strip()
-    bullets_raw = m.group(5).strip()
-    script_raw = m.group(6).strip()
+    speaker = ""
+    bullets_raw = m.group(4).strip()
+    script_raw = m.group(5).strip()
 
     # Clean script lines
     script_lines = []
@@ -180,7 +179,7 @@ run_sub2.font.color.rgb = RGBColor(0x4B, 0x55, 0x63)
 h2_1 = doc.add_paragraph()
 h2_1.paragraph_format.space_before = Pt(8)
 h2_1.paragraph_format.space_after = Pt(4)
-run_h2_1 = h2_1.add_run("1. Tổng quan phân công & phân bổ thời lượng 24 Slide (Tổng: 30:00)")
+run_h2_1 = h2_1.add_run("1. Tổng quan phân bổ thời lượng 24 Slide (Tổng: 30:00)")
 run_h2_1.font.name = "Calibri"
 run_h2_1.font.size = Pt(12.5)
 run_h2_1.font.bold = True
@@ -215,7 +214,6 @@ for i, s in enumerate(slides_data):
         str(s['num']),
         s['title'],
         s['dur'],
-        s['speaker'],
         str(s['wc']),
         s['est_str']
     ]
@@ -226,7 +224,7 @@ for i, s in enumerate(slides_data):
         if bg_color != "FFFFFF":
             set_cell_background(cell, bg_color)
         set_cell_margins(cell, top=50, bottom=50, left=80, right=80)
-        is_center = ci in [0, 4, 5]
+        is_center = ci in [0, 3, 4]
         format_cell_text(cell, txt, font_size=9.0, bold=(ci == 0))
         if is_center:
             cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -270,7 +268,7 @@ run_h2_2.font.bold = True
 run_h2_2.font.color.rgb = RGBColor(0x1F, 0x3A, 0x5F)
 
 t1_headers = [
-    "Slide · Thời gian · Người nói",
+    "Slide · Thời lượng",
     "Nội dung hiển thị trên slide",
     "Lời thoại (đọc thành tiếng - Verbatim Script)"
 ]
@@ -322,12 +320,6 @@ for i, s in enumerate(slides_data):
     r0_time.font.name = "Calibri"
     r0_time.font.size = Pt(9.0)
     r0_time.font.color.rgb = RGBColor(0x25, 0x63, 0xEB)
-
-    r0_spk = p0.add_run(f"Trình bày: {s['speaker']}\n\n")
-    r0_spk.font.name = "Calibri"
-    r0_spk.font.size = Pt(9.0)
-    r0_spk.font.bold = True
-    r0_spk.font.color.rgb = RGBColor(0x05, 0x96, 0x69)
 
     r0_wc = p0.add_run(f"Độ dài: {s['wc']} từ ({s['est_str']})")
     r0_wc.font.name = "Calibri"

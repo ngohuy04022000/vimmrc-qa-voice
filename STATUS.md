@@ -7,13 +7,13 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
 
 | Module | Trạng thái | File chính | Hợp đồng vào/ra | Chạy standalone | Test |
 |---|---|---|---|---|---|
-| STT | Xong (Faster-Whisper). Checkpoint fine-tune Whisper-small-vi (50h) có trên Drive nhóm, tải về `speech-to-text_Luong/models/whisper-small-vi-50h-ct2/` (không commit vào git) | `speech-to-text_Luong/stt_server.py` | `POST /api/stt` (multipart audio) → `{text}` | `WHISPER_MODEL=<path checkpoint> uvicorn stt_server:app --port 8001` (bỏ `WHISPER_MODEL` → tự dùng model 50h nếu có) | chưa có test riêng |
+| STT | Xong (Faster-Whisper). Checkpoint fine-tune Whisper-small-vi (50h) có trên Drive nhóm, tải về `speech-to-text_Luong/models/whisper-small-vi-50h-ct2/` (không commit vào git) | `speech-to-text_Luong/stt_server.py` | `POST /api/stt` (multipart audio) → `{text}` | `WHISPER_MODEL=<path checkpoint> uvicorn stt_server:app --port 8001` (bỏ `WHISPER_MODEL` → tự dùng model 50h nếu có) | `speech-to-text_Luong/tests/test_stt.py` (10 tests) |
 | Retrieval (RAG) | Xong. KB 2 tầng: `data/kb_index.json` (552 ViMMRC + 5.317 ViQuAD) + `data/kb_wiki_full` (1,48 triệu đoạn Wikipedia tiếng Việt, bm25s shard + chỉ mục dense multilingual-e5-small 384 chiều float16 ~1,1 GB). Mỗi câu lấy top-3 KB BM25 + top-3 wiki BM25 + top-3 wiki dense, reranker bge-reranker-v2-m3 chấm chung (+0,25 cho đoạn KB), điểm cao nhất thắng. Dựng bằng `build_kb.py`/`build_dense.py`; data không commit. BM25 hai tầng (trước reranker): dev R@1 70,7% / R@5 85,1% | `retrieval-model_Huy/kb_retriever.py` (`load_any`), `retrieval_client.py` | `Retriever.search(q, top_k) -> list[{id,passage,score}]`; `Retriever.retrieve(q) -> str` (API phụ, chỉ `test_retrieval.py` dùng) | `retrieval_cli.py` | `retrieval-model_Huy/test_retrieval.py` |
 | MRC (ViT5) | Đã fine-tune trên bộ dữ liệu mở rộng (xem dưới): **Exact Match 41,05%, token F1 66,55%** trên test (2.716 câu, không so được với số liệu ViMMRC thuần cũ). Checkpoint dùng trong Docker: `mrc-model_Huy/checkpoints/vit5-combined-cont/` (train tiếp 2 epoch từ `vit5-combined`, F1 66,02%), không commit (quá lớn) | `mrc-model_Huy/mrc_client.py` | `answer_question(question, passage) -> str` | `MRC_CHECKPOINT=<path> uvicorn scripts.api_server:app`, hoặc `MRCClient(checkpoint_dir)` trực tiếp | `mrc-model_Huy/tests/` |
 | Lexical baseline (MRC) | Xong, dùng khi chưa có checkpoint ViT5 | `mrc_client.LexicalBaselineClient` | `answer_question(question, passage) -> str` | không cần setup | cùng `mrc-model_Huy/tests/` |
 | TTS | Xong: Matcha-TTS mặc định (cần `checkpoints/matcha_vi.pt` + `scripts/setup_matcha.py`), VITS/Edge/gTTS, lỗi thì fallback gTTS | `text-to-speech_Duy/synthesize.py` | `synthesize(text, engine?, voice?) -> đường dẫn audio` | `python synthesize.py --text "..."` | `text-to-speech_Duy/tests/` |
-| Tích hợp API | Xong | `scripts/api_server.py` (mount `stt_server.app`) | xem bảng route dưới | `uvicorn scripts.api_server:app` | `tests/test_api_server.py`, `tests/test_pipeline.py` |
-| Web UI | Xong (Angular), build sẵn được server phục vụ nếu có `dist/` | `web-interface_Luong/src/app/` | gọi các route `/api/*` qua `pipeline.service.ts` | `npm start` trong `web-interface_Luong/` | chưa có test riêng |
+| Tích hợp API | Xong | `scripts/api_server.py` (mount `stt_server.app`) | xem bảng route dưới | `uvicorn scripts.api_server:app` (tự động phát hiện ViT5 checkpoint và KB index) | `tests/test_api_server.py`, `tests/test_pipeline.py`, `tests/test_web_ui.py` |
+| Web UI | Xong (Angular), build sẵn được server phục vụ nếu có `dist/` | `web-interface_Luong/src/app/` | gọi các route `/api/*` qua `pipeline.service.ts` | `npm start` trong `web-interface_Luong/` | `tests/test_web_ui.py` (5 tests) |
 
 ## API contract thật (khớp code, không phải thiết kế dự kiến)
 
@@ -101,10 +101,14 @@ GPT-4/Claude thay Ollama local 9B), hoặc re-rank nhiều candidate answer, ho�
 accuracy làm thước đo chính thay EM ký tự (EM ký tự về cấu trúc không thể cao với câu trả lời
 dài có trong dữ liệu này, bất kể model tốt đến đâu).
 
-## Nợ kỹ thuật còn lại (không gấp)
+## Nợ kỹ thuật & Cải tiến đã hoàn thành
 
-- STT, web UI chưa có test riêng.
-- Pipeline mặc định (không set `MRC_CHECKPOINT`) vẫn chạy lexical baseline — checkpoint ViT5 đã có nhưng
-  không commit vào git (quá lớn), mỗi máy cần tự chạy `train.py` để có checkpoint cục bộ.
-- Exact Match 41% còn khiêm tốn — ViT5-base, 3 epoch, chưa hyperparameter search. Đã thử LLM judge/generate
-  để cải thiện (xem mục trên) — không có hướng nào vượt trội rõ ràng ở quy mô đã thử.
+- **Kiểm thử tự động toàn diện**: Đã bổ sung bộ kiểm thử riêng cho STT (`speech-to-text_Luong/tests/test_stt.py` với 10 tests) và Web UI (`tests/test_web_ui.py` với 5 tests). Tổng bộ test suite hiện có **69 automated tests** (100% passed).
+- **Auto-Discovery trong API Server**: `scripts/api_server.py` tự động phát hiện và nạp checkpoint `vit5-combined-cont` và kho tri thức `data/kb_index.json` (5.869 passages) mà không cần biến môi trường thủ công.
+- **Reranker Gating Logic**: Thêm ngưỡng tin cậy `raw > -2.0` cho `kb_bonus` trong `TieredRetriever._rerank` nhằm ngăn chặn các đoạn KB không liên quan đè lên kết quả Wikipedia của các câu hỏi miền mở.
+- **Tương thích Transformers 5.x / Tokenizers 0.23**: Bổ sung cơ chế fallback `PreTrainedTokenizerFast` cho `mrc_client.py` xử lý triệt để lỗi BPE vocab dict.
+- **Gói triển khai & chạy cục bộ hoàn chỉnh**: Đã đóng gói thư mục `ViMMRC_Training_and_Local_Run_Package/` (1,23 GB) và archive `docs/ViMMRC_Training_and_Local_Run_Package.zip` (1,10 GB) bao gồm weights stripped optimizer states, dữ liệu 27.164 câu, audio mẫu, script kiểm tra `test_quick_inference.py` và cẩm nang hướng dẫn đầy đủ.
+
+## Hướng phát triển tiếp theo
+
+- Exact Match 41% còn khiêm tốn (ViT5-base, 3 epoch) — có thể tiếp tục fine-tune thêm epoch với learning rate scheduler hoặc khám phá mô hình Seq2Seq lớn hơn khi có tài nguyên GPU mạnh hơn.

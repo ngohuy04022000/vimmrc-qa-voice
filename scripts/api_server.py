@@ -103,8 +103,24 @@ class TTSRequest(BaseModel):
         return value
 
 
+def find_default_checkpoint() -> str | None:
+    """Auto-discover the best trained MRC ViT5 checkpoint if available."""
+    candidates = [
+        ROOT / "mrc-model_Huy" / "checkpoints" / "vit5-combined-cont",
+        ROOT / "mrc-model_Huy" / "checkpoints" / "vit5-combined",
+        ROOT / "mrc-model_Huy" / "checkpoints" / "vit5-vimmrc-ft",
+        ROOT / "models_and_checkpoints" / "mrc_vit5_combined",
+    ]
+    for cand in candidates:
+        if cand.is_dir() and (cand / "config.json").exists() and any(
+            (cand / name).exists() for name in ("model.safetensors", "pytorch_model.bin")
+        ):
+            return str(cand)
+    return None
+
+
 def get_qa_services() -> tuple[Retriever, object]:
-    """Load index and reader with fallbacks."""
+    """Load index and reader with fallbacks and auto-discovery."""
     global _retriever, _reader
     if _retriever is not None and _reader is not None:
         return _retriever, _reader
@@ -112,10 +128,18 @@ def get_qa_services() -> tuple[Retriever, object]:
     with _service_lock:
         if _retriever is None:
             index_path = os.getenv("QA_INDEX")
+            kb_index = ROOT / "data" / "kb_index.json"
             default_index = ROOT / "data" / "vimmrc_index.json"
+            wiki_dir = os.getenv("KB_WIKI") or (
+                str(ROOT / "data" / "kb_wiki_full") if (ROOT / "data" / "kb_wiki_full").is_dir() else None
+            )
+            ratio = float(os.getenv("KB_WIKI_RATIO", "0.4"))
+            reranker = os.getenv("KB_RERANKER") or None
+
             if index_path and Path(index_path).exists():
-                _retriever = load_any(index_path, os.getenv("KB_WIKI"), float(os.getenv("KB_WIKI_RATIO", "0.4")),
-                                      os.getenv("KB_RERANKER") or None)
+                _retriever = load_any(index_path, wiki_dir, ratio, reranker)
+            elif kb_index.exists():
+                _retriever = load_any(str(kb_index), wiki_dir, ratio, reranker)
             elif default_index.exists():
                 _retriever = Retriever.load(str(default_index))
             else:
@@ -123,23 +147,42 @@ def get_qa_services() -> tuple[Retriever, object]:
 
         if _reader is None:
             checkpoint = os.getenv("MRC_CHECKPOINT")
-            _reader = MRCClient(checkpoint) if checkpoint else LexicalBaselineClient()
+            if checkpoint and checkpoint.lower() in ("lexical", "baseline", "none"):
+                _reader = LexicalBaselineClient()
+            elif checkpoint and Path(checkpoint).exists():
+                _reader = MRCClient(checkpoint)
+            else:
+                default_ckpt = find_default_checkpoint()
+                if default_ckpt:
+                    try:
+                        _reader = MRCClient(default_ckpt)
+                    except Exception:
+                        _reader = LexicalBaselineClient()
+                else:
+                    _reader = LexicalBaselineClient()
 
     return _retriever, _reader
 
 
 @app.get("/api/health")
 def health() -> dict:
-    retriever, _ = get_qa_services()
-    index_source = "custom_index" if os.getenv("QA_INDEX") else (
-        "vimmrc_corpus" if (ROOT / "data" / "vimmrc_index.json").exists() else "demo_corpus"
-    )
+    retriever, reader = get_qa_services()
+    if os.getenv("QA_INDEX"):
+        index_source = "custom_index"
+    elif (ROOT / "data" / "kb_index.json").exists():
+        index_source = "kb_corpus"
+    elif (ROOT / "data" / "vimmrc_index.json").exists():
+        index_source = "vimmrc_corpus"
+    else:
+        index_source = "demo_corpus"
+
+    is_vit5 = reader.__class__.__name__ == "MRCClient"
     dist_browser = ROOT / "web-interface_Luong" / "dist" / "web-interface" / "browser"
     return {
         "status": "ok",
         "retrieval": index_source,
         "retrieval_passages": len(retriever.passages),
-        "reader": "trained_vit5" if os.getenv("MRC_CHECKPOINT") else "lexical_baseline",
+        "reader": "trained_vit5" if is_vit5 else "lexical_baseline",
         "tts_engine": os.getenv("TTS_ENGINE", "matcha"),
         "frontend_served": dist_browser.exists() and (dist_browser / "index.html").exists(),
     }

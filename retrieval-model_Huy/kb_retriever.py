@@ -135,8 +135,14 @@ class TieredRetriever:
         if not cands:
             return []
         kb_ids = {h["id"] for h in kb}
-        for h, s in zip(cands, self.reranker.predict([(question, h["passage"]) for h in cands], batch_size=16)):
-            h["score"] = float(s) + (self.kb_bonus if h["id"] in kb_ids else 0.0)
+        raw_scores = self.reranker.predict([(question, h["passage"]) for h in cands], batch_size=16)
+        for h, s in zip(cands, raw_scores):
+            raw = float(s)
+            # Dynamic gated bonus: only apply kb_bonus if the candidate has plausible semantic relevance
+            # (raw cross-encoder score > -2.0). This prevents low-confidence KB false positives
+            # from overriding high-relevance Wikipedia passages on open-domain questions.
+            bonus = self.kb_bonus if (h["id"] in kb_ids and raw > -2.0) else 0.0
+            h["score"] = raw + bonus
         return sorted(cands, key=lambda h: -h["score"])[:top_k]
 
     def retrieve(self, question: str) -> str:

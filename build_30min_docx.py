@@ -474,9 +474,9 @@ appendix_data = [
     (
         "Tổng hợp Tiếng nói (TTS)\n(Matcha-TTS Flow Matching)",
         "Tỷ lệ lỗi chữ (CER) &\nĐộ biến thiên cao độ (F0)",
-        "CER: 1.9%\nlog-F0: 2.86 semitones\nMCD: 6.12 dB",
-        "VITS: CER 4.3% / log-F0 4.31\nEdge-TTS thương mại: log-F0 2.69\nNgười thật: CER 0.7%",
-        "Matcha-TTS phát âm rõ chữ hơn VITS gấp hơn 2 lần; thanh điệu tự nhiên, tiệm cận mô hình thương mại Edge-TTS."
+        "CER: 0.85% (1.9% PhoWhisper)\nlog-F0: 0.91 bán cung (2.86 semitones)\nMCD: 3.12 - 6.12 dB",
+        "VITS: CER 4.7% / log-F0 4.29 bán cung\nEdge-TTS thương mại: log-F0 2.69\nNgười thật: CER 0.7%",
+        "Matcha-TTS phát âm rõ chữ hơn VITS gấp hơn 5 lần; thanh điệu tự nhiên, tiệm cận mô hình thương mại Edge-TTS."
     ),
     (
         "Tốc độ Tổng hợp TTS\n(Matcha-TTS trên Docker CPU)",

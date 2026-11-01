@@ -1,0 +1,29 @@
+{
+  "task": "four-choice answer selection; options required",
+  "train_examples": 3600,
+  "inner_train_examples": 2914,
+  "inner_valid_examples": 686,
+  "dev_examples": 564,
+  "seed": 42,
+  "tuning": [
+    {
+      "c": 0.1,
+      "inner_valid_accuracy": 0.5364431486880467
+    },
+    {
+      "c": 1.0,
+      "inner_valid_accuracy": 0.5379008746355685
+    },
+    {
+      "c": 10.0,
+      "inner_valid_accuracy": 0.5393586005830904
+    }
+  ],
+  "selected_c": 10.0,
+  "inner_valid_accuracy": 0.5393586005830904,
+  "dev_ranker_accuracy": 0.5195035460992907,
+  "dev_lexical_accuracy": 0.43617021276595747,
+  "dev_seeded_random_accuracy": 0.25177304964539005,
+  "nominal_random_chance": 0.25,
+  "test_evaluated": false
+}

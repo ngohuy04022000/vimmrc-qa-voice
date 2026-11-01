@@ -35,7 +35,9 @@ checkpoints/
 .idea/
 .DS_Store
 
-# node / frontend
+# large packages for drive upload
+ViMMRC_Training_and_Local_Run_Package/
+*.zip
 node_modules/
 dist/
 .angular/

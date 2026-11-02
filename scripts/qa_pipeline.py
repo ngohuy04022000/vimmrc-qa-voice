@@ -14,6 +14,7 @@ for folder in ("retrieval-model_Huy", "mrc-model_Huy", "text-to-speech_Duy", "te
 
 from retrieval_client import Retriever
 from mrc_client import LexicalBaselineClient, MRCClient
+from intent_router import ConversationalIntentRouter, polish_answer, rerank_hits
 
 
 class QAPipeline:
@@ -26,15 +27,37 @@ class QAPipeline:
     def predict(self, question: str) -> dict:
         if not isinstance(question, str) or not question.strip():
             raise ValueError("question must be non-empty text")
-        hits = self.retriever.search(question, top_k=1)
+        conv_resp = ConversationalIntentRouter.get_conversational_response(question)
+        if conv_resp:
+            return {
+                "question": question,
+                "answer": conv_resp,
+                "passage_id": "intent:conversational",
+                "passage": conv_resp,
+                "retrieval_score": 100.0,
+                "is_conversational": True,
+            }
+        raw_hits = self.retriever.search(question, top_k=5)
+        hits = rerank_hits(question, raw_hits, top_k=1)
         if not hits or hits[0]["score"] <= 0:
-            return {"question": question, "answer": "Không tìm thấy đoạn văn phù hợp.",
-                    "passage_id": None, "passage": "", "retrieval_score": 0.0}
+            return {
+                "question": question,
+                "answer": "Không tìm thấy đoạn văn phù hợp.",
+                "passage_id": None,
+                "passage": "",
+                "retrieval_score": 0.0,
+                "is_conversational": False,
+            }
         hit = hits[0]
-        return {"question": question,
-                "answer": self.reader.answer_question(question, hit["passage"]),
-                "passage_id": hit["id"], "passage": hit["passage"],
-                "retrieval_score": hit["score"]}
+        raw_answer = self.reader.answer_question(question, hit["passage"])
+        return {
+            "question": question,
+            "answer": polish_answer(raw_answer, question),
+            "passage_id": hit["id"],
+            "passage": hit["passage"],
+            "retrieval_score": hit["score"],
+            "is_conversational": False,
+        }
 
     def answer_question(self, question: str) -> str:
         """Plain text contract for STT/web input and TTS output."""

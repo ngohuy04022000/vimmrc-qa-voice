@@ -103,7 +103,34 @@ dài có trong dữ liệu này, bất kể model tốt đến đâu).
 
 ## Nợ kỹ thuật & Cải tiến đã hoàn thành
 
-- **Kiểm thử tự động toàn diện**: Đã bổ sung bộ kiểm thử riêng cho STT (`speech-to-text_Luong/tests/test_stt.py` với 10 tests) và Web UI (`tests/test_web_ui.py` với 5 tests). Tổng bộ test suite hiện có **69 automated tests** (100% passed).
+- **Kiểm thử tự động toàn diện**: Đã bổ sung bộ kiểm thử riêng cho STT (`speech-to-text_Luong/tests/test_stt.py` với 10 tests), Web UI (`tests/test_web_ui.py` với 5 tests), Intent Router (`tests/test_intent_router.py` với 8 tests), và Out-of-Dataset Suite (`tests/test_out_of_dataset.py` với 5 tests). Tổng bộ test suite hiện có **82 automated tests** (100% passed).
+- **Điều hướng hội thoại & Chuẩn hóa câu trả lời (Intent Router & Answer Polish)**: Tích hợp `scripts/intent_router.py` tự động nhận diện các ý định hội thoại (chào hỏi, danh tính trợ lý, tính năng, cảm ơn, tạm biệt, hỏi thăm) với độ trễ 0,1 ms. Bộ lọc `polish_answer()` loại bỏ ngoặc kép thừa, chuẩn hóa dấu câu và viết hoa đầu câu, đảm bảo 100% câu trả lời hoàn chỉnh, tự nhiên cho giọng đọc TTS.
+- **Reranking cụm từ N-gram liên tục**: Bổ sung cơ chế `rerank_hits()` tính điểm khớp 2-gram, 3-gram và 4-gram liên tục giữa câu hỏi và đoạn văn để ưu tiên đoạn trích mang đúng thực thể ngay cả khi BM25 đơn từ bị phân tán.
+- **Auto-Discovery trong API Server**: `scripts/api_server.py` tự động phát hiện và nạp checkpoint `vit5-combined-cont` và kho tri thức `data/kb_index.json` (5.874 passages) mà không cần biến môi trường thủ công.
+- **Reranker Gating Logic**: Thêm ngưỡng tin cậy `raw > -2.0` cho `kb_bonus` trong `TieredRetriever._rerank` nhằm ngăn chặn các đoạn KB không liên quan đè lên kết quả Wikipedia của các câu hỏi miền mở.
+- **Tương thích Transformers 5.x / Tokenizers 0.23**: Bổ sung cơ chế fallback `PreTrainedTokenizerFast` cho `mrc_client.py` xử lý triệt để lỗi BPE vocab dict.
+- **Gói triển khai & chạy cục bộ hoàn chỉnh**: Đã đóng gói thư mục `ViMMRC_Training_and_Local_Run_Package/` (1,23 GB) và archive `docs/ViMMRC_Training_and_Local_Run_Package.zip` (1,10 GB) bao gồm weights stripped optimizer states, dữ liệu 27.164 câu, audio mẫu, script kiểm tra `test_quick_inference.py` và cẩm nang hướng dẫn đầy đủ.
+
+## Đánh giá bộ chuẩn mở rộng Out-of-Dataset (110 câu hỏi độc lập ngoài tập dữ liệu)
+
+Để đảm bảo hệ thống không chỉ trả lời tốt các câu hỏi nội bộ tập dữ liệu mà còn tương tác tự nhiên, hoàn chỉnh với các câu hỏi và hội thoại ngẫu nhiên bên ngoài, nhóm đã xây dựng và kiểm thử bộ chuẩn **110 câu hỏi Out-of-Dataset** (`data/out_of_dataset_eval_100.json`, báo cáo chi tiết `reports/out_of_dataset_evaluation.json`):
+
+- **Zero Data Leakage (0% trùng lặp)**: Đã kiểm chứng toán học toàn bộ 110 câu hỏi không trùng với bất kỳ câu nào trong `train_vimmrc.json`, `dev_vimmrc.json` và `test_vimmrc.json`.
+- **Tỷ lệ hoàn thiện câu trả lời (Completion & Polishing Rate)**: **100,0%** (110/110 câu trả lời có cấu trúc ngữ pháp hoàn chỉnh, viết hoa đầu câu, kết thúc bằng dấu câu hợp lệ, sẵn sàng đọc qua TTS).
+- **Độ trễ trung bình**: QA Pipeline đạt **593,5 ms/câu** trên CPU (hội thoại: 0,1 ms; câu hỏi tra cứu: 500-900 ms).
+- **Vòng lặp kiểm thử âm thanh (TTS & STT Loopback)**: 100% câu trả lời được tổng hợp âm thanh thành công (gTTS/Matcha-TTS). Faster-Whisper CT2 nhận dạng vòng lặp đạt độ rõ ràng 62,5% - 94,6% khớp ngữ âm.
+
+### Chi tiết phân bố theo chủ đề:
+
+| Nhóm chủ đề | Số lượng | Tỷ lệ hoàn thiện | Độ trễ TB (ms) | Mô tả & Ví dụ tiêu biểu |
+|---|---|---|---|---|
+| **Hội thoại giao tiếp** | 25 câu | **100,0%** | 0,1 ms | Chào hỏi, danh tính, năng lực hệ thống, cảm ơn, tạm biệt. (*"Bạn là ai vậy?"* → Trả lời đầy đủ danh tính hệ thống) |
+| **Lịch sử Việt Nam** | 20 câu | **100,0%** | 996,9 ms | Nhân vật, triều đại, chiến công hiển hách. (*"Quang Trung đại phá quân Thanh vào năm nào?"* → *"Năm Kỷ Dậu 1789."*) |
+| **Địa lý Việt Nam** | 20 câu | **100,0%** | 734,6 ms | Danh lam thắng cảnh, đỉnh núi, sông ngòi, hang động. (*"Đảo nào có diện tích lớn nhất Việt Nam?"* → *"Đảo Phú Quốc."*) |
+| **Văn học & Văn hóa** | 15 câu | **100,0%** | 730,3 ms | Tác giả, tác phẩm kinh điển, lễ hội truyền thống. (*"Ai là tác giả Truyện Kiều?"* → *"Nguyễn Du."*) |
+| **Khoa học & Đời sống** | 15 câu | **100,0%** | 787,2 ms | Hiện tượng vật lý, hóa học, sinh học, toán học thường nhật. (*"Nước sôi ở nhiệt độ bao nhiêu?"* → *"100 độ C."*) |
+| **Công nghệ & AI** | 15 câu | **100,0%** | 525,6 ms | Thuật ngữ AI, STT, TTS, Whisper, ViT5, Docker. (*"AI là viết tắt của thuật ngữ gì?"* → *"Artificial Intelligence."*) |
+| **Tổng cộng** | **110 câu** | **100,0%** | **593,5 ms** | **Bộ chuẩn đánh giá độc lập toàn diện** |
 - **Auto-Discovery trong API Server**: `scripts/api_server.py` tự động phát hiện và nạp checkpoint `vit5-combined-cont` và kho tri thức `data/kb_index.json` (5.869 passages) mà không cần biến môi trường thủ công.
 - **Reranker Gating Logic**: Thêm ngưỡng tin cậy `raw > -2.0` cho `kb_bonus` trong `TieredRetriever._rerank` nhằm ngăn chặn các đoạn KB không liên quan đè lên kết quả Wikipedia của các câu hỏi miền mở.
 - **Tương thích Transformers 5.x / Tokenizers 0.23**: Bổ sung cơ chế fallback `PreTrainedTokenizerFast` cho `mrc_client.py` xử lý triệt để lỗi BPE vocab dict.

@@ -39,6 +39,7 @@ for folder in (
 from retrieval_client import Retriever
 from kb_retriever import load_any
 from mrc_client import LexicalBaselineClient, MRCClient
+from intent_router import ConversationalIntentRouter, polish_answer, rerank_hits
 
 from synthesize import synthesize as tts_synthesize
 import stt_server
@@ -150,12 +151,12 @@ def get_qa_services() -> tuple[Retriever, object]:
             if checkpoint and checkpoint.lower() in ("lexical", "baseline", "none"):
                 _reader = LexicalBaselineClient()
             elif checkpoint and Path(checkpoint).exists():
-                _reader = MRCClient(checkpoint)
+                _reader = MRCClient(checkpoint, context_strategy=os.getenv("MRC_CONTEXT_STRATEGY", "question_chunks"))
             else:
                 default_ckpt = find_default_checkpoint()
                 if default_ckpt:
                     try:
-                        _reader = MRCClient(default_ckpt)
+                        _reader = MRCClient(default_ckpt, context_strategy=os.getenv("MRC_CONTEXT_STRATEGY", "question_chunks"))
                     except Exception:
                         _reader = LexicalBaselineClient()
                 else:
@@ -190,8 +191,21 @@ def health() -> dict:
 
 @app.post("/api/retrieve")
 def retrieve(request: RetrieveRequest) -> dict:
+    conv_resp = ConversationalIntentRouter.get_conversational_response(request.question)
+    if conv_resp:
+        return {
+            "passages": [
+                {
+                    "id": "intent:conversational",
+                    "text": conv_resp,
+                    "score": 100.0,
+                }
+            ]
+        }
     retriever, _ = get_qa_services()
-    hits = retriever.search(request.question, top_k=request.top_k)
+    candidate_k = max(request.top_k * 2, 5)
+    raw_hits = retriever.search(request.question, top_k=candidate_k)
+    hits = rerank_hits(request.question, raw_hits, top_k=request.top_k)
     return {
         "passages": [
             {
@@ -206,8 +220,12 @@ def retrieve(request: RetrieveRequest) -> dict:
 
 @app.post("/api/answer")
 def answer(request: AnswerRequest) -> dict:
+    conv_resp = ConversationalIntentRouter.get_conversational_response(request.question)
+    if conv_resp:
+        return {"answer": conv_resp}
     _, reader = get_qa_services()
-    return {"answer": reader.answer_question(request.question, request.passage)}
+    raw_answer = reader.answer_question(request.question, request.passage)
+    return {"answer": polish_answer(raw_answer, request.question)}
 
 
 @app.post("/api/tts")

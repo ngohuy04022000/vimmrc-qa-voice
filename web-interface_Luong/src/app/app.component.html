@@ -34,6 +34,8 @@
           <div class="starter-grid">
             <button type="button" (click)="typedQuestion = 'Nội dung chính của đoạn văn là gì?'">Nội dung chính là gì?</button>
             <button type="button" (click)="typedQuestion = 'Ý nghĩa của đoạn văn này là gì?'">Giải thích ý nghĩa</button>
+            <button type="button" (click)="typedQuestion = 'Sông Hồng hay sông Mê Kông dài hơn?'">Hỏi so sánh</button>
+            <button type="button" (click)="typedQuestion = 'Vì sao bầu trời có màu xanh?'">Hỏi tại sao</button>
           </div>
         </div>
       }
@@ -47,7 +49,10 @@
           <article class="answer-row">
             <span class="assistant-avatar">V</span>
             <div class="answer-card">
-              <span class="answer-label">Câu trả lời</span>
+              <span class="answer-label">{{ msg.kind ? kindLabels[msg.kind] : 'Câu trả lời' }}</span>
+              @if (msg.resolvedQuestion) {
+                <small class="resolved-question">Hiểu câu hỏi là: “{{ msg.resolvedQuestion }}”</small>
+              }
               <p class="answer-text">{{ msg.text }}</p>
               @if (msg.passage) {
                 <blockquote>
@@ -107,7 +112,7 @@
       @if (latestPassage(); as passage) {
         <div class="selected-passage">
           <strong>Đoạn văn được chọn</strong>
-          @if (passage.score !== undefined) { <span class="score">{{ (passage.score * 100).toFixed(0) }}%</span> }
+          @if (passage.score !== undefined && passage.score !== null && passage.score >= 0 && passage.score <= 1) { <span class="score">{{ (passage.score * 100).toFixed(0) }}%</span> }
           <p>{{ passage.text }}</p>
         </div>
       } @else {

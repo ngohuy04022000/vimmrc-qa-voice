@@ -4,6 +4,8 @@ Integrates:
 - STT: Faster-Whisper (speech-to-text_Luong)
 - Retrieval: BM25 Retriever over ViMMRC 2.0 articles (retrieval-model_Huy)
 - MRC: fine-tuned ViT5 answer generator (mrc-model_Huy)
+- Dialogue: multi-turn conversation layer (dialogue-manager_Huy): small talk, follow-up
+  rewriting, comparison / multi-part / yes-no questions, full-sentence answers for TTS
 - TTS: Multi-engine Vietnamese synthesis with normalizer (text-to-speech_Duy)
 - Web UI: Angular static assets mounted directly when built (web-interface_Luong)
 
@@ -26,6 +28,7 @@ from starlette.staticfiles import StaticFiles
 
 ROOT = Path(__file__).resolve().parents[1]
 for folder in (
+    "dialogue-manager_Huy",
     "retrieval-model_Huy",
     "mrc-model_Huy",
     "speech-to-text_Luong",
@@ -38,7 +41,9 @@ for folder in (
 
 from retrieval_client import Retriever
 from kb_retriever import load_any
-from mrc_client import LexicalBaselineClient, MRCClient
+from mrc_client import MRCClient
+from answer_composer import HeuristicReader
+from dialogue import DialogueManager
 
 from synthesize import synthesize as tts_synthesize
 import stt_server
@@ -49,17 +54,10 @@ app.title = "ViMMRC Voice Q&A API"
 _service_lock = Lock()
 _retriever: Retriever | None = None
 _reader = None
+_dialogue: DialogueManager | None = None
 
-DEMO_PASSAGES = [
-    {
-        "id": "demo:capital",
-        "passage": "Hà Nội là thủ đô của Việt Nam. Thành phố nằm ở miền Bắc.",
-    },
-    {
-        "id": "demo:river",
-        "passage": "Sông Cửu Long chảy qua vùng đồng bằng Nam Bộ.",
-    },
-]
+# Kho kiến thức mẫu (~75 đoạn) dùng khi chưa có data/: đủ để demo hội thoại ngoài hộp.
+SEED_KB = ROOT / "dialogue-manager_Huy" / "eval" / "seed_kb.json"
 
 
 class RetrieveRequest(BaseModel):
@@ -86,6 +84,24 @@ class AnswerRequest(BaseModel):
         if not value:
             raise ValueError("text must not be blank")
         return value
+
+
+class AskRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=2000)
+    session_id: str | None = Field(default=None, max_length=100)
+    passage: str | None = Field(default=None, max_length=100_000)
+
+    @field_validator("question")
+    @classmethod
+    def question_must_not_be_blank(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("question must not be blank")
+        return value
+
+
+class ResetRequest(BaseModel):
+    session_id: str = Field(min_length=1, max_length=100)
 
 
 class TTSRequest(BaseModel):
@@ -119,27 +135,39 @@ def get_qa_services() -> tuple[Retriever, object]:
             elif default_index.exists():
                 _retriever = Retriever.load(str(default_index))
             else:
-                _retriever = Retriever(DEMO_PASSAGES)
+                import json
+                _retriever = Retriever(json.loads(SEED_KB.read_text(encoding="utf-8")))
 
         if _reader is None:
             checkpoint = os.getenv("MRC_CHECKPOINT")
-            _reader = MRCClient(checkpoint) if checkpoint else LexicalBaselineClient()
+            _reader = MRCClient(checkpoint) if checkpoint else HeuristicReader()
 
     return _retriever, _reader
+
+
+def get_dialogue() -> DialogueManager:
+    global _dialogue
+    if _dialogue is None:
+        retriever, reader = get_qa_services()
+        with _service_lock:
+            if _dialogue is None:
+                _dialogue = DialogueManager(retriever, reader, min_support=float(os.getenv("DIALOGUE_MIN_SUPPORT", "0.34")))
+    return _dialogue
 
 
 @app.get("/api/health")
 def health() -> dict:
     retriever, _ = get_qa_services()
     index_source = "custom_index" if os.getenv("QA_INDEX") else (
-        "vimmrc_corpus" if (ROOT / "data" / "vimmrc_index.json").exists() else "demo_corpus"
+        "vimmrc_corpus" if (ROOT / "data" / "vimmrc_index.json").exists() else "seed_corpus"
     )
     dist_browser = ROOT / "web-interface_Luong" / "dist" / "web-interface" / "browser"
     return {
         "status": "ok",
         "retrieval": index_source,
         "retrieval_passages": len(retriever.passages),
-        "reader": "trained_vit5" if os.getenv("MRC_CHECKPOINT") else "lexical_baseline",
+        "reader": "trained_vit5" if os.getenv("MRC_CHECKPOINT") else "heuristic_reader",
+        "dialogue": True,
         "tts_engine": os.getenv("TTS_ENGINE", "matcha"),
         "frontend_served": dist_browser.exists() and (dist_browser / "index.html").exists(),
     }
@@ -165,6 +193,31 @@ def retrieve(request: RetrieveRequest) -> dict:
 def answer(request: AnswerRequest) -> dict:
     _, reader = get_qa_services()
     return {"answer": reader.answer_question(request.question, request.passage)}
+
+
+@app.post("/api/ask")
+def ask(request: AskRequest) -> dict:
+    """Một lượt hội thoại: xã giao, câu nối tiếp, so sánh, câu ghép, đúng/sai, hỏi đáp thường.
+
+    Giữ ngữ cảnh theo session_id (trả về ở lượt đầu, gửi lại ở các lượt sau)."""
+    result = get_dialogue().respond(request.question, request.session_id, request.passage)
+    passage = result.get("passage")
+    return {
+        "answer": result["answer"],
+        "kind": result["kind"],
+        "intent": result.get("intent"),
+        "session_id": result["session_id"],
+        "resolved_question": result.get("resolved_question"),
+        "passage": {"id": passage.get("id"), "text": passage.get("text"), "score": passage.get("score")} if passage else None,
+        "parts": [{"question": p.get("resolved_question"), "answer": p.get("answer"), "kind": p.get("kind")}
+                  for p in result.get("parts", [])],
+    }
+
+
+@app.post("/api/ask/reset")
+def ask_reset(request: ResetRequest) -> dict:
+    get_dialogue().reset(request.session_id)
+    return {"status": "ok"}
 
 
 @app.post("/api/tts")

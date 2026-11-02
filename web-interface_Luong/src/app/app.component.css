@@ -447,3 +447,11 @@ blockquote span { color: #4c6385; font-size: 12px; line-height: 1.55; }
   .report-tip { grid-template-columns: auto 1fr; }
   .report-tip button { grid-column: 1 / -1; }
 }
+
+.resolved-question {
+  display: block;
+  margin: 2px 0 6px;
+  color: #6b7280;
+  font-style: italic;
+  font-size: 0.85em;
+}

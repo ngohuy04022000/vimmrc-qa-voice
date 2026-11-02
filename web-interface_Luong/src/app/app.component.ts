@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, ViewChild, computed, inject, signal }
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { ChatMessage, Passage, PipelineStep } from './models/chat.models';
+import { AnswerKind, ChatMessage, Passage, PipelineStep } from './models/chat.models';
 import { AudioRecorderService } from './services/audio-recorder.service';
 import { PipelineService } from './services/pipeline.service';
 
@@ -10,13 +10,25 @@ const STEP_LABELS: Record<PipelineStep, string> = {
   idle: 'Sẵn sàng',
   recording: 'Đang thu âm...',
   stt: 'Whisper đang nhận dạng giọng nói...',
-  retrieval: 'Đang tìm đoạn văn liên quan...',
-  mrc: 'Mô hình đang đọc hiểu và trả lời...',
+  retrieval: 'Đang hiểu câu hỏi và tìm đoạn văn liên quan...',
+  mrc: 'Mô hình đang đọc hiểu và soạn câu trả lời...',
   tts: 'Đang tổng hợp giọng nói...',
   playback: 'Đang phát câu trả lời...',
 };
 
 type FlowState = 'waiting' | 'active' | 'done';
+
+const KIND_LABELS: Record<AnswerKind, string> = {
+  qa: 'Câu trả lời',
+  multi: 'Trả lời từng ý',
+  compare: 'So sánh',
+  yesno: 'Đúng / sai',
+  summary: 'Tóm tắt đoạn văn',
+  expand: 'Giải thích thêm',
+  smalltalk: 'Trò chuyện',
+  math: 'Phép tính',
+  unknown: 'Chưa tìm thấy',
+};
 type AppView = 'chat' | 'library' | 'history' | 'report';
 
 interface LibraryPassage extends Passage {
@@ -37,6 +49,8 @@ export class AppComponent implements OnDestroy {
   private readonly pipeline = inject(PipelineService);
   private readonly objectUrls: string[] = [];
   private nextId = 1;
+  /** Phiên hội thoại phía server, để hiểu câu nối tiếp như "còn Hàn Quốc thì sao?". */
+  private sessionId: string | null = null;
 
   @ViewChild('player') private player?: ElementRef<HTMLAudioElement>;
   @ViewChild('chatLog') private chatLog?: ElementRef<HTMLElement>;
@@ -46,6 +60,7 @@ export class AppComponent implements OnDestroy {
   readonly error = signal<string | null>(null);
   readonly activeView = signal<AppView>('chat');
   readonly stepLabels = STEP_LABELS;
+  readonly kindLabels = KIND_LABELS;
   readonly flowSteps: ReadonlyArray<{ key: PipelineStep; name: string; description: string; icon: string }> = [
     { key: 'recording', name: 'Thu âm', description: 'Ghi nhận giọng nói của bạn', icon: '♬' },
     { key: 'stt', name: 'Speech-to-Text', description: 'Whisper chuyển giọng nói thành văn bản', icon: 'Aa' },
@@ -140,6 +155,10 @@ export class AppComponent implements OnDestroy {
 
   clearHistory(): void {
     this.messages.set([]);
+    if (this.sessionId) {
+      this.pipeline.resetConversation(this.sessionId).subscribe({ error: () => undefined });
+      this.sessionId = null;
+    }
   }
 
   flowState(target: PipelineStep): FlowState {
@@ -215,27 +234,34 @@ export class AppComponent implements OnDestroy {
   }
 
   private async runFromText(question: string): Promise<void> {
-    const passage = await this.selectPassage(question);
-
-    this.step.set('mrc');
-    const answer = await firstValueFrom(this.pipeline.answerQuestion(passage.text, question));
+    const provided = this.passageInput.trim();
+    this.step.set(provided ? 'mrc' : 'retrieval');
+    const reply = await firstValueFrom(this.pipeline.ask(question, this.sessionId, provided || undefined));
+    this.sessionId = reply.session_id;
+    const passage: Passage | undefined = reply.passage ?? undefined;
+    const resolved = reply.resolved_question?.trim();
+    const rewritten = resolved && resolved.toLocaleLowerCase('vi') !== question.trim().replace(/[?.!]+$/, '').toLocaleLowerCase('vi');
 
     this.step.set('tts');
-    const audio = await firstValueFrom(this.pipeline.synthesize(answer));
-    const audioUrl = this.track(URL.createObjectURL(audio));
-    this.push({ role: 'bot', text: answer, audioUrl, passage });
+    let audioUrl: string | undefined;
+    try {
+      const audio = await firstValueFrom(this.pipeline.synthesize(reply.answer));
+      audioUrl = this.track(URL.createObjectURL(audio));
+    } catch {
+      // TTS lỗi (mất mạng, chưa có checkpoint): vẫn hiện câu trả lời dạng chữ.
+      this.error.set('Không tổng hợp được giọng nói, câu trả lời chỉ hiển thị dạng chữ.');
+    }
+    this.push({
+      role: 'bot',
+      text: reply.answer,
+      audioUrl,
+      passage,
+      kind: reply.kind,
+      resolvedQuestion: rewritten && reply.kind !== 'smalltalk' ? resolved : undefined,
+    });
 
-    await this.play(audioUrl);
-  }
-
-  private async selectPassage(question: string): Promise<Passage> {
-    const provided = this.passageInput.trim();
-    if (provided) return { text: provided };
-
-    this.step.set('retrieval');
-    const passages = await firstValueFrom(this.pipeline.retrieve(question));
-    if (passages.length === 0) throw new Error('Không tìm thấy đoạn văn liên quan tới câu hỏi.');
-    return passages[0];
+    if (audioUrl) await this.play(audioUrl);
+    else this.step.set('idle');
   }
 
   private async play(url: string): Promise<void> {

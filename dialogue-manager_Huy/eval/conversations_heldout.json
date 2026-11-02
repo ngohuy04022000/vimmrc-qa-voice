@@ -1,0 +1,98 @@
+{
+"_doc": "Bộ held-out: viết SAU khi đã chỉnh hệ thống trên conversations.json, không dùng để chỉnh. Kết quả lần chạy đầu ghi trong README của module.",
+"items": [
+{"id": "h-st01", "category": "smalltalk", "turns": [{"user": "Chào buổi sáng!", "kind": "smalltalk", "expect": ["chào"]}]},
+{"id": "h-st02", "category": "smalltalk", "turns": [{"user": "hello bot", "kind": "smalltalk", "expect": ["chào"]}]},
+{"id": "h-st03", "category": "smalltalk", "turns": [{"user": "Cậu là robot hay người thật?", "kind": "smalltalk", "expect": ["trợ lý"]}]},
+{"id": "h-st04", "category": "smalltalk", "turns": [{"user": "Cám ơn nha", "kind": "smalltalk", "expect": ["không có gì|vui"]}]},
+{"id": "h-st05", "category": "smalltalk", "turns": [{"user": "Mình đi đây, bye bye", "kind": "smalltalk", "expect": ["tạm biệt|chúc|hẹn"]}]},
+{"id": "h-st06", "category": "smalltalk", "turns": [{"user": "Bạn được xây dựng bằng công nghệ gì?", "kind": "smalltalk", "expect": ["Whisper|giọng nói"]}]},
+{"id": "h-st07", "category": "smalltalk", "turns": [{"user": "Tôi nên hỏi gì?", "kind": "smalltalk", "expect": ["hỏi"]}]},
+{"id": "h-st08", "category": "smalltalk", "turns": [{"user": "Mình đang căng thẳng quá", "kind": "smalltalk", "expect": ["nghỉ|tiếc"]}]},
+
+{"id": "h-fa01", "category": "factoid", "turns": [{"user": "Thủ đô nước Pháp tên là gì?", "expect": ["Paris"]}]},
+{"id": "h-fa02", "category": "factoid", "turns": [{"user": "Ngọn núi cao nhất Nhật Bản là núi gì?", "expect": ["Phú Sĩ"]}]},
+{"id": "h-fa03", "category": "factoid", "turns": [{"user": "Việt Nam có diện tích khoảng bao nhiêu?", "expect": ["331.000"]}]},
+{"id": "h-fa04", "category": "factoid", "turns": [{"user": "Đơn vị tiền tệ của Thái Lan là gì?", "expect": ["baht"]}]},
+{"id": "h-fa05", "category": "factoid", "turns": [{"user": "Ai là người sáng tạo ra chữ Hangul?", "expect": ["Sejong"]}]},
+{"id": "h-fa06", "category": "factoid", "turns": [{"user": "Hoa Kỳ có bao nhiêu bang?", "expect": ["50"]}]},
+{"id": "h-fa07", "category": "factoid", "turns": [{"user": "Tượng Nữ thần Tự do do nước nào tặng?", "expect": ["Pháp"]}]},
+{"id": "h-fa08", "category": "factoid", "turns": [{"user": "Rãnh Mariana sâu khoảng bao nhiêu mét?", "expect": ["11.000"]}]},
+{"id": "h-fa09", "category": "factoid", "turns": [{"user": "Sa mạc nóng lớn nhất thế giới là sa mạc nào?", "expect": ["Sahara"]}]},
+{"id": "h-fa10", "category": "factoid", "turns": [{"user": "Trái Đất quay quanh Mặt Trời một vòng hết bao nhiêu ngày?", "expect": ["365"]}]},
+{"id": "h-fa11", "category": "factoid", "turns": [{"user": "Hành tinh nào gần Mặt Trời nhất?", "expect": ["Sao Thủy"]}]},
+{"id": "h-fa12", "category": "factoid", "turns": [{"user": "Sao Diêm Vương bị xếp lại thành hành tinh lùn vào năm nào?", "expect": ["2006"]}]},
+{"id": "h-fa13", "category": "factoid", "turns": [{"user": "Công thức hóa học của nước là gì?", "expect": ["H2O"]}]},
+{"id": "h-fa14", "category": "factoid", "turns": [{"user": "Cầu vồng có bao nhiêu màu?", "expect": ["bảy"]}]},
+{"id": "h-fa15", "category": "factoid", "turns": [{"user": "Newton sinh năm bao nhiêu?", "expect": ["1643"]}]},
+{"id": "h-fa16", "category": "factoid", "turns": [{"user": "Einstein đoạt giải Nobel Vật lý năm nào?", "expect": ["1921"]}]},
+{"id": "h-fa17", "category": "factoid", "turns": [{"user": "Ai phát minh ra World Wide Web?", "expect": ["Berners-Lee"]}]},
+{"id": "h-fa18", "category": "factoid", "turns": [{"user": "Bác Hồ ra đi tìm đường cứu nước năm nào?", "expect": ["1911"]}]},
+{"id": "h-fa19", "category": "factoid", "turns": [{"user": "Ngày miền Nam được giải phóng là ngày nào?", "expect": ["30 tháng 4"]}]},
+{"id": "h-fa20", "category": "factoid", "turns": [{"user": "Hai Bà Trưng khởi nghĩa vào năm nào?", "expect": ["40"]}]},
+{"id": "h-fa21", "category": "factoid", "turns": [{"user": "Tên thật của vua Quang Trung là gì?", "expect": ["Nguyễn Huệ"]}]},
+{"id": "h-fa22", "category": "factoid", "turns": [{"user": "Trần Hưng Đạo là tác giả của tác phẩm nào?", "expect": ["Hịch tướng sĩ"]}]},
+{"id": "h-fa23", "category": "factoid", "turns": [{"user": "Lý Công Uẩn dời đô về Đại La vào năm nào?", "expect": ["1010"]}]},
+{"id": "h-fa24", "category": "factoid", "turns": [{"user": "Món phở xuất hiện vào khoảng thời gian nào?", "expect": ["thế kỷ 20"]}]},
+{"id": "h-fa25", "category": "factoid", "turns": [{"user": "World Cup 2026 có bao nhiêu đội tham dự?", "expect": ["48"]}]},
+{"id": "h-fa26", "category": "factoid", "turns": [{"user": "Thế vận hội hiện đại đầu tiên diễn ra ở đâu?", "expect": ["Athens"]}]},
+{"id": "h-fa27", "category": "factoid", "turns": [{"user": "Nhịp tim bình thường khi nghỉ ngơi là bao nhiêu lần mỗi phút?", "expect": ["60"]}]},
+{"id": "h-fa28", "category": "factoid", "turns": [{"user": "Ai là người phát hiện ra cao nguyên Lâm Viên?", "expect": ["Yersin"]}]},
+{"id": "h-fa29", "category": "factoid", "turns": [{"user": "Cây cà phê được đưa vào Việt Nam bởi người nước nào?", "expect": ["Pháp"]}]},
+{"id": "h-fa30", "category": "factoid", "turns": [{"user": "Địa đạo Củ Chi dài khoảng bao nhiêu km?", "expect": ["250"]}]},
+
+{"id": "h-wh01", "category": "why_how", "turns": [{"user": "Vì sao có thủy triều?", "expect": ["Mặt Trăng"]}]},
+{"id": "h-wh02", "category": "why_how", "turns": [{"user": "Tại sao Sao Kim là hành tinh nóng nhất?", "expect": ["khí quyển"]}]},
+{"id": "h-wh03", "category": "why_how", "turns": [{"user": "Vì sao ban đêm ở sa mạc Sahara lại lạnh?", "expect": ["giữ"]}]},
+{"id": "h-wh04", "category": "why_how", "turns": [{"user": "Tại sao Thái Bình Dương lại có tên như vậy?", "expect": ["yên bình"]}]},
+{"id": "h-wh05", "category": "why_how", "turns": [{"user": "Ngày và đêm được tạo ra như thế nào?", "expect": ["quay"]}]},
+{"id": "h-wh06", "category": "why_how", "turns": [{"user": "Vì sao Thăng Long có tên gọi như vậy?", "expect": ["rồng"]}]},
+{"id": "h-wh07", "category": "why_how", "turns": [{"user": "Giới thiệu về sông Mê Kông", "expect": ["Mê Kông"]}]},
+{"id": "h-wh08", "category": "why_how", "turns": [{"user": "Vòi voi dùng để làm gì?", "expect": ["thở|ngửi|uống"]}]},
+
+{"id": "h-yn01", "category": "yesno", "turns": [{"user": "Seoul là thủ đô của Hàn Quốc phải không?", "kind": "yesno", "expect": ["Đúng"]}]},
+{"id": "h-yn02", "category": "yesno", "turns": [{"user": "Sao Thủy có phải là hành tinh lớn nhất không?", "kind": "yesno", "expect": ["Không"]}]},
+{"id": "h-yn03", "category": "yesno", "turns": [{"user": "Chim cánh cụt có biết bay không?", "kind": "yesno", "expect": ["Không"]}]},
+{"id": "h-yn04", "category": "yesno", "turns": [{"user": "Có phải vịnh Hạ Long ở tỉnh Quảng Ninh không?", "kind": "yesno", "expect": ["Đúng"]}]},
+{"id": "h-yn05", "category": "yesno", "turns": [{"user": "Truyện Kiều có 4.000 câu thơ đúng không?", "kind": "yesno", "expect": ["Không"]}]},
+{"id": "h-yn06", "category": "yesno", "turns": [{"user": "Thái Lan từng bị thực dân phương Tây đô hộ phải không?", "kind": "yesno", "expect": ["Không"]}]},
+
+{"id": "h-cp01", "category": "compare", "turns": [{"user": "Sao Mộc với Trái Đất, hành tinh nào lớn hơn?", "kind": "compare", "expect": ["Sao Mộc"]}]},
+{"id": "h-cp02", "category": "compare", "turns": [{"user": "Phú Quốc hay Hà Nội có diện tích lớn hơn?", "kind": "compare", "expect": ["Hà Nội"]}]},
+{"id": "h-cp03", "category": "compare", "turns": [{"user": "Einstein và Edison, ai sinh trước?", "kind": "compare", "expect": ["Edison sinh trước"]}]},
+{"id": "h-cp04", "category": "compare", "turns": [{"user": "Fansipan có cao hơn núi Phú Sĩ không?", "kind": "compare", "expect": ["Không"]}]},
+{"id": "h-cp05", "category": "compare", "turns": [{"user": "So sánh chiều dài của sông Nin và sông Mê Kông", "kind": "compare", "expect": ["Nin"]}]},
+
+{"id": "h-mp01", "category": "multi_part", "turns": [{"user": "Thủ đô của Úc là gì và thành phố lớn nhất nước này là gì?", "kind": "multi", "expect": ["Canberra", "Sydney"]}]},
+{"id": "h-mp02", "category": "multi_part", "turns": [{"user": "Everest cao bao nhiêu, ai lên đỉnh đầu tiên?", "kind": "multi", "expect": ["8.849", "Hillary|Tenzing"]}]},
+{"id": "h-mp03", "category": "multi_part", "turns": [{"user": "Đà Lạt nằm ở độ cao bao nhiêu và được mệnh danh là gì?", "kind": "multi", "expect": ["1.500", "ngàn hoa"]}]},
+
+{"id": "h-fu01", "category": "follow_up", "turns": [
+  {"user": "Thủ đô của Campuchia là gì?", "expect": ["Phnôm Pênh"]},
+  {"user": "Còn Lào thì sao?", "expect": ["Viêng Chăn"]}]},
+{"id": "h-fu02", "category": "follow_up", "turns": [
+  {"user": "Ai đánh thắng quân Nam Hán trên sông Bạch Đằng năm 938?", "expect": ["Ngô Quyền"]},
+  {"user": "Ông ấy đóng đô ở đâu?", "expect": ["Cổ Loa"]}]},
+{"id": "h-fu03", "category": "follow_up", "turns": [
+  {"user": "Nguyễn Du sinh năm nào?", "expect": ["1765"]},
+  {"user": "Ông mất năm nào?", "expect": ["1820"]}]},
+{"id": "h-fu04", "category": "follow_up", "turns": [
+  {"user": "Vườn quốc gia Phong Nha – Kẻ Bàng được UNESCO công nhận năm nào?", "expect": ["2003"]},
+  {"user": "Hang động nổi tiếng nhất ở đó là hang nào?", "expect": ["Sơn Đoòng"]}]},
+{"id": "h-fu05", "category": "follow_up", "turns": [
+  {"user": "Sông Nin dài bao nhiêu?", "expect": ["6.650"]},
+  {"user": "Còn sông Amazon thì sao?", "expect": ["6.400"]},
+  {"user": "Nó nằm ở châu lục nào?", "expect": ["Nam Mỹ"]}]},
+{"id": "h-fu06", "category": "follow_up", "turns": [
+  {"user": "Tại sao bầu trời có màu xanh?", "expect": ["tán xạ"]},
+  {"user": "Nói thêm đi", "kind": "expand", "expect": ["."]}]},
+
+{"id": "h-sn01", "category": "stt_noisy", "turns": [{"user": "ờ cho tôi hỏi thủ đô của nước úc là gì", "expect": ["Canberra"]}]},
+{"id": "h-sn02", "category": "stt_noisy", "turns": [{"user": "bạn ơi trái đất có mấy vệ tinh tự nhiên", "expect": ["một|Mặt Trăng"]}]},
+{"id": "h-sn03", "category": "stt_noisy", "turns": [{"user": "mình muốn biết tháp eiffel được xây dựng năm nào", "expect": ["1889"]}]},
+
+{"id": "h-un01", "category": "unanswerable", "turns": [{"user": "Tỷ giá đô la hôm nay là bao nhiêu?", "kind": "unknown", "expect": ["chưa tìm thấy"]}]},
+{"id": "h-un02", "category": "unanswerable", "turns": [{"user": "Ai là ca sĩ hát bài Hello?", "kind": "unknown", "expect": ["chưa tìm thấy"]}]},
+{"id": "h-un03", "category": "unanswerable", "turns": [{"user": "Samsung được thành lập năm nào?", "kind": "unknown", "expect": ["chưa tìm thấy"]}]}
+]
+}

@@ -18,6 +18,10 @@ DEFAULT_MODEL = str(next((model for model in LOCAL_MODELS if model.is_dir()), "s
 MODEL_SIZE = os.getenv("WHISPER_MODEL", DEFAULT_MODEL)
 DEVICE = os.getenv("WHISPER_DEVICE", "cpu")
 COMPUTE_TYPE = os.getenv("WHISPER_COMPUTE_TYPE", "int8")
+# Gợi ý văn phong cho Whisper (tùy chọn): một câu hỏi tiếng Việt có dấu câu giúp bản chép
+# giữ dấu chấm hỏi và viết hoa tên riêng, nhờ đó tầng hội thoại nhận ra thực thể tốt hơn.
+# Để trống = hành vi cũ. Ví dụ: WHISPER_INITIAL_PROMPT="Cho tôi hỏi, thủ đô của Việt Nam là gì?"
+INITIAL_PROMPT = os.getenv("WHISPER_INITIAL_PROMPT") or None
 MAX_UPLOAD_BYTES = 25 * 1024 * 1024
 ALLOWED_CONTENT_TYPES = {
     "audio/flac",
@@ -59,6 +63,7 @@ def transcribe(audio_path: str) -> str:
             vad_filter=True,
             beam_size=5,
             condition_on_previous_text=False,
+            initial_prompt=INITIAL_PROMPT,
         )
         return " ".join(seg.text.strip() for seg in segments).strip()
 

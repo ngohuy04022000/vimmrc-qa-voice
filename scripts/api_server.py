@@ -40,6 +40,7 @@ from retrieval_client import Retriever
 from kb_retriever import load_any
 from mrc_client import LexicalBaselineClient, MRCClient
 from intent_router import ConversationalIntentRouter, polish_answer, rerank_hits
+from dialogue_manager import DialogueContextManager
 
 from synthesize import synthesize as tts_synthesize
 import stt_server
@@ -48,6 +49,7 @@ app = stt_server.app
 app.title = "ViMMRC Voice Q&A API"
 
 _service_lock = Lock()
+_dialogue_manager = DialogueContextManager()
 _retriever: Retriever | None = None
 _reader = None
 
@@ -86,6 +88,20 @@ class AnswerRequest(BaseModel):
         value = value.strip()
         if not value:
             raise ValueError("text must not be blank")
+        return value
+
+
+class ChatRequest(BaseModel):
+    question: str = Field(min_length=1, max_length=1000)
+    session_id: str = "default"
+    reset: bool = False
+
+    @field_validator("question")
+    @classmethod
+    def question_must_not_be_blank(cls, value: str) -> str:
+        value = value.strip()
+        if not value:
+            raise ValueError("question must not be blank")
         return value
 
 
@@ -257,6 +273,19 @@ def synthesize_endpoint(request: TTSRequest) -> FileResponse:
         media_type=media_type,
         filename=filename,
         background=BackgroundTask(Path(actual_path).unlink, missing_ok=True),
+    )
+
+
+@app.post("/api/chat")
+def chat_endpoint(request: ChatRequest) -> dict:
+    if request.reset:
+        _dialogue_manager.reset_session(request.session_id)
+    retriever, reader = get_qa_services()
+    return _dialogue_manager.chat_turn(
+        question=request.question,
+        session_id=request.session_id,
+        retriever=retriever,
+        reader=reader,
     )
 
 

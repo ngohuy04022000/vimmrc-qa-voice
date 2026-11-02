@@ -56,6 +56,21 @@ class ApiServerIntegrationTests(unittest.TestCase):
         self.assertIn(response.headers.get("content-type"), ["audio/mpeg", "audio/wav"])
         self.assertGreater(len(response.content), 100)
 
+    def test_chat_endpoint_multiturn(self):
+        # Turn 1: greeting
+        r1 = self.client.post("/api/chat", json={"question": "Xin chào trợ lý ảo!", "session_id": "test_sess_01", "reset": True})
+        self.assertEqual(r1.status_code, 200)
+        d1 = r1.json()
+        self.assertTrue(d1["is_conversational"])
+        self.assertIn("Xin chào", d1["answer"])
+
+        # Turn 2: factual query
+        r2 = self.client.post("/api/chat", json={"question": "Thủ đô của Việt Nam là gì?", "session_id": "test_sess_01"})
+        self.assertEqual(r2.status_code, 200)
+        d2 = r2.json()
+        self.assertIn("answer", d2)
+        self.assertTrue(len(d2["answer"]) > 0)
+
     def test_validation_errors(self):
         # Empty question in retrieve
         r = self.client.post("/api/retrieve", json={"question": "   "})

@@ -107,7 +107,7 @@ class ConversationalIntentRouter:
             r"\bban (tra loi |noi )?(gioi|thong minh|tuyet voi|hay) (qua|that day)\b",
             r"\brat (tot|tuyet)\b",
         ]
-        if word_count <= 8 and any(re.search(pat, clean) for pat in gratitude_patterns):
+        if word_count <= 16 and any(re.search(pat, clean) for pat in gratitude_patterns):
             return ("gratitude", cls.RESPONSES["gratitude"])
 
         # 5. Farewell
@@ -117,7 +117,7 @@ class ConversationalIntentRouter:
             r"\bbye( bye)?\b",
             r"\bchuc (ban )?ngu ngon\b",
         ]
-        if word_count <= 8 and any(re.search(pat, clean) for pat in farewell_patterns):
+        if word_count <= 12 and any(re.search(pat, clean) for pat in farewell_patterns):
             return ("farewell", cls.RESPONSES["farewell"])
 
         # 6. Greeting intent

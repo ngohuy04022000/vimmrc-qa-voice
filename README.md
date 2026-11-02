@@ -59,7 +59,7 @@ Mở trình duyệt tại `http://localhost:4200`.
 python -m pytest -v
 ```
 
-Hệ thống bao gồm 54 bài kiểm thử tự động phủ khắp các phân hệ STT, Retrieval, Context Selection, MRC (ViT5), TTS (Normalizer, VITS, Matcha, Edge, gTTS) và FastAPI End-to-End.
+Hệ thống bao gồm 54 bài kiểm thử tự động phủ khắp các phân hệ STT, Retrieval, Context Selection, MRC (ViT5), TTS (Normalizer, VITS, Matcha, Edge, gTTS) và FastAPI End-to-End, cộng thêm 24 bài cho tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), 5 bài chuẩn hóa TTS mới và 2 bài cho `/api/ask`. Các bài Edge-TTS/gTTS cần mạng.
 
 ## Chạy CLI Pipeline đầu-cuối
 

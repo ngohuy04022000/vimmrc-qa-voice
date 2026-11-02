@@ -115,6 +115,19 @@ def read_number_token(match: re.Match) -> str:
     return raw
 
 
+_ROMAN = {"I": 1, "V": 5, "X": 10, "L": 50, "C": 100}
+
+
+def _roman_to_int(roman: str) -> int:
+    """'XIX' -> 19."""
+    total, prev = 0, 0
+    for ch in reversed(roman.upper()):
+        val = _ROMAN[ch]
+        total = total - val if val < prev else total + val
+        prev = max(prev, val)
+    return total
+
+
 def normalize_vietnamese_text(text: str) -> str:
     """Tiền xử lý và chuẩn hóa chuỗi văn bản trước khi đưa vào TTS engine."""
     if not text or not text.strip():
@@ -134,6 +147,20 @@ def normalize_vietnamese_text(text: str) -> str:
     s = re.sub(r"(?:^|(?<=[.!?]\s))\(([ABCD])\)\s*", r"Đáp án \1: ", s)
     s = re.sub(r"(?:^|(?<=[.!?]\s))([ABCD])\.\s*", r"Đáp án \1: ", s)
     s = re.sub(r"(?i)\b(đáp án\s+)+", "Đáp án ", s)
+
+    # 2b. Viết tắt thường gặp trong câu trả lời
+    s = re.sub(r"\bTP\.?\s?HCM\b|\bTPHCM\b", "Thành phố Hồ Chí Minh", s)
+    s = re.sub(r"\bTP\.\s?", "thành phố ", s)
+    s = re.sub(r"\bv\.v\.?", "vân vân", s)
+    s = re.sub(r"\bTCN\b", "trước Công nguyên", s)
+    s = re.sub(r"\bSCN\b", "sau Công nguyên", s)
+
+    # 2c. Số La Mã sau thế kỷ/chương/phần...: "thế kỷ XX" -> "thế kỷ 20" (đọc thành chữ ở bước 5)
+    s = re.sub(r"(?i)\b(thế kỷ|thế kỉ|chương|phần|khóa|đại hội|quyển|tập)\s+(thứ\s+)?([IVXLC]+)\b",
+               lambda m: f"{m.group(1)} {m.group(2) or ''}{_roman_to_int(m.group(3))}", s)
+
+    # 2d. Khoảng số: "1765–1820", "7-9 giờ" -> "1765 đến 1820"
+    s = re.sub(r"(?<![\d.,])(\d[\d.,]*)\s*[–—-]\s*(\d[\d.,]*)(?![\d.,]*\d)", r"\1 đến \2", s)
 
     # 3. Chuẩn hóa ngày tháng (dd/mm/yyyy hoặc dd/mm)
     def _replace_date(m):
@@ -166,6 +193,18 @@ def normalize_vietnamese_text(text: str) -> str:
     s = re.sub(num_re + r"\s*m3\b", r"\1 mét khối", s)
     s = re.sub(num_re + r"\s*m\b", r"\1 mét", s)
     s = re.sub(num_re + r"\s*°C\b", r"\1 độ C", s)
+
+    # 4b. Đơn vị đứng sau hệ số chữ ("9 triệu km²") hoặc đứng một mình
+    mult = r"(triệu|tỷ|tỉ|nghìn|ngàn|trăm|vạn)"
+    for unit, spoken in ((r"km²|km2", "ki-lô-mét vuông"), (r"m²|m2", "mét vuông"), (r"m³|m3", "mét khối"),
+                         (r"km/h", "ki-lô-mét trên giờ"), (r"km", "ki-lô-mét"), (r"kg", "ki-lô-gam"),
+                         (r"cm", "xăng-ti-mét"), (r"mm", "mi-li-mét"), (r"°C", "độ C"), (r"%", "phần trăm")):
+        s = re.sub(rf"{mult}\s*(?:{unit})(?![\w²³])", rf"\1 {spoken}", s)
+    s = re.sub(r"(?<=\d)\s*(cm|mm)\b", lambda m: " xăng-ti-mét" if m.group(1) == "cm" else " mi-li-mét", s)
+    s = s.replace("km²", "ki-lô-mét vuông").replace("m²", "mét vuông").replace("m³", "mét khối").replace("°C", "độ C")
+
+    # 4c. Chữ số dính chữ cái (H2O, CO2, G7): tách ra để đọc từng phần
+    s = re.sub(r"(?<=[A-Za-z])(?=\d)|(?<=\d)(?=[A-Za-z])", " ", s)
 
     # 5. Thay thế các con số đứng độc lập thành chữ tiếng Việt
     # Pattern khớp số nguyên hoặc số thập phân

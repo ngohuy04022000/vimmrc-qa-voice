@@ -12,17 +12,21 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
 | MRC (ViT5) | Đã fine-tune trên bộ dữ liệu mở rộng (xem dưới): **Exact Match 41,05%, token F1 66,55%** trên test (2.716 câu, không so được với số liệu ViMMRC thuần cũ). Checkpoint dùng trong Docker: `mrc-model_Huy/checkpoints/vit5-combined-cont/` (train tiếp 2 epoch từ `vit5-combined`, F1 66,02%), không commit (quá lớn) | `mrc-model_Huy/mrc_client.py` | `answer_question(question, passage) -> str` | `MRC_CHECKPOINT=<path> uvicorn scripts.api_server:app`, hoặc `MRCClient(checkpoint_dir)` trực tiếp | `mrc-model_Huy/tests/` |
 | Lexical baseline (MRC) | Xong, dùng khi chưa có checkpoint ViT5 | `mrc_client.LexicalBaselineClient` | `answer_question(question, passage) -> str` | không cần setup | cùng `mrc-model_Huy/tests/` |
 | TTS | Xong: Matcha-TTS mặc định (cần `checkpoints/matcha_vi.pt` + `scripts/setup_matcha.py`), VITS/Edge/gTTS, lỗi thì fallback gTTS | `text-to-speech_Duy/synthesize.py` | `synthesize(text, engine?, voice?) -> đường dẫn audio` | `python synthesize.py --text "..."` | `text-to-speech_Duy/tests/` |
+| Hội thoại (mới) | Xong: xã giao, câu nối tiếp nhiều lượt (theo `session_id`), so sánh, câu ghép, đúng/sai, tại sao/như thế nào, tóm tắt đoạn dán vào, phép tính/ngày giờ, từ chối khi kho không có; soạn câu trả lời trọn câu cho TTS. Offline: held-out lần đầu 59/72 (81,9%), xem `dialogue-manager_Huy/README.md` | `dialogue-manager_Huy/dialogue.py` | `DialogueManager.respond(text, session_id?, passage?) -> {answer, kind, resolved_question, passage, ...}` | `python dialogue-manager_Huy/chat_cli.py` | `dialogue-manager_Huy/tests/` |
 | Tích hợp API | Xong | `scripts/api_server.py` (mount `stt_server.app`) | xem bảng route dưới | `uvicorn scripts.api_server:app` (tự động phát hiện ViT5 checkpoint và KB index) | `tests/test_api_server.py`, `tests/test_pipeline.py`, `tests/test_web_ui.py` |
 | Web UI | Xong (Angular), build sẵn được server phục vụ nếu có `dist/` | `web-interface_Luong/src/app/` | gọi các route `/api/*` qua `pipeline.service.ts` | `npm start` trong `web-interface_Luong/` | `tests/test_web_ui.py` (5 tests) |
 
 ## API contract thật (khớp code, không phải thiết kế dự kiến)
 
-- `GET  /api/health` → `{status, retrieval, retrieval_passages, reader, tts_engine, frontend_served}`
+- `GET  /api/health` → `{status, retrieval, retrieval_passages, reader, dialogue, tts_engine, frontend_served}`
+  (chưa có `data/` → `retrieval: seed_corpus`, 75 đoạn mẫu; chưa có checkpoint → `reader: heuristic_reader`)
 - `POST /api/stt` (multipart file audio) → `{text}`
 - `POST /api/retrieve` `{question, top_k?}` → `{passages: [{id, text, score}]}`
 - `POST /api/answer` `{question, passage}` → `{answer}` (text tự do, từ `MRCClient`/`LexicalBaselineClient`).
   Hệ thống chỉ hỏi đáp tự do; phần trắc nghiệm (ChoiceRanker, `options`) đã bị gỡ bỏ.
 - `POST /api/chat` `{question, session_id?}` → `{session_id, turn_index, question, answer, reformulated_query, was_reformulated, is_conversational, intent, passage_id, active_topic}` (hội thoại đa lượt, quản lý ngữ cảnh, anaphora resolution).
+- `POST /api/ask` `{question, session_id?, passage?}` → `{answer, kind, intent, session_id, resolved_question, passage, parts}`
+  (tầng hội thoại `dialogue-manager_Huy`; web UI chưa dùng, UI gọi `/api/chat`). `POST /api/ask/reset` `{session_id}`.
 - `POST /api/tts` `{text, engine?, voice?, rate?}` → file audio
 
 ## Biết rồi, không cần đọc lại
@@ -158,3 +162,14 @@ dài có trong dữ liệu này, bất kể model tốt đến đâu).
 ## Hướng phát triển tiếp theo
 
 - Exact Match 41% còn khiêm tốn (ViT5-base, 3 epoch) — có thể tiếp tục fine-tune thêm epoch với learning rate scheduler hoặc khám phá mô hình Seq2Seq lớn hơn khi có tài nguyên GPU mạnh hơn.
+
+## Tầng hội thoại (`dialogue-manager_Huy/`)
+
+Đo offline (kho mẫu 75 đoạn tự viết + `HeuristicReader`), bộ câu hỏi tự viết không có trong dataset:
+bộ phát triển 157 mục — lần đầu 82,8%, sau khi sửa 99,4% (đã chỉnh trên chính bộ này); **held-out 72 mục, viết sau
+khi chỉnh — lần chạy đầu 81,9%** (`reports/dialogue_heldout_first_run.json`), sau khi sửa lỗi chung 97,2%. Chưa đo trên KB
+thật + ViT5 (sandbox không có dữ liệu/checkpoint): lệnh đo nằm trong `dialogue-manager_Huy/README.md`.
+TTS: `normalizer.py` đọc thêm đơn vị sau "triệu/tỷ" (`9 triệu km²`), số dính chữ (`H2O`), khoảng số (`1765–1820`),
+số La Mã sau "thế kỷ", `TP.HCM`; `--tts-check` cho 0 câu trả lời còn chữ số/ký hiệu.
+STT: thêm biến tùy chọn `WHISPER_INITIAL_PROMPT` (mặc định tắt, chưa đo WER).
+Web UI hiện gọi `/api/chat` (`scripts/dialogue_manager.py`); `/api/ask` chưa được UI dùng.

@@ -156,7 +156,7 @@ python -X utf8 dialogue-manager_Huy/chat_cli.py --debug
 - [x] Triển khai hệ thống TTS đa engine tiếng Việt (Matcha-TTS, VITS MMS, Edge-TTS, gTTS) có tự động fallback và chuẩn hóa văn bản.
 - [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và pipeline đầu-cuối CLI.
 - [x] Ghép toàn diện STT, Retrieval, MRC, TTS và giao diện web Angular vào API Server FastAPI thống nhất.
-- [x] Tự động hóa bộ kiểm thử tích hợp (95 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
+- [x] Tự động hóa bộ kiểm thử tích hợp (119 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
 
 ## 7. Phân công
 

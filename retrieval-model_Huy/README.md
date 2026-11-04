@@ -36,7 +36,7 @@ old_retriever = Retriever([{"id": "p1", "passage": "Nội dung đoạn văn."}],
 
 Hệ thống chạy thật (`scripts/api_server.py`, Docker) dùng `kb_retriever.load_any`, không dùng index demo ở trên:
 
-- Tầng 1 `data/kb_index.json`: 5.869 đoạn ViMMRC + ViQuAD, `Retriever` BM25 (k1 2.1, b 1.0, bigram boost 0.4).
+- Tầng 1 `data/kb_index.json`: 5.879 đoạn (552 ViMMRC + 5.317 ViQuAD + 10 thẻ tri thức), `Retriever` BM25 (k1 2.1, b 1.0, bigram boost 0.4).
 - Tầng 2 `data/kb_wiki_full/shard_*`: 1,48 triệu đoạn Wikipedia tiếng Việt, BM25 `bm25s` (dựng bằng
   `python build_kb.py --wiki --wiki-full`) và chỉ mục vector e5-small (`python build_dense.py ../data/kb_wiki_full`).
 - Mỗi câu hỏi lấy top-3 của BM25 tầng 1, BM25 Wikipedia và vector Wikipedia; `bge-reranker-v2-m3` chấm chung,

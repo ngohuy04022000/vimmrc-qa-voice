@@ -15,7 +15,7 @@
 * **Slide 3:** Phân tích Bộ Dữ liệu ViMMRC 2.0 & Nhiệm vụ Đọc hiểu
 * **Slide 4:** Kiến trúc Tổng thể Pipeline 4 Chặng (End-to-End Pipeline)
 * **Slide 5:** Phân hệ 1: Nhận dạng Tiếng nói (Speech-to-Text - Whisper-small LoRA 50h)
-* **Slide 6:** Phân hệ 2: Truy xuất Ngữ cảnh lai (BM25 + dense + reranker trên 5.869 đoạn + 1,48 triệu đoạn Wikipedia)
+* **Slide 6:** Phân hệ 2: Truy xuất Ngữ cảnh lai (BM25 + dense + reranker trên 5.879 đoạn + 1,48 triệu đoạn Wikipedia)
 * **Slide 7:** Phân hệ 3: Mô hình Đọc hiểu Máy (MRC - ViT5)
 * **Slide 8:** Phân hệ 4: Tổng hợp Tiếng nói (Matcha-TTS Flow Matching)
 * **Slide 9:** Kết quả Đánh giá & Benchmark Định lượng Phân hệ TTS
@@ -88,13 +88,13 @@
     $$\text{Micro (Audio)} \xrightarrow{\text{STT}} \text{Văn bản câu hỏi} \xrightarrow{\text{Retrieval}} \text{Đoạn văn liên quan} \xrightarrow{\text{MRC}} \text{Đáp án} \xrightarrow{\text{TTS}} \text{Loa (Audio)}$$
   * **4 Phân hệ nòng cốt:**
     1. **STT Module:** Whisper-small fine-tune LoRA 50h VietSpeech (CTranslate2 int8) trích xuất câu hỏi từ audio 16kHz; WER 13,77% / CER 6,67% trên 1.802 mẫu test VietSpeech (Whisper small gốc: 36,76% / 19,43%).
-    2. **Retrieval Module:** Truy xuất hai tầng (5.869 đoạn văn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt) bằng BM25 + dense, reranker bge-reranker-v2-m3 chọn đoạn văn tốt nhất.
+    2. **Retrieval Module:** Truy xuất hai tầng (5.879 đoạn văn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt) bằng BM25 + dense, reranker bge-reranker-v2-m3 chọn đoạn văn tốt nhất.
     3. **MRC Module:** ViT5 Transformer sinh câu trả lời tự do từ đoạn văn truy xuất (có Lexical Baseline dự phòng).
     4. **TTS Module:** Matcha-TTS (Conditional Flow Matching) & VITS (MMS) tổng hợp âm thanh giọng nói.
-  * **Cơ chế dự phòng (Resilience Architecture):** Có cơ chế dự phòng ở từng phân hệ (MRC: Lexical Baseline; TTS: Matcha → VITS → Edge-TTS → gTTS).
+  * **Cơ chế dự phòng (Resilience Architecture):** Có cơ chế dự phòng ở từng phân hệ (MRC: Lexical Baseline; TTS: Matcha → gTTS (khi lỗi); VITS, Edge-TTS chọn thủ công).
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Trên màn hình là sơ đồ kiến trúc tổng thể của hệ thống. Luồng dữ liệu vận hành tuần tự qua 4 chặng:  
-  > Trước hết, tín hiệu giọng nói từ micro người dùng được gửi tới phân hệ STT để chuyển thành văn bản. Câu hỏi văn bản tiếp tục được đưa vào bộ truy xuất lai (BM25 + dense, có reranker) để tìm ra đoạn văn liên quan nhất trong kho 5.869 đoạn và 1,48 triệu đoạn Wikipedia. Sau đó, mô hình MRC tiếp nhận cặp (câu hỏi, ngữ cảnh) để sinh câu trả lời. Cuối cùng, câu trả lời dạng văn bản đi qua bộ tổng hợp TTS để tạo thành giọng nói phát qua loa.  
+  > Trước hết, tín hiệu giọng nói từ micro người dùng được gửi tới phân hệ STT để chuyển thành văn bản. Câu hỏi văn bản tiếp tục được đưa vào bộ truy xuất lai (BM25 + dense, có reranker) để tìm ra đoạn văn liên quan nhất trong kho 5.879 đoạn và 1,48 triệu đoạn Wikipedia. Sau đó, mô hình MRC tiếp nhận cặp (câu hỏi, ngữ cảnh) để sinh câu trả lời. Cuối cùng, câu trả lời dạng văn bản đi qua bộ tổng hợp TTS để tạo thành giọng nói phát qua loa.  
   > Toàn bộ pipeline được thiết kế với cơ chế dự phòng ở từng phân hệ khi một engine hoặc kết nối gặp sự cố."
 
 ---
@@ -122,7 +122,7 @@
 * **Nội dung hiển thị trên Slide:**
   * **Bài toán:** Trong kịch bản thực tế, người dùng chỉ đặt câu hỏi mà không cung cấp bài đọc. Hệ thống phải tự tìm bài đọc liên quan nhất trong toàn bộ kho tài liệu.
   * **Truy xuất lai BM25 + Dense + Reranker:**
-    * **Kho tri thức hai tầng:** tầng 1 gồm **5.869 đoạn văn** từ ViMMRC + ViQuAD (BM25 $k_1 = 2.1$, $b = 1.0$, **Bigram Phrase Boost** +0,4); tầng 2 gồm **1,48 triệu đoạn Wikipedia tiếng Việt** với cả chỉ mục BM25 (`bm25s` chia shard) và chỉ mục vector dense (`multilingual-e5-small`, 384 chiều, float16 mmap ~1,1 GB).
+    * **Kho tri thức hai tầng:** tầng 1 gồm **5.879 đoạn văn** từ ViMMRC + ViQuAD (BM25 $k_1 = 2.1$, $b = 1.0$, **Bigram Phrase Boost** +0,4); tầng 2 gồm **1,48 triệu đoạn Wikipedia tiếng Việt** với cả chỉ mục BM25 (`bm25s` chia shard) và chỉ mục vector dense (`multilingual-e5-small`, 384 chiều, float16 mmap ~1,1 GB).
     * **Ứng viên:** top-3 BM25 tầng 1 + top-3 BM25 Wikipedia + top-3 dense Wikipedia (≤ 9 ứng viên).
     * **Reranker** `bge-reranker-v2-m3` (cross-encoder) chấm chung tất cả; đoạn tầng 1 được cộng +0,25, điểm cao nhất thắng.
   * **Kết quả đo lường:**
@@ -131,7 +131,7 @@
     * **Tốc độ:** truy xuất + reranker ~6 giây / câu trên CPU Docker; có thể tắt reranker (`KB_RERANKER=`) để truy xuất còn ~0,1–1,7 giây với độ chính xác thấp hơn.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Tiếp theo là phân hệ Truy xuất Đoạn văn do em phụ trách. Khi người dùng hỏi một câu như 'Ai là tác giả của Truyện Kiều?', hệ thống phải tìm ra bài đọc tương ứng trong kho văn bản.  
-  > Em xây dựng kho tri thức hai tầng: tầng một là 5.869 đoạn văn từ ViMMRC và ViQuAD dùng BM25 tinh chỉnh $k_1=2.1$, $b=1.0$ cùng Bigram Phrase Boost; tầng hai là 1,48 triệu đoạn Wikipedia tiếng Việt, có cả chỉ mục BM25 và chỉ mục vector dense multilingual-e5-small. Với mỗi câu hỏi, hệ thống lấy top 3 từ mỗi nguồn, tối đa 9 ứng viên, rồi reranker bge-reranker-v2-m3 chấm chung; đoạn tầng một được cộng thêm 0,25 và đoạn điểm cao nhất thắng.  
+  > Em xây dựng kho tri thức hai tầng: tầng một là 5.879 đoạn văn từ ViMMRC và ViQuAD dùng BM25 tinh chỉnh $k_1=2.1$, $b=1.0$ cùng Bigram Phrase Boost; tầng hai là 1,48 triệu đoạn Wikipedia tiếng Việt, có cả chỉ mục BM25 và chỉ mục vector dense multilingual-e5-small. Với mỗi câu hỏi, hệ thống lấy top 3 từ mỗi nguồn, tối đa 9 ứng viên, rồi reranker bge-reranker-v2-m3 chấm chung; đoạn tầng một được cộng thêm 0,25 và đoạn điểm cao nhất thắng.  
   > Với BM25 hai tầng, trước khi thêm reranker, trên tập test 2.545 câu Recall@1 đạt 71,1% và Recall@5 đạt 85,9%. Ở pipeline cuối, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4 lên 24,3 và trên câu có đoạn trong kho từ 58,0 lên 60,7, dù mức cộng 0,25 được chọn trên chính các câu này nên hơi lạc quan. Truy xuất cùng reranker mất khoảng 6 giây mỗi câu trên CPU."
 
 ---
@@ -156,7 +156,7 @@
 * **Nội dung hiển thị trên Slide:**
   * **Mô hình chủ đạo: Matcha-TTS (ICASSP 2024):**
     * Dựa trên **Optimal-Transport Conditional Flow Matching (OT-CFM)**: giải phương trình vi phân thường (ODE) theo quỹ đạo thẳng từ nhiễu Gaussian tới Mel-spectrogram.
-    * Giải mã hiệu quả: Với 10 bước Euler trong benchmark, đạt **RTF 0.52 trên CPU** (nhanh hơn thời gian thực mà không cần GPU).
+    * Giải mã hiệu quả: Với 20 bước Euler (mặc định), đạt **RTF 0.64 trên CPU** (nhanh hơn thời gian thực mà không cần GPU).
   * **Đóng góp kỹ thuật:**
     * **Frontend tách thanh điệu (`vi_tone_v2`):** Tách 6 thanh điệu tiếng Việt (ngang, huyền, sắc, hỏi, ngã, nặng) thành token độc lập ở cuối âm tiết (ví dụ: `hồ` $\rightarrow$ `h ô 2`). Giúp mô hình học biểu diễn cao độ nhất quán và thu gọn bộ từ vựng.
     * **Text Normalizer:** Tự động chuyển đổi ngày tháng (`07/05/1954`), số thập phân, tiền tệ, ký hiệu viết tắt và nhãn đáp án (`(A)`, `(B)` $\rightarrow$ `Đáp án A:`, `Đáp án B:`).
@@ -171,23 +171,22 @@
 #### SLIDE 9: ĐÁNH GIÁ & BENCHMARK ĐỊNH LƯỢNG PHÂN HỆ TTS
 * **Thời lượng dự kiến:** 1.5 phút
 * **Nội dung hiển thị trên Slide:**
-  * **Bảng so sánh đối sánh thực nghiệm (trên 10 câu mẫu tham chiếu giọng người thật InfoRe1):**
+  * **Bảng so sánh đối sánh thực nghiệm (trên câu mẫu tham chiếu giọng người thật InfoRe1):**
 
 | Mô hình | MCD (dB) $\downarrow$ | F0 RMSE (Hz) $\downarrow$ | log-F0 RMSE (semitones) $\downarrow$ | CER (ASR) $\downarrow$ | RTF (CPU) $\downarrow$ | Đặc điểm kiến trúc |
 |---|:---:|:---:|:---:|:---:|:---:|---|
 | **Giọng người thật (Tham chiếu)** | – | – | – | 0.7% | – | Mức trần kiểm chứng ASR PhoWhisper |
-| **Matcha-TTS (Nhóm huấn luyện)** | 5.35 | 70.4 | **2.86** | **1.9%** | **0.52** | OT-CFM cục bộ, frontend tách thanh điệu |
-| **VITS MMS (Meta Pretrained)** | **4.45** | 84.1 | 4.31 | 4.3% | 0.38 | VAE End-to-End, giọng nam |
-| **Edge-TTS (Hoài My Neural)** | 4.63 | **48.3** | 2.69 | 1.0% | 0.13 | Cloud Neural, phụ thuộc kết nối Internet |
+| **Matcha-TTS (Nhóm huấn luyện)** | 3.05 | 21.6 | **0.88** | **0.8%** | **0.64** | OT-CFM cục bộ, frontend tách thanh điệu |
+| **VITS MMS (Meta Pretrained)** | **4.40** | 82.7 | 4.29 | 4.7% | 0.29 | VAE End-to-End, giọng nam |
 
   * **Phân tích kết quả:**
-    * Matcha-TTS đạt tỷ lệ lỗi ký tự CER thấp: **1.9%**, gần mức trần của ASR (0.7%) và thấp hơn hơn 2 lần so với VITS (4.3%).
-    * Sai số cao độ log-F0 của Matcha đạt **2.86 bán cung**, gần với mô hình thương mại Edge-TTS (2.69) và tốt hơn so với VITS (4.31).
-    * Tốc độ suy luận CPU đạt RTF 0.52: tổng hợp nhanh hơn thời gian thực.
+    * Matcha-TTS đạt tỷ lệ lỗi ký tự CER thấp: **0.8%**, gần mức trần của ASR (0.7%) và thấp hơn gần 6 lần so với VITS (4.7%).
+    * Sai số cao độ log-F0 của Matcha đạt **0.88 bán cung**, thấp hơn rất nhiều so với VITS (4.29).
+    * Tốc độ suy luận CPU đạt RTF 0.64: tổng hợp nhanh hơn thời gian thực.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Để đánh giá khách quan chất lượng âm thanh, em đã thiết lập bộ benchmark định lượng, so sánh trực tiếp với giọng thu âm của người thật trên 10 câu để dành từ tập InfoRe1.  
-  > Kết quả trên bảng cho thấy: Matcha-TTS đạt độ rõ tiếng nói tốt với CER là 1.9%, ít lỗi hơn VITS hơn 2 lần. Về độ chuẩn thanh điệu, sai số log-F0 đạt 2.86 bán cung, gần với mô hình đám mây của Microsoft Edge (2.69).  
-  > Với chỉ số RTF đạt 0.52 trên CPU thông thường, mô hình chỉ mất khoảng 0.52 giây để tạo ra 1 giây âm thanh mà không cần GPU."
+  > "Để đánh giá khách quan chất lượng âm thanh, em đã thiết lập bộ benchmark định lượng, so sánh trực tiếp với giọng thu âm của người thật trên các câu để dành từ tập InfoRe1.  
+  > Kết quả trên bảng cho thấy: Matcha-TTS đạt độ rõ tiếng nói tốt với CER là 0.8%, ít lỗi hơn VITS gần 6 lần. Về độ chuẩn thanh điệu, sai số log-F0 đạt 0.88 bán cung, thấp hơn rất nhiều so với VITS (4.29).  
+  > Với chỉ số RTF đạt 0.64 trên CPU thông thường, mô hình chỉ mất khoảng 0.64 giây để tạo ra 1 giây âm thanh mà không cần GPU."
 
 ---
 
@@ -202,11 +201,11 @@
     * Stage 2 (`python:3.11-slim`): Cài đặt ffmpeg, libsndfile, PyTorch CPU wheel và backend.
     * Quản lý bằng `docker-compose.yml`, tích hợp Healthcheck tự động, phục vụ trên cổng 8090 (Docker map 8090 → 8000).
   * **Chất lượng Kiểm thử Phần mềm:**
-    * Bộ kiểm thử tự động gồm **54 bài kiểm thử** (53 passed, 1 skipped trên CPU) bao phủ các phân hệ từ mức hàm đến API Server.
+    * Bộ kiểm thử tự động gồm **115 bài kiểm thử** bao phủ các phân hệ từ mức hàm đến API Server.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Về khía cạnh kỹ nghệ phần mềm, nhóm đã tích hợp toàn bộ các phân hệ thành một hệ thống thống nhất:  
   > Phía Frontend, em xây dựng ứng dụng Angular với giao diện trực quan, có thanh trạng thái thể hiện hệ thống đang chạy ở bước nào trong pipeline. Người dùng có thể bấm mic nói hoặc chọn bài đọc từ thư viện.  
-  > Toàn bộ dự án được đóng gói thành container Docker đa tầng: tự biên dịch giao diện web và khởi chạy server FastAPI bằng một lệnh `docker compose up -d`. Hệ thống có 54 bài kiểm thử tự động, giúp phát hiện sớm lỗi hồi quy và thuận tiện khi tái lập."
+  > Toàn bộ dự án được đóng gói thành container Docker đa tầng: tự biên dịch giao diện web và khởi chạy server FastAPI bằng một lệnh `docker compose up -d`. Hệ thống có 115 bài kiểm thử tự động, giúp phát hiện sớm lỗi hồi quy và thuận tiện khi tái lập."
 
 ---
 

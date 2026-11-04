@@ -5,10 +5,11 @@ import { firstValueFrom } from 'rxjs';
 import { ChatMessage, Passage, PipelineStep } from './models/chat.models';
 import { AudioRecorderService } from './services/audio-recorder.service';
 import { PipelineService } from './services/pipeline.service';
+import { AutoStopReason } from './utils/silence-detector';
 
 const STEP_LABELS: Record<PipelineStep, string> = {
   idle: 'Hệ thống sẵn sàng',
-  recording: 'Đang lắng nghe giọng nói...',
+  recording: 'Đang lắng nghe... hệ thống tự trả lời khi bạn ngừng nói',
   stt: 'Whisper LoRA đang nhận dạng tiếng Việt...',
   retrieval: 'Đang truy xuất ngữ cảnh (BM25 + e5 + Reranker)...',
   mrc: 'ViT5 đang suy luận câu trả lời...',
@@ -203,24 +204,46 @@ export class AppComponent implements OnDestroy {
     return targetIndex < currentIndex ? 'done' : 'waiting';
   }
 
+  private finishing = false;
+
   async toggleRecording(): Promise<void> {
     this.error.set(null);
     if (this.step() === 'recording') {
-      try {
-        const wav = await this.recorder.stop();
-        await this.runFromAudio(wav);
-      } catch (e) {
-        this.fail(e);
-      }
+      await this.finishRecording();
       return;
     }
 
     try {
-      await this.recorder.start();
+      // Tự dừng và trả lời khi người dùng ngừng nói; bấm lại nút vẫn dừng ngay như trước.
+      await this.recorder.start((reason) => void this.onAutoStop(reason));
       this.currentQueryMode.set('voice');
       this.step.set('recording');
     } catch (e) {
       this.fail(e, this.microphoneError(e));
+    }
+  }
+
+  private async onAutoStop(reason: AutoStopReason): Promise<void> {
+    if (this.step() !== 'recording' || this.finishing) return;
+    if (reason === 'no-speech') {
+      this.recorder.cancel();
+      this.step.set('idle');
+      this.error.set('Không nghe thấy giọng nói. Bấm micro và nói lại, hoặc nhập câu hỏi bằng văn bản.');
+      return;
+    }
+    await this.finishRecording();
+  }
+
+  private async finishRecording(): Promise<void> {
+    if (this.finishing) return;
+    this.finishing = true;
+    try {
+      const wav = await this.recorder.stop();
+      await this.runFromAudio(wav);
+    } catch (e) {
+      this.fail(e);
+    } finally {
+      this.finishing = false;
     }
   }
 
@@ -381,6 +404,7 @@ export class AppComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.recorder.cancel();
     this.objectUrls.forEach((u) => URL.revokeObjectURL(u));
   }
 }

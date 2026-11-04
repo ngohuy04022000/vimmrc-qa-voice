@@ -55,6 +55,10 @@ def get_model() -> WhisperModel:
     return WhisperModel(MODEL_SIZE, device=DEVICE, compute_type=COMPUTE_TYPE)
 
 
+# Hàm tùy chọn (str -> str) chạy sau khi nhận dạng, ví dụ sửa lỗi nghe nhầm tên riêng bằng LLM.
+POST_PROCESS = None
+
+
 def transcribe(audio_path: str) -> str:
     with MODEL_LOCK:
         segments, _ = get_model().transcribe(
@@ -100,6 +104,9 @@ async def stt(file: UploadFile = File(...)) -> dict:
         text = await run_in_threadpool(transcribe, tmp_path)
         if not text:
             raise HTTPException(status_code=422, detail="No speech detected")
+        if POST_PROCESS:
+            fixed = await run_in_threadpool(POST_PROCESS, text)
+            return {"text": fixed, "raw": text} if fixed != text else {"text": text}
         return {"text": text}
     except HTTPException:
         raise

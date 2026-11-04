@@ -118,7 +118,7 @@
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Trọng tâm dữ liệu của đề tài bắt đầu từ bộ dữ liệu đọc hiểu ViMMRC 2.0 do UIT-NLP công bố, gồm 5.273 câu hỏi trắc nghiệm tiếng Việt dành cho học sinh. Để mở rộng cho bài toán hỏi đáp tự do, nhóm đã gộp ViMMRC 2.0 với bộ dữ liệu UIT-ViQuAD2.0 gồm 21.891 câu hỏi tự luận trên Wikipedia, tạo thành kho dữ liệu tổng cộng 27.164 câu.  
   > Dữ liệu được phân chia theo bài đọc thành 3 tập: Train 21.733 câu, Dev 2.715 câu và Test 2.716 câu. Nhóm tuân thủ nghiêm ngặt nguyên tắc phân tách ở cấp độ bài đọc: các văn bản trong tập Dev và Test hoàn toàn chưa từng xuất hiện trong tập Train, đảm bảo zero leakage.  
-  > Về tiền xử lý, bài đọc trong dữ liệu có độ dài từ 120 đến hơn 1.200 từ. Nhóm đã chuẩn hóa Unicode NFC, loại bỏ ký tự điều khiển ẩn và lập kho tri thức hai tầng gồm 5.869 đoạn văn ViMMRC và ViQuAD kết hợp 1,48 triệu đoạn Wikipedia tiếng Việt, làm cơ sở tri thức vững chắc cho hệ thống."
+  > Về tiền xử lý, bài đọc trong dữ liệu có độ dài từ 120 đến hơn 1.200 từ. Nhóm đã chuẩn hóa Unicode NFC, loại bỏ ký tự điều khiển ẩn và lập kho tri thức hai tầng gồm 5.879 đoạn văn ViMMRC và ViQuAD kết hợp 1,48 triệu đoạn Wikipedia tiếng Việt, làm cơ sở tri thức vững chắc cho hệ thống."
 ---
 
 ### SLIDE 5: KIẾN TRÚC END-TO-END PIPELINE 4 CHẶNG
@@ -139,7 +139,7 @@
   > "Kính thưa Thầy Cô, em là Huỳnh Công Lương, xin trình bày về Kiến trúc Hệ thống và Phân hệ STT.  
   > Trên màn hình là kiến trúc 4 chặng:  
   > Người dùng nói vào mic, âm thanh gửi tới phân hệ STT để chuyển thành văn bản câu hỏi. Câu hỏi đi vào phân hệ Retrieval tìm kiếm trên kho tri thức hai tầng và trả về đoạn văn liên quan nhất. Tiếp đó, phân hệ MRC dùng ViT5 đọc hiểu và sinh câu trả lời tự do. Cuối cùng, phân hệ TTS tổng hợp thành giọng nói tự nhiên phát qua loa.  
-  > Hệ thống có cơ chế Fallback ở từng chặng: chưa nạp checkpoint ViT5 thì dùng bộ trích xuất lexical; chuỗi TTS ưu tiên Matcha-TTS, lỗi sẽ chuyển VITS, Edge-TTS hoặc gTTS, đảm bảo không bao giờ gián đoạn."
+  > Hệ thống có cơ chế Fallback ở từng chặng: chưa nạp checkpoint ViT5 thì dùng bộ trích xuất lexical; chuỗi TTS ưu tiên Matcha-TTS, lỗi sẽ chuyển sang gTTS (VITS và Edge-TTS chỉ dùng khi chọn thủ công), đảm bảo không bao giờ gián đoạn."
 ---
 
 ### SLIDE 6: PHÂN HỆ STT - WHISPER-SMALL LORA 50H & CTRANSLATE2
@@ -206,7 +206,7 @@
   * **Đặt bài toán:**
     * Trong cấu trúc ViMMRC gốc, mỗi câu hỏi luôn đi kèm sẵn với một bài đọc cố định.
     * Trong kịch bản thực tế của Voice Q&A, người dùng chỉ bật mic và hỏi: *"Chiến dịch Điện Biên Phủ diễn ra vào năm nào?"* mà hoàn toàn không cho biết câu hỏi thuộc bài đọc nào.
-    * Hệ thống phải tự động quét trong kho tri thức hai tầng (**5.869 đoạn + 1,48 triệu đoạn Wikipedia**) để tìm ra đúng ngữ cảnh chứa câu trả lời.
+    * Hệ thống phải tự động quét trong kho tri thức hai tầng (**5.879 đoạn + 1,48 triệu đoạn Wikipedia**) để tìm ra đúng ngữ cảnh chứa câu trả lời.
   * **Thách thức của bài toán Open-Domain Retrieval:**
     * Số lượng từ vựng lớn, nhiều bài đọc có chủ đề tương tự nhau (lịch sử, khoa học, danh nhân).
     * Câu hỏi người dùng ngắn gọn (thường chỉ 5 - 10 từ), trong khi bài đọc dài từ 300 - 800 từ (vấn đề bất cân xứng độ dài câu hỏi - tài liệu).
@@ -261,7 +261,7 @@
 ### SLIDE 12: RETRIEVAL - KHO TRI THỨC HAI TẦNG CHO RAG
 * **Thời lượng:** 1 phút 15 giây (14:45 - 16:00)
 * **Nội dung hiển thị:**
-  * **Tầng 1 - Kho chuyên biệt:** 5.869 đoạn văn (passages) từ ViMMRC + ViQuAD, chỉ mục BM25 ($k_1=2.1$, $b=1.0$, bigram boost).
+  * **Tầng 1 - Kho chuyên biệt:** 5.879 đoạn văn (passages) từ ViMMRC + ViQuAD, chỉ mục BM25 ($k_1=2.1$, $b=1.0$, bigram boost).
   * **Tầng 2 - Wikipedia tiếng Việt:** 1,48 triệu chunk (mỗi chunk ≤ 800 ký tự) với cả chỉ mục BM25 (`bm25s` chia shard) và chỉ mục vector dense (`multilingual-e5-small`, 384 chiều, float16 mmap ~1,1 GB).
   * **Ứng viên và reranker:** mỗi câu hỏi lấy top-3 BM25 tầng 1 + top-3 BM25 Wikipedia + top-3 dense Wikipedia (≤ 9 ứng viên); reranker `bge-reranker-v2-m3` (cross-encoder) chấm chung, đoạn tầng 1 được cộng +0,25, điểm cao nhất thắng.
   * **BM25 hai tầng (trước khi thêm reranker), test 2.545 câu hỏi:**
@@ -271,7 +271,7 @@
   * **Độ trễ:** truy xuất + reranker ~6 giây / câu trên CPU Docker; tắt reranker (`KB_RERANKER=`) còn ~0,1–1,7 giây với độ chính xác thấp hơn.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Để trả lời các câu hỏi kiến thức mở, nhóm đã xây dựng kho tri thức hai tầng cho RAG:  
-  > Tầng 1 gồm 5.869 đoạn văn chọn lọc từ ViMMRC và ViQuAD. Tầng 2 gồm 1,48 triệu đoạn trích từ Wikipedia tiếng Việt, được đánh chỉ mục kép: BM25 chia shard và chỉ mục vector dense multilingual-e5-small 384 chiều lưu float16 khoảng 1,1 GB.  
+  > Tầng 1 gồm 5.879 đoạn văn chọn lọc từ ViMMRC và ViQuAD. Tầng 2 gồm 1,48 triệu đoạn trích từ Wikipedia tiếng Việt, được đánh chỉ mục kép: BM25 chia shard và chỉ mục vector dense multilingual-e5-small 384 chiều lưu float16 khoảng 1,1 GB.  
   > Với mỗi câu hỏi, hệ thống lấy top 3 từ BM25 tầng 1, top 3 từ BM25 Wikipedia và top 3 từ dense Wikipedia, tổng cộng tối đa 9 ứng viên. Reranker cross-encoder bge-reranker-v2-m3 chấm điểm chung tất cả ứng viên, trong đó đoạn tầng 1 được cộng ưu tiên 0,25 điểm.  
   > Đánh giá trên tập test 2.545 câu, BM25 hai tầng đạt Recall@1 71,1% và Recall@5 85,9%. Khi có reranker, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4 lên 24,3, và câu có trong kho tăng từ 58,0 lên 60,7, cho thấy hiệu quả rõ rệt của kiến trúc truy xuất lai hai tầng."
 ---
@@ -304,7 +304,7 @@
     * *Thời kỳ 3: Denoising Diffusion (Diff-TTS, Grad-TTS):* Chất lượng âm thanh vượt bậc nhưng tốc độ cực chậm, cần từ 50 đến 100 bước khử nhiễu lặp lại.
   * **Lựa chọn kiến trúc: Matcha-TTS (ICASSP 2024):**
     * Dựa trên **Conditional Flow Matching (CFM)** kết hợp Đường vận chuyển tối ưu (Optimal Transport).
-    * Đạt chất lượng âm thanh gần với Diffusion nhưng giải ODE nhanh (10 bước Euler trong benchmark trên CPU).
+    * Đạt chất lượng âm thanh gần với Diffusion nhưng giải ODE nhanh (20 bước Euler mặc định, 10 bước ở chế độ nhanh).
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Kính thưa Thầy Cô, em là Trương Hoàng Duy, xin báo cáo về Phân hệ Tổng hợp Tiếng nói (TTS) và Bộ benchmark đánh giá âm học.  
   > Phân hệ TTS là điểm chạm trực tiếp quyết định cảm nhận của người dùng. Một câu trả lời chính xác nhưng giọng đọc khô cứng hay sai thanh điệu sẽ làm giảm trải nghiệm tương tác.  
@@ -322,14 +322,14 @@
     * Thay vì tạo ra quỹ đạo cong uốn lượn ngẫu nhiên như Diffusion truyền thống:
       $$\psi_t(x) = (1 - (1 - \sigma_{\min})t) x_0 + t x_1$$
     * Quỹ đạo di chuyển giữa nhiễu $x_0$ và Mel-spectrogram đích $x_1$ là một **đường thẳng tối ưu (Straight Line Trajectory)** trong không gian vector.
-    * Do quỹ đạo là đường thẳng, việc giải phương trình ODE bằng phương pháp Euler chỉ cần **10 bước lặp (NFE = 10)** là hội tụ chính xác, thay vì phải mất 50-100 bước như SDE/ODE của Diffusion.
+    * Do quỹ đạo là đường thẳng, việc giải phương trình ODE bằng phương pháp Euler chỉ cần **10–20 bước lặp (mặc định NFE = 20)** là hội tụ chính xác, thay vì phải mất 50-100 bước như SDE/ODE của Diffusion.
   * **Hàm mất mát huấn luyện (Loss Function):**
     $$\mathcal{L}_{\text{CFM}}(\theta) = \mathbb{E}_{t, q(x_1), p(x_0)} \left\| v_t(\psi_t(x_0); \theta) - (x_1 - (1 - \sigma_{\min})x_0) \right\|^2$$
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Về nguyên lý toán học, sự khác biệt lớn nhất giữa Flow Matching và Diffusion nằm ở quỹ đạo xác suất:  
   > Trong Diffusion tiêu chuẩn, quá trình khuếch tán vi phân SDE tạo ra quỹ đạo cong uốn lượn ngẫu nhiên trong không gian vector, buộc mô hình phải bước từng bước rất nhỏ để không lệch hướng, tốn hàng chục bước lặp.  
   > Ngược lại, Matcha-TTS áp dụng lý thuyết Optimal Transport Conditional Flow Matching: ép trường vector đạo hàm di chuyển theo đường thẳng tối ưu nối trực tiếp từ nhiễu Gaussian x0 đến Mel-spectrogram đích x1.  
-  > Vì quỹ đạo là đường thẳng tuyến tính, phương trình vi phân ODE có thể giải bằng phương pháp Euler chỉ trong đúng 10 bước lặp. Nhờ đó, Matcha-TTS giữ được độ chi tiết âm thanh của Diffusion nhưng tốc độ suy luận nhanh gấp nhiều lần, hoàn toàn khả thi khi chạy trên CPU."
+  > Vì quỹ đạo là đường thẳng tuyến tính, phương trình vi phân ODE có thể giải bằng phương pháp Euler chỉ trong khoảng 10 đến 20 bước lặp (hệ thống dùng 20). Nhờ đó, Matcha-TTS giữ được độ chi tiết âm thanh của Diffusion nhưng tốc độ suy luận nhanh gấp nhiều lần, hoàn toàn khả thi khi chạy trên CPU."
 ---
 
 ### SLIDE 16: ĐÓNG GÓP FRONTEND TÁCH THANH ĐIỆU `vi_tone_v2`
@@ -379,26 +379,25 @@
 * **Thời lượng:** 1 phút 15 giây (22:15 - 23:30)
 * **Nội dung hiển thị:**
   * **Thiết lập Benchmark chuẩn quốc tế:**
-    * Tập dữ liệu kiểm thử: 10 câu mẫu tham chiếu từ giọng thu âm của phát thanh viên chuyên nghiệp (tập InfoRe1).
+    * Tập dữ liệu kiểm thử: các câu mẫu tham chiếu từ giọng thu âm của phát thanh viên chuyên nghiệp (tập InfoRe1).
     * Các chỉ số đo lường: Mel-Cepstral Distortion (MCD - dB), F0 RMSE (Hz), log-F0 RMSE (semitones), Character Error Rate (CER - qua ASR PhoWhisper), Real-Time Factor (RTF trên CPU).
   * **Bảng kết quả đối sánh thực nghiệm:**
 
 | Mô hình TTS | MCD (dB) $\downarrow$ | F0 RMSE (Hz) $\downarrow$ | log-F0 RMSE (semitones) $\downarrow$ | CER (ASR) $\downarrow$ | RTF (CPU) $\downarrow$ | Ghi chú kiến trúc |
 |---|:---:|:---:|:---:|:---:|:---:|---|
 | **Giọng người thật (Tham chiếu)** | – | – | – | 0.7% | – | Ngưỡng trần kiểm chứng ASR |
-| **Matcha-TTS (Nhóm huấn luyện)** | 5.35 | 70.4 | **2.86** | **1.9%** | **0.52** | OT-CFM cục bộ, frontend tách thanh điệu |
-| **VITS MMS (Meta Pretrained)** | **4.45** | 84.1 | 4.31 | 4.3% | 0.38 | VAE End-to-End, giọng nam miền Bắc |
-| **Edge-TTS (Hoài My Neural)** | 4.63 | **48.3** | 2.69 | 1.0% | 0.13 | Cloud Neural, phụ thuộc Internet |
+| **Matcha-TTS (Nhóm huấn luyện)** | 3.05 | 21.6 | **0.88** | **0.8%** | **0.64** | OT-CFM cục bộ, frontend tách thanh điệu |
+| **VITS MMS (Meta Pretrained)** | **4.40** | 82.7 | 4.29 | 4.7% | 0.29 | VAE End-to-End, giọng nam miền Bắc |
 
   * **Phân tích chi tiết:**
-    * **Độ rõ âm vị (Intelligibility):** Matcha-TTS đạt CER **1.9%**, thấp hơn VITS hơn 2 lần, cho thấy phát âm rõ chữ và ít mất phụ âm.
-    * **Độ chuẩn thanh điệu (Pitch accuracy):** log-F0 RMSE của Matcha đạt **2.86 bán cung**, gần với mô hình thương mại Microsoft Edge-TTS (2.69) và tốt hơn so với VITS (4.31).
-    * **Hiệu năng CPU:** RTF đạt **0.52**, nghĩa là trên CPU máy tính thông thường, mô hình chỉ mất 0.52 giây để tạo ra 1 giây âm thanh, tức là TTS nhanh hơn thời gian thực.
+    * **Độ rõ âm vị (Intelligibility):** Matcha-TTS đạt CER **0.8%**, thấp hơn VITS gần 6 lần, cho thấy phát âm rõ chữ và ít mất phụ âm.
+    * **Độ chuẩn thanh điệu (Pitch accuracy):** log-F0 RMSE của Matcha đạt **0.88 bán cung**, tốt hơn rất nhiều so với VITS (4.29).
+    * **Hiệu năng CPU:** RTF đạt **0.64**, nghĩa là trên CPU máy tính thông thường, mô hình chỉ mất 0.64 giây để tạo ra 1 giây âm thanh, tức là TTS nhanh hơn thời gian thực.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Nhóm đã thiết lập bộ benchmark âm học định lượng chuẩn quốc tế, so sánh trực tiếp Matcha-TTS với giọng phát thanh viên người thật và hai mô hình nền tảng VITS của Meta và Edge-TTS của Microsoft:  
-  > Về độ rõ chữ: khi dùng mô hình nhận dạng ASR PhoWhisper kiểm chứng lại, tỷ lệ lỗi ký tự CER của Matcha-TTS đạt 1,9%, thấp hơn hơn 2 lần so với mức 4,3% của VITS và gần mức trần 0,7% của người thật.  
-  > Về độ chuẩn cao độ: sai số log-F0 của Matcha đạt 2,86 bán cung, tiệm cận mô hình thương mại Edge-TTS là 2,69 bán cung và tốt hơn nhiều so với VITS.  
-  > Về tốc độ: hệ số RTF trên CPU đạt 0,52, nghĩa là chỉ mất khoảng nửa giây để tổng hợp một câu nói dài một giây, hoàn toàn đáp ứng yêu cầu đàm thoại thời gian thực mà không cần GPU."
+  > "Nhóm đã thiết lập bộ benchmark âm học định lượng chuẩn quốc tế, so sánh trực tiếp Matcha-TTS với giọng phát thanh viên người thật và mô hình nền tảng VITS MMS của Meta:  
+  > Về độ rõ chữ: khi dùng mô hình nhận dạng ASR PhoWhisper kiểm chứng lại, tỷ lệ lỗi ký tự CER của Matcha-TTS đạt 0,8%, thấp hơn gần 6 lần so với mức 4,7% của VITS và gần mức trần 0,7% của người thật.  
+  > Về độ chuẩn cao độ: sai số log-F0 của Matcha đạt 0,88 bán cung, thấp hơn rất nhiều so với 4,29 bán cung của VITS.  
+  > Về tốc độ: hệ số RTF trên CPU đạt 0,64, nghĩa là chỉ mất khoảng 0,6 giây để tổng hợp một câu nói dài một giây, hoàn toàn đáp ứng yêu cầu đàm thoại thời gian thực mà không cần GPU."
 ---
 
 ### SLIDE 19: KIẾN TRÚC PHẦN MỀM FULL-STACK FASTAPI & ANGULAR
@@ -442,7 +441,7 @@
     * Áp dụng framework kiểm thử tự động **pytest** cho toàn bộ backend.
     * Kiểm thử phủ khắp cả 3 cấp độ: Unit Tests (hàm xử lý), Module Integration Tests (từng phân hệ) và End-to-End System Tests (toàn bộ pipeline API).
   * **Kết quả Kiểm định Chất lượng:**
-    * **Bộ 54 bài kiểm thử tự động (53 passed, 1 skipped trên CPU)** (thời gian chạy ~1–2 phút):
+    * **Bộ 115 bài kiểm thử tự động** (thời gian chạy ~1–2 phút):
       * 12 tests: Phân hệ TTS (Matcha/VITS/Edge-TTS fallback, normalizer, tokenizer vi_tone_v2) — 12/12 passed.
       * 15 tests: Phân hệ Truy xuất BM25, Tokenizer và Lập chỉ mục — 15/15 passed.
       * 18 tests: Dữ liệu MRC, metric EM/F1, context selection, dataset gộp, smoke train — 17 passed, 1 skipped (`accelerate` trên CPU).
@@ -451,7 +450,7 @@
     * Đảm bảo tính toàn vẹn (Integrity), phát hiện sớm lỗi hồi quy khi hợp nhất mã nguồn giữa các thành viên.
 * **Kịch bản thuyết trình (Speaker Script):**
   > "Nhóm áp dụng quy trình kiểm thử tự động toàn diện bằng framework pytest để đảm bảo tính ổn định của toàn bộ mã nguồn.  
-  > Trước khi đóng gói phiên bản chính thức, bộ 54 bài kiểm thử tự động đều vượt qua kiểm định (53 passed, 1 skipped cho test accelerate trên CPU).  
+  > Trước khi đóng gói phiên bản chính thức, bộ 115 bài kiểm thử tự động được dùng để kiểm tra hồi quy.  
   > Bộ test kiểm tra đa tầng từ chuẩn hóa văn bản, giải thuật BM25, mô hình đọc hiểu ViT5, động cơ tổng hợp TTS đến các endpoint API của server. Nhờ kiểm thử chặt chẽ, nhóm phát hiện sớm lỗi hồi quy khi tích hợp mã nguồn giữa các thành viên, giúp hệ thống vận hành ổn định."
 ---
 

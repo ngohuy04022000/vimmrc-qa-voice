@@ -1,0 +1,412 @@
+{
+ "summary": {
+  "cer_raw": 0.0826,
+  "cer_fixed": 0.0742,
+  "f1_clean": 0.6006,
+  "f1_raw": 0.5216,
+  "f1_fixed": 0.5614,
+  "changed": 35
+ },
+ "rows": [
+  {
+   "q": "Quang Trung đại phá quân Thanh vào năm nào?",
+   "raw": "quang trung đại phá quân thanh vào năm nào",
+   "fixed": "Quang Trung đại phá quân Thanh vào năm nào",
+   "cer_raw": 0.0233,
+   "cer_fixed": 0.0233,
+   "f1_clean": 0.6154,
+   "f1_raw": 0.6154,
+   "f1_fixed": 0.6154
+  },
+  {
+   "q": "Ai là người chỉ huy chiến thắng Bạch Đằng năm 938 chấm dứt nghìn năm Bắc thuộc?",
+   "raw": "ai là người chỉ huy chiến thắng bạch đằng năm chín trăm ba mươi tám chấm dứt nghìn năm bác thuộc",
+   "fixed": "Ai là người chỉ huy chiến thắng Bạch Đằng năm chín trăm ba mươi tám chấm dứt nghìn năm Bắc thuộc",
+   "cer_raw": 0.2911,
+   "cer_fixed": 0.2785,
+   "f1_clean": 0.4865,
+   "f1_raw": 0.0,
+   "f1_fixed": 0.5
+  },
+  {
+   "q": "Hưng Đạo Đại Vương Trần Quốc Tuấn ba lần lãnh đạo nhân dân đánh tan quân xâm lược nào?",
+   "raw": "thương đạo đại vương trần quốc tuấn ba lần lãnh đạo nhân dân đánh tan quân sâm lược nào",
+   "fixed": "Thương đạo đại vương Trần Quốc Tuấn ba lần lãnh đạo nhân dân đánh tan quân xâm lược nào",
+   "cer_raw": 0.0465,
+   "cer_fixed": 0.0349,
+   "f1_clean": 0.6047,
+   "f1_raw": 0.5581,
+   "f1_fixed": 0.5581
+  },
+  {
+   "q": "Hai Bà Trưng phất cờ khởi nghĩa chống lại ách đô hộ của phong kiến phương Bắc vào năm nào?",
+   "raw": "hai bà chương phất cờ khởi nghĩa chống lại ách đô hộ của phong kiến phương bóc vào năm nào",
+   "fixed": "Hai Bà Trưng phất cờ khởi nghĩa chống lại ách đô hộ của phong kiến phương Bắc vào năm nào",
+   "cer_raw": 0.0556,
+   "cer_fixed": 0.0111,
+   "f1_clean": 0.6061,
+   "f1_raw": 0.5455,
+   "f1_fixed": 0.6061
+  },
+  {
+   "q": "Ai là tác giả của bản Tuyên ngôn Độc lập đầu tiên của nước ta mang tên Nam quốc sơn hà?",
+   "raw": "ai là tác giả của bản tuyên môn độc lập đầu tiên của nước ta mang tên năm quốc sơn hà",
+   "fixed": "Ai là tác giả của bản Tuyên ngôn Độc lập đầu tiên của nước ta mang tên Quốc Sơn Hà",
+   "cer_raw": 0.046,
+   "cer_fixed": 0.0575,
+   "f1_clean": 0.3913,
+   "f1_raw": 0.2667,
+   "f1_fixed": 0.3556
+  },
+  {
+   "q": "Vị vua nào có công dẹp loạn 12 sứ quân và lập ra nhà nước Đại Cồ Việt?",
+   "raw": "vị vô nào có công dẹp loạn mười hai sứ quân và lập ra nhà nước đại cố việt",
+   "fixed": "Vua nào có công dẹp loạn mười hai sứ quân và lập ra nhà nước Đại Cồ Việt",
+   "cer_raw": 0.1714,
+   "cer_fixed": 0.1714,
+   "f1_clean": 0.5641,
+   "f1_raw": 0.4211,
+   "f1_fixed": 0.6667
+  },
+  {
+   "q": "Chủ tịch Hồ Chí Minh đọc bản Tuyên ngôn Độc lập khai sinh nước Việt Nam Dân chủ Cộng hòa vào ngày tháng năm nào?",
+   "raw": "chủ tịch hồ chí minh đọc bản tuyên ngôn độc lập khai sinh nước việt nam dân chủ cộng quà vào ngày tháng năm nào",
+   "fixed": "Chủ tịch Hồ Chí Minh đọc bản Tuyên ngôn Độc lập khai sinh nước Việt Nam Dân chủ Cộng hòa vào ngày tháng năm nào",
+   "cer_raw": 0.0357,
+   "cer_fixed": 0.0089,
+   "f1_clean": 0.6182,
+   "f1_raw": 0.6182,
+   "f1_fixed": 0.6182
+  },
+  {
+   "q": "Chiến dịch Điện Biên Phủ toàn thắng vào ngày tháng năm nào?",
+   "raw": "chiến dịch điện miên phủ toàn tháng vào ngày tháng năm nào",
+   "fixed": "chiến dịch điện miên phủ toàn tháng vào ngày tháng năm nào",
+   "cer_raw": 0.0508,
+   "cer_fixed": 0.0508,
+   "f1_clean": 0.7742,
+   "f1_raw": 0.7097,
+   "f1_fixed": 0.7097
+  },
+  {
+   "q": "Người anh hùng áo vải lãnh đạo cuộc khởi nghĩa Lam Sơn giành lại độc lập là ai?",
+   "raw": "người anh hùng áo vài lãnh đạo cuộc khởi nghĩa lang sơn dành lại độc lập là ai",
+   "fixed": "người anh hùng áo vải lãnh đạo cuộc khởi nghĩa lang sơn giành lại độc lập là ai",
+   "cer_raw": 0.0759,
+   "cer_fixed": 0.038,
+   "f1_clean": 0.6111,
+   "f1_raw": 0.5556,
+   "f1_fixed": 0.5556
+  },
+  {
+   "q": "Kinh đô đầu tiên của nhà nước Văn Lang thời các vua Hùng nằm ở đâu?",
+   "raw": "kinh đô đầu tiên của nhà nước văn lang thời các vua hùng nằm ở đâu",
+   "fixed": "Kinh đô đầu tiên của nhà nước Văn Lang thời các vua Hùng nằm ở đâu",
+   "cer_raw": 0.0149,
+   "cer_fixed": 0.0149,
+   "f1_clean": 0.75,
+   "f1_raw": 0.75,
+   "f1_fixed": 0.75
+  },
+  {
+   "q": "Vua Lý Thái Tổ ban Chiếu dời đô từ Hoa Lư về Thăng Long vào năm nào?",
+   "raw": "vua lý thái tổ ban chiếu rời đô từ hoa lư về thang long vào năm nào",
+   "fixed": "Vua Lý Thái Tổ ban chiếu dời đô từ Hoa Lư về Thăng Long vào năm nào",
+   "cer_raw": 0.0441,
+   "cer_fixed": 0.0147,
+   "f1_clean": 0.6486,
+   "f1_raw": 0.5946,
+   "f1_fixed": 0.6486
+  },
+  {
+   "q": "Chiến dịch Hồ Chí Minh lịch sử giải phóng hoàn toàn miền Nam thống nhất đất nước toàn thắng vào ngày nào?",
+   "raw": "chiến dịch hầu chí minh lịch sử giải phóng hoàn toàn miền nam thống nhất đất nước toàn thắng vào ngày nào",
+   "fixed": "Chiến dịch Hồ Chí Minh lịch sử giải phóng hoàn toàn miền Nam thống nhất đất nước toàn thắng vào ngày nào",
+   "cer_raw": 0.0286,
+   "cer_fixed": 0.0095,
+   "f1_clean": 0.6667,
+   "f1_raw": 0.619,
+   "f1_fixed": 0.6667
+  },
+  {
+   "q": "Đại tướng đầu tiên và Tổng tư lệnh Quân đội Nhân dân Việt Nam là ai?",
+   "raw": "đại tướng đầu tiên và tổng tư lệnh quân đội nhân dân việt nam là ai",
+   "fixed": "Đại tướng đầu tiên và Tổng tư lệnh Quân đội Nhân dân Việt Nam là ai",
+   "cer_raw": 0.0147,
+   "cer_fixed": 0.0147,
+   "f1_clean": 0.4444,
+   "f1_raw": 0.4444,
+   "f1_fixed": 0.4444
+  },
+  {
+   "q": "Ai là người anh hùng thiếu niên bóp nát quả cam vì không được dự bàn việc nước đánh giặc Nguyên Mông?",
+   "raw": "ai là người anh hùng thiếu niên bóc nát quả cam vì không được dự bàn việc nước đánh giác nguyên mông",
+   "fixed": "ai là người anh hùng thiếu niên bóc nát quả cam vì không được dự bàn việc nước đánh giặc nguyên mông",
+   "cer_raw": 0.0297,
+   "cer_fixed": 0.0198,
+   "f1_clean": 0.5294,
+   "f1_raw": 0.5294,
+   "f1_fixed": 0.5294
+  },
+  {
+   "q": "Ai là tác giả của bản thiên cổ hùng văn Bình Ngô đại cáo?",
+   "raw": "ai là tác giả của bản thiên cổ vùng văn bình ngô đại cáo",
+   "fixed": "ai là tác giả của bản hùng văn bình ngô đại cáo",
+   "cer_raw": 0.0351,
+   "cer_fixed": 0.1754,
+   "f1_clean": 0.7097,
+   "f1_raw": 0.7097,
+   "f1_fixed": 0.7586
+  },
+  {
+   "q": "Trận Như Nguyệt năm 1077 diễn ra trên dòng sông nào ngày nay?",
+   "raw": "trận như nguyện năm một nghìn không trăm bảy mươi bảy diễn ra trên rong sông nào ngày nay",
+   "fixed": "Trận Như Nguyệt năm một nghìn không trăm bảy mươi bảy diễn ra trên dòng sông nào ngày nay",
+   "cer_raw": 0.5902,
+   "cer_fixed": 0.5574,
+   "f1_clean": 0.2258,
+   "f1_raw": 0.1379,
+   "f1_fixed": 0.1261
+  },
+  {
+   "q": "Thành Cổ Loa được xây dựng dưới triều đại của vị vua nào?",
+   "raw": "thanh cấu loa được xây dựng dưới triều đại cổ vị vua nào",
+   "fixed": "Thanh cấu loa được xây dựng dưới triều đại cổ vị vua nào",
+   "cer_raw": 0.1053,
+   "cer_fixed": 0.1053,
+   "f1_clean": 0.6207,
+   "f1_raw": 0.6,
+   "f1_fixed": 0.875
+  },
+  {
+   "q": "Bác Hồ ra đi tìm đường cứu nước từ bến cảng nào vào ngày 5 tháng 6 năm 1911?",
+   "raw": "bác hồ ra đi tìm đường cứu nước từ biến cảng nào vào ngày năm tháng sáu năm một nghìn chín trăm mười một",
+   "fixed": "Bác Hồ ra đi tìm đường cứu nước từ bến cảng nào vào ngày năm tháng sáu năm một nghìn chín trăm mười một",
+   "cer_raw": 0.4605,
+   "cer_fixed": 0.4474,
+   "f1_clean": 0.7179,
+   "f1_raw": 0.6364,
+   "f1_fixed": 0.6364
+  },
+  {
+   "q": "Vị trạng nguyên trẻ tuổi nhất trong lịch sử khoa bảng Việt Nam là ai?",
+   "raw": "vị trạng nguyên trẻ tối nhất trong lịch sử qua bảng việt nam là ai",
+   "fixed": "vị trạng nguyên trẻ nhất trong lịch sử qua bảng việt nam là ai",
+   "cer_raw": 0.087,
+   "cer_fixed": 0.1304,
+   "f1_clean": 0.5143,
+   "f1_raw": 0.4571,
+   "f1_fixed": 0.4706
+  },
+  {
+   "q": "Phong trào Cần Vương chống thực dân Pháp do vị vua yêu nước nào ban chiếu phát động?",
+   "raw": "phong trào cần vương chống thực dân pháp do vị vua yêu nước nào ban chiếu phát động",
+   "fixed": "Phong trào cần vương chống thực dân Pháp do vị vua yêu nước nào ban chiếu phát động",
+   "cer_raw": 0.0119,
+   "cer_fixed": 0.0119,
+   "f1_clean": 0.7059,
+   "f1_raw": 0.7059,
+   "f1_fixed": 0.7059
+  },
+  {
+   "q": "Thủ đô của nước Cộng hòa Xã hội Chủ nghĩa Việt Nam là thành phố nào?",
+   "raw": "thủ đô của nước cộng hòa xã hội chủ nghĩa việt nam là thành phố nào",
+   "fixed": "Thủ đô của nước Cộng hòa xã hội chủ nghĩa Việt Nam là thành phố nào",
+   "cer_raw": 0.0147,
+   "cer_fixed": 0.0147,
+   "f1_clean": 0.5714,
+   "f1_raw": 0.5517,
+   "f1_fixed": 0.5517
+  },
+  {
+   "q": "Đỉnh núi cao nhất Việt Nam và được mệnh danh là nóc nhà Đông Dương là đỉnh núi nào?",
+   "raw": "đỉnh núi cao nhất việt nam và được mệnh danh là nóc nhà đông dương là đỉnh núi nào",
+   "fixed": "đỉnh núi cao nhất việt nam và được mệnh danh là nóc nhà đông dương là đỉnh núi nào",
+   "cer_raw": 0.012,
+   "cer_fixed": 0.012,
+   "f1_clean": 0.1538,
+   "f1_raw": 0.1538,
+   "f1_fixed": 0.1538
+  },
+  {
+   "q": "Hang động tự nhiên lớn nhất thế giới nằm ở tỉnh nào của Việt Nam?",
+   "raw": "hăng động tự nhiên lớn nhất thế giới năm ở tỉnh nào của việt nam",
+   "fixed": "Hằng động tự nhiên lớn nhất thế giới nằm ở tỉnh nào của Việt Nam",
+   "cer_raw": 0.0462,
+   "cer_fixed": 0.0308,
+   "f1_clean": 0.2069,
+   "f1_raw": 0.2069,
+   "f1_fixed": 0.2069
+  },
+  {
+   "q": "Đảo nào có diện tích lớn nhất của Việt Nam?",
+   "raw": "đảo nào có diện tích lớn nhất của việt nam",
+   "fixed": "Đảo nào có diện tích lớn nhất của Việt Nam",
+   "cer_raw": 0.0233,
+   "cer_fixed": 0.0233,
+   "f1_clean": 0.56,
+   "f1_raw": 0.56,
+   "f1_fixed": 0.56
+  },
+  {
+   "q": "Vịnh Hạ Long được UNESCO công nhận là di sản thiên nhiên thế giới thuộc tỉnh nào?",
+   "raw": "viện hạn long được ôn ét so công nhận là di sản thiên nhiên thế giới thuộc tỉnh nào",
+   "fixed": "Viện Hạn Long được UNESCO công nhận là di sản thiên nhiên thế giới thuộc tỉnh nào",
+   "cer_raw": 0.1358,
+   "cer_fixed": 0.0617,
+   "f1_clean": 0.5185,
+   "f1_raw": 0.3448,
+   "f1_fixed": 0.3704
+  },
+  {
+   "q": "Cột cờ Lũng Cú điểm cực Bắc của Tổ quốc thuộc huyện nào của tỉnh Hà Giang?",
+   "raw": "cột cơ lũng cố điểm cực bắc của tổ quốc thuộc nguyện nào của tỉnh ha rang",
+   "fixed": "Cột cờ lũng cố điểm cực bắc của Tổ quốc thuộc nguyện nào của tỉnh Hà Rang",
+   "cer_raw": 0.1081,
+   "cer_fixed": 0.0811,
+   "f1_clean": 0.6667,
+   "f1_raw": 0.3871,
+   "f1_fixed": 0.4138
+  },
+  {
+   "q": "Điểm cực Nam trên đất liền của Việt Nam thuộc địa phận tỉnh nào?",
+   "raw": "điểm cực nam trên đất liền của việt nam thuộc địa phận tình nào",
+   "fixed": "điểm cực nam trên đất liền của việt nam thuộc địa phận tỉnh nào",
+   "cer_raw": 0.0312,
+   "cer_fixed": 0.0156,
+   "f1_clean": 0.7143,
+   "f1_raw": 0.7143,
+   "f1_fixed": 0.7143
+  },
+  {
+   "q": "Dòng sông nào dài nhất chảy hoàn toàn bên trong lãnh thổ Việt Nam?",
+   "raw": "dòng sông nào dài nhất trải hoàn toàn bên trong lãnh thổ việt nam",
+   "fixed": "dòng sông nào dài nhất trải hoàn toàn bên trong lãnh thổ việt nam",
+   "cer_raw": 0.0606,
+   "cer_fixed": 0.0606,
+   "f1_clean": 0.7273,
+   "f1_raw": 0.6667,
+   "f1_fixed": 0.6667
+  },
+  {
+   "q": "Đồng bằng sông Cửu Long còn được gọi bằng tên quen thuộc nào?",
+   "raw": "đồng bằng sông cổ long còn được gọi bằng tên quen thuộc nào",
+   "fixed": "đồng bằng sông Cửu Long còn được gọi bằng tên quen thuộc nào",
+   "cer_raw": 0.0492,
+   "cer_fixed": 0.0164,
+   "f1_clean": 0.6842,
+   "f1_raw": 0.6316,
+   "f1_fixed": 0.6842
+  },
+  {
+   "q": "Hồ nước ngọt tự nhiên lớn nhất Việt Nam là hồ nào?",
+   "raw": "phổ nước ngọt sự nhiên lớn nhất việt nam là hồ nào",
+   "fixed": "phổ nước ngọt tự nhiên lớn nhất việt nam là hồ nào",
+   "cer_raw": 0.08,
+   "cer_fixed": 0.06,
+   "f1_clean": 0.6667,
+   "f1_raw": 0.6,
+   "f1_fixed": 0.6667
+  },
+  {
+   "q": "Quần đảo Hoàng Sa và Trường Sa thuộc chủ quyền thiêng liêng của quốc gia nào?",
+   "raw": "quần đảo hoàng xa và trường xa thuộc chủ quyền thiêng liêng của quốc gia nào",
+   "fixed": "quần đảo hoàng xa và trường xa thuộc chủ quyền thiêng liêng của quốc gia nào",
+   "cer_raw": 0.039,
+   "cer_fixed": 0.039,
+   "f1_clean": 0.6842,
+   "f1_raw": 0.6667,
+   "f1_fixed": 0.6667
+  },
+  {
+   "q": "Thác nước tự nhiên lớn nhất Đông Nam Á nằm giữa biên giới Việt Nam và Trung Quốc tên là gì?",
+   "raw": "thác nước tự nhiên lớn nhất đông nam á nằm giữa biên giới việt nam và trung quốc tên là gì",
+   "fixed": "Thác nước tự nhiên lớn nhất Đông Nam Á nằm giữa biên giới Việt Nam và Trung Quốc tên là gì",
+   "cer_raw": 0.011,
+   "cer_fixed": 0.011,
+   "f1_clean": 0.25,
+   "f1_raw": 0.25,
+   "f1_fixed": 0.25
+  },
+  {
+   "q": "Thành phố Đà Lạt thành phố ngàn hoa nằm trên cao nguyên nào?",
+   "raw": "thành phố đa lạc thành phố ngàn hoan nồng trên cao nguyên nào",
+   "fixed": "thành phố đa lạc thành phố ngàn hoan nồng trên cao nguyên nào",
+   "cer_raw": 0.1167,
+   "cer_fixed": 0.1167,
+   "f1_clean": 0.7586,
+   "f1_raw": 0.0,
+   "f1_fixed": 0.0
+  },
+  {
+   "q": "Cố đô Huế với dòng sông Hương thơ mộng thuộc tỉnh nào?",
+   "raw": "cố đô huế với giòng sông hương thơ mộng thuộc tỉnh nào",
+   "fixed": "Cố đô Huế với dòng sông Hương thơ mộng thuộc tỉnh nào",
+   "cer_raw": 0.0556,
+   "cer_fixed": 0.0185,
+   "f1_clean": 0.5385,
+   "f1_raw": 0.5385,
+   "f1_fixed": 0.5385
+  },
+  {
+   "q": "Việt Nam có đường bờ biển dài khoảng bao nhiêu kilomet?",
+   "raw": "việt nam có đường vơ biển dài khoảng bao nhiêu kêu nét",
+   "fixed": "Việt Nam có đường bờ biển dài khoảng bao nhiêu km",
+   "cer_raw": 0.1455,
+   "cer_fixed": 0.1091,
+   "f1_clean": 0.7333,
+   "f1_raw": 0.4516,
+   "f1_fixed": 0.5517
+  },
+  {
+   "q": "Tỉnh nào ở Việt Nam có diện tích tự nhiên rộng nhất cả nước?",
+   "raw": "tỉnh nào ở việt nam có diện tích tự nhiên rộng nhất cả nước",
+   "fixed": "Tỉnh nào ở Việt Nam có diện tích tự nhiên rộng nhất cả nước",
+   "cer_raw": 0.0167,
+   "cer_fixed": 0.0167,
+   "f1_clean": 0.8276,
+   "f1_raw": 0.8276,
+   "f1_fixed": 0.8276
+  },
+  {
+   "q": "Tỉnh nào có diện tích đất tự nhiên nhỏ nhất nước ta?",
+   "raw": "tỉnh nào có diện tích đất tự nhiên nhỏ nhất nước ta",
+   "fixed": "Tỉnh nào có diện tích đất tự nhiên nhỏ nhất nước ta",
+   "cer_raw": 0.0192,
+   "cer_fixed": 0.0192,
+   "f1_clean": 0.6154,
+   "f1_raw": 0.6154,
+   "f1_fixed": 0.6154
+  },
+  {
+   "q": "Đèo Hải Vân là ranh giới tự nhiên giữa hai địa phương nào?",
+   "raw": "đèo hải vân là danh giới tự nhiên giữa hai địa phương nào",
+   "fixed": "Đèo Hải Vân là danh giới tự nhiên giữa hai địa phương nào",
+   "cer_raw": 0.0345,
+   "cer_fixed": 0.0345,
+   "f1_clean": 0.9474,
+   "f1_raw": 0.8947,
+   "f1_fixed": 0.8947
+  },
+  {
+   "q": "Núi Bà Đen ngọn núi cao nhất miền Đông Nam Bộ thuộc tỉnh nào?",
+   "raw": "núi bà đen ngọn núi cao nhất miền đông năm bộ thuộc tỉnh nào",
+   "fixed": "Núi Bà Đen ngọn núi cao nhất miền Đông Nam Bộ thuộc tỉnh nào",
+   "cer_raw": 0.0328,
+   "cer_fixed": 0.0164,
+   "f1_clean": 0.5926,
+   "f1_raw": 0.5926,
+   "f1_fixed": 0.5926
+  },
+  {
+   "q": "Sông Hồng bắt nguồn từ đâu trước khi chảy vào Việt Nam?",
+   "raw": "sông hồng mắt nguồn từ đâu trước khi chải vào việt nam",
+   "fixed": "sông hồng mắt nguồn từ đâu trước khi chảy vào việt nam",
+   "cer_raw": 0.0545,
+   "cer_fixed": 0.0364,
+   "f1_clean": 0.8,
+   "f1_raw": 0.7333,
+   "f1_fixed": 0.7333
+  }
+ ]
+}

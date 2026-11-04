@@ -395,7 +395,7 @@ appendix_data = [
         "Tỷ lệ lỗi từ (WER) /\nTỷ lệ lỗi ký tự (CER)",
         "WER: 13.77%\nCER: 6.67%\n(Test 1.802 mẫu VietSpeech)",
         "Whisper-small gốc (zero-shot):\nWER: 36.76%\nCER: 19.43%",
-        "Fine-tune LoRA 50h giúp giảm 23,0 điểm % WER (62,6% tương đối) trên tiếng Việt thực tế; nhận dạng rõ dấu thanh."
+        "Fine-tune LoRA 50h giúp giảm 23,0 điểm % WER (62,5% tương đối) trên tiếng Việt thực tế; nhận dạng rõ dấu thanh."
     ),
     (
         "Tối ưu STT\n(CTranslate2 INT8 vs PyTorch FP32)",
@@ -421,7 +421,7 @@ appendix_data = [
     (
         "Kho Tri thức Hai Tầng RAG\n(Two-Tier Knowledge Base)",
         "Quy mô kho tài liệu &\nĐộ phủ tri thức",
-        "Tầng 1: 5.869 đoạn (ViMMRC + ViQuAD)\nTầng 2: 1,48 triệu đoạn Wikipedia",
+        "Tầng 1: 5.879 đoạn (ViMMRC + ViQuAD)\nTầng 2: 1,48 triệu đoạn Wikipedia",
         "Kho đơn tầng:\nChỉ trả lời câu hỏi thuộc bài đọc có sẵn",
         "Hỗ trợ trả lời cả câu hỏi thuộc bộ dữ liệu đọc hiểu lẫn câu hỏi kiến thức bách khoa mở."
     ),
@@ -449,15 +449,15 @@ appendix_data = [
     (
         "Tổng hợp Tiếng nói (TTS)\n(Matcha-TTS Flow Matching)",
         "Tỷ lệ lỗi ký tự (CER) &\nSai số cao độ (F0)",
-        "CER (PhoWhisper): 1.9%\nlog-F0 RMSE: 2.86 bán cung\nF0 RMSE: 70.4 Hz | MCD: 5.35 dB",
-        "VITS MMS: CER 4.3%, log-F0 4.31, MCD 4.45\nEdge-TTS: CER 1.0%, log-F0 2.69, MCD 4.63\nNgười thật (tham chiếu): CER 0.7%",
-        "Matcha-TTS có tỷ lệ lỗi ký tự thấp hơn VITS hơn 2 lần; đường cao độ thanh điệu ổn định nhờ vi_tone_v2."
+        "CER (PhoWhisper): 0.8%\nlog-F0 RMSE: 0.88 bán cung\nF0 RMSE: 21.6 Hz | MCD: 3.05 dB",
+        "VITS MMS: CER 4.7%, log-F0 4.29, MCD 4.40\nNgười thật (tham chiếu): CER 0.7%",
+        "Matcha-TTS có tỷ lệ lỗi ký tự thấp hơn VITS gần 6 lần; đường cao độ thanh điệu ổn định nhờ vi_tone_v2."
     ),
     (
         "Tốc độ Tổng hợp TTS\n(Matcha-TTS trên CPU)",
-        "Real-Time Factor (RTF)\n(10 bước Euler ODE)",
-        "RTF: 0.52\n(CPU thông thường)",
-        "Ngưỡng thời gian thực: RTF < 1.0\nVITS MMS: RTF 0.38",
+        "Real-Time Factor (RTF)\n(20 bước Euler ODE)",
+        "RTF: 0.64\n(CPU thông thường)",
+        "Ngưỡng thời gian thực: RTF < 1.0\nVITS MMS: RTF 0.29",
         "Tổng hợp âm thanh nhanh hơn thời gian thực trên CPU (~1.3 giây cho một câu trả lời trung bình)."
     ),
     (
@@ -470,7 +470,7 @@ appendix_data = [
     (
         "Kiểm thử Phần mềm\n(Automated Test Suites)",
         "Số lượng bài kiểm thử &\nĐộ bao phủ",
-        "54 bài kiểm thử tự động\n(53 passed, 1 skipped trên CPU)",
+        "115 bài kiểm thử tự động\n",
         "Chạy tự động qua pytest",
         "Bao phủ REST API, Retrieval, Context Selection, MRC, Text Normalizer, Tokenizer và cơ chế Fallback."
     )

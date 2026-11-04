@@ -22,6 +22,11 @@ services:
       - DIALOGUE_MIN_SUPPORT=${DIALOGUE_MIN_SUPPORT:-0.34}
       # cross-encoder over both tiers: better answers, but ~4-5 s extra per question on CPU; empty = off
       - KB_RERANKER=${KB_RERANKER-BAAI/bge-reranker-v2-m3}
+      # LLM Ollama trên máy chủ kiểm tra đoạn/đáp án (dialogue-manager_Huy/llm_assist.py); không chạy thì tự bỏ qua
+      - OLLAMA_BASE=${OLLAMA_BASE:-http://host.docker.internal:11434}
+      - LLM_ASSIST=${LLM_ASSIST:-1}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./data:/app/data:ro
       - ./text-to-speech_Duy/outputs:/app/text-to-speech_Duy/outputs

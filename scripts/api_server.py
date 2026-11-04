@@ -28,6 +28,7 @@ from starlette.staticfiles import StaticFiles
 
 ROOT = Path(__file__).resolve().parents[1]
 for folder in (
+    "scripts",  # intent_router; pytest.ini đã thêm, nhưng `uvicorn scripts.api_server:app` thì không
     "dialogue-manager_Huy",
     "retrieval-model_Huy",
     "mrc-model_Huy",
@@ -44,11 +45,15 @@ from kb_retriever import load_any
 from mrc_client import LexicalBaselineClient, MRCClient
 from intent_router import ConversationalIntentRouter, polish_answer, rerank_hits
 from dialogue import DialogueManager
+from llm_assist import LLMAssist
 
 from synthesize import synthesize as tts_synthesize
 import stt_server
 
 app = stt_server.app
+# LLM_ASSIST=0 tắt; bật mà Ollama không chạy thì tự bỏ qua, hệ thống chạy như cũ
+_assist = LLMAssist(enabled=os.getenv("LLM_ASSIST", "1") != "0")
+stt_server.POST_PROCESS = _assist.fix_transcript
 app.title = "ViMMRC Voice Q&A API"
 
 _service_lock = Lock()
@@ -187,7 +192,8 @@ def get_dialogue() -> DialogueManager:
         retriever, reader = get_qa_services()
         with _service_lock:
             if _dialogue is None:
-                _dialogue = DialogueManager(retriever, reader, min_support=float(os.getenv("DIALOGUE_MIN_SUPPORT", "0.34")))
+                _dialogue = DialogueManager(retriever, reader, assist=_assist,
+                                            min_support=float(os.getenv("DIALOGUE_MIN_SUPPORT", "0.34")))
     return _dialogue
 
 
@@ -211,6 +217,7 @@ def health() -> dict:
         "retrieval_passages": len(retriever.passages),
         "reader": "trained_vit5" if is_vit5 else "lexical_baseline",
         "dialogue": True,
+        "llm_assist": _assist.available(),
         "tts_engine": os.getenv("TTS_ENGINE", "matcha"),
         "frontend_served": dist_browser.exists() and (dist_browser / "index.html").exists(),
     }

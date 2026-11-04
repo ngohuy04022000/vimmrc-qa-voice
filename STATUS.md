@@ -8,7 +8,7 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
 | Module | Trạng thái | File chính | Hợp đồng vào/ra | Chạy standalone | Test |
 |---|---|---|---|---|---|
 | STT | Xong (Faster-Whisper). Checkpoint fine-tune Whisper-small-vi (50h) có trên Drive nhóm, tải về `speech-to-text_Luong/models/whisper-small-vi-50h-ct2/` (không commit vào git) | `speech-to-text_Luong/stt_server.py` | `POST /api/stt` (multipart audio) → `{text}` | `WHISPER_MODEL=<path checkpoint> uvicorn stt_server:app --port 8001` (bỏ `WHISPER_MODEL` → tự dùng model 50h nếu có) | `speech-to-text_Luong/tests/test_stt.py` (10 tests) |
-| Retrieval (RAG) | Xong. KB 2 tầng: `data/kb_index.json` (552 ViMMRC + 5.317 ViQuAD) + `data/kb_wiki_full` (1,48 triệu đoạn Wikipedia tiếng Việt, bm25s shard + chỉ mục dense multilingual-e5-small 384 chiều float16 ~1,1 GB). Mỗi câu lấy top-3 KB BM25 + top-3 wiki BM25 + top-3 wiki dense, reranker bge-reranker-v2-m3 chấm chung (+0,25 cho đoạn KB), điểm cao nhất thắng. Dựng bằng `build_kb.py`/`build_dense.py`; data không commit. BM25 hai tầng (trước reranker): dev R@1 70,7% / R@5 85,1% | `retrieval-model_Huy/kb_retriever.py` (`load_any`), `retrieval_client.py` | `Retriever.search(q, top_k) -> list[{id,passage,score}]`; `Retriever.retrieve(q) -> str` (API phụ, chỉ `test_retrieval.py` dùng) | `retrieval_cli.py` | `retrieval-model_Huy/test_retrieval.py` |
+| Retrieval (RAG) | Xong. KB 2 tầng: `data/kb_index.json` (552 ViMMRC + 5.317 ViQuAD + 10 thẻ tri thức) + `data/kb_wiki_full` (1,48 triệu đoạn Wikipedia tiếng Việt, bm25s shard + chỉ mục dense multilingual-e5-small 384 chiều float16 ~1,1 GB). Mỗi câu lấy top-3 KB BM25 + top-3 wiki BM25 + top-3 wiki dense, reranker bge-reranker-v2-m3 chấm chung (+0,25 cho đoạn KB), điểm cao nhất thắng. Dựng bằng `build_kb.py`/`build_dense.py`; data không commit. BM25 hai tầng (trước reranker): dev R@1 70,7% / R@5 85,1% | `retrieval-model_Huy/kb_retriever.py` (`load_any`), `retrieval_client.py` | `Retriever.search(q, top_k) -> list[{id,passage,score}]`; `Retriever.retrieve(q) -> str` (API phụ, chỉ `test_retrieval.py` dùng) | `retrieval_cli.py` | `retrieval-model_Huy/test_retrieval.py` |
 | MRC (ViT5) | Đã fine-tune trên bộ dữ liệu mở rộng (xem dưới): **Exact Match 41,05%, token F1 66,55%** trên test (2.716 câu, không so được với số liệu ViMMRC thuần cũ). Checkpoint dùng trong Docker: `mrc-model_Huy/checkpoints/vit5-combined-cont/` (train tiếp 2 epoch từ `vit5-combined`, F1 66,02%), không commit (quá lớn) | `mrc-model_Huy/mrc_client.py` | `answer_question(question, passage) -> str` | `MRC_CHECKPOINT=<path> uvicorn scripts.api_server:app`, hoặc `MRCClient(checkpoint_dir)` trực tiếp | `mrc-model_Huy/tests/` |
 | Lexical baseline (MRC) | Xong, dùng khi chưa có checkpoint ViT5 | `mrc_client.LexicalBaselineClient` | `answer_question(question, passage) -> str` | không cần setup | cùng `mrc-model_Huy/tests/` |
 | TTS | Xong: Matcha-TTS mặc định (cần `checkpoints/matcha_vi.pt` + `scripts/setup_matcha.py`), VITS/Edge/gTTS, lỗi thì fallback gTTS | `text-to-speech_Duy/synthesize.py` | `synthesize(text, engine?, voice?) -> đường dẫn audio` | `python synthesize.py --text "..."` | `text-to-speech_Duy/tests/` |
@@ -108,7 +108,7 @@ dài có trong dữ liệu này, bất kể model tốt đến đâu).
 
 ## Nợ kỹ thuật & Cải tiến đã hoàn thành
 
-- **Kiểm thử tự động toàn diện**: Đã bổ sung bộ kiểm thử riêng cho STT (`speech-to-text_Luong/tests/test_stt.py` với 10 tests), Web UI (`tests/test_web_ui.py` với 5 tests), Intent Router (`tests/test_intent_router.py` với 8 tests), Out-of-Dataset Suite (`tests/test_out_of_dataset.py` với 5 tests), và tầng hội thoại (`dialogue-manager_Huy/tests`, 24 tests). Tổng bộ test suite hiện có **113 automated tests** (100% passed).
+- **Kiểm thử tự động toàn diện**: Đã bổ sung bộ kiểm thử riêng cho STT (`speech-to-text_Luong/tests/test_stt.py` với 10 tests), Web UI (`tests/test_web_ui.py` với 5 tests), Intent Router (`tests/test_intent_router.py` với 8 tests), Out-of-Dataset Suite (`tests/test_out_of_dataset.py` với 5 tests), và tầng hội thoại (`dialogue-manager_Huy/tests`, 24 tests). Tổng bộ test suite hiện có **115 automated tests** (100% passed).
 - **Hợp nhất tầng hội thoại**: chỉ còn một engine `dialogue-manager_Huy/dialogue.py` (`DialogueManager`) cho cả web UI, API và eval: xã giao, câu nối tiếp theo `session_id`, so sánh, câu ghép, đúng/sai, tóm tắt đoạn dán vào. Bản `scripts/dialogue_manager.py` cũ đã gỡ.
 - **Bổ sung 5 thẻ tri thức chuyên sâu (Deep Knowledge Cards)**: Tích hợp 5 thẻ bài đọc kiến thức chuyên sâu vào `data/kb_index.json` (tăng tổng số đoạn văn từ 5.874 lên 5.879), cung cấp đầy đủ luận cứ cho các câu hỏi lịch sử, công nghệ Voice AI, địa danh kỳ quan, cơ chế sinh học và danh tác văn học.
 - **Điều hướng hội thoại & Chuẩn hóa câu trả lời (Intent Router & Answer Polish)**: Tích hợp `scripts/intent_router.py` tự động nhận diện các ý định hội thoại (chào hỏi, danh tính trợ lý, tính năng, cảm ơn, tạm biệt, hỏi thăm) với độ trễ 0,1 ms. Bộ lọc `polish_answer()` loại bỏ ngoặc kép thừa, chuẩn hóa dấu câu và viết hoa đầu câu, đảm bảo 100% câu trả lời hoàn chỉnh, tự nhiên cho giọng đọc TTS.
@@ -173,3 +173,41 @@ TTS: `normalizer.py` đọc thêm đơn vị sau "triệu/tỷ" (`9 triệu km²
 số La Mã sau "thế kỷ", `TP.HCM`; `--tts-check` cho 0 câu trả lời còn chữ số/ký hiệu.
 STT: thêm biến tùy chọn `WHISPER_INITIAL_PROMPT` (mặc định tắt, chưa đo WER).
 Web UI gọi `/api/ask` (một lượt thay cho chuỗi retrieve → answer), hiện câu trả lời chữ khi TTS lỗi.
+
+
+## Đối chiếu số liệu trình bày với báo cáo gốc (04/11/2026)
+
+Rà lại các con số trong slide/kịch bản so với `reports/` và mã nguồn. Kết quả: bốn chỗ là số cũ hoặc sai (44,1%, 54 test, 5.869 đoạn, 62,6%), nhãn "BM25 hai tầng" là đúng; đã sửa trong STATUS, README, `build_*.py`, `docs/*.md`, `docs/*.pptx|docx`.
+
+| Số/nhãn từng ghi | Thực tế | Loại lỗi |
+|---|---|---|
+| "Recall@1 BM25 tinh chỉnh: 44,1% → 77,48% (dev)" | 44,1% là cấu hình **kém nhất** (k1 0,9, b 0,4) trong 16 cấu hình thử trên **800 câu train** (`retrieval-model_Huy/reports/lexical_benchmark.json`); 77,48% là cấu hình chọn trên **dev**. Cùng tập dev: BM25 cũ 71,45% → 77,48%; cùng tập train 800 câu: 53,25% → 64,13% | Trộn hai tập đo, không phải số cũ |
+| "BM25 hai tầng: R@1 71,1% / R@5 85,9% (test), 70,7% / 85,1% (dev)" | **Nhãn đúng, giữ nguyên.** `scripts/eval_e2e.py` chạy với `--wiki` (tỷ lệ 0,5): R@1 theo nguồn trong `e2e_dev_kb_*.json` (ViMMRC 51,98%, ViQuAD 74,24%) trùng khít mục `kb+wiki_full(ratio 0.5)` của `kb_retrieval_dev.json`, không phải mục chỉ-KB (52,48% / 74,52%). Đối chiếu: BM25 chỉ trên kho chọn lọc 5.879 đoạn cho dev 71,1% / 85,6%, test 71,6% / 86,8% (cao hơn dưới 1 điểm, vì tầng Wikipedia đôi khi chen vào) | Không sai |
+| "54 bài kiểm thử (53 passed, 1 skipped)" | Hiện thu thập và chạy **124** test, tất cả đạt (`pytest -q`, `.venv` của dự án; gồm 2 test hồi quy mới: import `scripts.api_server` từ thư mục gốc, và logic tự dừng ghi âm của web); số 54 là số cũ, không còn khớp với bộ test hiện tại. Chạy lại trên máy thiếu `bm25s`, `edge_tts`, `gtts`, `matcha`: 102 đạt, 11 lỗi `ModuleNotFoundError` (không phải lỗi logic) | Số cũ |
+| "5.869 đoạn" kho chọn lọc | `data/kb_index.json` hiện có **5.879** đoạn: 552 ViMMRC + 5.317 ViQuAD + 10 thẻ tri thức | Số cũ |
+| "Giảm 62,6% WER tương đối" | (36,76 − 13,77) / 36,76 = 62,54% → **62,5%** | Làm tròn sai |
+
+Số "F1 câu hỏi mở 15,4 → 24,3" đúng: cả hai đo trên cùng 200 câu (`reports/dense_routing_e2e.json`, `rerank_routing_e2e.json`). Không so với 52,9/16,0 (500 câu, `routing_e2e.json`) vì khác tập mẫu.
+
+Bản nén `docs/ViMMRC_GoogleDrive_Upload_Package.zip` và thư mục `docs/google_drive_upload_package/` (bản sao của `docs/`) đã bị xóa; các slide/kịch bản đã xuất trước đây có thể còn số cũ nếu chưa dựng lại bằng `build_*.py`.
+
+## LLM cục bộ (Ollama) bù cho ViT5 + BM25 (04/11/2026)
+
+`dialogue-manager_Huy/llm_assist.py` dùng model `nemotron-3.5-bolt:e4b-q4_K_M` (Ollama, GPU) làm người kiểm tra, ViT5 vẫn là bộ trả lời chính:
+
+1. **Cổng đoạn**: duyệt top-3 đoạn, đoạn đầu tiên "có thông tin trả lời" mới được dùng; không đoạn nào thì trả lời "chưa tìm thấy" (hết bịa với câu ngoài kho).
+2. **Kiểm chứng đáp án**: ViT5 trả lời xong, LLM kiểm tra theo đoạn; SAI thì thay bằng đáp án LLM sinh từ đoạn.
+3. **Sửa lỗi STT** (`/api/stt`): sửa tên riêng nghe nhầm ("lam sân" → "Lam Sơn"), chỉ nhận bản sửa nếu còn gần bản gốc.
+
+Ollama không chạy / thiếu model: mọi bước tự bỏ qua, hệ thống chạy như trước (`/api/health` có khóa `llm_assist`). Tắt hẳn: `LLM_ASSIST=0`. Docker: `OLLAMA_BASE` (mặc định `http://host.docker.internal:11434`).
+
+Đo bằng `scripts/eval_llm_assist.py` (220 câu trả lời được: 85 ngoài tập huấn luyện + 35 khó + 100 mẫu test; 30 câu ngoài kho), cùng retriever và ViT5, lưu `reports/llm_assist_ab.json`:
+
+| Cấu hình | F1 chung | Từ chối nhầm (/220) | Từ chối đúng (/30) | Giây/câu |
+|---|---|---|---|---|
+| Không LLM | 0,4277 | 13 | 7 | 0,49 |
+| Chỉ cổng đoạn (prompt đầu, chặt) | 0,4169 | 39 | 25 | 2,10 |
+| Chỉ cổng đoạn (prompt nới) | 0,4294 | 26 | 23 | 2,08 |
+| **Cổng + kiểm chứng (đang dùng)** | **0,4361** | 26 | 23 | 2,34 |
+
+Giới hạn: tăng F1 nhỏ (+0,008) vì F1 token đo chung cả câu bị từ chối nhầm; lợi ích chính là hết bịa với câu ngoài kho (7/30 → 23/30). Chậm hơn ~1,9 giây/câu. Bộ 30 câu ngoài kho do mình viết, chưa phải benchmark chuẩn.

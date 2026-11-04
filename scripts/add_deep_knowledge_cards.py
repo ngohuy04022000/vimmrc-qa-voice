@@ -10,7 +10,6 @@ if hasattr(sys.stdout, "reconfigure"):
 
 ROOT = Path(__file__).resolve().parents[1]
 KB_PATH = ROOT / "data" / "kb_index.json"
-PACKAGE_KB_PATH = ROOT / "ViMMRC_Training_and_Local_Run_Package" / "data" / "kb_index.json"
 
 DEEP_CARDS = [
     {
@@ -106,10 +105,6 @@ def main():
     with open(KB_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-    if PACKAGE_KB_PATH.parent.exists():
-        with open(PACKAGE_KB_PATH, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        print(f"Synchronized updated index to {PACKAGE_KB_PATH}")
 
     print("Knowledge index enhancement complete!")
 

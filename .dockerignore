@@ -19,7 +19,6 @@ data/
 docs/
 reports/
 notebooks/
-ViMMRC_Training_and_Local_Run_Package/
 *.pptx
 *.docx
 *.zip

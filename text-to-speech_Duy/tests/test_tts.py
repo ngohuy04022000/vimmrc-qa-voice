@@ -127,6 +127,7 @@ def test_vits_engine():
     print(f"[OK] VITS Engine   : {res_vits} ({size_vits} bytes) - Thời gian: {t_vits:.2f}s")
 
     assert size_vits > 0, "File VITS audio sinh ra không được rỗng"
+    assert str(res_vits).lower().endswith(".wav"), f"VITS lỗi và đã rơi về engine khác: {res_vits}"
     print("=> [PASS] VITS Engine hoạt động tốt!\n")
 
 
@@ -146,6 +147,8 @@ def test_matcha_engine():
     print(f"[OK] Matcha Engine : {res_matcha} ({size_matcha} bytes) - Thời gian: {t_matcha:.2f}s")
 
     assert size_matcha > 0, "File Matcha audio sinh ra không được rỗng"
+    # synthesize() lặng lẽ rơi về gTTS (.mp3) khi engine lỗi; Matcha thật phải ra .wav
+    assert str(res_matcha).lower().endswith(".wav"), f"Matcha lỗi và đã rơi về engine khác: {res_matcha}"
     print("=> [PASS] Matcha-TTS Engine hoạt động xuất sắc!\n")
 
 

@@ -46,10 +46,10 @@ builder.add_title_slide(
 # ==========================================
 s2_notes = """Để thực hiện mục tiêu trên, nhóm thiết kế kiến trúc pipeline gồm 4 chặng nối tiếp:
 Chặng 1, STT: Nhận âm thanh từ micro người dùng, mô hình Whisper-small fine-tune LoRA 50h VietSpeech chuyển thành văn bản, chạy bằng CTranslate2 INT8 với bộ lọc VAD cắt khoảng lặng, đạt WER 13,77% so với 36,76% của bản gốc chưa fine-tune.
-Chặng 2, Retrieval: Tìm kiếm trên kho tri thức hai tầng gồm 5.869 đoạn văn ViMMRC và ViQuAD kết hợp 1,48 triệu đoạn Wikipedia tiếng Việt bằng BM25 và vector dense, sau đó reranker bge-reranker-v2-m3 chấm lại để chọn đoạn văn phù hợp nhất.
+Chặng 2, Retrieval: Tìm kiếm trên kho tri thức hai tầng gồm 5.879 đoạn văn ViMMRC và ViQuAD kết hợp 1,48 triệu đoạn Wikipedia tiếng Việt bằng BM25 và vector dense, sau đó reranker bge-reranker-v2-m3 chấm lại để chọn đoạn văn phù hợp nhất.
 Chặng 3, MRC: Mô hình ViT5-base đọc đoạn văn và sinh câu trả lời tự do ngắn gọn, không cần các phương án lựa chọn sẵn.
 Chặng 4, TTS: Mô hình Matcha-TTS dựa trên Conditional Flow Matching tổng hợp câu trả lời thành giọng đọc qua loa.
-Mỗi chặng đều có cơ chế dự phòng tự động: nếu chưa nạp checkpoint ViT5 thì dùng bộ trích câu khớp nhất, nếu Matcha-TTS gặp lỗi thì chuyển sang VITS, Edge-TTS hoặc gTTS."""
+Mỗi chặng đều có cơ chế dự phòng tự động: nếu chưa nạp checkpoint ViT5 thì dùng bộ trích câu khớp nhất, nếu Matcha-TTS gặp lỗi thì chuyển sang gTTS (VITS và Edge-TTS chỉ dùng khi chọn thủ công)."""
 
 s2 = builder.add_content_slide(
     category="Kiến trúc Tổng thể",
@@ -61,9 +61,9 @@ s2 = builder.add_content_slide(
 
 steps = [
     ("CHẶNG 1: STT", "Whisper-small LoRA 50h", "CTranslate2 + INT8", "VAD cắt khoảng lặng", "WER 13,77% | CER 6,67% (VietSpeech)", PRIMARY_BLUE),
-    ("CHẶNG 2: RETRIEVAL", "BM25 + Dense + Reranker", "Kho 5.869 đoạn + Wikipedia", "bge-reranker-v2-m3", "F1 kiến thức mở: 15,4 → 24,3", TEAL),
+    ("CHẶNG 2: RETRIEVAL", "BM25 + Dense + Reranker", "Kho 5.879 đoạn + Wikipedia", "bge-reranker-v2-m3", "F1 kiến thức mở: 15,4 → 24,3", TEAL),
     ("CHẶNG 3: MRC", "ViT5-base fine-tune", "Sinh câu trả lời tự do", "Train ViMMRC + ViQuAD2.0", "Test: EM 41.05% | F1 66.55%", TECH_BLUE),
-    ("CHẶNG 4: TTS", "Matcha-TTS (OT-CFM)", "10 bước ODE trên CPU", "Frontend vi_tone_v2", "RTF: 0.52 | CER: 1.9%", GREEN)
+    ("CHẶNG 4: TTS", "Matcha-TTS (OT-CFM)", "20 bước ODE trên CPU", "Frontend vi_tone_v2", "RTF: 0.64 | CER: 0.8%", GREEN)
 ]
 
 for idx, (head, sub, d1, d2, d3, col) in enumerate(steps):
@@ -100,7 +100,7 @@ pr0.font.bold = True
 pr0.font.color.rgb = PRIMARY_BLUE
 
 pr1 = tf_res.add_paragraph()
-pr1.text = "• STT: Thread-safe Lazy Loading giúp server khởi động nhanh (~0.45s); model Whisper-small LoRA 50h chạy int8 trên CPU.\n• MRC & TTS: ViT5 chạy trên CPU, dự phòng bằng bộ trích câu khớp nhất (lexical); TTS ưu tiên Matcha → VITS → Edge-TTS → gTTS."
+pr1.text = "• STT: Thread-safe Lazy Loading giúp server khởi động nhanh (~0.45s); model Whisper-small LoRA 50h chạy int8 trên CPU.\n• MRC & TTS: ViT5 chạy trên CPU, dự phòng bằng bộ trích câu khớp nhất (lexical); TTS ưu tiên Matcha → gTTS (khi lỗi); VITS, Edge-TTS chọn thủ công."
 pr1.font.size = Pt(10.5)
 pr1.font.color.rgb = TEXT_DARK
 pr1.space_before = Pt(2)
@@ -127,7 +127,7 @@ col_h = Inches(5.35)
 
 c1, tf1 = builder.add_card(s3, Inches(0.8), col_y, col_w, col_h, title="1. BM25 Tinh Chỉnh & Kho Hai Tầng", title_color=PRIMARY_BLUE)
 for b in [
-    "Kho tri thức hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt (BM25 bm25s chia shard + vector dense multilingual-e5-small).",
+    "Kho tri thức hai tầng: 5.879 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt (BM25 bm25s chia shard + vector dense multilingual-e5-small).",
     "Tinh chỉnh siêu tham số: k1 = 2.1 (độ bão hòa tần suất từ), b = 1.0 (chuẩn hóa theo độ dài văn bản).",
     "Bigram Phrase Boost (+0.4): Nhận diện cặp từ ghép liền kề tiếng Việt ('Điện Biên', 'Văn Miếu'), cộng điểm thưởng theo IDF.",
     "Top-3 mỗi nguồn (≤9 ứng viên) được reranker bge-reranker-v2-m3 chấm chung, đoạn tầng 1 cộng +0,25.",
@@ -155,7 +155,7 @@ for b in [
 c3, tf3 = builder.add_card(s3, Inches(8.8), col_y, col_w, col_h, title="3. Matcha-TTS & Frontend vi_tone_v2", title_color=GREEN)
 for b in [
     "Kiến trúc Flow Matching: Optimal-Transport Conditional Flow Matching (OT-CFM, ICASSP 2024) kết hợp vocoder HiFi-GAN.",
-    "Suy luận hiệu quả: Quỹ đạo vận chuyển thẳng giúp giải ODE nhanh trên CPU (10 bước trong benchmark đạt RTF 0.52).",
+    "Suy luận hiệu quả: Quỹ đạo vận chuyển thẳng giúp giải ODE nhanh trên CPU (20 bước đạt RTF 0.64; 10 bước nhanh hơn: RTF 0.53).",
     "Frontend vi_tone_v2: Tách 6 thanh điệu tiếng Việt thành token riêng cuối âm tiết (ví dụ: 'hồ' -> 'h ô 2'), thu gọn bộ từ vựng còn 41 ký hiệu.",
     "Text Normalizer: Chuẩn hóa ngày tháng, số liệu, tiền tệ, đơn vị đo, nhãn đáp án và chèn khoảng nghỉ theo dấu câu."
 ]:
@@ -172,7 +172,7 @@ s4_notes = """Kính thưa Thầy Cô, bảng số liệu trên slide tổng hợ
 Ở phân hệ STT, fine-tune LoRA 50 giờ giúp giảm WER từ 36,76% xuống 13,77% và CER xuống 6,67% trên 1.802 mẫu test VietSpeech.
 Ở phân hệ Retrieval, trên 2.545 câu test với kho tri thức hai tầng, BM25 đạt Recall@1 71,1% và Recall@5 85,9%. Khi kết hợp dense và reranker, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4% lên 24,3%, và trên câu có đoạn trong kho tăng từ 58,0% lên 60,7%.
 Ở phân hệ MRC, ViT5 fine-tune đạt Exact Match 41,05% và token F1 66,55% trên 2.716 câu test; khi chạy toàn chuỗi từ BM25 sang ViT5 đạt F1 53,9%.
-Ở phân hệ TTS, Matcha-TTS đạt tỷ lệ lỗi ký tự CER 1,9% qua PhoWhisper, gần mức trần giọng người thật 0,7% và thấp hơn VITS MMS (4,3%). Sai số cao độ log-F0 đạt 2,86 bán cung, gần với Edge-TTS (2,69), với tốc độ RTF 0,52 trên CPU."""
+Ở phân hệ TTS, Matcha-TTS đạt tỷ lệ lỗi ký tự CER 0,8% qua PhoWhisper, gần mức trần giọng người thật 0,7% và thấp hơn VITS MMS (4,7%). Sai số cao độ log-F0 đạt 0,88 bán cung, so với 4,29 của VITS, với tốc độ RTF 0,64 trên CPU."""
 
 s4 = builder.add_content_slide(
     category="Thực nghiệm & Đối sánh",
@@ -184,14 +184,14 @@ s4 = builder.add_content_slide(
 
 headers_s4 = ["Phân hệ / Mô hình", "Chỉ số Đo lường", "Kết quả Đạt được", "Mức Đối chứng (Baseline)", "Ý nghĩa Thực tiễn"]
 rows_s4 = [
-    ["STT: Whisper-small LoRA 50h (CT2 int8)", "WER / CER (Test 1.802 mẫu VietSpeech)", "13.77% / 6.67%", "Whisper-small gốc: 36.76% / 19.43%", "Giảm 62,6% WER tương đối; nhanh gấp 4,1x trên CPU"],
+    ["STT: Whisper-small LoRA 50h (CT2 int8)", "WER / CER (Test 1.802 mẫu VietSpeech)", "13.77% / 6.67%", "Whisper-small gốc: 36.76% / 19.43%", "Giảm 62,5% WER tương đối; nhanh gấp 4,1x trên CPU"],
     ["Retrieval: BM25 Tinh chỉnh (kho 2 tầng)", "Recall@1 / Recall@5 (Test 2.545 câu)", "71.1% / 85.9%", "Ablation kho 552 đoạn: R@1 71.45% (cũ 64.2%)", "Định vị đúng đoạn văn ngay ở Top 1 và Top 5"],
     ["Pipeline cuối: BM25 + dense + reranker", "Answer F1 (200 câu trong kho / 200 câu mở)", "60.7% / 24.3%", "BM25 thuần: 58.0% / 15.4%", "Cải thiện câu trả lời cả trong kho lẫn kiến thức mở"],
     ["Toàn chuỗi: BM25 → ViT5", "EM / token F1 (Test 2.545 câu)", "32.3% / 53.9%", "Đưa đúng đoạn văn (Gold): F1 68.6%", "Độ chính xác khi tự tìm đoạn văn rồi sinh câu trả lời"],
     ["MRC: ViT5-base fine-tune", "EM / token F1 (Test 2.716 câu)", "41.05% / 66.55%", "Trích câu khớp nhất (dự phòng khi thiếu model)", "Sinh câu trả lời ngắn gọn, đúng trọng tâm câu hỏi"],
-    ["TTS: Matcha-TTS (Nhóm huấn luyện)", "CER (ASR PhoWhisper, 10 câu InfoRe1)", "1.9%", "VITS MMS: 4.3% | Người thật: 0.7%", "Phát âm rõ chữ, tỷ lệ lỗi thấp hơn VITS hơn 2 lần"],
-    ["TTS: Matcha-TTS (Nhóm huấn luyện)", "log-F0 RMSE / MCD (10 câu InfoRe1)", "2.86 bán cung / 5.35 dB", "VITS: 4.31 bán cung | Edge-TTS: 2.69", "Thanh điệu ổn định, gần với dịch vụ đám mây"],
-    ["Tốc độ & Độ trễ (Docker CPU)", "RTF TTS / Tổng thời gian 1 câu hỏi", "RTF 0.52 / ~12s (tắt rerank ~6s)", "Ngưỡng thời gian thực TTS: RTF < 1.0", "Chạy cục bộ trên CPU (STT ~3s, RAG ~6s, MRC ~1.4s, TTS ~1.3s)"]
+    ["TTS: Matcha-TTS (Nhóm huấn luyện)", "CER (ASR PhoWhisper, InfoRe1)", "0.8%", "VITS MMS: 4.7% | Người thật: 0.7%", "Phát âm rõ chữ, tỷ lệ lỗi thấp hơn VITS gần 6 lần"],
+    ["TTS: Matcha-TTS (Nhóm huấn luyện)", "log-F0 RMSE / MCD (InfoRe1)", "0.88 bán cung / 3.05 dB", "VITS: 4.29 bán cung", "Thanh điệu ổn định, sai số cao độ thấp hơn VITS khoảng 5 lần"],
+    ["Tốc độ & Độ trễ (Docker CPU)", "RTF TTS / Tổng thời gian 1 câu hỏi", "RTF 0.64 / ~12s (tắt rerank ~6s)", "Ngưỡng thời gian thực TTS: RTF < 1.0", "Chạy cục bộ trên CPU (STT ~3s, RAG ~6s, MRC ~1.4s, TTS ~1.3s)"]
 ]
 
 col_w_s4 = [Inches(3.1), Inches(2.3), Inches(2.0), Inches(2.3), Inches(2.033)]
@@ -215,9 +215,9 @@ ps1.space_before = Pt(2)
 # ==========================================
 s5_notes = """Kính thưa Thầy Cô, slide này trực quan hóa quá trình huấn luyện và đường cong hội tụ thực tế của cả 4 phân hệ:
 Ở biểu đồ 1, quá trình huấn luyện LoRA cho Whisper-small trên 50 giờ dữ liệu VietSpeech cho thấy hàm mất mát giảm ổn định từ 2,8 xuống 0,42 qua 2.750 bước, giúp mô hình đạt WER 13,77%.
-Ở biểu đồ 2, kết quả tinh chỉnh tham số BM25 cho thấy việc tăng k1 lên 2.1 và b lên 1.0 cùng cơ chế thưởng Bigram Boost giúp nâng Recall@1 từ 44,1% lên 77,48%.
+Ở biểu đồ 2, kết quả tinh chỉnh tham số BM25 cho thấy việc tăng k1 lên 2.1 và b lên 1.0 cùng cơ chế thưởng Bigram Boost giúp nâng Recall@1 từ 71,45% lên 77,48%.
 Ở biểu đồ 3, mô hình đọc hiểu ViT5-base duy trì điểm F1 thẩm định ổn định trên 66% qua 2 epoch và đạt 41,05% Exact Match trên tập kiểm thử độc lập 2.716 câu.
-Ở biểu đồ 4, kiến trúc Conditional Flow Matching của Matcha-TTS hội tụ sau 150k bước; kết hợp vocoder HiFi-GAN fine-tune 50k bước cho ra chất giọng rõ ràng với CER chỉ 1,9%."""
+Ở biểu đồ 4, kiến trúc Conditional Flow Matching của Matcha-TTS hội tụ sau 150k bước; kết hợp vocoder HiFi-GAN fine-tune 50k bước cho ra chất giọng rõ ràng với CER chỉ 0,8%."""
 
 s5 = builder.add_content_slide(
     category="Thực nghiệm & Huấn luyện",
@@ -234,10 +234,10 @@ builder.add_image(s5, chart_p1, Inches(0.8), Inches(1.45), Inches(7.5), Inches(5
 # Key insights card on the right side (width ~4.0 in)
 c_chart_notes, tf_chart_notes = builder.add_card(s5, Inches(8.5), Inches(1.45), Inches(4.033), Inches(5.35), title="Điểm Nhấn Hội Tụ Cốt Lõi", title_color=PRIMARY_BLUE)
 chart_bullet_points = [
-    ("STT Whisper LoRA (Hình 1):", "Loss giảm từ 2.8 xuống 0.42 sau 2.750 bước; checkpoint 50h đạt WER 13,77% (giảm 62,6% lỗi so với gốc 36,76%)."),
-    ("BM25 Tinh chỉnh (Hình 2):", "k1=2.1, b=1.0 + Bigram Boost (+0.4) đưa Recall@1 từ 44,1% lên 77,48% trên tập dev ViMMRC."),
+    ("STT Whisper LoRA (Hình 1):", "Loss giảm từ 2.8 xuống 0.42 sau 2.750 bước; checkpoint 50h đạt WER 13,77% (giảm 62,5% lỗi so với gốc 36,76%)."),
+    ("BM25 Tinh chỉnh (Hình 2):", "k1=2.1, b=1.0 + Bigram Boost (+0.4) đưa Recall@1 từ 71,45% lên 77,48% trên tập dev ViMMRC."),
     ("ViT5 Đọc hiểu (Hình 3):", "Sinh câu trả lời hội tụ sau 2 epoch; đạt F1 66,55% và EM 41,05% trên tập test 2.716 câu độc lập."),
-    ("Matcha-TTS & Vocoder (Hình 4):", "OT-CFM hội tụ sau 150k bước; HiFi-GAN fine-tune 50k bước đạt CER 1,9% (gần trần người thật 0,7%).")
+    ("Matcha-TTS & Vocoder (Hình 4):", "OT-CFM hội tụ sau 150k bước; HiFi-GAN fine-tune 50k bước đạt CER 0,8% (gần trần người thật 0,7%).")
 ]
 for title_cb, desc_cb in chart_bullet_points:
     p = tf_chart_notes.add_paragraph()
@@ -249,7 +249,7 @@ for title_cb, desc_cb in chart_bullet_points:
 # ==========================================
 # SLIDE 6: SẢN PHẨM HOÀN CHỈNH & LIVE DEMO (5:15 - 6:00)
 # ==========================================
-s6_notes = """Về mặt kỹ nghệ phần mềm, nhóm đã tích hợp hệ thống thành ứng dụng Full-stack gồm Backend FastAPI và Frontend Angular 22, hiển thị trực quan trạng thái xử lý qua từng chặng. Toàn bộ dự án được đóng gói bằng Docker multi-stage, khởi chạy bằng một lệnh docker compose và có 54 bài kiểm thử tự động.
+s6_notes = """Về mặt kỹ nghệ phần mềm, nhóm đã tích hợp hệ thống thành ứng dụng Full-stack gồm Backend FastAPI và Frontend Angular 22, hiển thị trực quan trạng thái xử lý qua từng chặng. Toàn bộ dự án được đóng gói bằng Docker multi-stage, khởi chạy bằng một lệnh docker compose và có 115 bài kiểm thử tự động.
 Trong kịch bản demo thực tế: khi người dùng bấm micro hỏi 'Ai là tác giả của Truyện Kiều?', phân hệ STT nhận dạng câu hỏi trong khoảng 3 giây; bộ truy xuất lấy ứng viên và reranker chọn đoạn Wikipedia về Truyện Kiều trong khoảng 6 giây; ViT5 sinh câu trả lời 'Nguyễn Du' trong 1,4 giây; và Matcha-TTS tổng hợp giọng đọc trong 1,3 giây. Tổng thời gian phản hồi khoảng 12 giây trên CPU Docker, hoặc khoảng 6 giây nếu tắt reranker."""
 
 s6 = builder.add_content_slide(
@@ -266,7 +266,7 @@ for title_p, desc_p in [
     ("Giao diện Trực quan:", "Hiển thị Pipeline Flow Indicator theo thời gian thực (Thu âm -> STT -> Retrieval -> MRC -> TTS -> Nghe)."),
     ("Docker Multi-Stage:", "Stage 1 (Node 22) biên dịch web; Stage 2 (Python 3.11-slim) cài đặt API và PyTorch CPU wheel."),
     ("Khởi chạy 1 Lệnh:", "docker compose up -d ánh xạ cổng 8090 -> 8000, tích hợp sẵn Docker Healthcheck."),
-    ("Kiểm thử Tự động:", "54 bài kiểm thử tự động (53 passed, 1 skipped trên CPU) bao phủ từ xử lý dữ liệu đến REST API.")
+    ("Kiểm thử Tự động:", "115 bài kiểm thử tự động bao phủ từ xử lý dữ liệu đến REST API.")
 ]:
     p = tf_eng.add_paragraph()
     p.text = f"• {title_p} {desc_p}"
@@ -307,9 +307,9 @@ s7 = builder.add_content_slide(
 c_achieve, tf_achieve = builder.add_card(s7, Inches(0.8), Inches(1.5), Inches(5.6), Inches(4.1), title="Kết Quả Đạt Được", title_color=PRIMARY_BLUE)
 for item in [
     "Hoàn thiện chu trình Voice Q&A tiếng Việt dựa trên ViMMRC 2.0 và UIT-ViQuAD2.0 (27.164 câu hỏi).",
-    "Huấn luyện mô hình Matcha-TTS (ICASSP 2024) với frontend vi_tone_v2 tách thanh điệu, đạt CER 1,9% và RTF 0,52.",
+    "Huấn luyện mô hình Matcha-TTS (ICASSP 2024) với frontend vi_tone_v2 tách thanh điệu, đạt CER 0,8% và RTF 0,64.",
     "Vận hành cục bộ trên CPU thông thường (Edge-TTS/gTTS dự phòng cần Internet), độ trễ ~12s/câu (~6s khi tắt reranker).",
-    "Đóng gói ứng dụng Full-stack (FastAPI + Angular) qua Docker multi-stage, đạt 54 bài kiểm thử tự động."
+    "Đóng gói ứng dụng Full-stack (FastAPI + Angular) qua Docker multi-stage, đạt 115 bài kiểm thử tự động."
 ]:
     p = tf_achieve.add_paragraph()
     p.text = "• " + item

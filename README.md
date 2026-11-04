@@ -6,7 +6,7 @@ Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC
 
 ## Chạy hệ thống tích hợp
 
-Backend FastAPI phục vụ STT (Whisper), retrieval lai BM25 + dense + reranker bge-reranker-v2-m3 (kho hai tầng: 5.869 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt), MRC (ViT5 sinh câu trả lời tự do), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
+Backend FastAPI phục vụ STT (Whisper), retrieval lai BM25 + dense + reranker bge-reranker-v2-m3 (kho hai tầng: 5.879 đoạn ViMMRC + ViQuAD + thẻ tri thức và 1,48 triệu đoạn Wikipedia tiếng Việt), MRC (ViT5 sinh câu trả lời tự do), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
 
 Từ thư mục gốc:
 
@@ -59,7 +59,23 @@ Mở trình duyệt tại `http://localhost:4200`.
 python -m pytest -v
 ```
 
-Hiện có **113 bài kiểm thử tự động** (đo bằng `pytest -q`, Python 3.11) phủ STT, Retrieval, Context Selection, MRC (ViT5), TTS (normalizer, VITS, Matcha, Edge, gTTS), tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), Intent Router, bộ câu hỏi ngoài dataset, Web UI và FastAPI end-to-end (`/api/ask`).
+Hiện có **124 bài kiểm thử tự động** (đo bằng `pytest -q`, Python 3.11) phủ STT, Retrieval, Context Selection, MRC (ViT5), TTS (normalizer, VITS, Matcha, Edge, gTTS), tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), Intent Router, bộ câu hỏi ngoài dataset, Web UI và FastAPI end-to-end (`/api/ask`).
+
+### Môi trường cục bộ (không dùng Docker)
+
+Dùng `.venv` của dự án (Python 3.11), không dùng Python hệ thống: `transformers` phải `<4.58` (ViT5), nếu không tokenizer không nạp được.
+
+```powershell
+.venv\Scripts\python.exe -m pip install -r requirements-docker.txt   # nếu thiếu gói
+.venv\Scripts\python.exe -m pip install "diffusers>=0.25,<0.36"      # khớp huggingface-hub<1.0 mà transformers<4.58 cần
+.venv\Scripts\python.exe text-to-speech_Duy\scripts\setup_matcha.py   # clone mã Matcha-TTS vào text-to-speech_Duy/Matcha-TTS
+$env:TRANSFORMERS_NO_TF = "1"; .venv\Scripts\python.exe -m pytest -q
+.venv\Scripts\python.exe -m uvicorn scripts.api_server:app --port 8000
+```
+
+Chưa có `Matcha-TTS/` thì `synthesize()` im lặng chuyển sang gTTS (file `.mp3`, cần mạng); test `test_matcha_engine` và `test_vits_engine` kiểm tra đuôi `.wav` để phát hiện trường hợp này.
+
+Web (`web-interface_Luong`): bấm micro rồi nói; hệ thống tự dừng thu âm sau khoảng 1,3 giây im lặng và tự gửi câu hỏi (bấm lại nút micro để dừng ngay). Không nghe thấy gì trong 8 giây thì huỷ và báo lỗi. Cần dựng lại web (`npm run build`) sau khi sửa mã.
 
 ## Chạy CLI Pipeline đầu-cuối
 
@@ -156,7 +172,7 @@ python -X utf8 dialogue-manager_Huy/chat_cli.py --debug
 - [x] Triển khai hệ thống TTS đa engine tiếng Việt (Matcha-TTS, VITS MMS, Edge-TTS, gTTS) có tự động fallback và chuẩn hóa văn bản.
 - [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và pipeline đầu-cuối CLI.
 - [x] Ghép toàn diện STT, Retrieval, MRC, TTS và giao diện web Angular vào API Server FastAPI thống nhất.
-- [x] Tự động hóa bộ kiểm thử tích hợp (113 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
+- [x] Tự động hóa bộ kiểm thử tích hợp (124 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
 
 ## 7. Phân công
 

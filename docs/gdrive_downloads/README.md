@@ -37,7 +37,7 @@ Dựa trên việc đối sánh chéo giữa Báo cáo cuối kỳ của Lương
    - Triển khai: `faster-whisper` / `CTranslate2` INT8 trên CPU, nhanh gấp **4,1 lần** so với PyTorch FP32, RAM khoảng 450–540 MB; tích hợp bộ lọc `vad_filter=True` giúp cắt khoảng lặng và giảm hiện tượng lặp từ.
 
 2. **Phân hệ Retrieval (Kho tri thức hai tầng RAG):**
-   - Kho tài liệu: **Tầng 1** gồm 5.869 đoạn văn (552 ViMMRC + 5.317 ViQuAD); **Tầng 2** gồm 1,48 triệu đoạn văn Wikipedia tiếng Việt.
+   - Kho tài liệu: **Tầng 1** gồm 5.879 đoạn văn (552 ViMMRC + 5.317 ViQuAD + 10 thẻ tri thức); **Tầng 2** gồm 1,48 triệu đoạn văn Wikipedia tiếng Việt.
    - BM25 Tinh chỉnh: $k_1 = 2.1, b = 1.0$ kết hợp Bigram Phrase Boost (+0,4). Trên ablation kho ViMMRC 552 đoạn (564 câu dev), đạt **Recall@1: 71,45%** (so với cấu hình mặc định Lucene 64,18%).
    - RAG hai tầng trên 2.545 câu test (trước reranker): **Recall@1: 71,1%**, **Recall@5: 85,9%**.
    - Pipeline cuối với `bge-reranker-v2-m3` (+0,25 ưu tiên tầng 1): Answer F1 trên 200 câu trong kho đạt **60,7%**; trên 200 câu kiến thức mở Wikipedia đạt **24,3%** (so với BM25 thuần 58,0% / 15,4%).
@@ -51,9 +51,9 @@ Dựa trên việc đối sánh chéo giữa Báo cáo cuối kỳ của Lương
 4. **Phân hệ Tổng hợp Tiếng nói TTS (Matcha-TTS Flow Matching OT-CFM):**
    - Kiến trúc: 1D CNN + Transformer + Optimal-Transport Conditional Flow Matching (OT-CFM) + Vocoder HiFi-GAN tinh chỉnh 50.000 bước.
    - Cải tiến: Frontend tách thanh điệu `vi_tone_v2` (từ điển 41 ký hiệu gồm chữ cái và token thanh điệu 0–5); thuật toán Monotonic Alignment Search (MAS) viết bằng Numba.
-   - Kết quả benchmark chuẩn trong kho mã nguồn (`text-to-speech_Duy/scripts/benchmark.py`, đối sánh trên 10 câu tham chiếu giọng người thật InfoRe1):
-     - **Matcha-TTS:** **MCD: 5,35 dB**, **F0 RMSE: 70,4 Hz**, **log-F0 RMSE: 2,86 bán cung**, **CER (ASR PhoWhisper): 1,9%**, **RTF: 0,52** trên CPU.
-     - **So sánh:** VITS MMS đạt MCD 4,45 dB, F0 RMSE 84,1 Hz, log-F0 4,31 bán cung, CER 4,3%, RTF 0,38; Edge-TTS đạt MCD 4,63 dB, F0 RMSE 48,3 Hz, log-F0 2,69 bán cung, CER 1,0%, RTF 0,13; Giọng người thật đạt CER trần 0,7%.
+   - Kết quả benchmark chuẩn trong kho mã nguồn (`text-to-speech_Duy/scripts/benchmark.py`, đối sánh trên câu tham chiếu giọng người thật InfoRe1):
+     - **Matcha-TTS:** **MCD: 3,05 dB**, **F0 RMSE: 21,6 Hz**, **log-F0 RMSE: 0,88 bán cung**, **CER (ASR PhoWhisper): 0,8%**, **RTF: 0,64** trên CPU.
+     - **So sánh:** VITS MMS đạt MCD 4,40 dB, F0 RMSE 82,7 Hz, log-F0 4,29 bán cung, CER 4,7%, RTF 0,29 (Edge-TTS là dịch vụ đám mây, không nằm trong bảng đo mới); Giọng người thật đạt CER trần 0,7%.
 
 5. **Hiệu năng Triển khai Hệ thống (Docker CPU):**
    - Đo đạc thực tế trên Docker CPU (`OMP_NUM_THREADS=4`):
@@ -62,4 +62,4 @@ Dựa trên việc đối sánh chéo giữa Báo cáo cuối kỳ của Lương
      - ViT5 Reader sinh đáp án: ~1,4 giây.
      - TTS Matcha tổng hợp âm thanh: ~1,3 giây.
      - **Tổng thời gian toàn chu trình:** **khoảng 12 giây/câu**; nếu tắt reranker (`KB_RERANKER=`) còn **khoảng 6 giây/câu**.
-   - Đảm bảo chất lượng: **54 bài kiểm thử tự động** (`53 passed, 1 skipped` cho test `accelerate` trên CPU).
+   - Đảm bảo chất lượng: **115 bài kiểm thử tự động**.

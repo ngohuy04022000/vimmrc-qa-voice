@@ -86,7 +86,7 @@ nhìn thấy lỗi nên lạc quan hơn thực tế. `--tts-check`: 0 câu trả
 
 Giới hạn cần biết:
 
-- Các con số trên đo **offline trên kho 75 đoạn tự viết**, không phải trên KB thật (5.869 đoạn
+- Các con số trên đo **offline trên kho 75 đoạn tự viết**, không phải trên KB thật (5.879 đoạn
   ViMMRC/ViQuAD + 1,48 triệu đoạn Wikipedia) với ViT5. Trên máy có dữ liệu, chạy:
   ```bash
   python -X utf8 dialogue-manager_Huy/eval_dialogue.py --index data/kb_index.json --wiki data/kb_wiki_full \

@@ -356,9 +356,17 @@ def judge_claim(claim: str, sentence: str) -> tuple[str, float]:
 
 # --- Quản lý hội thoại ---------------------------------------------------------------
 
+REALTIME = re.compile(r"\b(?:hôm nay|ngày mai|tối nay|sáng nay|hiện nay|hiện tại|bây giờ|mới nhất|năm nay|tuần này|đang giao dịch)\b",
+                      re.IGNORECASE)
+
+
 class DialogueManager:
     def __init__(self, retriever, reader=None, *, top_k: int = 3, min_support: float = 0.34,
-                 max_sessions: int = 1000, session_ttl: float = 6 * 3600, seed: int | None = None):
+                 max_sessions: int = 1000, session_ttl: float = 6 * 3600, seed: int | None = None,
+                 assist=None, assist_gate: bool = True, assist_verify: bool = True):
+        self.assist = assist  # LLMAssist hoặc None; None/không sẵn sàng = chạy như trước
+        self.assist_gate = assist_gate
+        self.assist_verify = assist_verify
         self.retriever = retriever
         self.reader = reader or HeuristicReader()
         self.fallback_reader = HeuristicReader()
@@ -513,6 +521,17 @@ class DialogueManager:
                 best = cand
         return best[4], best[0]
 
+    def _gate(self, question: str, hit: dict, hits: list[dict]) -> tuple[dict | None, bool]:
+        """LLM chọn đoạn đầu tiên (hit trước) thực sự trả lời được câu hỏi. (None, True) = không đoạn nào;
+        (hit, False) = LLM không dùng được, giữ nguyên lựa chọn cũ."""
+        for cand in [hit] + [h for h in hits if h is not hit]:
+            ok = self.assist.supports(question, cand["passage"])
+            if ok is None:
+                return hit, False
+            if ok:
+                return cand, True
+        return None, True
+
     def _answer_single(self, question: str, passage: str | None, sess: Session | None) -> dict:
         qtype = question_type(question)
         if qtype == "yesno":
@@ -528,6 +547,16 @@ class DialogueManager:
             if sum(t in p_toks for t in q_ents) / len(q_ents) < 0.5:
                 # tên riêng chính của câu hỏi không có trong đoạn: đoạn nói về chuyện khác
                 return dict(base, answer=UNKNOWN_ANSWER, kind="unknown", passage=None, support=round(sup, 3))
+        llm = {}
+        if self.assist and self.assist_gate and not passage and REALTIME.search(question):
+            # giá, thời tiết, tin mới: kho tĩnh không có, đoạn trùng từ khóa chỉ dẫn tới câu trả lời bịa
+            return dict(base, answer=UNKNOWN_ANSWER, kind="unknown", passage=None, support=round(sup, 3),
+                        llm={"realtime": True})
+        if self.assist and self.assist_gate and not passage and qtype != "summary" and self.assist.available():
+            hit, used = self._gate(question, hit, hits)
+            llm["gate"] = used
+            if hit is None:
+                return dict(base, answer=UNKNOWN_ANSWER, kind="unknown", passage=None, support=round(sup, 3), llm=llm)
         text = hit["passage"]
         if qtype == "summary":
             raw = summarize(text)
@@ -538,10 +567,18 @@ class DialogueManager:
             elif qtype in {"time", "quantity", "person", "location"} and len(raw.split()) > 12:
                 # reader trả cả câu dài: cố trích cụm đúng loại để câu trả lời gọn khi đọc
                 raw = extract_span(question, raw, qtype) or raw
+        if self.assist and self.assist_verify and not passage and qtype != "summary" and self.assist.available():
+            ok = self.assist.verify(question, text, raw)
+            llm["verify"] = ok
+            if ok is False:
+                alt = self.assist.answer(question, text)
+                if alt:
+                    llm["replaced"] = raw
+                    raw = alt
         answer = compose_answer(question, raw, text, qtype)
         if not answer.strip():
-            return dict(base, answer=UNKNOWN_ANSWER, kind="unknown", passage=None, support=round(sup, 3))
-        return dict(base, answer=answer, raw_answer=raw, kind="summary" if qtype == "summary" else "qa",
+            return dict(base, answer=UNKNOWN_ANSWER, kind="unknown", passage=None, support=round(sup, 3), llm=llm)
+        return dict(base, llm=llm, answer=answer, raw_answer=raw, kind="summary" if qtype == "summary" else "qa",
                     passage={"id": hit.get("id"), "text": text, "score": hit.get("score")}, support=round(sup, 3))
 
     def _yesno(self, question: str, passage: str | None, sess: Session | None) -> dict:

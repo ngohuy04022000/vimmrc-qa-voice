@@ -42,6 +42,11 @@ class SmalltalkTests(unittest.TestCase):
         self.assertEqual(detect_intent("Mình đi đây, bye bye")[0], "goodbye")
         self.assertIsNone(detect_intent("Bạn có biết Hà Nội ở đâu không?"))
         self.assertIsNone(detect_intent("Sông nào dài nhất thế giới?"))
+        # câu xã giao dài vẫn nhận ra, nhưng câu hỏi chứa từ khóa thì không
+        self.assertEqual(detect_intent("Hay quá, cảm ơn bạn nhé, kiến thức rất thú vị")[0], "thanks")
+        self.assertEqual(detect_intent("Hẹn gặp lại bạn lần sau.")[0], "goodbye")
+        self.assertEqual(detect_intent("Xin chào, tôi muốn tìm hiểu về Fansipan")[0], "greeting")
+        self.assertIsNone(detect_intent("Ai đã nói cảm ơn trước tiên?"))
 
     def test_arithmetic(self):
         self.assertEqual(try_arithmetic("12 nhân 12 bằng bao nhiêu"), "12 nhân 12 bằng 144.")

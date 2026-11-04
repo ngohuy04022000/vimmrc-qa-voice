@@ -121,6 +121,23 @@ def detect_intent(text: str) -> tuple[str, dict] | None:
         hits = [_match_intent(seg, clean_utterance(seg).casefold()) for seg in segments]
         if all(hits):
             return hits[-1]
+    return _loose_intent(nfc(text).casefold())
+
+
+_ASKING = re.compile(r"\?|\b(?:tại sao|vì sao|là gì|ở đâu|bao nhiêu|thế nào|như thế nào|khi nào|ai|nào|sao)\b")
+
+
+def _loose_intent(low: str) -> tuple[str, dict] | None:
+    """Câu xã giao dài hơn mẫu ("Hay quá, cảm ơn bạn nhé", "Hẹn gặp lại bạn lần sau"):
+    ngắn, không phải câu hỏi, và chứa từ khóa cảm ơn / tạm biệt / lời chào kèm mong muốn."""
+    if len(low.split()) > 25 or _ASKING.search(low):
+        return None
+    if re.search(r"\b(?:cảm ơn|cám ơn|thank)", low):
+        return "thanks", {}
+    if re.search(r"\b(?:tạm biệt|hẹn gặp lại|bye)\b", low):
+        return "goodbye", {}
+    if re.match(r"^(?:xin chào|chào|hello|hi)\b", low) and re.search(r"\b(?:muốn|cần|nhờ)\b.*\b(?:tìm hiểu|hỏi|biết)\b", low):
+        return "greeting", {}
     return None
 
 

@@ -17,7 +17,7 @@ python -m pip install -r requirements-api.txt
 python -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000
 ```
 
-- **Tầng hội thoại** (`dialogue-manager_Huy/`, route `POST /api/ask`): hiểu câu xã giao, câu hỏi nối tiếp nhiều lượt
+- **Tầng hội thoại** (`dialogue-manager_Huy/`, route `POST /api/ask`; web UI gọi route này, giữ `session_id` giữa các lượt): hiểu câu xã giao, câu hỏi nối tiếp nhiều lượt
   ("còn Hàn Quốc thì sao?", "ông ấy sinh năm nào?"), câu so sánh, câu ghép nhiều vế, câu đúng/sai, tại sao/như thế nào,
   tóm tắt đoạn văn dán vào; trả lời thành câu trọn vẹn cho TTS và nói "chưa tìm thấy" thay vì đoán. Chi tiết và kết quả
   đánh giá trên hơn 200 câu hỏi/hội thoại ngoài dataset: [dialogue-manager_Huy/README.md](dialogue-manager_Huy/README.md).
@@ -59,7 +59,7 @@ Mở trình duyệt tại `http://localhost:4200`.
 python -m pytest -v
 ```
 
-Hệ thống bao gồm 54 bài kiểm thử tự động phủ khắp các phân hệ STT, Retrieval, Context Selection, MRC (ViT5), TTS (Normalizer, VITS, Matcha, Edge, gTTS) và FastAPI End-to-End, cộng thêm 24 bài cho tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), 5 bài chuẩn hóa TTS mới và 2 bài cho `/api/ask`. Các bài Edge-TTS/gTTS cần mạng.
+Hiện có **113 bài kiểm thử tự động** (đo bằng `pytest -q`, Python 3.11) phủ STT, Retrieval, Context Selection, MRC (ViT5), TTS (normalizer, VITS, Matcha, Edge, gTTS), tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), Intent Router, bộ câu hỏi ngoài dataset, Web UI và FastAPI end-to-end (`/api/ask`).
 
 ## Chạy CLI Pipeline đầu-cuối
 
@@ -156,7 +156,7 @@ python -X utf8 dialogue-manager_Huy/chat_cli.py --debug
 - [x] Triển khai hệ thống TTS đa engine tiếng Việt (Matcha-TTS, VITS MMS, Edge-TTS, gTTS) có tự động fallback và chuẩn hóa văn bản.
 - [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và pipeline đầu-cuối CLI.
 - [x] Ghép toàn diện STT, Retrieval, MRC, TTS và giao diện web Angular vào API Server FastAPI thống nhất.
-- [x] Tự động hóa bộ kiểm thử tích hợp (119 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
+- [x] Tự động hóa bộ kiểm thử tích hợp (113 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
 
 ## 7. Phân công
 

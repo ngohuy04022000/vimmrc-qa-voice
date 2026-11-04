@@ -126,6 +126,7 @@ export class AppComponent implements OnDestroy {
   ];
 
   passageInput = '';
+  private sessionId: string | null = null;
   typedQuestion = '';
   librarySearch = '';
 
@@ -169,6 +170,7 @@ export class AppComponent implements OnDestroy {
   }
 
   newChat(): void {
+    this.resetSession();
     this.messages.set([]);
     this.typedQuestion = '';
     this.error.set(null);
@@ -176,7 +178,13 @@ export class AppComponent implements OnDestroy {
   }
 
   clearHistory(): void {
+    this.resetSession();
     this.messages.set([]);
+  }
+
+  private resetSession(): void {
+    if (this.sessionId) void firstValueFrom(this.pipeline.resetConversation(this.sessionId)).catch(() => undefined);
+    this.sessionId = null;
   }
 
   quickAsk(question: string): void {
@@ -271,10 +279,13 @@ export class AppComponent implements OnDestroy {
   }
 
   private async runFromText(question: string): Promise<void> {
-    const passage = await this.selectPassage(question);
-
-    this.step.set('mrc');
-    const answer = await firstValueFrom(this.pipeline.answerQuestion(passage.text, question));
+    // Một lượt hội thoại: server giữ ngữ cảnh theo session (câu nối tiếp, so sánh, xã giao...).
+    this.step.set('retrieval');
+    const provided = this.passageInput.trim();
+    const res = await firstValueFrom(this.pipeline.ask(question, this.sessionId, provided || undefined));
+    this.sessionId = res.session_id;
+    const answer = res.answer.trim();
+    const passage = res.passage ?? undefined;
 
     this.step.set('tts');
     const audio = await firstValueFrom(this.pipeline.synthesize(answer));
@@ -288,16 +299,6 @@ export class AppComponent implements OnDestroy {
     });
 
     await this.play(audioUrl);
-  }
-
-  private async selectPassage(question: string): Promise<Passage> {
-    const provided = this.passageInput.trim();
-    if (provided) return { text: provided, score: 1.0 };
-
-    this.step.set('retrieval');
-    const passages = await firstValueFrom(this.pipeline.retrieve(question));
-    if (passages.length === 0) throw new Error('Không tìm thấy đoạn văn phù hợp trong kho tri thức.');
-    return passages[0];
   }
 
   private async play(url: string): Promise<void> {

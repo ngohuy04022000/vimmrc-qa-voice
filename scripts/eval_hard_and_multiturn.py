@@ -24,7 +24,7 @@ if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parents[1]
-for folder in ("scripts", "retrieval-model_Huy", "mrc-model_Huy", "text-to-speech_Duy", "text-to-speech_Duy/src", "speech-to-text_Luong"):
+for folder in ("scripts", "retrieval-model_Huy", "mrc-model_Huy", "dialogue-manager_Huy", "text-to-speech_Duy", "text-to-speech_Duy/src", "speech-to-text_Luong"):
     path_str = str(ROOT / folder)
     if path_str not in sys.path:
         sys.path.insert(0, path_str)
@@ -32,7 +32,7 @@ for folder in ("scripts", "retrieval-model_Huy", "mrc-model_Huy", "text-to-speec
 from intent_router import ConversationalIntentRouter, polish_answer, rerank_hits, remove_accents
 from retrieval_client import Retriever
 from mrc_client import MRCClient, LexicalBaselineClient
-from dialogue_manager import DialogueContextManager
+from dialogue import DialogueManager
 from synthesize import synthesize as tts_synthesize
 import stt_server
 
@@ -105,7 +105,7 @@ def main():
         logger.warning("No checkpoint found at %s. Falling back to LexicalBaselineClient.", args.model)
         reader = LexicalBaselineClient()
 
-    dialogue_manager = DialogueContextManager()
+    dialogue_manager = DialogueManager(retriever, reader)
 
     # =========================================================================
     # Part 1: Evaluate Hard Questions
@@ -185,7 +185,7 @@ def main():
         turns = sc["turns"]
 
         sess_id = f"eval_sess_{sc_id}"
-        dialogue_manager.reset_session(sess_id)
+        dialogue_manager.reset(sess_id)
         sc_turn_results = []
 
         logger.info("Running Scenario %d/%d: %s (%d turns)...", sc_idx, len(multiturn_scenarios), title, len(turns))
@@ -196,12 +196,12 @@ def main():
             ref_ans = turn_data["reference_answer"]
 
             t0 = time.perf_counter()
-            chat_res = dialogue_manager.chat_turn(
-                question=user_q,
-                session_id=sess_id,
-                retriever=retriever,
-                reader=reader,
-            )
+            chat_res = dialogue_manager.respond(user_q, sess_id)
+            chat_res["was_reformulated"] = bool(chat_res.get("rewritten"))
+            chat_res["is_conversational"] = chat_res["kind"] in ("smalltalk", "math")
+            chat_res["reformulated_query"] = chat_res.get("resolved_question", user_q)
+            chat_res["passage_id"] = (chat_res.get("passage") or {}).get("id")
+            chat_res["active_topic"] = dialogue_manager.session(sess_id)[1].topic
             turn_dur_ms = (time.perf_counter() - t0) * 1000
             dialogue_latencies.append(turn_dur_ms)
             total_turns_count += 1

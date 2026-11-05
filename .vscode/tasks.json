@@ -1,0 +1,61 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Chạy Web ViMMRC (BE + FE)",
+      "dependsOn": [
+        "Khởi động Backend (FastAPI :8000)",
+        "Khởi động Frontend (Angular :4200)"
+      ],
+      "dependsOrder": "parallel",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Khởi động Backend (FastAPI :8000)",
+      "type": "shell",
+      "command": "python -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000",
+      "windows": {
+        "command": "python -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000"
+      },
+      "osx": {
+        "command": "python3 -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000"
+      },
+      "linux": {
+        "command": "python3 -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000"
+      },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Khởi động Frontend (Angular :4200)",
+      "type": "shell",
+      "command": "npm start",
+      "options": {
+        "cwd": "${workspaceFolder}/web-interface_Luong"
+      },
+      "windows": {
+        "command": "npm.cmd start"
+      },
+      "osx": {
+        "command": "npm start"
+      },
+      "linux": {
+        "command": "npm start"
+      },
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

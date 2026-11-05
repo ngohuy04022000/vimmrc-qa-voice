@@ -41,7 +41,80 @@ python scripts/setup_matcha.py
 
 Chép hai file kết quả của notebook vào `checkpoints/`: `matcha_vi.pt` (mô hình, đã kèm bộ token) và `matcha_vi_hifigan.pt` (vocoder fine-tune). Thiếu vocoder fine-tune thì engine tự tải HiFi-GAN Universal. Engine `vits` tự tải `facebook/mms-tts-vie`; `edge` và `gtts` cần Internet.
 
-## Sử dụng
+## Hướng dẫn các câu lệnh chạy nhanh (Quick Start)
+
+### 1. File chạy đa nền tảng (macOS, Windows, Linux) ⭐
+Dự án đã tích hợp sẵn file thực thi chạy đồng nhất trên cả 3 hệ điều hành:
+
+* **Chạy bằng Python (Khuyên dùng cho macOS & Windows):**
+  ```bash
+  cd text-to-speech_Duy
+
+  # Mở Menu tương tác trực quan (tự động phát audio sau khi tạo):
+  python run.py
+
+  # Đọc câu mẫu từ file test_sentence.txt:
+  python run.py -f test_sentence.txt
+
+  # Đọc một câu văn bản bất kỳ:
+  python run.py -t "Xin chào bạn, hệ thống ViMMRC đã sẵn sàng."
+
+  # Chạy giọng nơ-ron Edge-TTS (cần internet):
+  python run.py -f test_sentence.txt -e edge -v nu
+
+  # Khởi động cả hệ thống Web UI (Backend FastAPI :8000 + Frontend Angular :4200):
+  python run.py --app
+
+  # Chạy đo đạc đánh giá benchmark (MCD, F0, CER, RTF):
+  python run.py --benchmark
+  ```
+
+* **Chạy bằng Bash Script (dành riêng cho macOS / Linux):**
+  ```bash
+  cd text-to-speech_Duy
+  chmod +x run.sh
+  ./run.sh                  # Mở menu tương tác
+  ./run.sh -f test_sentence.txt
+  ./run.sh --app
+  ```
+
+* **Chạy bằng VS Code Task (Dùng phím tắt trong IDE):**
+  Bấm tổ hợp phím **`Ctrl+Shift+P`** (trên Windows) hoặc **`Cmd+Shift+P`** (trên macOS) -> Chọn **`Tasks: Run Task`** -> Chọn một trong các tác vụ:
+  - *`TTS: Chạy tổng hợp câu mẫu (Matcha-TTS)`*
+  - *`TTS: Mở Menu tương tác (run.py)`*
+  - *`TTS: Chạy với giọng nơ-ron Edge-TTS (Hoài My)`*
+  - *`ViMMRC: Khởi động toàn bộ dự án (FE + BE)`*
+
+### 2. Dùng script riêng trên Windows (Batch / PowerShell)
+- **Batch script:** Nhấp đúp vào `run_tts.bat` (hoặc gõ `.\run_tts.bat` trong CMD/PowerShell).
+- **PowerShell script:** `.\run_tts.ps1` hoặc `.\run_tts.ps1 -Text "Xin chào"` hoặc `.\run_tts.ps1 -LaunchApp`.
+
+### 2. Các câu lệnh chạy trực tiếp bằng dòng lệnh (CLI)
+```bash
+# Di chuyển vào thư mục text-to-speech_Duy:
+cd text-to-speech_Duy
+
+# 1. Đọc văn bản từ file test_sentence.txt bằng Matcha-TTS (150k + 50k vocoder):
+python synthesize.py -f test_sentence.txt
+
+# 2. Đọc trực tiếp câu văn bản bất kỳ:
+python synthesize.py -t "Đáp án đúng là câu C: Quá trình quang hợp diễn ra ở lục lạp."
+
+# 3. Đọc và lưu ra file cụ thể kèm chỉnh tốc độ:
+python synthesize.py -t "Xin chào các bạn." --rate -10% -o outputs/test_cham.wav
+
+# 4. Đọc bằng Microsoft Edge-TTS (Hoài My - Nữ hoặc Nam Minh - Nam):
+python synthesize.py -t "Xin chào các bạn." -e edge -v vi-VN-HoaiMyNeural
+python synthesize.py -t "Xin chào các bạn." -e edge -v vi-VN-NamMinhNeural
+
+# 5. Khởi động Web UI tích hợp cả dự án (từ thư mục gốc repository):
+cd ..
+python -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000
+# Trong một terminal khác:
+cd web-interface_Luong && npm start
+```
+
+## Sử dụng trong mã nguồn Python
 
 ```python
 path = synthesize("**Đáp án:** (B) Chiến thắng Điện Biên Phủ ngày 07/05/1954.")

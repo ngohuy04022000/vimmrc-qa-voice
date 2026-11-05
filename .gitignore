@@ -31,7 +31,8 @@ checkpoints/
 .env
 
 # IDE / OS
-.vscode/
+.vscode/*
+!.vscode/tasks.json
 .idea/
 .DS_Store
 

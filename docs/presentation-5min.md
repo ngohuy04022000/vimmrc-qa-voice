@@ -1,141 +1,155 @@
-# TÀI LIỆU KỊCH BẢN THUYẾT TRÌNH 5 PHÚT (BÁO CÁO NHANH CHO GIẢNG VIÊN)
+# KỊCH BẢN THUYẾT TRÌNH 5 - 10 PHÚT (BÁO CÁO NHANH CHO GIẢNG VIÊN & HỘI ĐỒNG)
 ## ĐỀ TÀI: HỆ THỐNG HỎI - ĐÁP BẰNG GIỌNG NÓI TIẾNG VIỆT DỰA TRÊN BỘ DỮ LIỆU ViMMRC 2.0 (ViMMRC VOICE Q&A)
-**Môn học:** Học máy tiên tiến và ứng dụng  
-**Thời lượng:** 5 phút (khoảng 600 - 700 từ nói, nhịp độ 120 - 130 từ/phút)  
-**Mục tiêu:** Báo cáo tóm lược, súc tích, làm nổi bật ngay: Vấn đề giải quyết, Kiến trúc 4 chặng, Các đóng góp kỹ thuật cốt lõi, Kết quả thực nghiệm định lượng và Demo thực tế.
+
+* **Môn học:** Học máy tiên tiến và ứng dụng
+* **Thời lượng mục tiêu:** Khung 5 - 10 phút (~6:45 - 7:00 phút thuyết trình chuẩn, tốc độ nói tự nhiên ~125 - 130 từ/phút, tổng cộng 7 Slides)
+* **File trình chiếu tương ứng:** `docs/ViMMRC_Presentation_5min.pptx`
+* **File kịch bản Word tương ứng:** `docs/ViMMRC_KichBan_5phut.docx`
+* **Thành viên thực hiện:**
+  1. **Ngô Trí Huy**
+  2. **Huỳnh Công Lương**
+  3. **Trương Hoàng Duy**
 
 ---
 
-### PHÂN CÔNG & THỜI LƯỢNG TỪNG SLIDE (TỔNG: 5 PHÚT)
-* **Slide 1 (0:00 - 0:45):** Giới thiệu Đề tài, Thành viên & Đặt vấn đề
-* **Slide 2 (0:45 - 1:45):** Mục tiêu & Kiến trúc Hệ thống 4 Chặng End-to-End
-* **Slide 3 (1:45 - 2:45):** Ba Đóng góp Kỹ thuật Nổi bật (Retrieval, MRC, TTS)
-* **Slide 4 (2:45 - 3:45):** Kết quả Đo lường & Benchmark Định lượng Then chốt
-* **Slide 5 (3:45 - 4:30):** Sản phẩm Hoàn chỉnh, Đóng gói Docker & Minh họa Live Demo
-* **Slide 6 (4:30 - 5:00):** Tổng kết, Khả năng Ứng dụng & Hướng Phát triển
-
----
-
-## NỘI DUNG VÀ KỊCH BẢN CHI TIẾT TỪNG SLIDE
-
-### SLIDE 1: GIỚI THIỆU ĐỀ TÀI & ĐẶT VẤN ĐỀ
-* **Thời lượng:** 45 giây (0:00 - 0:45)
-* **Người trình bày:** Ngô Trí Huy (Nhóm trưởng)
+### SLIDE 1: HỆ THỐNG HỎI - ĐÁP BẰNG GIỌNG NÓI TIẾNG VIỆT DỰA TRÊN BỘ DỮ LIỆU ViMMRC 2.0
+* **Thời lượng dự kiến:** 0:00 - 1:00 (60s)
 * **Nội dung hiển thị trên Slide:**
-  * **Tên đề tài:** Hệ Thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0 (ViMMRC Voice Q&A System)
-  * **Học viên thực hiện:**
-    * **Ngô Trí Huy** (Lead): Retrieval BM25 tối ưu, Mô hình MRC (ChoiceRanker & ViT5), Tích hợp hệ thống.
-    * **Huỳnh Công Lương**: Nhận dạng giọng nói (Faster-Whisper), Giao diện Web Client Angular.
-    * **Trương Hoàng Duy**: Tổng hợp giọng nói (Matcha-TTS Flow Matching & VITS), Benchmark âm học.
-  * **Vấn đề cốt lõi:**
-    * Các hệ thống Đọc hiểu máy (MRC) hiện nay hầu hết bị bó hẹp ở dạng văn bản gõ phím (text-only).
-    * Mục tiêu của nhóm là chuyển đổi bài toán MRC thành chu trình **Hỏi bằng giọng nói $\rightarrow$ Trả lời bằng giọng nói** tự nhiên, hoàn toàn cục bộ và độ trễ thấp.
+  * **Tên đề tài:** Hệ Thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0
+  * **Môn học:** Học máy tiên tiến và ứng dụng | Báo cáo nhanh Hội đồng (Khung 5 - 10 Phút)
+  * **Thành viên thực hiện:**
+    * **Ngô Trí Huy**
+    * **Huỳnh Công Lương**
+    * **Trương Hoàng Duy**
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Kính thưa Thầy! Hôm nay, nhóm chúng em xin phép báo cáo nhanh tiến độ và kết quả thực hiện đồ án môn 'Học máy tiên tiến và ứng dụng' với đề tài: **Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0**.  
-  > Nhóm gồm có 3 thành viên: Em là Ngô Trí Huy phụ trách phân hệ Truy xuất và Đọc hiểu; bạn Huỳnh Công Lương phụ trách Nhận dạng giọng nói và Giao diện Web; và bạn Trương Hoàng Duy phụ trách Tổng hợp giọng nói và Đánh giá âm học.  
-  > Động lực lớn nhất của đề tài xuất phát từ việc: phần lớn các hệ thống đọc hiểu hiện nay chỉ tương tác qua gõ chữ, rất bất tiện trong các tình huống rảnh tay hoặc cho người khiếm thị. Mục tiêu của chúng em là xây dựng một chu trình khép kín: người dùng hỏi trực tiếp bằng giọng nói, hệ thống tự tìm văn bản, đọc hiểu suy luận và phát âm thanh trả lời ngay lập tức."
+  > "Kính thưa Thầy Cô trong Hội đồng! Hôm nay, em xin đại diện nhóm báo cáo kết quả thực hiện đồ án môn Học máy tiên tiến và ứng dụng: 'Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0'.
+  > Nhóm gồm 3 thành viên: em Ngô Trí Huy, bạn Huỳnh Công Lương và bạn Trương Hoàng Duy.
+  > Động lực của đề tài xuất phát từ thực tế: các hệ thống đọc hiểu hiện nay chủ yếu tương tác qua văn bản gõ phím, gây bất tiện trong các tình huống rảnh tay hoặc với người khiếm thị. Mục tiêu của nhóm là xây dựng một chu trình khép kín: người dùng hỏi bằng giọng nói, hệ thống tự động tìm ngữ cảnh, đọc hiểu suy luận và trả lời lại bằng giọng nói trên máy tính cá nhân."
 
 ---
 
-### SLIDE 2: MỤC TIÊU & KIẾN TRÚC PIPELINE 4 CHẶNG
-* **Thời lượng:** 60 giây (0:45 - 1:45)
-* **Người trình bày:** Ngô Trí Huy
+### SLIDE 2: CHU TRÌNH HỎI - ĐÁP 4 CHẶNG & CƠ CHẾ DỰ PHÒNG ĐA TẦNG
+* **Thời lượng dự kiến:** 1:00 - 2:15 (75s)
 * **Nội dung hiển thị trên Slide:**
-  * **Sơ đồ luồng dữ liệu 4 Chặng (End-to-End Pipeline):**
-    $$\text{Micro (Audio 16kHz)} \xrightarrow{\text{STT}} \text{Văn bản câu hỏi} \xrightarrow{\text{Retrieval}} \text{Bài đọc liên quan} \xrightarrow{\text{MRC}} \text{Đáp án} \xrightarrow{\text{TTS}} \text{Loa (Audio 22kHz)}$$
-  * **4 Phân hệ phối hợp:**
-    1. **STT:** Faster-Whisper Small (CTranslate2) + Bộ lọc VAD + Thread-safe Lazy Loading.
-    2. **Retrieval:** BM25 tối ưu hóa trên kho 552 bài đọc độc bản ViMMRC 2.0.
-    3. **MRC:** Hướng tiếp cận kép (ChoiceRanker cho trắc nghiệm & ViT5 cho câu hỏi mở).
-    4. **TTS:** Matcha-TTS (Flow Matching) + VITS + Edge-TTS dự phòng.
-  * **Thiết kế chịu lỗi (Fault-Tolerant):** Hệ thống có cơ chế Fallback tự động ở từng chặng, đảm bảo hoạt động offline trên CPU thông thường mà không cần GPU đắt tiền.
+  * **Chặng 1 - STT (Whisper-small LoRA 50h):** CTranslate2 + INT8; VAD cắt khoảng lặng; WER 13,77% | CER 6,67% (VietSpeech).
+  * **Chặng 2 - Retrieval (BM25 + Dense + Reranker):** Kho 5.879 đoạn + Wikipedia; `bge-reranker-v2-m3`; F1 kiến thức mở: 15,4 → 24,3.
+  * **Chặng 3 - MRC (ViT5-base fine-tune):** Sinh câu trả lời tự do; Train ViMMRC + ViQuAD2.0; Test: EM 41,05% | F1 66,55%.
+  * **Chặng 4 - TTS (Matcha-TTS OT-CFM):** 20 bước ODE trên CPU; Frontend `vi_tone_v2`; RTF: 0,64 | CER: 0,8%.
+  * **Chiến lược dự phòng & vận hành cục bộ trên CPU:**
+    * STT: Thread-safe Lazy Loading giúp server khởi động nhanh (~0,45s); model Whisper-small LoRA 50h chạy int8 trên CPU.
+    * MRC & TTS: ViT5 chạy trên CPU, dự phòng bằng bộ trích câu khớp nhất (lexical); TTS ưu tiên Matcha → gTTS (khi lỗi); VITS, Edge-TTS chọn thủ công.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Để đạt được mục tiêu đó, nhóm đã thiết kế kiến trúc pipeline 4 chặng đồng bộ:  
-  > Chặng 1: Giọng nói từ micro được phân hệ STT Faster-Whisper chuyển thành văn bản, có tích hợp bộ lọc VAD cắt nhiễu môi trường.  
-  > Chặng 2: Văn bản câu hỏi được đưa vào bộ truy xuất BM25 để tìm ra bài đọc liên quan nhất trong kho 552 văn bản của bộ dữ liệu ViMMRC 2.0.  
-  > Chặng 3: Mô hình Đọc hiểu tiếp nhận cặp bài đọc và câu hỏi để suy luận đáp án chính xác.  
-  > Chặng 4: Đáp án dạng chữ được đưa qua bộ tổng hợp tiếng nói tiên tiến Matcha-TTS để tái tạo âm thanh tự nhiên phát qua loa.  
-  > Toàn bộ pipeline được trang bị cơ chế dự phòng tự động: nếu một nhánh gặp sự cố, hệ thống tự chuyển fallback ngay mà không bao giờ làm gián đoạn trải nghiệm người dùng."
+  > "Để thực hiện mục tiêu trên, nhóm thiết kế kiến trúc pipeline gồm 4 chặng nối tiếp:
+  > Chặng 1, STT: Nhận âm thanh từ micro người dùng, mô hình Whisper-small fine-tune LoRA 50h VietSpeech chuyển thành văn bản, chạy bằng CTranslate2 INT8 với bộ lọc VAD cắt khoảng lặng, đạt WER 13,77% so với 36,76% của bản gốc chưa fine-tune.
+  > Chặng 2, Retrieval: Tìm kiếm trên kho tri thức hai tầng gồm 5.879 đoạn văn ViMMRC và ViQuAD kết hợp 1,48 triệu đoạn Wikipedia tiếng Việt bằng BM25 và vector dense, sau đó reranker bge-reranker-v2-m3 chấm lại để chọn đoạn văn phù hợp nhất.
+  > Chặng 3, MRC: Mô hình ViT5-base đọc đoạn văn và sinh câu trả lời tự do ngắn gọn, không cần các phương án lựa chọn sẵn.
+  > Chặng 4, TTS: Mô hình Matcha-TTS dựa trên Conditional Flow Matching tổng hợp câu trả lời thành giọng đọc qua loa.
+  > Mỗi chặng đều có cơ chế dự phòng tự động: nếu chưa nạp checkpoint ViT5 thì dùng bộ trích câu khớp nhất, nếu Matcha-TTS gặp lỗi thì chuyển sang gTTS (VITS và Edge-TTS chỉ dùng khi chọn thủ công)."
 
 ---
 
-### SLIDE 3: BA ĐÓNG GÓP KỸ THUẬT NỔI BẬT
-* **Thời lượng:** 60 giây (1:45 - 2:45)
-* **Người trình bày:** Ngô Trí Huy (hoặc Trương Hoàng Duy)
+### SLIDE 3: BA ĐIỂM NHẤN KỸ THUẬT: RETRIEVAL HAI TẦNG, ViT5 & MATCHA-TTS
+* **Thời lượng dự kiến:** 2:15 - 3:30 (75s)
 * **Nội dung hiển thị trên Slide:**
-  * **Đóng góp 1 - Retrieval BM25 Tối ưu hóa:**
-    * Tinh chỉnh tham số thực nghiệm: $k_1 = 2.1$, $b = 1.0$.
-    * Bổ sung cơ chế **Bigram Phrase Boost (+0.4)** ưu tiên từ ghép tiếng Việt, giúp tìm chính xác bài đọc chỉ với 1 câu hỏi ngắn.
-  * **Đóng góp 2 - Mô hình MRC Kép Linh hoạt:**
-    * **ChoiceRanker:** Trích xuất đặc trưng TF-IDF n-gram đa tầng + Logistic Regression $C=10$, chuyên biệt hóa cho bài toán 4 lựa chọn.
-    * **ViT5 Sequence-to-Sequence:** Tích hợp bộ chọn lọc ngữ cảnh Heuristic (`context_selection`) giải quyết trần 512 token.
-  * **Đóng góp 3 - Làm chủ Kiến trúc Matcha-TTS (Flow Matching):**
-    * Ứng dụng thành công **Optimal-Transport Conditional Flow Matching (OT-CFM)** từ ICASSP 2024.
-    * Đề xuất **Frontend tách thanh điệu `vi_tone_v2`**: Tách 6 thanh điệu thành token độc lập (ví dụ `hồ` $\rightarrow$ `h ô 2`), giúp mô hình nắm bắt cao độ F0 cực kỳ ổn định.
+  * **1. BM25 Tinh Chỉnh & Kho Hai Tầng:**
+    * Kho tri thức hai tầng: 5.879 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt (BM25 `bm25s` chia shard + vector dense `multilingual-e5-small`).
+    * Tinh chỉnh siêu tham số: $k_1 = 2.1$ (độ bão hòa tần suất từ), $b = 1.0$ (chuẩn hóa theo độ dài văn bản).
+    * Bigram Phrase Boost (+0,4): Nhận diện cặp từ ghép liền kề tiếng Việt ('Điện Biên', 'Văn Miếu'), cộng điểm thưởng theo IDF.
+    * Top-3 mỗi nguồn (≤9 ứng viên) được reranker `bge-reranker-v2-m3` chấm chung, đoạn tầng 1 cộng +0,25.
+    * BM25 hai tầng (trước reranker, test 2.545 câu): Recall@1 71,1%, Recall@5 85,9%. Answer F1 kiến thức mở: 15,4 → 24,3.
+  * **2. Đọc Hiểu Sinh Câu Trả Lời: ViT5:**
+    * Hỏi đáp tự do: người dùng đặt câu hỏi bằng lời tự nhiên, không cần các phương án lựa chọn A/B/C/D.
+    * Dữ liệu: 27.164 câu hỏi gộp ViMMRC 2.0 + UIT-ViQuAD2.0, chia theo bài đọc để tránh rò rỉ (21.733 / 2.715 / 2.716).
+    * ViT5-base (VietAI) fine-tune seq2seq; lưu checkpoint định kỳ, hỗ trợ tiếp tục huấn luyện (resume) khi ngắt quãng.
+    * Kết quả test (2.716 câu): Exact Match 41,05%, token F1 66,55%; toàn chuỗi BM25 → ViT5 đạt F1 53,9% (đoạn đúng: 68,6%).
+  * **3. Matcha-TTS & Frontend `vi_tone_v2`:**
+    * Kiến trúc Flow Matching: Optimal-Transport Conditional Flow Matching (OT-CFM, ICASSP 2024) kết hợp vocoder HiFi-GAN.
+    * Suy luận hiệu quả: Quỹ đạo vận chuyển thẳng giúp giải ODE nhanh trên CPU (20 bước đạt RTF 0,64; 10 bước nhanh hơn: RTF 0,53).
+    * Frontend `vi_tone_v2`: Tách 6 thanh điệu tiếng Việt thành token riêng cuối âm tiết (ví dụ: `hồ` → `h ô 2`), thu gọn bộ từ vựng còn 41 ký hiệu.
+    * Text Normalizer: Chuẩn hóa ngày tháng, số liệu, tiền tệ, đơn vị đo, nhãn đáp án và chèn khoảng nghỉ theo dấu câu.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Về mặt kỹ thuật, nhóm xin nhấn mạnh vào 3 đóng góp trọng tâm:  
-  > Thứ nhất, ở khâu truy xuất, thay vì dùng BM25 mặc định, nhóm đã tinh chỉnh siêu tham số $k_1=2.1, b=1.0$ và đề xuất cơ chế Bigram Phrase Boost cộng 0.4 điểm cho các cụm từ ghép tiếng Việt, giải quyết triệt để bài toán tìm kiếm bài đọc khi người dùng chỉ hỏi ngắn gọn một câu.  
-  > Thứ hai, ở phân hệ Đọc hiểu, nhóm xây dựng mô hình ChoiceRanker dựa trên kỹ nghệ đặc trưng ma trận TF-IDF đa mức, kết hợp bộ phân loại Logistic Regression đạt độ chính xác vượt trội trên dữ liệu trắc nghiệm.  
-  > Thứ ba và là điểm nhấn học thuật lớn nhất: nhóm đã làm chủ và huấn luyện thành công kiến trúc tiên tiến Matcha-TTS theo trường phái Flow Matching. Nhóm đã tự thiết kế frontend `vi_tone_v2` bóc tách 6 thanh điệu tiếng Việt, giúp chất lượng ngữ điệu âm thanh vượt trội so với các mô hình truyền thống."
+  > "Đề tài tập trung vào 3 điểm nhấn kỹ thuật chính:
+  > Thứ nhất, ở khâu Truy xuất, nhóm tinh chỉnh tham số BM25 với k1=2.1, b=1.0 và bổ sung Bigram Phrase Boost cộng điểm cho cụm từ ghép liền kề trong tiếng Việt. Đồng thời, nhóm xây dựng kho tri thức hai tầng kết hợp Wikipedia tiếng Việt và reranker bge-reranker-v2-m3, giúp F1 câu trả lời cho câu hỏi kiến thức mở tăng từ 15,4% lên 24,3%.
+  > Thứ hai, ở phân hệ Đọc hiểu, nhóm chuyển bài toán sang hỏi đáp tự do bằng cách fine-tune mô hình ViT5-base trên 27.164 câu hỏi gộp từ ViMMRC 2.0 và UIT-ViQuAD2.0, chia theo bài đọc để không rò rỉ dữ liệu. Mô hình sinh câu trả lời ngắn gọn, đạt F1 66,55% và Exact Match 41,05% trên tập test.
+  > Thứ ba, ở phân hệ TTS, nhóm huấn luyện mô hình Matcha-TTS theo hướng Flow Matching với frontend vi_tone_v2 tách 6 thanh điệu thành token độc lập ở cuối âm tiết, kết hợp bộ chuẩn hóa văn bản tiếng Việt."
 
 ---
 
-### SLIDE 4: KẾT QUẢ THỰC NGHIỆM & BENCHMARK THEN CHỐT
-* **Thời lượng:** 60 giây (2:45 - 3:45)
-* **Người trình bày:** Trương Hoàng Duy (hoặc Ngô Trí Huy)
+### SLIDE 4: BẢNG SỐ LIỆU BENCHMARK GIỮA CÁC PHÂN HỆ & BASELINE
+* **Thời lượng dự kiến:** 3:30 - 4:30 (60s)
 * **Nội dung hiển thị trên Slide:**
-  * **Bảng kết quả định lượng tổng hợp trên tập Test/Dev:**
-
-| Phân hệ / Mô hình | Chỉ số then chốt | Giá trị đạt được | So sánh Baseline | Ý nghĩa thực tiễn |
-|---|---|:---:|:---:|---|
-| **Retrieval (BM25)** | Recall@1 / Recall@5 | **71.45% / 83.69%** | Lucene DF: 64.2% | Tìm đúng bài đọc ngay ở top 1 và top 5 |
-| **Retrieval (BM25)** | MRR@5 | **0.7624** | Baseline: 0.689 | Thứ hạng văn bản đúng nằm ở vị trí rất cao |
-| **MRC (ChoiceRanker)**| Accuracy (Dev) | **51.95%** (293/564) | Lexical: 43.6% / Random: 25.2% | Vượt trội hơn 8.3% so với baseline từ khóa |
-| **TTS (Matcha-TTS)** | Tỷ lệ lỗi chữ (CER) | **1.9%** | VITS: 4.3% (Người thật: 0.7%) | Phát âm rõ chữ, ít lỗi hơn VITS gấp 2 lần |
-| **TTS (Matcha-TTS)** | Sai số cao độ (log-F0) | **2.86 semitones** | VITS: 4.31 / Edge-TTS: 2.69 | Thanh điệu chuẩn xác, gần bằng mô hình thương mại |
-| **Tốc độ (Matcha CPU)**| Real-Time Factor (RTF)| **0.52** | Yêu cầu thời gian thực: < 1.0 | Nhanh gấp 2 lần thời gian thực trên CPU i5/i7 |
-
+  * **STT (Whisper-small LoRA 50h CT2 int8):** WER 13,77% / CER 6,67% (Test 1.802 mẫu VietSpeech) vs Whisper gốc 36,76% / 19,43%.
+  * **Retrieval (BM25 tinh chỉnh, kho 2 tầng):** Recall@1 71,1% / Recall@5 85,9% (Test 2.545 câu); Ablation kho 552 đoạn: R@1 71,45% (cũ 64,2%).
+  * **Pipeline cuối (BM25 + dense + reranker):** Answer F1 (200 câu trong kho / 200 câu mở): 60,7% / 24,3% vs BM25 thuần 58,0% / 15,4%.
+  * **Toàn chuỗi (BM25 → ViT5):** EM 32,3% / token F1 53,9% (Test 2.545 câu) vs đưa đúng đoạn văn (Gold): F1 68,6%.
+  * **MRC (ViT5-base fine-tune):** EM 41,05% / token F1 66,55% (Test 2.716 câu) vs trích câu khớp nhất (dự phòng khi thiếu model).
+  * **TTS (Matcha-TTS nhóm huấn luyện):** CER 0,8% (ASR PhoWhisper, InfoRe1) vs VITS MMS 4,7% | Người thật 0,7%.
+  * **TTS (Cao độ & Phổ):** log-F0 RMSE 0,88 bán cung / MCD 3,05 dB vs VITS 4,29 bán cung.
+  * **Tốc độ & Độ trễ (Docker CPU):** RTF 0,64 / Tổng thời gian ~12s/câu (tắt reranker ~6s).
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Kính thưa Thầy, các kết quả trên bảng là minh chứng định lượng cho hiệu quả của hệ thống:  
-  > Ở phân hệ Retrieval, giải thuật BM25 tinh chỉnh đạt Recall@1 là 71.45% và Recall@5 lên tới 83.69%, với chỉ số MRR đạt 0.762. Nghĩa là phần lớn trường hợp hệ thống định vị chính xác bài đọc ngay ở vị trí đầu tiên.  
-  > Ở phân hệ MRC, ChoiceRanker đạt độ chính xác 51.95%, cao hơn baseline từ khóa 8.3% và gấp hơn 2 lần phương pháp chọn ngẫu nhiên.  
-  > Đặc biệt ở phân hệ TTS, khi nhóm thiết lập benchmark âm học chuẩn quốc tế: Matcha-TTS đạt tỷ lệ lỗi ký tự CER cực thấp chỉ 1.9%, bám sát mức trần của giọng người thật là 0.7% và tốt hơn VITS hơn 2 lần. Sai số thanh điệu log-F0 đạt 2.86 bán cung, tiệm cận mô hình thương mại Edge-TTS. Quan trọng nhất, chỉ số RTF đạt 0.52 trên CPU thông thường, nghĩa là chỉ mất nửa giây để tổng hợp câu nói 1 giây, hoàn toàn đáp ứng đàm thoại thời gian thực."
+  > "Kính thưa Thầy Cô, bảng số liệu trên slide tổng hợp kết quả thực nghiệm của các phân hệ:
+  > Ở phân hệ STT, fine-tune LoRA 50 giờ giúp giảm WER từ 36,76% xuống 13,77% và CER xuống 6,67% trên 1.802 mẫu test VietSpeech.
+  > Ở phân hệ Retrieval, trên 2.545 câu test với kho tri thức hai tầng, BM25 đạt Recall@1 71,1% và Recall@5 85,9%. Khi kết hợp dense và reranker, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4% lên 24,3%, và trên câu có đoạn trong kho tăng từ 58,0% lên 60,7%.
+  > Ở phân hệ MRC, ViT5 fine-tune đạt Exact Match 41,05% và token F1 66,55% trên 2.716 câu test; khi chạy toàn chuỗi từ BM25 sang ViT5 đạt F1 53,9%.
+  > Ở phân hệ TTS, Matcha-TTS đạt tỷ lệ lỗi ký tự CER 0,8% qua PhoWhisper, gần mức trần giọng người thật 0,7% và thấp hơn VITS MMS (4,7%). Sai số cao độ log-F0 đạt 0,88 bán cung, so với 4,29 của VITS, với tốc độ RTF 0,64 trên CPU."
 
 ---
 
-### SLIDE 5: SẢN PHẨM HOÀN CHỈNH & KỊCH BẢN DEMO
-* **Thời lượng:** 45 giây (3:45 - 4:30)
-* **Người trình bày:** Huỳnh Công Lương
+### SLIDE 5: QUÁ TRÌNH HUẤN LUYỆN & BIỂU ĐỒ HỘI TỤ ĐA PHÂN HỆ
+* **Thời lượng dự kiến:** 4:30 - 5:30 (60s)
 * **Nội dung hiển thị trên Slide:**
-  * **Sản phẩm hoàn thiện:**
-    * **Web UI (Angular 19):** Giao diện Chat trực quan, hiển thị tiến trình pipeline (Thu âm $\rightarrow$ STT $\rightarrow$ Retrieval $\rightarrow$ MRC $\rightarrow$ TTS $\rightarrow$ Nghe audio).
-    * **Backend (FastAPI):** Kiến trúc RESTful modules hóa, hỗ trợ Lazy Loading.
-    * **Đóng gói Docker:** Multi-stage build (`node:22-alpine` + `python:3.11-slim`), cô lập cổng 8090, 55/55 test cases ĐẠT 100%.
-  * **Minh họa luồng Demo thực tế (End-to-End Test):**
-    * Người dùng hỏi: *"Thủ đô của Việt Nam là gì?"* (Kèm 4 phương án: Huế, Hà Nội, Đà Nẵng, Cần Thơ).
-    * Retrieval truy xuất bài đọc `train:0288` (Văn Miếu Hà Nội, điểm 26.97).
-    * ChoiceRanker suy luận: Phương án B đạt 0.807.
-    * TTS tự động phát: *"Đáp án B: Hà Nội"* với giọng đọc nơ-ron tự nhiên trong 1.8 giây.
+  * **Biểu đồ minh họa:** `chart_01_training_curves.png` (4 đồ thị trực quan: Loss STT Whisper LoRA 50h, Dò tham số BM25 & Recall, Đường cong hội tụ ViT5-base EM/F1, và Hàm mất mát Matcha-TTS OT-CFM).
+  * **Điểm Nhấn Hội Tụ Mô Hình:**
+    * **STT LoRA 50h:** Hàm mất mát Cross-Entropy giảm đều đặn từ ~1.85 xuống 0.42 tại bước 2.750, mô hình học tốt đặc trưng âm vị tiếng Việt mà không bị overfit.
+    * **Retrieval Tuning:** Lưới tham số xác lập điểm cực đại tại $k_1 = 2.1, b = 1.0$, kết hợp Bigram boost nâng Recall@1 thêm 7.27% tuyệt đối.
+    * **MRC ViT5-base:** Hội tụ sau 2 epoch trên 21.733 mẫu train; validation F1 đạt 66.55% và Exact Match đạt 41.05% trên tập test 2.716 câu.
+    * **Matcha-TTS Flow Matching:** Loss vận chuyển tối ưu OT-CFM giảm nhanh dưới 1.0, kết hợp vocoder HiFi-GAN tái tạo âm thanh trong trẻo, tự nhiên.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Về mặt sản phẩm phần mềm, nhóm đã tích hợp hoàn chỉnh thành một ứng dụng Full-stack: Backend FastAPI kết hợp Frontend Angular với giao diện Chat hiện đại, có biểu đồ thể hiện luồng pipeline đang chạy ở phân hệ nào.  
-  > Toàn bộ hệ thống được đóng gói thành container Docker tự động hóa 100%, vượt qua tất cả 55/55 bài kiểm thử tự động.  
-  > Trong kịch bản demo: khi người dùng bấm mic hỏi 'Thủ đô của Việt Nam là gì?', hệ thống ngay lập tức nhận dạng câu hỏi, truy xuất đúng bài đọc Văn Miếu số 288 trong 552 bài đọc, suy luận phương án B Hà Nội với xác suất 80.7% và phát âm thanh câu trả lời mượt mà cho người dùng chỉ sau chưa đầy 2 giây."
+  > "Kính thưa Thầy Cô, slide số 5 minh họa trực quan quá trình huấn luyện và các đường cong hội tụ thực nghiệm của cả 4 phân hệ.
+  > Ở góc trên bên trái là quá trình fine-tune STT Whisper-small LoRA trên 50 giờ dữ liệu VietSpeech: hàm mất mát giảm ổn định từ 1,85 xuống 0,42 tại checkpoint 2.750 bước, khẳng định mô hình thích ứng sâu với âm vị học tiếng Việt.
+  > Ở góc trên bên phải là đồ thị quét tham số BM25: đường cong phản ánh rõ việc tăng k1 lên 2.1 và b lên 1.0 giúp Recall@1 tăng từ 64,18% lên 68,79%, và khi cộng thêm Bigram Boost thì bứt phá lên 71,45%.
+  > Ở góc dưới bên trái, mô hình đọc hiểu ViT5-base hội tụ vững chắc sau 2 epoch huấn luyện, đạt điểm F1 66,55% và Exact Match 41,05% trên 2.716 mẫu test độc lập.
+  > Cuối cùng ở góc dưới bên phải, đường cong hàm mất mát Flow Matching của Matcha-TTS và Mel-loss của vocoder HiFi-GAN giảm mượt mà, đảm bảo việc tổng hợp giọng đọc vừa chuẩn cao độ vừa tự nhiên như giọng người thật."
 
 ---
 
-### SLIDE 6: TỔNG KẾT & HƯỚNG PHÁT TRIỂN
-* **Thời lượng:** 30 giây (4:30 - 5:00)
-* **Người trình bày:** Ngô Trí Huy
+### SLIDE 6: SẢN PHẨM ĐÓNG GÓI DOCKER & KỊCH BẢN DEMO END-TO-END
+* **Thời lượng dự kiến:** 5:30 - 6:30 (60s)
 * **Nội dung hiển thị trên Slide:**
-  * **Các giá trị đạt được:**
-    * Xây dựng trọn vẹn hệ thống Voice Q&A tiếng Việt mã nguồn mở, hoạt động cục bộ trên CPU.
-    * Khép kín chu trình đa phương thức (Âm thanh - Văn bản - Ngữ nghĩa - Âm thanh).
-    * Huấn luyện thành công mô hình Flow Matching (Matcha-TTS) với cơ chế tách thanh điệu tiếng Việt.
-  * **Hướng nâng cấp tiếp theo:**
-    * Phát triển bộ truy xuất lai kết hợp Dense Retrieval (Bi-Encoder tiếng Việt) và Reranker.
-    * Tích hợp LLM tiếng Việt (như PhoGPT / Vistral) để hỗ trợ đàm thoại đa lượt (multi-turn dialog).
-  * **Lời cảm ơn & Xin ý kiến nhận xét của Thầy.**
+  * **Kỹ Nghệ Phần Mềm & Đóng Gói:**
+    * Kiến trúc Full-Stack: Backend FastAPI bất đồng bộ + Frontend Angular 22 Standalone hiển thị trực quan.
+    * Giao diện Trực quan: Hiển thị Pipeline Flow Indicator theo thời gian thực (Thu âm → STT → Retrieval → MRC → TTS → Nghe).
+    * Docker Multi-Stage: Stage 1 (Node 22) biên dịch web; Stage 2 (Python 3.11-slim) cài đặt API và PyTorch CPU wheel.
+    * Khởi chạy 1 Lệnh: `docker compose up -d` ánh xạ cổng 8090 → 8000, tích hợp sẵn Docker Healthcheck.
+    * Kiểm thử Tự động: 115 bài kiểm thử tự động bao phủ từ xử lý dữ liệu đến REST API.
+  * **Kịch Bản Demo Thực Tế (Live Flow):**
+    * 1. Giọng nói Đầu vào: Người dùng bấm mic hỏi: *"Ai là tác giả của Truyện Kiều?"*.
+    * 2. STT (~3s): Whisper-small LoRA 50h (CTranslate2 int8) nhận dạng văn bản tiếng Việt có dấu.
+    * 3. Retrieval + reranker (~6s): BM25 + dense lấy ứng viên, reranker chọn đoạn Wikipedia "Truyện Kiều".
+    * 4. MRC (~1,4s): ViT5 đọc đoạn Wikipedia về Truyện Kiều và sinh câu trả lời *"Nguyễn Du"*.
+    * 5. TTS (~1,3s): Matcha-TTS chuẩn hóa văn bản và tổng hợp giọng đọc câu trả lời.
+    * 6. Tổng Độ trễ: Khoảng 12 giây trên CPU Docker (STT ~3s, truy xuất + reranker ~6s, ViT5 ~1,4s, TTS ~1,3s); tắt reranker còn ~6 giây.
 * **Kịch bản thuyết trình (Speaker Script):**
-  > "Tóm lại, đồ án của nhóm đã hiện thực hóa thành công một hệ thống Voice Q&A tiếng Việt hoàn chỉnh, nhẹ, chạy được offline trên máy tính cá nhân và làm chủ các kỹ thuật học máy tiên tiến từ Flow Matching đến MRC.  
-  > Trong giai đoạn tiếp theo, nhóm định hướng sẽ nâng cấp bộ tìm kiếm sang dạng lai Dense Retrieval và tích hợp LLMs tiếng Việt để hỗ trợ trò chuyện đa lượt.  
-  > Nhóm chúng em xin chân thành cảm ơn sự lắng nghe và chỉ dẫn của Thầy! Nhóm rất mong nhận được những góp ý quý báu từ Thầy để tiếp tục hoàn thiện đồ án."
+  > "Về mặt kỹ nghệ phần mềm, nhóm đã tích hợp hệ thống thành ứng dụng Full-stack gồm Backend FastAPI và Frontend Angular 22, hiển thị trực quan trạng thái xử lý qua từng chặng. Toàn bộ dự án được đóng gói bằng Docker multi-stage, khởi chạy bằng một lệnh docker compose và có 115 bài kiểm thử tự động.
+  > Trong kịch bản demo thực tế: khi người dùng bấm micro hỏi 'Ai là tác giả của Truyện Kiều?', phân hệ STT nhận dạng câu hỏi trong khoảng 3 giây; bộ truy xuất lấy ứng viên và reranker chọn đoạn Wikipedia về Truyện Kiều trong khoảng 6 giây; ViT5 sinh câu trả lời 'Nguyễn Du' trong 1,4 giây; và Matcha-TTS tổng hợp giọng đọc trong 1,3 giây. Tổng thời gian phản hồi khoảng 12 giây trên CPU Docker, hoặc khoảng 6 giây nếu tắt reranker."
+
+---
+
+### SLIDE 7: TỔNG KẾT ĐÓNG GÓP, GIỚI HẠN THỰC TẾ & HƯỚNG PHÁT TRIỂN
+* **Thời lượng dự kiến:** 6:30 - 7:15 (45s)
+* **Nội dung hiển thị trên Slide:**
+  * **Kết Quả Đạt Được:**
+    * Hoàn thiện chu trình Voice Q&A tiếng Việt dựa trên ViMMRC 2.0 và UIT-ViQuAD2.0 (27.164 câu hỏi).
+    * Huấn luyện mô hình Matcha-TTS (ICASSP 2024) với frontend `vi_tone_v2` tách thanh điệu, đạt CER 0,8% và RTF 0,64.
+    * Vận hành cục bộ trên CPU thông thường (Edge-TTS/gTTS dự phòng cần Internet), độ trễ ~12s/câu (~6s khi tắt reranker).
+    * Đóng gói ứng dụng Full-stack (FastAPI + Angular) qua Docker multi-stage, đạt 115 bài kiểm thử tự động.
+  * **Giới Hạn Hiện Tại & Hướng Mở Rộng:**
+    * Chạy trên GPU: Giảm thời gian chờ (hiện ~12 giây/câu trên CPU Docker do reranker chiếm ~6 giây).
+    * Tinh chỉnh định tuyến & reranker: Khắc phục hiện tượng câu hỏi kiến thức mở bị đoạn tầng 1 lấn át (hiện F1 mở đạt 24,3%).
+    * Thử nghiệm LLM tiếng Việt: Đánh giá thêm các mô hình lớn hơn hoặc kết hợp xếp hạng nhiều câu trả lời ứng viên.
+    * Hội thoại Đa lượt (Multi-Turn): Bổ sung bộ nhớ ngữ cảnh phiên làm việc để người dùng hỏi nối tiếp tự nhiên.
+    * Ứng dụng thực tế: Thử nghiệm tích hợp vào kiosk tra cứu thông tin học đường và công cụ hỗ trợ người khiếm thị.
+* **Kịch bản thuyết trình (Speaker Script):**
+  > "Tóm lại, nhóm đã xây dựng hoàn chỉnh hệ thống Voice Q&A tiếng Việt dựa trên ViMMRC 2.0 và UIT-ViQuAD2.0, kết hợp từ nhận dạng giọng nói, truy xuất hai tầng, đọc hiểu sinh câu trả lời tự do đến tổng hợp giọng nói Matcha-TTS chạy cục bộ trên CPU.
+  > Về hạn chế và hướng phát triển: hiện tại độ trễ trên CPU khoảng 12 giây mỗi câu do reranker chiếm 6 giây, và một số câu hỏi kiến thức mở vẫn còn nhầm lẫn khi đoạn văn tầng 1 được cộng điểm ưu tiên. Trong thời gian tới, nhóm dự kiến triển khai trên GPU để giảm độ trễ, tinh chỉnh bộ định tuyến cho câu hỏi kiến thức chung, và thử nghiệm các mô hình ngôn ngữ lớn tiếng Việt để hỗ trợ hội thoại đa lượt.
+  > Nhóm chúng em xin chân thành cảm ơn Thầy Cô đã lắng nghe và rất mong nhận được ý kiến đóng góp của Hội đồng!"

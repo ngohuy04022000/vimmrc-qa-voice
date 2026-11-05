@@ -6,10 +6,21 @@ export interface Passage {
   score?: number;
 }
 
+export interface AskResponse {
+  answer: string;
+  kind: string;
+  intent?: string | null;
+  session_id: string;
+  resolved_question?: string | null;
+  passage?: Passage | null;
+}
+
 export interface ChatMessage {
   id: number;
   role: 'user' | 'bot';
   text: string;
   audioUrl?: string;
   passage?: Passage;
+  time?: string;
+  source?: 'voice' | 'text';
 }

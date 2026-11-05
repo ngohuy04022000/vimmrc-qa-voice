@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { Passage } from '../models/chat.models';
+import { AskResponse, Passage } from '../models/chat.models';
 
 @Injectable({ providedIn: 'root' })
 export class PipelineService {
@@ -23,6 +23,18 @@ export class PipelineService {
     return this.http
       .post<{ answer: string }>('/api/answer', { passage, question })
       .pipe(map((r) => r.answer.trim()));
+  }
+
+  /** Một lượt hội thoại có ngữ cảnh (câu nối tiếp, so sánh, câu ghép, xã giao...). */
+  ask(question: string, sessionId: string | null, passage?: string): Observable<AskResponse> {
+    const body: Record<string, string> = { question };
+    if (sessionId) body['session_id'] = sessionId;
+    if (passage) body['passage'] = passage;
+    return this.http.post<AskResponse>('/api/ask', body);
+  }
+
+  resetConversation(sessionId: string): Observable<unknown> {
+    return this.http.post('/api/ask/reset', { session_id: sessionId });
   }
 
   synthesize(text: string): Observable<Blob> {

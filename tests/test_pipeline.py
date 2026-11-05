@@ -32,24 +32,18 @@ class PipelineTests(unittest.TestCase):
         self.assertIsNone(result["passage_id"])
         self.assertEqual(result["retrieval_score"], 0)
 
-    def test_multiple_choice_contract_and_question_only_retrieval(self):
+    def test_reader_gets_question_and_retrieved_passage(self):
         calls = []
         class TrackingRetriever:
             def search(self, question, top_k):
                 calls.append(question)
                 return [{"id": "p", "passage": "Hà Nội là thủ đô Việt Nam.", "score": 1.0}]
-        class ChoiceReader:
-            def predict(self, question, passage, options):
-                return {"label": "B", "answer": options[1], "scores": {"B": 0.8}}
-        pipeline = QAPipeline(TrackingRetriever(), ChoiceReader())
-        result = pipeline.predict("Thủ đô?", ["Huế", "Hà Nội", "Đà Nẵng", "Cần Thơ"])
+        class EchoReader:
+            def answer_question(self, question, passage):
+                return passage
+        result = QAPipeline(TrackingRetriever(), EchoReader()).predict("Thủ đô?")
         self.assertEqual(calls, ["Thủ đô?"])
-        self.assertEqual(result["choice_label"], "B")
-        self.assertEqual(result["answer"], "Hà Nội")
-
-    def test_invalid_choices(self):
-        with self.assertRaises(ValueError):
-            self.pipeline.predict("question", ["", "", "", ""])
+        self.assertEqual(result["answer"], "Hà Nội là thủ đô Việt Nam.")
 
 
 if __name__ == "__main__":

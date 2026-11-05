@@ -5,21 +5,22 @@ import { firstValueFrom } from 'rxjs';
 import { ChatMessage, Passage, PipelineStep } from './models/chat.models';
 import { AudioRecorderService } from './services/audio-recorder.service';
 import { PipelineService } from './services/pipeline.service';
+import { AutoStopReason } from './utils/silence-detector';
 
 const STEP_LABELS: Record<PipelineStep, string> = {
-  idle: 'Sẵn sàng',
-  recording: 'Đang thu âm...',
-  stt: 'Whisper đang nhận dạng giọng nói...',
-  retrieval: 'Đang tìm đoạn văn liên quan...',
-  mrc: 'Mô hình đang đọc hiểu và trả lời...',
-  tts: 'Đang tổng hợp giọng nói...',
-  playback: 'Đang phát câu trả lời...',
+  idle: 'Hệ thống sẵn sàng',
+  recording: 'Đang lắng nghe... hệ thống tự trả lời khi bạn ngừng nói',
+  stt: 'Whisper LoRA đang nhận dạng tiếng Việt...',
+  retrieval: 'Đang truy xuất ngữ cảnh (BM25 + e5 + Reranker)...',
+  mrc: 'ViT5 đang suy luận câu trả lời...',
+  tts: 'Matcha-TTS đang tổng hợp giọng nói...',
+  playback: 'Đang phát âm thanh câu trả lời...',
 };
 
 type FlowState = 'waiting' | 'active' | 'done';
 type AppView = 'chat' | 'library' | 'history' | 'report';
 
-interface LibraryPassage extends Passage {
+export interface LibraryPassage extends Passage {
   id: string;
   title: string;
   category: string;
@@ -45,17 +46,26 @@ export class AppComponent implements OnDestroy {
   readonly step = signal<PipelineStep>('idle');
   readonly error = signal<string | null>(null);
   readonly activeView = signal<AppView>('chat');
+  readonly currentlyPlayingUrl = signal<string | null>(null);
+  readonly copiedMessageId = signal<number | null>(null);
+  readonly selectedCategory = signal<string>('Tất cả');
+  readonly currentQueryMode = signal<'voice' | 'text'>('text');
+
   readonly stepLabels = STEP_LABELS;
-  readonly flowSteps: ReadonlyArray<{ key: PipelineStep; name: string; description: string; icon: string }> = [
-    { key: 'recording', name: 'Thu âm', description: 'Ghi nhận giọng nói của bạn', icon: '♬' },
-    { key: 'stt', name: 'Speech-to-Text', description: 'Whisper chuyển giọng nói thành văn bản', icon: 'Aa' },
-    { key: 'retrieval', name: 'Retrieval', description: 'Tìm kiếm đoạn văn phù hợp', icon: '⌕' },
-    { key: 'mrc', name: 'MRC Inference', description: 'Suy luận câu trả lời từ ngữ cảnh', icon: 'AI' },
-    { key: 'tts', name: 'Text-to-Speech', description: 'Tổng hợp giọng nói trả lời', icon: '♪' },
+  readonly categories = ['Tất cả', 'Văn học', 'Lịch sử', 'Công nghệ', 'Môi trường'];
+
+  readonly flowSteps: ReadonlyArray<{ key: PipelineStep; name: string; description: string; tag: string }> = [
+    { key: 'recording', name: 'Ghi âm đầu vào', description: 'Ghi nhận âm thanh PCM 16kHz', tag: 'Audio' },
+    { key: 'stt', name: 'Nhận dạng giọng nói', description: 'Whisper-small LoRA (CTranslate2)', tag: 'STT' },
+    { key: 'retrieval', name: 'Truy xuất tri thức', description: 'BM25 + Dense e5 + BGE Reranker', tag: 'RAG' },
+    { key: 'mrc', name: 'Đọc hiểu suy luận', description: 'Mô hình sinh câu trả lời ViT5-base', tag: 'MRC' },
+    { key: 'tts', name: 'Tổng hợp giọng nói', description: 'Matcha-TTS (OT-CFM) + HiFi-GAN', tag: 'TTS' },
   ];
+
   readonly latestPassage = computed(() =>
     [...this.messages()].reverse().find((message) => message.passage)?.passage,
   );
+
   readonly learningSessions = computed(() => {
     const sessions: Array<{ id: number; question: ChatMessage; answer?: ChatMessage }> = [];
     for (const message of this.messages()) {
@@ -67,48 +77,57 @@ export class AppComponent implements OnDestroy {
     }
     return sessions.reverse();
   });
+
   readonly reportMetrics = computed(() => {
     const sessions = this.learningSessions();
     return {
       questions: sessions.length,
       answered: sessions.filter((session) => session.answer).length,
-      voiceQuestions: sessions.filter((session) => session.question.audioUrl).length,
+      voiceQuestions: sessions.filter((session) => session.question.source === 'voice' || session.question.audioUrl).length,
       passages: new Set(sessions.map((session) => session.answer?.passage?.text).filter(Boolean)).size,
     };
   });
+
   readonly libraryPassages: LibraryPassage[] = [
+    {
+      id: 'truyen-kieu',
+      title: 'Tác phẩm Truyện Kiều & Đại thi hào Nguyễn Du',
+      category: 'Văn học',
+      level: 'Cơ bản',
+      text: 'Truyện Kiều (Đoạn trường tân thanh) là truyện thơ kinh điển của đại thi hào Nguyễn Du, viết bằng chữ Nôm theo thể lục bát gồm 3.254 câu. Hoàn cảnh ra đời: có thuyết nói Nguyễn Du viết sau khi đi sứ Trung Quốc (1814–1820), lại có thuyết nói ông viết trước khi đi sứ vào cuối thời Lê đầu thời Tây Sơn.',
+    },
     {
       id: 'environment',
       title: 'Bảo vệ môi trường sống',
       category: 'Môi trường',
       level: 'Trung bình',
-      text: 'Việc bảo vệ môi trường sống không chỉ là trách nhiệm của mỗi cá nhân mà còn là nghĩa vụ chung của toàn xã hội, để gìn giữ một tương lai bền vững cho các thế hệ mai sau.',
+      text: 'Việc bảo vệ môi trường sống không chỉ là trách nhiệm của mỗi cá nhân mà còn là nghĩa vụ chung của toàn xã hội, để gìn giữ một tương lai bền vững cho các thế hệ mai sau. Việc giảm thiểu rác thải nhựa và bảo tồn nguồn nước sạch là ưu tiên cấp bách.',
     },
     {
       id: 'history',
       title: 'Di sản văn hóa Việt Nam',
       category: 'Lịch sử',
       level: 'Cơ bản',
-      text: 'Di sản văn hóa là tài sản quý giá được hình thành qua nhiều thế hệ. Mỗi di sản lưu giữ những giá trị lịch sử, tri thức và bản sắc riêng của cộng đồng Việt Nam.',
+      text: 'Di sản văn hóa là tài sản quý giá được hình thành qua nhiều thế hệ. Mỗi di sản lưu giữ những giá trị lịch sử, tri thức và bản sắc riêng của cộng đồng Việt Nam, phản ánh quá trình dựng nước và giữ nước hào hùng.',
     },
     {
       id: 'technology',
       title: 'Trí tuệ nhân tạo trong giáo dục',
       category: 'Công nghệ',
       level: 'Nâng cao',
-      text: 'Trí tuệ nhân tạo hỗ trợ người học tiếp cận kiến thức theo nhu cầu cá nhân, đồng thời giúp giáo viên phân tích tiến độ và thiết kế hoạt động học tập phù hợp hơn.',
+      text: 'Trí tuệ nhân tạo hỗ trợ người học tiếp cận kiến thức theo nhu cầu cá nhân, đồng thời giúp giáo viên phân tích tiến độ và thiết kế hoạt động học tập phù hợp hơn thông qua các hệ thống đọc hiểu và hỏi đáp đa phương thức.',
     },
     {
       id: 'literature',
       title: 'Giá trị của việc đọc sách',
       category: 'Văn học',
       level: 'Cơ bản',
-      text: 'Đọc sách mở rộng hiểu biết, nuôi dưỡng khả năng tưởng tượng và rèn luyện tư duy phản biện. Thói quen đọc đều đặn còn giúp mỗi người diễn đạt suy nghĩ rõ ràng hơn.',
+      text: 'Đọc sách mở rộng hiểu biết, nuôi dưỡng khả năng tưởng tượng và rèn luyện tư duy phản biện. Thói quen đọc đều đặn còn giúp mỗi người diễn đạt suy nghĩ rõ ràng hơn và tích lũy vốn từ phong phú.',
     },
   ];
 
-  /** Optional passage provided by the user; when set, retrieval is skipped. */
   passageInput = '';
+  private sessionId: string | null = null;
   typedQuestion = '';
   librarySearch = '';
 
@@ -121,11 +140,20 @@ export class AppComponent implements OnDestroy {
     this.activeView.set(view);
   }
 
+  setCategory(cat: string): void {
+    this.selectedCategory.set(cat);
+  }
+
   filteredPassages(): LibraryPassage[] {
     const query = this.librarySearch.trim().toLocaleLowerCase('vi');
-    if (!query) return this.libraryPassages;
-    return this.libraryPassages.filter((passage) =>
-      `${passage.title} ${passage.category} ${passage.text}`.toLocaleLowerCase('vi').includes(query),
+    const cat = this.selectedCategory();
+    let list = this.libraryPassages;
+    if (cat !== 'Tất cả') {
+      list = list.filter((p) => p.category === cat);
+    }
+    if (!query) return list;
+    return list.filter((p) =>
+      `${p.title} ${p.category} ${p.text}`.toLocaleLowerCase('vi').includes(query),
     );
   }
 
@@ -138,8 +166,31 @@ export class AppComponent implements OnDestroy {
     if (this.passageInput.trim()) this.activeView.set('chat');
   }
 
-  clearHistory(): void {
+  clearCustomPassage(): void {
+    this.passageInput = '';
+  }
+
+  newChat(): void {
+    this.resetSession();
     this.messages.set([]);
+    this.typedQuestion = '';
+    this.error.set(null);
+    this.step.set('idle');
+  }
+
+  clearHistory(): void {
+    this.resetSession();
+    this.messages.set([]);
+  }
+
+  private resetSession(): void {
+    if (this.sessionId) void firstValueFrom(this.pipeline.resetConversation(this.sessionId)).catch(() => undefined);
+    this.sessionId = null;
+  }
+
+  quickAsk(question: string): void {
+    this.typedQuestion = question;
+    void this.sendTyped();
   }
 
   flowState(target: PipelineStep): FlowState {
@@ -153,23 +204,46 @@ export class AppComponent implements OnDestroy {
     return targetIndex < currentIndex ? 'done' : 'waiting';
   }
 
+  private finishing = false;
+
   async toggleRecording(): Promise<void> {
     this.error.set(null);
     if (this.step() === 'recording') {
-      try {
-        const wav = await this.recorder.stop();
-        await this.runFromAudio(wav);
-      } catch (e) {
-        this.fail(e);
-      }
+      await this.finishRecording();
       return;
     }
 
     try {
-      await this.recorder.start();
+      // Tự dừng và trả lời khi người dùng ngừng nói; bấm lại nút vẫn dừng ngay như trước.
+      await this.recorder.start((reason) => void this.onAutoStop(reason));
+      this.currentQueryMode.set('voice');
       this.step.set('recording');
     } catch (e) {
       this.fail(e, this.microphoneError(e));
+    }
+  }
+
+  private async onAutoStop(reason: AutoStopReason): Promise<void> {
+    if (this.step() !== 'recording' || this.finishing) return;
+    if (reason === 'no-speech') {
+      this.recorder.cancel();
+      this.step.set('idle');
+      this.error.set('Không nghe thấy giọng nói. Bấm micro và nói lại, hoặc nhập câu hỏi bằng văn bản.');
+      return;
+    }
+    await this.finishRecording();
+  }
+
+  private async finishRecording(): Promise<void> {
+    if (this.finishing) return;
+    this.finishing = true;
+    try {
+      const wav = await this.recorder.stop();
+      await this.runFromAudio(wav);
+    } catch (e) {
+      this.fail(e);
+    } finally {
+      this.finishing = false;
     }
   }
 
@@ -180,13 +254,13 @@ export class AppComponent implements OnDestroy {
 
     switch (error.name) {
       case 'NotAllowedError':
-        return 'Quyền micro đang bị chặn. Mở biểu tượng khóa cạnh thanh địa chỉ, cho phép Micro rồi tải lại trang.';
+        return 'Quyền micro đang bị chặn. Vui lòng cấp quyền Micro trong trình duyệt để sử dụng tính năng giọng nói.';
       case 'NotFoundError':
-        return 'Không tìm thấy micro trên thiết bị.';
+        return 'Không tìm thấy thiết bị micro trên hệ thống.';
       case 'NotReadableError':
-        return 'Micro đang được ứng dụng khác sử dụng hoặc hệ điều hành đang chặn truy cập.';
+        return 'Micro đang được ứng dụng khác sử dụng hoặc hệ điều hành hạn chế truy cập.';
       default:
-        return `Không truy cập được micro (${error.name}).`;
+        return `Không thể truy cập micro (${error.name}).`;
     }
   }
 
@@ -195,8 +269,14 @@ export class AppComponent implements OnDestroy {
     if (!question || this.busy) return;
     this.typedQuestion = '';
     this.error.set(null);
+    this.currentQueryMode.set('text');
     try {
-      this.push({ role: 'user', text: question });
+      this.push({
+        role: 'user',
+        text: question,
+        source: 'text',
+        time: this.nowStr(),
+      });
       await this.runFromText(question);
     } catch (e) {
       this.fail(e);
@@ -205,56 +285,98 @@ export class AppComponent implements OnDestroy {
 
   private async runFromAudio(wav: Blob): Promise<void> {
     const userAudioUrl = this.track(URL.createObjectURL(wav));
+    this.currentQueryMode.set('voice');
 
     this.step.set('stt');
     const question = await firstValueFrom(this.pipeline.transcribe(wav));
-    if (!question) throw new Error('Không nhận dạng được câu hỏi, hãy nói lại rõ hơn.');
-    this.push({ role: 'user', text: question, audioUrl: userAudioUrl });
+    if (!question) throw new Error('Không nhận dạng được câu hỏi, hãy phát âm rõ hơn hoặc nhập bằng văn bản.');
+    this.push({
+      role: 'user',
+      text: question,
+      audioUrl: userAudioUrl,
+      source: 'voice',
+      time: this.nowStr(),
+    });
 
     await this.runFromText(question);
   }
 
   private async runFromText(question: string): Promise<void> {
-    const passage = await this.selectPassage(question);
-
-    this.step.set('mrc');
-    const answer = await firstValueFrom(this.pipeline.answerQuestion(passage.text, question));
+    // Một lượt hội thoại: server giữ ngữ cảnh theo session (câu nối tiếp, so sánh, xã giao...).
+    this.step.set('retrieval');
+    const provided = this.passageInput.trim();
+    const res = await firstValueFrom(this.pipeline.ask(question, this.sessionId, provided || undefined));
+    this.sessionId = res.session_id;
+    const answer = res.answer.trim();
+    const passage = res.passage ?? undefined;
 
     this.step.set('tts');
     const audio = await firstValueFrom(this.pipeline.synthesize(answer));
     const audioUrl = this.track(URL.createObjectURL(audio));
-    this.push({ role: 'bot', text: answer, audioUrl, passage });
+    this.push({
+      role: 'bot',
+      text: answer,
+      audioUrl,
+      passage,
+      time: this.nowStr(),
+    });
 
     await this.play(audioUrl);
   }
 
-  private async selectPassage(question: string): Promise<Passage> {
-    const provided = this.passageInput.trim();
-    if (provided) return { text: provided };
-
-    this.step.set('retrieval');
-    const passages = await firstValueFrom(this.pipeline.retrieve(question));
-    if (passages.length === 0) throw new Error('Không tìm thấy đoạn văn liên quan tới câu hỏi.');
-    return passages[0];
-  }
-
   private async play(url: string): Promise<void> {
     const el = this.player?.nativeElement;
-    if (!el) return this.step.set('idle');
+    if (!el) {
+      this.step.set('idle');
+      this.currentlyPlayingUrl.set(null);
+      return;
+    }
 
     this.step.set('playback');
+    this.currentlyPlayingUrl.set(url);
     el.src = url;
-    el.onended = () => this.step.set('idle');
+    el.onended = () => {
+      this.currentlyPlayingUrl.set(null);
+      this.step.set('idle');
+    };
     try {
       await el.play();
     } catch {
-      // Autoplay blocked: the user can still press play on the message.
+      // Autoplay blocked by browser policy
+      this.currentlyPlayingUrl.set(null);
       this.step.set('idle');
     }
   }
 
-  replay(url: string): void {
+  toggleAudio(url: string): void {
+    const el = this.player?.nativeElement;
+    if (!el) return;
+    if (this.currentlyPlayingUrl() === url && !el.paused) {
+      el.pause();
+      this.currentlyPlayingUrl.set(null);
+      this.step.set('idle');
+      return;
+    }
     void this.play(url);
+  }
+
+  isPlaying(url?: string): boolean {
+    return !!url && this.currentlyPlayingUrl() === url;
+  }
+
+  copyText(text: string, msgId?: number): void {
+    if (!navigator.clipboard) return;
+    navigator.clipboard.writeText(text).then(() => {
+      if (msgId !== undefined) {
+        this.copiedMessageId.set(msgId);
+        setTimeout(() => this.copiedMessageId.set(null), 1800);
+      }
+    });
+  }
+
+  private nowStr(): string {
+    const d = new Date();
+    return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
   }
 
   private push(msg: Omit<ChatMessage, 'id'>): void {
@@ -272,15 +394,17 @@ export class AppComponent implements OnDestroy {
 
   private fail(e: unknown, fallback?: string): void {
     this.step.set('idle');
+    this.currentlyPlayingUrl.set(null);
     if (fallback) return this.error.set(fallback);
     if (e instanceof HttpErrorResponse) {
       const module = e.url?.match(/\/api\/(\w+)/)?.[1] ?? 'server';
-      return this.error.set(`Lỗi khi gọi module "${module}" (HTTP ${e.status}).`);
+      return this.error.set(`Lỗi dịch vụ phân hệ "${module}" (HTTP ${e.status}).`);
     }
-    this.error.set(e instanceof Error ? e.message : 'Đã xảy ra lỗi không xác định.');
+    this.error.set(e instanceof Error ? e.message : 'Đã xảy ra lỗi không mong muốn.');
   }
 
   ngOnDestroy(): void {
+    this.recorder.cancel();
     this.objectUrls.forEach((u) => URL.revokeObjectURL(u));
   }
 }

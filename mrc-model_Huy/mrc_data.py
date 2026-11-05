@@ -20,14 +20,12 @@ def load_articles(path: str | Path) -> list[dict]:
 
 
 def flatten_articles(articles: list[dict]) -> list[dict]:
-    """One row per question; target is correct option text, never its letter.
+    """One row per question with a free-text "answer" target.
 
     Two article shapes are accepted:
-    - ViMMRC multiple-choice: has "options" (4 choices/question) and "answers" (A-D).
-      Row gets "options" and "answer_letter" in addition to "answer".
-    - Free-form extractive (e.g. UIT-ViQuAD2.0): has "answer_texts" (list of accepted
-      answer strings per question) instead of "options"/"answers". Row has no
-      "options"/"answer_letter"; ChoiceRanker and choice_accuracy skip these rows.
+    - ViMMRC 2.0 source format: "options" + "answers" (A-D); the answer is the text of
+      the correct option, so the system stays free-form QA.
+    - Free-form extractive (e.g. UIT-ViQuAD2.0): "answer_texts" per question.
     """
     examples = []
     for article_index, article in enumerate(articles):
@@ -83,8 +81,6 @@ def flatten_articles(articles: list[dict]) -> list[dict]:
                 "id": f"{article_index}:{question_index}",
                 "passage": passage.strip(),
                 "question": question.strip(),
-                "options": [choice.strip() for choice in choices],
-                "answer_letter": correct,
                 "answer": choices[LETTERS.index(correct)].strip(),
             })
     return examples
@@ -123,15 +119,7 @@ def evaluate_predictions(predictions: list[str], examples: list[dict]) -> dict[s
     if len(predictions) != len(examples) or not examples:
         raise ValueError("predictions and nonempty examples must have the same length")
     count = len(examples)
-    result = {
+    return {
         "exact_match": sum(exact_match(pred, row["answer"]) for pred, row in zip(predictions, examples)) / count,
         "token_f1": sum(token_f1(pred, row["answer"]) for pred, row in zip(predictions, examples)) / count,
     }
-    if all("options" in row for row in examples):
-        correct_choices = 0
-        for prediction, row in zip(predictions, examples):
-            scores = [token_f1(prediction, option) for option in row["options"]]
-            if max(scores) > 0 and scores.index(max(scores)) == LETTERS.index(row["answer_letter"]):
-                correct_choices += 1
-        result["choice_accuracy"] = correct_choices / count
-    return result

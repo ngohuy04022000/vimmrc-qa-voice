@@ -20,9 +20,8 @@ rơi vào đúng một split, tránh model "học vẹt" passage đã thấy ở
 
 Article lấy từ ViQuAD không có `options`/`answers` (không phải trắc nghiệm) — thay vào đó có
 `answer_texts`: danh sách các câu trả lời tự luận được chấp nhận cho mỗi câu hỏi. `mrc_data.flatten_articles`
-đọc được cả hai dạng; hàng sinh từ `answer_texts` không có `options`/`answer_letter`, nên
-`evaluate_predictions` tự bỏ `choice_accuracy` khi tập đánh giá có lẫn hàng tự luận (chỉ tính khi
-**toàn bộ** hàng đều có `options`). Câu hỏi không có đáp án (`is_impossible=True`) trong ViQuAD2.0 bị loại.
+đọc được cả hai dạng và đều trả về hàng `{question, passage, answer}` dạng văn bản tự do.
+Câu hỏi không có đáp án (`is_impossible=True`) trong ViQuAD2.0 bị loại: 28.454 câu gốc → 21.891 câu còn lại (cộng 5.273 câu ViMMRC = 27.164 câu).
 
 Chạy (cần `huggingface_hub`, `pandas`, `pyarrow` — đã có trong `requirements.txt`):
 
@@ -41,6 +40,16 @@ Kết quả lần fine-tune đầu (ViT5-base, 3 epoch, batch 1 × gradient accu
 Còn khiêm tốn vì chưa tăng epoch hoặc dò hyperparameter; `train.py` tự chọn checkpoint tốt nhất theo
 Exact Match trên dev (`load_best_model_at_end`), không phải checkpoint cuối cùng.
 
+Train tiếp 2 epoch từ checkpoint trên (learning rate 1e-5, lưu checkpoint mỗi 450 bước, resume được khi
+máy tắt đột ngột) → `checkpoints/vit5-combined-cont/`: **Exact Match 41,05%, token F1 66,55%** trên test.
+Dev loss tăng (0,69 → 0,84) nên train thêm cùng cấu hình không còn giúp:
+
+```powershell
+$env:TRANSFORMERS_NO_TF='1'
+python train.py --data-dir ../data/combined --model-name checkpoints/vit5-combined `
+  --output-dir checkpoints/vit5-combined-cont --epochs 2 --learning-rate 1e-5 --save-steps 450 --resume
+```
+
 ## Chạy demo offline và kiểm tra dữ liệu
 
 Từ thư mục gốc repository:
@@ -54,17 +63,17 @@ python train.py --dry-run
 
 Notebook [01_vimmrc_training.ipynb](01_vimmrc_training.ipynb) chạy từ đầu đến cuối với dữ liệu mẫu tự tạo ở `examples/sample_vimmrc.json`. Mặc định `RUN_TRAINING = False`, nên notebook không tải ViT5 và không cần GPU. Để mở notebook qua Jupyter, cài thêm `jupyterlab`; để tạo lại notebook từ `make_notebook.py`, cài `nbformat`. Giữ nguyên notebook cũ `mrc_vimmrc.ipynb` để tham khảo.
 
-## Fine-tune trên GPU/Colab
+## Fine-tune trên GPU/Colab (bộ gộp ViMMRC 2.0 + UIT-ViQuAD2.0, 27.164 câu; train 21.733)
 
 ```powershell
 cd mrc-model_Huy
 pip install -r requirements.txt
-python train.py --data-dir ../data --output-dir checkpoints/vit5-vimmrc
+python train.py --data-dir ../data/combined --output-dir checkpoints/vit5-combined
 ```
 
 Mặc định: `VietAI/vit5-base`, seed 42, ba epoch, batch 1, tích lũy gradient 16, đầu vào tối đa 512 token, đầu ra 64 token. Script báo số đầu vào/đáp án sẽ bị cắt token trước khi huấn luyện. Trainer chọn checkpoint bằng Exact Match trên **dev**; sau đó mới dự đoán **test** và ghi `test_metrics.json`. `DataCollatorForSeq2Seq` đệm nhãn bằng `-100`, nên padding không tham gia loss. Script yêu cầu CUDA, dùng BF16 khi GPU hỗ trợ và FP32 nếu không; không thực hiện full training trên CPU. Có thể đổi các tham số bằng `python train.py --help`.
 
-Đánh giá gồm Exact Match và token F1 sau chuẩn hóa chữ thường, dấu câu và khoảng trắng. `choice_accuracy` là phép ghép **heuristic**: chọn lựa chọn có token F1 cao nhất so với câu sinh, rồi kiểm tra nhãn A–D. Nếu mọi lựa chọn đều có điểm 0, dự đoán được tính là sai; khi hòa điểm dương, lựa chọn xuất hiện trước thắng. Đây là cách đánh giá thêm cho bài toán trắc nghiệm, không phải điểm xác suất của mô hình cho từng lựa chọn. API thực tế vẫn trả lời tự do khi không có danh sách lựa chọn.
+Đánh giá gồm Exact Match và token F1 sau chuẩn hóa chữ thường, dấu câu và khoảng trắng.
 
 Passage dài hơn 512 token sẽ bị cắt, nên thông tin cần thiết ở cuối bài có thể mất. Đây là giới hạn quan trọng khi diễn giải kết quả.
 
@@ -80,7 +89,7 @@ python train.py --data-dir ../data/combined --output-dir checkpoints/vit5-combin
 ```python
 from mrc_client import MRCClient, LexicalBaselineClient
 
-client = MRCClient("checkpoints/vit5-combined")  # chỉ sau khi fine-tune xong
+client = MRCClient("checkpoints/vit5-combined-cont")  # chỉ sau khi fine-tune xong
 answer = client.answer_question("Thủ đô của Việt Nam là gì?", "Hà Nội là thủ đô của Việt Nam.")
 
 demo = LexicalBaselineClient()  # chỉ để thử pipeline offline

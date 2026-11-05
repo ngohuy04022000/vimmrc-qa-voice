@@ -9,10 +9,11 @@ pydantic>=2.0
 python-multipart>=0.0.9
 tf-keras>=2.15.0
 
-# Bắt buộc nếu bật MRC_CHECKPOINT (mrc_client.MRCClient) hoặc CHOICE_RANKER_CHECKPOINT
-# (scripts/api_server.py import các module này ở top-level nên server crash khi start nếu thiếu).
-# Không cần nếu chỉ dùng lexical baseline (mặc định khi không set các env var trên).
+# Bắt buộc: scripts/api_server.py import mrc_client / kb_retriever / dialogue ở top-level
+# nên server crash khi start nếu thiếu (kể cả khi chỉ dùng lexical baseline).
 torch>=2.2
 transformers>=4.40.0,<4.58
 scikit-learn>=1.4,<2
 joblib>=1.3,<2
+bm25s>=0.2.0
+sentence-transformers>=3.0.0

@@ -46,20 +46,6 @@ class ApiServerIntegrationTests(unittest.TestCase):
         self.assertIn("answer", data)
         self.assertTrue(len(data["answer"]) > 0)
 
-    def test_answer_endpoint_multiple_choice(self):
-        payload = {
-            "question": "Thủ đô của Việt Nam là gì?",
-            "passage": "Hà Nội là thủ đô của Việt Nam.",
-            "options": ["Huế", "Hà Nội", "Đà Nẵng", "Cần Thơ"],
-        }
-        response = self.client.post("/api/answer", json=payload)
-        self.assertEqual(response.status_code, 200)
-        data = response.json()
-        self.assertIn("answer", data)
-        self.assertEqual(data["answer"], "Hà Nội")
-        if "choice_label" in data:
-            self.assertEqual(data["choice_label"], "B")
-
     def test_tts_endpoint(self):
         payload = {
             "text": "Xin chào, đây là câu trả lời kiểm thử.",
@@ -69,6 +55,30 @@ class ApiServerIntegrationTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(response.headers.get("content-type"), ["audio/mpeg", "audio/wav"])
         self.assertGreater(len(response.content), 100)
+
+    def test_ask_endpoint_keeps_conversation(self):
+        first = self.client.post("/api/ask", json={"question": "Thủ đô của Nhật Bản là gì?"})
+        self.assertEqual(first.status_code, 200)
+        data = first.json()
+        self.assertIn("Tokyo", data["answer"])
+        self.assertEqual(data["kind"], "qa")
+        self.assertIsNotNone(data["passage"])
+        follow = self.client.post("/api/ask", json={"question": "Còn Hàn Quốc thì sao?",
+                                                   "session_id": data["session_id"]})
+        self.assertIn("Seoul", follow.json()["answer"])
+        self.assertEqual(follow.json()["session_id"], data["session_id"])
+        reset = self.client.post("/api/ask/reset", json={"session_id": data["session_id"]})
+        self.assertEqual(reset.status_code, 200)
+
+    def test_ask_endpoint_smalltalk_and_user_passage(self):
+        hello = self.client.post("/api/ask", json={"question": "Xin chào"}).json()
+        self.assertEqual(hello["kind"], "smalltalk")
+        self.assertIsNone(hello["passage"])
+        own = self.client.post("/api/ask", json={
+            "question": "Làng nghề có lịch sử bao nhiêu năm?",
+            "passage": "Làng gốm Bát Tràng ở Hà Nội. Làng nghề đã có lịch sử hơn 700 năm."}).json()
+        self.assertIn("700", own["answer"])
+        self.assertEqual(self.client.post("/api/ask", json={"question": "  "}).status_code, 422)
 
     def test_validation_errors(self):
         # Empty question in retrieve

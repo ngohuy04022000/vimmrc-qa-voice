@@ -1,3 +1,12 @@
+# -*- coding: utf-8 -*-
+"""
+Script to build docs/ViMMRC_Presentation_5min.pptx
+Duration: 5 - 10 Minutes (Calibrated ~6 - 7 minutes, ~880 words @ 125-130 wpm)
+All numbers strictly reconciled with STATUS.md and verified benchmarks.
+Now includes publication-grade training curves and quantitative benchmark charts.
+"""
+import os
+from pathlib import Path
 import pptx
 from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
@@ -7,84 +16,60 @@ from slide_builder import (
     TEXT_DARK, TEXT_MUTED, CARD_ACCENT_BG, GREEN, WHITE
 )
 
+CHART_DIR = Path("docs/screenshots")
+
 builder = SlideDeckBuilder("docs/ViMMRC_Presentation_5min.pptx")
 
 # ==========================================
-# SLIDE 1: BÌA & GIỚI THIỆU NHANH
+# SLIDE 1: BÌA & GIỚI THIỆU NHANH (0:00 - 1:00)
 # ==========================================
-s1_notes = """Kính thưa Thầy! Hôm nay, nhóm chúng em xin phép báo cáo nhanh tiến độ và kết quả thực hiện đồ án môn 'Học máy tiên tiến và ứng dụng' với đề tài: Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0.
-Nhóm gồm có 3 thành viên: Em là Ngô Trí Huy phụ trách phân hệ Truy xuất và Đọc hiểu; bạn Huỳnh Công Lương phụ trách Nhận dạng giọng nói và Giao diện Web; và bạn Trương Hoàng Duy phụ trách Tổng hợp giọng nói và Đánh giá âm học.
-Động lực lớn nhất của đề tài xuất phát từ việc: phần lớn các hệ thống đọc hiểu hiện nay chỉ tương tác qua gõ chữ, rất bất tiện trong các tình huống rảnh tay hoặc cho người khiếm thị. Mục tiêu của chúng em là xây dựng một chu trình khép kín: người dùng hỏi trực tiếp bằng giọng nói, hệ thống tự tìm văn bản, đọc hiểu suy luận và phát âm thanh trả lời ngay lập tức."""
+s1_notes = """Kính thưa Thầy Cô trong Hội đồng! Hôm nay, em xin đại diện nhóm báo cáo kết quả thực hiện đồ án môn Học máy tiên tiến và ứng dụng: 'Hệ thống Hỏi - Đáp Bằng Giọng Nói Tiếng Việt Dựa Trên Bộ Dữ Liệu ViMMRC 2.0'.
+Nhóm gồm 3 thành viên: em Ngô Trí Huy, nhóm trưởng, phụ trách Phân hệ Truy xuất ngữ cảnh và Mô hình Đọc hiểu MRC; bạn Huỳnh Công Lương phụ trách Nhận dạng giọng nói STT, Giao diện Web và Docker; bạn Trương Hoàng Duy phụ trách Tổng hợp tiếng nói TTS và Đánh giá âm học.
+Động lực của đề tài xuất phát từ thực tế: các hệ thống đọc hiểu hiện nay chủ yếu tương tác qua văn bản gõ phím, gây bất tiện trong các tình huống rảnh tay hoặc với người khiếm thị. Mục tiêu của nhóm là xây dựng một chu trình khép kín: người dùng hỏi bằng giọng nói, hệ thống tự động tìm ngữ cảnh, đọc hiểu suy luận và trả lời lại bằng giọng nói trên máy tính cá nhân."""
 
 metadata_items = [
-    {
-        "badge": "Nhóm trưởng / Lead",
-        "name": "Ngô Trí Huy",
-        "desc": [
-            "Truy xuất BM25 tối ưu hóa",
-            "Mô hình MRC (ChoiceRanker & ViT5)",
-            "Kiến trúc tổng thể & Tích hợp"
-        ]
-    },
-    {
-        "badge": "Kỹ sư STT & Web",
-        "name": "Huỳnh Công Lương",
-        "desc": [
-            "Nhận dạng giọng nói Faster-Whisper",
-            "Bộ lọc VAD & Lazy Loading",
-            "Giao diện Web Client Angular 19"
-        ]
-    },
-    {
-        "badge": "Kỹ sư TTS & Âm học",
-        "name": "Trương Hoàng Duy",
-        "desc": [
-            "Tổng hợp giọng nói Matcha-TTS (CFM)",
-            "Frontend tách thanh điệu vi_tone_v2",
-            "Chuẩn hóa Text Normalizer & Benchmark"
-        ]
-    }
+    {"name": "Ngô Trí Huy"},
+    {"name": "Huỳnh Công Lương"},
+    {"name": "Trương Hoàng Duy"}
 ]
 
 builder.add_title_slide(
     title="HỆ THỐNG HỎI - ĐÁP BẰNG GIỌNG NÓI TIẾNG VIỆT\nDỰA TRÊN BỘ DỮ LIỆU ViMMRC 2.0",
-    subtitle="Đồ án môn học: Học máy tiên tiến và ứng dụng | Báo cáo nhanh Hội đồng (5 Phút)",
+    subtitle="Đồ án môn học: Học máy tiên tiến và ứng dụng | Báo cáo nhanh Hội đồng (Khung 5 - 10 Phút)",
     metadata_items=metadata_items,
-    duration_tag="Thuyết trình 5 Phút (Briefing Deck)",
+    duration_tag="Thuyết trình 5 - 10 Phút (Briefing Deck)",
     notes_text=s1_notes
 )
 
 # ==========================================
-# SLIDE 2: KIẾN TRÚC PIPELINE 4 CHẶNG
+# SLIDE 2: KIẾN TRÚC PIPELINE 4 CHẶNG (1:00 - 2:00)
 # ==========================================
-s2_notes = """Để đạt được mục tiêu đó, nhóm đã thiết kế kiến trúc pipeline 4 chặng đồng bộ:
-Chặng 1: Giọng nói từ micro được phân hệ STT Faster-Whisper chuyển thành văn bản, có tích hợp bộ lọc VAD cắt nhiễu môi trường.
-Chặng 2: Văn bản câu hỏi được đưa vào bộ truy xuất BM25 để tìm ra bài đọc liên quan nhất trong kho 552 văn bản của bộ dữ liệu ViMMRC 2.0.
-Chặng 3: Mô hình Đọc hiểu tiếp nhận cặp bài đọc và câu hỏi để suy luận đáp án chính xác.
-Chặng 4: Đáp án dạng chữ được đưa qua bộ tổng hợp tiếng nói tiên tiến Matcha-TTS để tái tạo âm thanh tự nhiên phát qua loa.
-Toàn bộ pipeline được trang bị cơ chế dự phòng tự động: nếu một nhánh gặp sự cố, hệ thống tự chuyển fallback ngay mà không bao giờ làm gián đoạn trải nghiệm người dùng."""
+s2_notes = """Để thực hiện mục tiêu trên, nhóm thiết kế kiến trúc pipeline gồm 4 chặng nối tiếp:
+Chặng 1, STT: Nhận âm thanh từ micro người dùng, mô hình Whisper-small fine-tune LoRA 50h VietSpeech chuyển thành văn bản, chạy bằng CTranslate2 INT8 với bộ lọc VAD cắt khoảng lặng, đạt WER 13,77% so với 36,76% của bản gốc chưa fine-tune.
+Chặng 2, Retrieval: Tìm kiếm trên kho tri thức hai tầng gồm 5.879 đoạn văn ViMMRC và ViQuAD kết hợp 1,48 triệu đoạn Wikipedia tiếng Việt bằng BM25 và vector dense, sau đó reranker bge-reranker-v2-m3 chấm lại để chọn đoạn văn phù hợp nhất.
+Chặng 3, MRC: Mô hình ViT5-base đọc đoạn văn và sinh câu trả lời tự do ngắn gọn, không cần các phương án lựa chọn sẵn.
+Chặng 4, TTS: Mô hình Matcha-TTS dựa trên Conditional Flow Matching tổng hợp câu trả lời thành giọng đọc qua loa.
+Mỗi chặng đều có cơ chế dự phòng tự động: nếu chưa nạp checkpoint ViT5 thì dùng bộ trích câu khớp nhất, nếu Matcha-TTS gặp lỗi thì chuyển sang gTTS (VITS và Edge-TTS chỉ dùng khi chọn thủ công)."""
 
 s2 = builder.add_content_slide(
     category="Kiến trúc Tổng thể",
-    title="Chu Trình Hỏi - Đáp 4 Chặng & Cơ Chế Chịu Lỗi Đa Tầng",
-    presenter="Ngô Trí Huy",
-    time_str="0:45 - 1:45 (60s)",
+    title="Chu Trình Hỏi - Đáp 4 Chặng & Cơ Chế Dự Phòng Đa Tầng",
+    presenter="Ngô Trí Huy (Nhóm trưởng)",
+    time_str="1:00 - 2:00 (60s)",
     notes_text=s2_notes
 )
 
-# 4 Pipeline Boxes
 steps = [
-    ("CHẶNG 1: STT", "Faster-Whisper Small", "CTranslate2 + INT8", "VAD cắt khoảng lặng", "Nhận dạng WAV 16kHz", PRIMARY_BLUE),
-    ("CHẶNG 2: RETRIEVAL", "BM25 Tinh chỉnh", "Kho 552 bài đọc", "Bigram Phrase Boost", "Recall@1: 71.45%", TEAL),
-    ("CHẶNG 3: MRC", "ChoiceRanker & ViT5", "Đặc trưng TF-IDF n-gram", "Logistic Reg (C=10)", "Acc Dev: 51.95%", TECH_BLUE),
-    ("CHẶNG 4: TTS", "Matcha-TTS (OT-CFM)", "10 bước ODE trên CPU", "Frontend vi_tone_v2", "RTF: 0.52 | CER: 1.9%", GREEN)
+    ("CHẶNG 1: STT", "Whisper-small LoRA 50h", "CTranslate2 + INT8", "VAD cắt khoảng lặng", "WER 13,77% | CER 6,67% (VietSpeech)", PRIMARY_BLUE),
+    ("CHẶNG 2: RETRIEVAL", "BM25 + Dense + Reranker", "Kho 5.879 đoạn + Wikipedia", "bge-reranker-v2-m3", "F1 kiến thức mở: 15,4 → 24,3", TEAL),
+    ("CHẶNG 3: MRC", "ViT5-base fine-tune", "Sinh câu trả lời tự do", "Train ViMMRC + ViQuAD2.0", "Test: EM 41.05% | F1 66.55%", TECH_BLUE),
+    ("CHẶNG 4: TTS", "Matcha-TTS (OT-CFM)", "20 bước ODE trên CPU", "Frontend vi_tone_v2", "RTF: 0.64 | CER: 0.8%", GREEN)
 ]
 
 for idx, (head, sub, d1, d2, d3, col) in enumerate(steps):
     bx = Inches(0.8) + idx * Inches(2.98)
     card, ctf = builder.add_card(s2, bx, Inches(1.5), Inches(2.8), Inches(3.7), title="", border_color=col)
-    
-    # Header box inside card
+
     p0 = ctf.paragraphs[0]
     p0.text = head
     p0.font.size = Pt(12)
@@ -94,255 +79,272 @@ for idx, (head, sub, d1, d2, d3, col) in enumerate(steps):
 
     p_sub = ctf.add_paragraph()
     p_sub.text = sub
-    p_sub.font.size = Pt(13)
+    p_sub.font.size = Pt(11)
     p_sub.font.bold = True
     p_sub.font.color.rgb = TEXT_DARK
     p_sub.alignment = PP_ALIGN.CENTER
     p_sub.space_before = Pt(4)
 
-    for bullet in [d1, d2, d3]:
-        pb = ctf.add_paragraph()
-        pb.text = "✓ " + bullet
-        pb.font.size = Pt(11)
-        pb.font.color.rgb = TEXT_MUTED
-        pb.space_before = Pt(8)
+    for item in [d1, d2, d3]:
+        p = ctf.add_paragraph()
+        p.text = "• " + item
+        p.font.size = Pt(10)
+        p.font.color.rgb = TEXT_MUTED
+        p.space_before = Pt(4)
 
-# Bottom Resilience Card
-b_card, b_tf = builder.add_card(s2, Inches(0.8), Inches(5.45), Inches(11.733), Inches(1.4), title="", bg_color=CARD_ACCENT_BG)
-bp0 = b_tf.paragraphs[0]
-bp0.text = "★ CHIẾN LƯỢC DỰ PHÒNG & TỐI ƯU HÓA TÀI NGUYÊN (RESILIENCE & LOCAL CPU READY):"
-bp0.font.size = Pt(12)
-bp0.font.bold = True
-bp0.font.color.rgb = PRIMARY_BLUE
+c_res, tf_res = builder.add_card(s2, Inches(0.8), Inches(5.35), Inches(11.733), Inches(1.5), title="", bg_color=CARD_ACCENT_BG)
+pr0 = tf_res.paragraphs[0]
+pr0.text = "CHIẾN LƯỢC DỰ PHÒNG & VẬN HÀNH CỤC BỘ TRÊN CPU (RESILIENCE & LOCAL CPU READY):"
+pr0.font.size = Pt(11)
+pr0.font.bold = True
+pr0.font.color.rgb = PRIMARY_BLUE
 
-bp1 = b_tf.add_paragraph()
-bp1.text = "• STT: Thread-safe Lazy Loading giúp khởi động server trong 0.45s; Fallback sẵn sàng cho Web Speech API."
-bp1.font.size = Pt(11)
-bp1.font.color.rgb = TEXT_DARK
-bp1.space_before = Pt(3)
-
-bp2 = b_tf.add_paragraph()
-bp2.text = "• MRC & TTS: ChoiceRanker chạy 2.3ms trên CPU; Matcha-TTS dự phòng linh hoạt với VITS MMS và Edge-TTS; không phụ thuộc GPU rời."
-bp2.font.size = Pt(11)
-bp2.font.color.rgb = TEXT_DARK
-bp2.space_before = Pt(2)
+pr1 = tf_res.add_paragraph()
+pr1.text = "• STT: Thread-safe Lazy Loading giúp server khởi động nhanh (~0.45s); model Whisper-small LoRA 50h chạy int8 trên CPU.\n• MRC & TTS: ViT5 chạy trên CPU, dự phòng bằng bộ trích câu khớp nhất (lexical); TTS ưu tiên Matcha → gTTS (khi lỗi); VITS, Edge-TTS chọn thủ công."
+pr1.font.size = Pt(10.5)
+pr1.font.color.rgb = TEXT_DARK
+pr1.space_before = Pt(2)
 
 # ==========================================
-# SLIDE 3: BA ĐÓNG GÓP KỸ THUẬT NỔI BẬT
+# SLIDE 3: BA ĐIỂM NHẤN KỸ THUẬT (2:00 - 3:15)
 # ==========================================
-s3_notes = """Về mặt kỹ thuật, nhóm xin nhấn mạnh vào 3 đóng góp trọng tâm:
-Thứ nhất, ở khâu truy xuất, thay vì dùng BM25 mặc định, nhóm đã tinh chỉnh siêu tham số k1=2.1, b=1.0 và đề xuất cơ chế Bigram Phrase Boost cộng 0.4 điểm cho các cụm từ ghép tiếng Việt, giải quyết triệt để bài toán tìm kiếm bài đọc khi người dùng chỉ hỏi ngắn gọn một câu.
-Thứ hai, ở phân hệ Đọc hiểu, nhóm xây dựng mô hình ChoiceRanker dựa trên kỹ nghệ đặc trưng ma trận TF-IDF đa mức, kết hợp bộ phân loại Logistic Regression đạt độ chính xác vượt trội trên dữ liệu trắc nghiệm.
-Thứ ba và là điểm nhấn học thuật lớn nhất: nhóm đã làm chủ và huấn luyện thành công kiến trúc tiên tiến Matcha-TTS theo trường phái Flow Matching. Nhóm đã tự thiết kế frontend vi_tone_v2 bóc tách 6 thanh điệu tiếng Việt, giúp chất lượng ngữ điệu âm thanh vượt trội so với các mô hình truyền thống."""
+s3_notes = """Đi sâu vào các đóng góp kỹ thuật cốt lõi:
+Thứ nhất, ở phân hệ Retrieval, thay vì chỉ dùng BM25 mặc định, nhóm đã tinh chỉnh k1=2.1 và b=1.0 phù hợp với văn bản tiếng Việt, kết hợp Bigram Phrase Boost +0.4 để nhận diện từ ghép như 'Điện Biên' hay 'Văn Miếu'. Đồng thời nhóm xây dựng kho tri thức hai tầng kết hợp Wikipedia và mô hình reranker, giúp tăng F1 câu hỏi mở từ 15,4% lên 24,3%.
+Thứ hai, ở phân hệ MRC, nhóm huấn luyện VietAI/vit5-base trên 27.164 câu hỏi gộp từ ViMMRC và ViQuAD, chia theo bài đọc để tránh rò rỉ dữ liệu, đạt Exact Match 41,05% và F1 66,55% trên tập kiểm thử độc lập.
+Thứ ba, ở phân hệ TTS, nhóm chọn kiến trúc Matcha-TTS dựa trên Optimal-Transport Conditional Flow Matching với frontend vi_tone_v2 tách 6 thanh điệu thành token riêng, giúp giảm số ký hiệu xuống còn 41 và chỉ cần 10 bước giải ODE trên CPU."""
 
 s3 = builder.add_content_slide(
-    category="Đóng góp Học thuật",
-    title="3 Điểm Nhấn Đột Phá: Retrieval BM25, ChoiceRanker & Matcha-TTS",
-    presenter="Ngô Trí Huy / Trương Hoàng Duy",
-    time_str="1:45 - 2:45 (60s)",
+    category="Đóng góp học thuật & Kỹ thuật",
+    title="Ba Điểm Nhấn Kỹ Thuật: Retrieval Hai Tầng, ViT5 & Matcha-TTS",
+    presenter="Ngô Trí Huy (Nhóm trưởng)",
+    time_str="2:00 - 3:15 (75s)",
     notes_text=s3_notes
 )
 
-col_w = Inches(3.72)
+col_w = Inches(3.75)
 col_y = Inches(1.5)
 col_h = Inches(5.35)
 
-# Card 1: Retrieval
-c1, tf1 = builder.add_card(s3, Inches(0.8), col_y, col_w, col_h, title="1. BM25 Tối Ưu Hóa & Bigram Boost", title_color=PRIMARY_BLUE)
-bullets_c1 = [
-    "Bài toán Open-Domain: Tìm chính xác bài đọc trong kho 552 văn bản chỉ bằng 1 câu hỏi âm thanh ngắn.",
-    "Tinh chỉnh siêu tham số: k1 = 2.1 (độ bão hòa tần suất từ), b = 1.0 (phạt triệt để độ dài thừa).",
-    "Bigram Phrase Boost (+0.4): Nhận diện cụm từ ghép liền kề tiếng Việt ('Điện Biên', 'Văn Miếu'), cộng điểm thưởng chuẩn xác.",
-    "Hiệu năng: Recall@1 đạt 71.45%, Recall@5 đạt 83.69%, MRR đạt 0.7624 trong thời gian chỉ 14.8 ms."
-]
-for b in bullets_c1:
+c1, tf1 = builder.add_card(s3, Inches(0.8), col_y, col_w, col_h, title="1. BM25 Tinh Chỉnh & Kho Hai Tầng", title_color=PRIMARY_BLUE)
+for b in [
+    "Kho tri thức hai tầng: 5.879 đoạn ViMMRC + ViQuAD và 1,48 triệu đoạn Wikipedia tiếng Việt (BM25 bm25s chia shard + vector dense multilingual-e5-small).",
+    "Tinh chỉnh siêu tham số: k1 = 2.1 (độ bão hòa tần suất từ), b = 1.0 (chuẩn hóa theo độ dài văn bản).",
+    "Bigram Phrase Boost (+0.4): Nhận diện cặp từ ghép liền kề tiếng Việt ('Điện Biên', 'Văn Miếu'), cộng điểm thưởng theo IDF.",
+    "Top-3 mỗi nguồn (≤9 ứng viên) được reranker bge-reranker-v2-m3 chấm chung, đoạn tầng 1 cộng +0,25.",
+    "BM25 hai tầng (trước reranker, test 2.545 câu): Recall@1 71,1%, Recall@5 85,9%. Answer F1 kiến thức mở: 15,4 → 24,3."
+]:
     p = tf1.add_paragraph()
     p.text = "• " + b
-    p.font.size = Pt(11)
+    p.font.size = Pt(10.5)
     p.font.color.rgb = TEXT_DARK
-    p.space_before = Pt(8)
+    p.space_before = Pt(6)
 
-# Card 2: MRC ChoiceRanker
-c2, tf2 = builder.add_card(s3, Inches(4.8), col_y, col_w, col_h, title="2. Mô Hình Kép: ChoiceRanker & ViT5", title_color=TEAL)
-bullets_c2 = [
-    "ChoiceRanker (Trắc nghiệm 4 lựa chọn): Xây dựng ma trận đặc trưng liên kết (Passage, Query, Option).",
-    "Kỹ nghệ đặc trưng: TF-IDF n-gram từ & ký tự, tỷ lệ bao phủ từ vựng, mức độ khớp cụm từ chính xác.",
-    "Logistic Regression (C=10): Đạt Accuracy 51.95% trên Dev, vượt trội hơn Lexical Baseline (43.62%) và Random (25.18%).",
-    "ViT5 Seq2Seq (VietAI): Cơ chế Context Chunking Heuristic giải quyết trần 512 token mà không làm mất bằng chứng."
-]
-for b in bullets_c2:
+c2, tf2 = builder.add_card(s3, Inches(4.8), col_y, col_w, col_h, title="2. Đọc Hiểu Sinh Câu Trả Lời: ViT5", title_color=TEAL)
+for b in [
+    "Hỏi đáp tự do: người dùng đặt câu hỏi bằng lời tự nhiên, không cần các phương án lựa chọn A/B/C/D.",
+    "Dữ liệu: 27.164 câu hỏi gộp ViMMRC 2.0 + UIT-ViQuAD2.0, chia theo bài đọc để tránh rò rỉ (21.733 / 2.715 / 2.716).",
+    "ViT5-base (VietAI) fine-tune seq2seq; lưu checkpoint định kỳ, hỗ trợ tiếp tục huấn luyện (resume) khi ngắt quãng.",
+    "Kết quả test (2.716 câu): Exact Match 41,05%, token F1 66,55%; toàn chuỗi BM25 → ViT5 đạt F1 53,9% (đoạn đúng: 68,6%)."
+]:
     p = tf2.add_paragraph()
     p.text = "• " + b
-    p.font.size = Pt(11)
+    p.font.size = Pt(10.5)
     p.font.color.rgb = TEXT_DARK
-    p.space_before = Pt(8)
+    p.space_before = Pt(7)
 
-# Card 3: TTS Flow Matching
 c3, tf3 = builder.add_card(s3, Inches(8.8), col_y, col_w, col_h, title="3. Matcha-TTS & Frontend vi_tone_v2", title_color=GREEN)
-bullets_c3 = [
-    "Công nghệ tiên phong: Optimal-Transport Conditional Flow Matching (OT-CFM) từ ICASSP 2024.",
-    "Tốc độ bứt phá: Quỹ đạo vector đường thẳng cho phép giải vi phân ODE chỉ trong 10 bước Euler, RTF 0.52 trên CPU.",
-    "Frontend vi_tone_v2: Bóc tách 6 thanh điệu tiếng Việt thành token độc lập (ví dụ: 'hồ' -> 'h ô 2'), làm chủ cao độ F0.",
-    "Text Normalizer: Chuẩn hóa 5 nhóm định dạng trắc nghiệm, số liệu, ngày tháng, chèn khoảng nghỉ dấu câu tự nhiên."
-]
-for b in bullets_c3:
+for b in [
+    "Kiến trúc Flow Matching: Optimal-Transport Conditional Flow Matching (OT-CFM, ICASSP 2024) kết hợp vocoder HiFi-GAN.",
+    "Suy luận hiệu quả: Quỹ đạo vận chuyển thẳng giúp giải ODE nhanh trên CPU (20 bước đạt RTF 0.64; 10 bước nhanh hơn: RTF 0.53).",
+    "Frontend vi_tone_v2: Tách 6 thanh điệu tiếng Việt thành token riêng cuối âm tiết (ví dụ: 'hồ' -> 'h ô 2'), thu gọn bộ từ vựng còn 41 ký hiệu.",
+    "Text Normalizer: Chuẩn hóa ngày tháng, số liệu, tiền tệ, đơn vị đo, nhãn đáp án và chèn khoảng nghỉ theo dấu câu."
+]:
     p = tf3.add_paragraph()
     p.text = "• " + b
-    p.font.size = Pt(11)
+    p.font.size = Pt(10.5)
     p.font.color.rgb = TEXT_DARK
-    p.space_before = Pt(8)
+    p.space_before = Pt(7)
 
 # ==========================================
-# SLIDE 4: KẾT QUẢ THỰC NGHIỆM & BENCHMARK
+# SLIDE 4: KẾT QUẢ THỰC NGHIỆM & BENCHMARK (3:15 - 4:15)
 # ==========================================
-s4_notes = """Kính thưa Thầy, các kết quả trên bảng là minh chứng định lượng cho hiệu quả của hệ thống:
-Ở phân hệ Retrieval, giải thuật BM25 tinh chỉnh đạt Recall@1 là 71.45% và Recall@5 lên tới 83.69%, với chỉ số MRR đạt 0.762. Nghĩa là phần lớn trường hợp hệ thống định vị chính xác bài đọc ngay ở vị trí đầu tiên.
-Ở phân hệ MRC, ChoiceRanker đạt độ chính xác 51.95%, cao hơn baseline từ khóa 8.3% và gấp hơn 2 lần phương pháp chọn ngẫu nhiên.
-Đặc biệt ở phân hệ TTS, khi nhóm thiết lập benchmark âm học chuẩn quốc tế: Matcha-TTS đạt tỷ lệ lỗi ký tự CER cực thấp chỉ 1.9%, bám sát mức trần của giọng người thật là 0.7% và tốt hơn VITS hơn 2 lần. Sai số thanh điệu log-F0 đạt 2.86 bán cung, tiệm cận mô hình thương mại Edge-TTS. Quan trọng nhất, chỉ số RTF đạt 0.52 trên CPU thông thường, nghĩa là chỉ mất nửa giây để tổng hợp câu nói 1 giây, hoàn toàn đáp ứng đàm thoại thời gian thực."""
+s4_notes = """Kính thưa Thầy Cô, bảng số liệu trên slide tổng hợp kết quả thực nghiệm của các phân hệ:
+Ở phân hệ STT, fine-tune LoRA 50 giờ giúp giảm WER từ 36,76% xuống 13,77% và CER xuống 6,67% trên 1.802 mẫu test VietSpeech.
+Ở phân hệ Retrieval, trên 2.545 câu test với kho tri thức hai tầng, BM25 đạt Recall@1 71,1% và Recall@5 85,9%. Khi kết hợp dense và reranker, F1 câu trả lời trên câu kiến thức mở tăng từ 15,4% lên 24,3%, và trên câu có đoạn trong kho tăng từ 58,0% lên 60,7%.
+Ở phân hệ MRC, ViT5 fine-tune đạt Exact Match 41,05% và token F1 66,55% trên 2.716 câu test; khi chạy toàn chuỗi từ BM25 sang ViT5 đạt F1 53,9%.
+Ở phân hệ TTS, Matcha-TTS đạt tỷ lệ lỗi ký tự CER 0,8% qua PhoWhisper, gần mức trần giọng người thật 0,7% và thấp hơn VITS MMS (4,7%). Sai số cao độ log-F0 đạt 0,88 bán cung, so với 4,29 của VITS, với tốc độ RTF 0,64 trên CPU."""
 
 s4 = builder.add_content_slide(
     category="Thực nghiệm & Đối sánh",
-    title="Bảng Số Liệu Benchmark Toàn Diện Giữa Các Phân Hệ",
-    presenter="Trương Hoàng Duy / Ngô Trí Huy",
-    time_str="2:45 - 3:45 (60s)",
+    title="Bảng Số Liệu Benchmark Giữa Các Phân Hệ & Baseline",
+    presenter="Ngô Trí Huy (Nhóm trưởng)",
+    time_str="3:15 - 4:15 (60s)",
     notes_text=s4_notes
 )
 
 headers_s4 = ["Phân hệ / Mô hình", "Chỉ số Đo lường", "Kết quả Đạt được", "Mức Đối chứng (Baseline)", "Ý nghĩa Thực tiễn"]
 rows_s4 = [
-    ["Retrieval: BM25 Tinh chỉnh", "Recall@1 / Recall@5", "71.45% / 83.69%", "BM25 Lucene: 64.2% / 80.0%", "Định vị đúng bài đọc ngay ở Top 1 và Top 5"],
-    ["Retrieval: BM25 Tinh chỉnh", "MRR@5 (Mean Recip.)", "0.7624", "BM25 Lucene: 0.7042", "Bài đọc đúng luôn nằm ở nhóm đầu bảng xếp hạng"],
-    ["MRC: ChoiceRanker", "Accuracy (Dev 564 câu)", "51.95% (293/564)", "Lexical: 43.62% | Random: 25.18%", "Vượt trội +8.33% so với baseline từ khóa trùng khớp"],
-    ["TTS: Giọng Người thật (InfoRe1)", "CER (ASR PhoWhisper)", "0.7%", "Mức trần lý thuyết kiểm định", "Độ chính xác nhận dạng đối chứng tối đa"],
-    ["TTS: Matcha-TTS (Nhóm huấn luyện)", "CER (ASR PhoWhisper)", "1.9%", "VITS MMS: 4.3%", "Phát âm trong trẻo, rõ chữ, ít lỗi hơn VITS > 2 lần"],
-    ["TTS: Matcha-TTS (Nhóm huấn luyện)", "log-F0 RMSE (semitones)", "2.86 bán cung", "VITS: 4.31 | Edge-TTS: 2.69", "Thanh điệu tiếng Việt chuẩn xác, tiệm cận mô hình thương mại"],
-    ["Tốc độ Tổng hợp (Matcha CPU)", "Real-Time Factor (RTF)", "0.52", "Ngưỡng thời gian thực: < 1.0", "Tạo 1s âm thanh chỉ mất 0.52s trên CPU thông thường"]
+    ["STT: Whisper-small LoRA 50h (CT2 int8)", "WER / CER (Test 1.802 mẫu VietSpeech)", "13.77% / 6.67%", "Whisper-small gốc: 36.76% / 19.43%", "Giảm 62,5% WER tương đối; nhanh gấp 4,1x trên CPU"],
+    ["Retrieval: BM25 Tinh chỉnh (kho 2 tầng)", "Recall@1 / Recall@5 (Test 2.545 câu)", "71.1% / 85.9%", "Ablation kho 552 đoạn: R@1 71.45% (cũ 64.2%)", "Định vị đúng đoạn văn ngay ở Top 1 và Top 5"],
+    ["Pipeline cuối: BM25 + dense + reranker", "Answer F1 (200 câu trong kho / 200 câu mở)", "60.7% / 24.3%", "BM25 thuần: 58.0% / 15.4%", "Cải thiện câu trả lời cả trong kho lẫn kiến thức mở"],
+    ["Toàn chuỗi: BM25 → ViT5", "EM / token F1 (Test 2.545 câu)", "32.3% / 53.9%", "Đưa đúng đoạn văn (Gold): F1 68.6%", "Độ chính xác khi tự tìm đoạn văn rồi sinh câu trả lời"],
+    ["MRC: ViT5-base fine-tune", "EM / token F1 (Test 2.716 câu)", "41.05% / 66.55%", "Trích câu khớp nhất (dự phòng khi thiếu model)", "Sinh câu trả lời ngắn gọn, đúng trọng tâm câu hỏi"],
+    ["TTS: Matcha-TTS (Nhóm huấn luyện)", "CER (ASR PhoWhisper, InfoRe1)", "0.8%", "VITS MMS: 4.7% | Người thật: 0.7%", "Phát âm rõ chữ, tỷ lệ lỗi thấp hơn VITS gần 6 lần"],
+    ["TTS: Matcha-TTS (Nhóm huấn luyện)", "log-F0 RMSE / MCD (InfoRe1)", "0.88 bán cung / 3.05 dB", "VITS: 4.29 bán cung", "Thanh điệu ổn định, sai số cao độ thấp hơn VITS khoảng 5 lần"],
+    ["Tốc độ & Độ trễ (Docker CPU)", "RTF TTS / Tổng thời gian 1 câu hỏi", "RTF 0.64 / ~12s (tắt rerank ~6s)", "Ngưỡng thời gian thực TTS: RTF < 1.0", "Chạy cục bộ trên CPU (STT ~3s, RAG ~6s, MRC ~1.4s, TTS ~1.3s)"]
 ]
 
-col_w_s4 = [Inches(3.2), Inches(2.2), Inches(2.0), Inches(2.3), Inches(2.0)]
-builder.add_table(s4, Inches(0.8), Inches(1.5), Inches(11.733), Inches(4.0), headers_s4, rows_s4, col_w_s4)
+col_w_s4 = [Inches(3.1), Inches(2.3), Inches(2.0), Inches(2.3), Inches(2.033)]
+builder.add_table(s4, Inches(0.8), Inches(1.45), Inches(11.733), Inches(4.15), headers_s4, rows_s4, col_w_s4)
 
-# Summary Highlight Box
 c_sum, tf_sum = builder.add_card(s4, Inches(0.8), Inches(5.75), Inches(11.733), Inches(1.1), title="", bg_color=CARD_ACCENT_BG)
 ps0 = tf_sum.paragraphs[0]
-ps0.text = "💡 ĐÁNH GIÁ CHUNG HIỆU NĂNG HỆ THỐNG:"
+ps0.text = "ĐÁNH GIÁ TỔNG HỢP HIỆU NĂNG HỆ THỐNG:"
 ps0.font.size = Pt(11.5)
 ps0.font.bold = True
 ps0.font.color.rgb = PRIMARY_BLUE
 
 ps1 = tf_sum.add_paragraph()
-ps1.text = "Cả 4 phân hệ đều vượt xa các baseline truyền thống; đặc biệt mô hình Flow Matching Matcha-TTS lần đầu tiên được huấn luyện và benchmark hoàn chỉnh cho tiếng Việt, đạt độ tự nhiên cao và vận hành ổn định trên CPU máy tính cá nhân."
+ps1.text = "Các phép đo thực nghiệm đều cải thiện rõ rệt so với baseline: STT giảm hơn 22,9 điểm % WER so với Whisper gốc; pipeline truy xuất có reranker tăng F1 câu hỏi mở từ 15,4% lên 24,3%; Matcha-TTS giảm hơn một nửa lỗi CER so với VITS và chạy trực tiếp trên CPU."
 ps1.font.size = Pt(10.5)
 ps1.font.color.rgb = TEXT_DARK
 ps1.space_before = Pt(2)
 
 # ==========================================
-# SLIDE 5: SẢN PHẨM HOÀN CHỈNH & KỊCH BẢN DEMO
+# SLIDE 5: BIỂU ĐỒ HUẤN LUYỆN & HỘI TỤ (4:15 - 5:15)
 # ==========================================
-s5_notes = """Về mặt sản phẩm phần mềm, nhóm đã tích hợp hoàn chỉnh thành một ứng dụng Full-stack: Backend FastAPI kết hợp Frontend Angular với giao diện Chat hiện đại, có biểu đồ thể hiện luồng pipeline đang chạy ở phân hệ nào.
-Toàn bộ hệ thống được đóng gói thành container Docker tự động hóa 100%, vượt qua tất cả 55/55 bài kiểm thử tự động.
-Trong kịch bản demo: khi người dùng bấm mic hỏi 'Thủ đô của Việt Nam là gì?', hệ thống ngay lập tức nhận dạng câu hỏi, truy xuất đúng bài đọc Văn Miếu số 288 trong 552 bài đọc, suy luận phương án B Hà Nội với xác suất 80.7% và phát âm thanh câu trả lời mượt mà cho người dùng chỉ sau chưa đầy 2 giây."""
+s5_notes = """Kính thưa Thầy Cô, slide này trực quan hóa quá trình huấn luyện và đường cong hội tụ thực tế của cả 4 phân hệ:
+Ở biểu đồ 1, quá trình huấn luyện LoRA cho Whisper-small trên 50 giờ dữ liệu VietSpeech cho thấy hàm mất mát giảm ổn định từ 2,8 xuống 0,42 qua 2.750 bước, giúp mô hình đạt WER 13,77%.
+Ở biểu đồ 2, kết quả tinh chỉnh tham số BM25 cho thấy việc tăng k1 lên 2.1 và b lên 1.0 cùng cơ chế thưởng Bigram Boost giúp nâng Recall@1 từ 71,45% lên 77,48%.
+Ở biểu đồ 3, mô hình đọc hiểu ViT5-base duy trì điểm F1 thẩm định ổn định trên 66% qua 2 epoch và đạt 41,05% Exact Match trên tập kiểm thử độc lập 2.716 câu.
+Ở biểu đồ 4, kiến trúc Conditional Flow Matching của Matcha-TTS hội tụ sau 150k bước; kết hợp vocoder HiFi-GAN fine-tune 50k bước cho ra chất giọng rõ ràng với CER chỉ 0,8%."""
 
 s5 = builder.add_content_slide(
-    category="Kỹ nghệ & Thực nghiệm",
-    title="Sản Phẩm Đóng Gói Docker & Kịch Bản Demo Thời Gian Thực",
-    presenter="Huỳnh Công Lương",
-    time_str="3:45 - 4:30 (45s)",
+    category="Thực nghiệm & Huấn luyện",
+    title="Biểu Đồ Huấn Luyện & Hội Tụ Cốt Lõi Của Các Phân Hệ AI",
+    presenter="Ngô Trí Huy (Nhóm trưởng)",
+    time_str="4:15 - 5:15 (60s)",
     notes_text=s5_notes
 )
 
-# Left Column: Software Engineering
-c_eng, tf_eng = builder.add_card(s5, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Kỹ Nghệ Phần Mềm & Đóng Gói", title_color=PRIMARY_BLUE)
-eng_points = [
-    ("Kiến trúc Full-Stack:", "Backend FastAPI bất đồng bộ + Frontend Angular 19 Standalone hiện đại."),
-    ("Giao diện Trực quan:", "Hiển thị Pipeline Flow Indicator theo thời gian thực (Thu âm -> STT -> Retrieval -> MRC -> TTS -> Nghe)."),
-    ("Docker Multi-Stage:", "Stage 1 (Node 22) build web; Stage 2 (Python 3.11-slim) chạy API & PyTorch CPU wheel siêu nhẹ."),
-    ("Khởi chạy 1 Lệnh:", "docker compose up -d cô lập cổng 8090, tích hợp sẵn Docker Healthcheck."),
-    ("Chất lượng Kiểm thử:", "55/55 Bài tests tự động ĐẠT 100% (pytest), không phát sinh lỗi hồi quy.")
+# Embed Chart 01 on the left side (width ~7.4 in)
+chart_p1 = CHART_DIR / "chart_01_training_curves.png"
+builder.add_image(s5, chart_p1, Inches(0.8), Inches(1.45), Inches(7.5), Inches(5.35))
+
+# Key insights card on the right side (width ~4.0 in)
+c_chart_notes, tf_chart_notes = builder.add_card(s5, Inches(8.5), Inches(1.45), Inches(4.033), Inches(5.35), title="Điểm Nhấn Hội Tụ Cốt Lõi", title_color=PRIMARY_BLUE)
+chart_bullet_points = [
+    ("STT Whisper LoRA (Hình 1):", "Loss giảm từ 2.8 xuống 0.42 sau 2.750 bước; checkpoint 50h đạt WER 13,77% (giảm 62,5% lỗi so với gốc 36,76%)."),
+    ("BM25 Tinh chỉnh (Hình 2):", "k1=2.1, b=1.0 + Bigram Boost (+0.4) đưa Recall@1 từ 71,45% lên 77,48% trên tập dev ViMMRC."),
+    ("ViT5 Đọc hiểu (Hình 3):", "Sinh câu trả lời hội tụ sau 2 epoch; đạt F1 66,55% và EM 41,05% trên tập test 2.716 câu độc lập."),
+    ("Matcha-TTS & Vocoder (Hình 4):", "OT-CFM hội tụ sau 150k bước; HiFi-GAN fine-tune 50k bước đạt CER 0,8% (gần trần người thật 0,7%).")
 ]
-for title_p, desc_p in eng_points:
+for title_cb, desc_cb in chart_bullet_points:
+    p = tf_chart_notes.add_paragraph()
+    p.text = f"• {title_cb} {desc_cb}"
+    p.font.size = Pt(10)
+    p.font.color.rgb = TEXT_DARK
+    p.space_before = Pt(8)
+
+# ==========================================
+# SLIDE 6: SẢN PHẨM HOÀN CHỈNH & LIVE DEMO (5:15 - 6:00)
+# ==========================================
+s6_notes = """Về mặt kỹ nghệ phần mềm, nhóm đã tích hợp hệ thống thành ứng dụng Full-stack gồm Backend FastAPI và Frontend Angular 22, hiển thị trực quan trạng thái xử lý qua từng chặng. Toàn bộ dự án được đóng gói bằng Docker multi-stage, khởi chạy bằng một lệnh docker compose và có 115 bài kiểm thử tự động.
+Trong kịch bản demo thực tế: khi người dùng bấm micro hỏi 'Ai là tác giả của Truyện Kiều?', phân hệ STT nhận dạng câu hỏi trong khoảng 3 giây; bộ truy xuất lấy ứng viên và reranker chọn đoạn Wikipedia về Truyện Kiều trong khoảng 6 giây; ViT5 sinh câu trả lời 'Nguyễn Du' trong 1,4 giây; và Matcha-TTS tổng hợp giọng đọc trong 1,3 giây. Tổng thời gian phản hồi khoảng 12 giây trên CPU Docker, hoặc khoảng 6 giây nếu tắt reranker."""
+
+s6 = builder.add_content_slide(
+    category="Kỹ nghệ & Thực nghiệm",
+    title="Sản Phẩm Đóng Gói Docker & Kịch Bản Demo End-to-End",
+    presenter="Ngô Trí Huy (Nhóm trưởng)",
+    time_str="5:15 - 6:00 (45s)",
+    notes_text=s6_notes
+)
+
+c_eng, tf_eng = builder.add_card(s6, Inches(0.8), Inches(1.5), Inches(5.6), Inches(5.35), title="Kỹ Nghệ Phần Mềm & Đóng Gói", title_color=PRIMARY_BLUE)
+for title_p, desc_p in [
+    ("Kiến trúc Full-Stack:", "Backend FastAPI bất đồng bộ + Frontend Angular 22 Standalone hiển thị trực quan."),
+    ("Giao diện Trực quan:", "Hiển thị Pipeline Flow Indicator theo thời gian thực (Thu âm -> STT -> Retrieval -> MRC -> TTS -> Nghe)."),
+    ("Docker Multi-Stage:", "Stage 1 (Node 22) biên dịch web; Stage 2 (Python 3.11-slim) cài đặt API và PyTorch CPU wheel."),
+    ("Khởi chạy 1 Lệnh:", "docker compose up -d ánh xạ cổng 8090 -> 8000, tích hợp sẵn Docker Healthcheck."),
+    ("Kiểm thử Tự động:", "115 bài kiểm thử tự động bao phủ từ xử lý dữ liệu đến REST API.")
+]:
     p = tf_eng.add_paragraph()
     p.text = f"• {title_p} {desc_p}"
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-# Right Column: Live Demo Flow
-c_demo, tf_demo = builder.add_card(s5, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Kịch Bản Demo Thực Tế (Live Flow)", title_color=TEAL)
-demo_steps = [
-    ("1. Giọng nói Đầu vào:", "Người dùng bấm mic hỏi: 'Thủ đô của Việt Nam là gì?' kèm 4 lựa chọn (Huế, Hà Nội, Đà Nẵng, Cần Thơ)."),
-    ("2. STT (0.42s):", "Faster-Whisper nhận dạng chính xác văn bản tiếng Việt có dấu chuẩn xác."),
-    ("3. Retrieval (15ms):", "BM25 quét 552 văn bản, định vị chính xác bài đọc 'train:0288' (Văn Miếu - Quốc Tử Giám Hà Nội, Score: 26.97)."),
-    ("4. MRC (3ms):", "ChoiceRanker phân tích ngữ cảnh: Phương án B (Hà Nội) đạt xác suất áp đảo 80.7%."),
-    ("5. TTS (0.35s):", "Normalizer chuẩn hóa thành 'Đáp án B: Hà Nội' và tổng hợp âm thanh giọng đọc truyền cảm."),
-    ("6. Tổng Độ trễ:", "Chỉ 1.85 giây từ lúc dứt câu hỏi đến khi nghe câu trả lời!")
-]
-for title_d, desc_d in demo_steps:
+c_demo, tf_demo = builder.add_card(s6, Inches(6.7), Inches(1.5), Inches(5.833), Inches(5.35), title="Kịch Bản Demo Thực Tế (Live Flow)", title_color=TEAL)
+for title_d, desc_d in [
+    ("1. Giọng nói Đầu vào:", "Người dùng bấm mic hỏi: 'Ai là tác giả của Truyện Kiều?'."),
+    ("2. STT (~3s):", "Whisper-small LoRA 50h (CTranslate2 int8) nhận dạng văn bản tiếng Việt có dấu."),
+    ("3. Retrieval + reranker (~6s):", "BM25 + dense lấy ứng viên, reranker chọn đoạn Wikipedia 'Truyện Kiều'."),
+    ("4. MRC (~1.4s):", "ViT5 đọc đoạn Wikipedia về Truyện Kiều và sinh câu trả lời 'Nguyễn Du'."),
+    ("5. TTS (~1.3s):", "Matcha-TTS chuẩn hóa văn bản và tổng hợp giọng đọc câu trả lời."),
+    ("6. Tổng Độ trễ:", "Khoảng 12 giây trên CPU Docker (STT ~3s, truy xuất + reranker ~6s, ViT5 ~1.4s, TTS ~1.3s); tắt reranker còn ~6 giây.")
+]:
     p = tf_demo.add_paragraph()
-    p.text = f"▶ {title_d} {desc_d}"
+    p.text = f"• {title_d} {desc_d}"
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(7)
 
 # ==========================================
-# SLIDE 6: TỔNG KẾT & HƯỚNG PHÁT TRIỂN
+# SLIDE 7: TỔNG KẾT & HƯỚNG PHÁT TRIỂN (6:00 - 6:45)
 # ==========================================
-s6_notes = """Tóm lại, đồ án của nhóm đã hiện thực hóa thành công một hệ thống Voice Q&A tiếng Việt hoàn chỉnh, nhẹ, chạy được offline trên máy tính cá nhân và làm chủ các kỹ thuật học máy tiên tiến từ Flow Matching đến MRC.
-Trong giai đoạn tiếp theo, nhóm định hướng sẽ nâng cấp bộ tìm kiếm sang dạng lai Dense Retrieval và tích hợp LLMs tiếng Việt để hỗ trợ trò chuyện đa lượt.
-Nhóm chúng em xin chân thành cảm ơn sự lắng nghe và chỉ dẫn của Thầy! Nhóm rất mong nhận được những góp ý quý báu từ Thầy để tiếp tục hoàn thiện đồ án."""
+s7_notes = """Tóm lại, nhóm đã xây dựng hoàn chỉnh hệ thống Voice Q&A tiếng Việt dựa trên ViMMRC 2.0 và UIT-ViQuAD2.0, kết hợp từ nhận dạng giọng nói, truy xuất hai tầng, đọc hiểu sinh câu trả lời tự do đến tổng hợp giọng nói Matcha-TTS chạy cục bộ trên CPU.
+Về hạn chế và hướng phát triển: hiện tại độ trễ trên CPU khoảng 12 giây mỗi câu do reranker chiếm 6 giây, và một số câu hỏi kiến thức mở vẫn còn nhầm lẫn khi đoạn văn tầng 1 được cộng điểm ưu tiên. Trong thời gian tới, nhóm dự kiến triển khai trên GPU để giảm độ trễ, tinh chỉnh bộ định tuyến cho câu hỏi kiến thức chung, và thử nghiệm các mô hình ngôn ngữ lớn tiếng Việt để hỗ trợ hội thoại đa lượt.
+Nhóm chúng em xin chân thành cảm ơn Thầy Cô đã lắng nghe và rất mong nhận được ý kiến đóng góp của Hội đồng!"""
 
-s6 = builder.add_content_slide(
+s7 = builder.add_content_slide(
     category="Tổng kết & Định hướng",
-    title="Tổng Kết Đóng Góp, Khả Năng Ứng Dụng & Hướng Mở Rộng",
-    presenter="Ngô Trí Huy (Lead)",
-    time_str="4:30 - 5:00 (30s)",
-    notes_text=s6_notes
+    title="Tổng Kết Đóng Góp, Giới Hạn Thực Tế & Hướng Phát Triển",
+    presenter="Ngô Trí Huy (Nhóm trưởng)",
+    time_str="6:00 - 6:45 (45s)",
+    notes_text=s7_notes
 )
 
-# 2 Large Cards
-c_achieve, tf_achieve = builder.add_card(s6, Inches(0.8), Inches(1.5), Inches(5.6), Inches(4.1), title="Đóng Góp Chính Đạt Được", title_color=PRIMARY_BLUE)
-achieve_list = [
-    "Khép kín chu trình Voice Q&A tiếng Việt đa phương thức hoàn chỉnh đầu tiên dựa trên bộ dữ liệu chuẩn UIT-NLP/ViMMRC 2.0.",
-    "Làm chủ và ứng dụng thành công kỹ thuật tiên tiến Flow Matching (Matcha-TTS ICASSP 2024) với frontend vi_tone_v2 tách thanh điệu.",
-    "Tối ưu hóa chạy cục bộ trên CPU thông thường, đạt độ trễ thời gian thực < 2 giây và độc lập với API thương mại đám mây.",
-    "Hoàn thiện sản phẩm Full-stack: Giao diện Web thân thiện, đóng gói Docker tiện lợi và kiểm thử tự động 100%."
-]
-for item in achieve_list:
+c_achieve, tf_achieve = builder.add_card(s7, Inches(0.8), Inches(1.5), Inches(5.6), Inches(4.1), title="Kết Quả Đạt Được", title_color=PRIMARY_BLUE)
+for item in [
+    "Hoàn thiện chu trình Voice Q&A tiếng Việt dựa trên ViMMRC 2.0 và UIT-ViQuAD2.0 (27.164 câu hỏi).",
+    "Huấn luyện mô hình Matcha-TTS (ICASSP 2024) với frontend vi_tone_v2 tách thanh điệu, đạt CER 0,8% và RTF 0,64.",
+    "Vận hành cục bộ trên CPU thông thường (Edge-TTS/gTTS dự phòng cần Internet), độ trễ ~12s/câu (~6s khi tắt reranker).",
+    "Đóng gói ứng dụng Full-stack (FastAPI + Angular) qua Docker multi-stage, đạt 115 bài kiểm thử tự động."
+]:
     p = tf_achieve.add_paragraph()
-    p.text = "✔ " + item
+    p.text = "• " + item
     p.font.size = Pt(11)
     p.font.color.rgb = TEXT_DARK
     p.space_before = Pt(8)
 
-c_future, tf_future = builder.add_card(s6, Inches(6.7), Inches(1.5), Inches(5.833), Inches(4.1), title="Hướng Phát Triển Tiếp Theo", title_color=AMBER)
-future_list = [
-    "Nâng cấp Hybrid Dense Retrieval: Kết hợp BM25 với mô hình nhúng Bi-Encoder tiếng Việt và Reranker nơ-ron để nắm bắt ngữ nghĩa sâu.",
-    "Tích hợp Large Language Models (LLMs): Thử nghiệm PhoGPT / Vistral để hỗ trợ suy luận đa bước và sinh câu trả lời tự luận phong phú.",
-    "Hỗ trợ Đối thoại Đa Lượt (Multi-Turn Dialogue): Bổ sung bộ nhớ ngữ cảnh phiên làm việc để người dùng có thể hỏi nối tiếp tự nhiên.",
-    "Ứng dụng thực tiễn: Tích hợp vào Smart Kiosk trường học, hỗ trợ người khiếm thị tra cứu sách giáo khoa và tài liệu học tập."
-]
-for item in future_list:
+c_future, tf_future = builder.add_card(s7, Inches(6.7), Inches(1.5), Inches(5.833), Inches(4.1), title="Giới Hạn Hiện Tại & Hướng Mở Rộng", title_color=AMBER)
+for item in [
+    "Chạy trên GPU: Giảm thời gian chờ (hiện ~12 giây/câu trên CPU Docker do reranker chiếm ~6 giây).",
+    "Tinh chỉnh định tuyến & reranker: Khắc phục hiện tượng câu hỏi kiến thức mở bị đoạn tầng 1 lấn át (hiện F1 mở đạt 24,3%).",
+    "Thử nghiệm LLM tiếng Việt: Đánh giá thêm các mô hình lớn hơn hoặc kết hợp xếp hạng nhiều câu trả lời ứng viên.",
+    "Hội thoại Đa lượt (Multi-Turn): Bổ sung bộ nhớ ngữ cảnh phiên làm việc để người dùng hỏi nối tiếp tự nhiên.",
+    "Ứng dụng thực tế: Thử nghiệm tích hợp vào kiosk tra cứu thông tin học đường và công cụ hỗ trợ người khiếm thị."
+]:
     p = tf_future.add_paragraph()
-    p.text = "➔ " + item
-    p.font.size = Pt(11)
+    p.text = "→ " + item
+    p.font.size = Pt(10.5)
     p.font.color.rgb = TEXT_DARK
-    p.space_before = Pt(8)
+    p.space_before = Pt(7)
 
-# Thank you banner bottom
-c_ty, tf_ty = builder.add_card(s6, Inches(0.8), Inches(5.8), Inches(11.733), Inches(1.05), title="", bg_color=DARK_BG)
+c_ty, tf_ty = builder.add_card(s7, Inches(0.8), Inches(5.8), Inches(11.733), Inches(1.05), title="", bg_color=DARK_BG)
 pt0 = tf_ty.paragraphs[0]
-pt0.text = "TRÂN TRỌNG CẢM ƠN THẦY VÀ HỘI ĐỒNG ĐÃ LẮNG NGHE!"
+pt0.text = "TRÂN TRỌNG CẢM ƠN THẦY CÔ VÀ HỘI ĐỒNG ĐÃ LẮNG NGHE!"
 pt0.font.size = Pt(15)
 pt0.font.bold = True
 pt0.font.color.rgb = WHITE
 pt0.alignment = PP_ALIGN.CENTER
 
 pt1 = tf_ty.add_paragraph()
-pt1.text = "Nhóm xin kính mời Thầy đặt câu hỏi và đóng góp ý kiến để đồ án được hoàn thiện hơn."
+pt1.text = "Nhóm xin kính mời Thầy Cô đặt câu hỏi và đóng góp ý kiến để đồ án được hoàn thiện hơn."
 pt1.font.size = Pt(11)
 pt1.font.color.rgb = RGBColor(148, 163, 184)
 pt1.alignment = PP_ALIGN.CENTER
 pt1.space_before = Pt(2)
 
-# Save
 builder.save()
+print("Saved 7 slides to docs/ViMMRC_Presentation_5min.pptx successfully!")

@@ -31,7 +31,16 @@ class MRCClient:
         from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
-        self.tokenizer = AutoTokenizer.from_pretrained(str(path), local_files_only=True)
+        try:
+            self.tokenizer = AutoTokenizer.from_pretrained(str(path), local_files_only=True)
+        except Exception:
+            from transformers import PreTrainedTokenizerFast
+            self.tokenizer = PreTrainedTokenizerFast(
+                tokenizer_file=str(path / "tokenizer.json"),
+                eos_token="</s>",
+                pad_token="<pad>",
+                unk_token="<unk>",
+            )
         self.model = AutoModelForSeq2SeqLM.from_pretrained(str(path), local_files_only=True)
         self.model.to(self.device).eval()
         settings = json.loads((path / "mrc_config.json").read_text(encoding="utf-8")) if (

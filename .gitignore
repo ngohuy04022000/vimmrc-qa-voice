@@ -36,7 +36,8 @@ checkpoints/
 .idea/
 .DS_Store
 
-# node / frontend
+# large packages for drive upload
+*.zip
 node_modules/
 dist/
 .angular/

@@ -16,9 +16,8 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_actual_schema_and_answer_conversion():
     examples = load_examples(ROOT / "examples" / "sample_vimmrc.json")
     assert [row["answer"] for row in examples] == ["Hà Nội", "miền Bắc"]
-    assert [row["answer_letter"] for row in examples] == ["B", "C"]
     assert evaluate_predictions(["Hà Nội", "miền Bắc"], examples) == {
-        "exact_match": 1.0, "token_f1": 1.0, "choice_accuracy": 1.0
+        "exact_match": 1.0, "token_f1": 1.0
     }
 
 
@@ -43,13 +42,6 @@ def test_vietnamese_metrics_and_empty_prediction():
     assert token_f1("", "Hà Nội") == 0.0
 
 
-def test_choice_accuracy_can_differ_from_exact_match():
-    examples = load_examples(ROOT / "examples" / "sample_vimmrc.json")
-    result = evaluate_predictions(["Hà Nội là thủ đô", "Bắc"], examples)
-    assert result["exact_match"] == 0.0
-    assert result["choice_accuracy"] == 1.0
-
-
 def test_baseline_is_available_without_model():
     answer = LexicalBaselineClient().answer_question(
         "Thành phố nằm ở miền nào?", "Hà Nội là thủ đô. Thành phố nằm ở miền Bắc."
@@ -71,23 +63,12 @@ def test_flatten_articles_accepts_free_form_answer_texts():
         "id": "0:0", "passage": "Hà Nội là thủ đô của Việt Nam.",
         "question": "Thủ đô của Việt Nam là gì?", "answer": "Hà Nội",
     }]
-    assert "options" not in examples[0] and "answer_letter" not in examples[0]
 
 
 def test_flatten_articles_rejects_empty_answer_texts():
     article = {"article": "x" * 10, "questions": ["q?"], "answer_texts": [[]]}
     with pytest.raises(ValueError, match="answer_texts"):
         flatten_articles([article])
-
-
-def test_evaluate_predictions_skips_choice_accuracy_when_any_row_has_no_options():
-    """Mixed ViMMRC + free-form rows: choice_accuracy only applies when ALL rows have options."""
-    mcq_examples = load_examples(ROOT / "examples" / "sample_vimmrc.json")
-    free_form_row = {"id": "x", "passage": "p", "question": "q", "answer": "a"}
-    mixed = mcq_examples + [free_form_row]
-    result = evaluate_predictions([row["answer"] for row in mixed], mixed)
-    assert "choice_accuracy" not in result
-    assert result["exact_match"] == 1.0
 
 
 def test_real_splits_have_no_article_leakage():

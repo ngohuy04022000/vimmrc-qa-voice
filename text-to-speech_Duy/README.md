@@ -7,7 +7,7 @@ Mô hình chính là **Matcha-TTS** (Conditional Flow Matching) tự huấn luy�
 ```python
 from synthesize import synthesize
 
-audio_path = synthesize("Đáp án B: Hồ Gươm nằm ở trung tâm thủ đô Hà Nội.")   # -> ".../outputs/tts_<ms>.wav"
+audio_path = synthesize("Tác giả Truyện Kiều là Nguyễn Du.")   # -> ".../outputs/tts_<ms>.wav"
 ```
 
 ## Cấu trúc
@@ -16,7 +16,7 @@ audio_path = synthesize("Đáp án B: Hồ Gươm nằm ở trung tâm thủ đ�
 text-to-speech_Duy/
 ├── synthesize.py                # Entrypoint: synthesize(text, ...) -> đường dẫn audio, kèm CLI
 ├── src/
-│   ├── normalizer.py            # Chuẩn hóa văn bản tiếng Việt / nhãn đáp án ViMMRC
+│   ├── normalizer.py            # Chuẩn hóa văn bản tiếng Việt (số liệu, ngày tháng, tiền tệ, viết tắt, nhãn liệt kê)
 │   ├── vi_tokenizer.py          # Token hóa tách thanh điệu (dùng chung với notebook)
 │   ├── matcha_engine.py         # Suy luận Matcha-TTS + HiFi-GAN, ngắt cụm theo dấu câu
 │   ├── tts_engine.py            # Engine matcha / vits / edge / gtts cùng một giao diện
@@ -117,7 +117,7 @@ cd web-interface_Luong && npm start
 ## Sử dụng trong mã nguồn Python
 
 ```python
-path = synthesize("**Đáp án:** (B) Chiến thắng Điện Biên Phủ ngày 07/05/1954.")
+path = synthesize("Chiến thắng Điện Biên Phủ diễn ra ngày 07/05/1954.")
 path = synthesize("Xin chào.", output_path="outputs/a.wav", rate="-10%")
 path = synthesize("Xin chào.", engine="edge", voice="vi-VN-NamMinhNeural")   # -> .mp3
 ```
@@ -129,7 +129,7 @@ path = synthesize("Xin chào.", engine="edge", voice="vi-VN-NamMinhNeural")   # 
 | `engine` | `matcha` | `matcha`, `vits`, `edge`, `gtts` |
 | `voice` | `vi-VN-HoaiMyNeural` | Giọng Edge-TTS (`nu` / `nam`); Matcha chỉ có một giọng |
 | `checkpoint_path` | `checkpoints/matcha_vi.pt` | File `.pt` của Matcha-TTS |
-| `normalize` | `True` | Chuẩn hóa số, ngày tháng, nhãn đáp án |
+| `normalize` | `True` | Chuẩn hóa số, ngày tháng, nhãn liệt kê |
 | `rate` | `+0%` | Tốc độ đọc (matcha, edge) |
 | `pitch` | `+0Hz` | Cao độ (edge) |
 
@@ -138,7 +138,7 @@ Engine được khởi tạo một lần rồi dùng lại. Nếu engine đượ
 ```bash
 # Từ thư mục gốc repository:
 cd text-to-speech_Duy
-python synthesize.py -t "Đáp án B: Hồ Gươm nằm ở Hà Nội."
+python synthesize.py -t "Tác giả Truyện Kiều là Nguyễn Du."
 python synthesize.py -t "Xin chào các bạn." --rate -10% -o outputs/cham.wav
 python synthesize.py -t "Xin chào các bạn." -e edge -v vi-VN-NamMinhNeural
 ```

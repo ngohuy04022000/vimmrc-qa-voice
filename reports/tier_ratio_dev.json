@@ -1,0 +1,42 @@
+[
+  {
+    "ratio": 0.6,
+    "vimmrc": 0.3292,
+    "viquad": 0.7396
+  },
+  {
+    "ratio": 0.8,
+    "vimmrc": 0.4282,
+    "viquad": 0.7396
+  },
+  {
+    "ratio": 1.0,
+    "vimmrc": 0.5074,
+    "viquad": 0.7341
+  },
+  {
+    "ratio": 1.2,
+    "vimmrc": 0.5569,
+    "viquad": 0.7096
+  },
+  {
+    "ratio": 1.4,
+    "vimmrc": 0.5767,
+    "viquad": 0.6704
+  },
+  {
+    "ratio": 1.6,
+    "vimmrc": 0.5916,
+    "viquad": 0.6062
+  },
+  {
+    "ratio": 2.0,
+    "vimmrc": 0.5941,
+    "viquad": 0.4783
+  },
+  {
+    "ratio": 3.0,
+    "vimmrc": 0.5941,
+    "viquad": 0.1948
+  }
+]

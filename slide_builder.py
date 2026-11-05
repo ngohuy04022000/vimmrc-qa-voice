@@ -73,11 +73,14 @@ class SlideDeckBuilder:
         tx_box = slide.shapes.add_textbox(Inches(0.8), Inches(1.7), Inches(11.733), Inches(1.8))
         tf = tx_box.text_frame
         tf.word_wrap = True
-        p = tf.paragraphs[0]
-        p.text = title
-        p.font.size = Pt(28)
-        p.font.bold = True
-        p.font.color.rgb = WHITE
+        for t_idx, t_line in enumerate(title.split("\n")):
+            p = tf.paragraphs[0] if t_idx == 0 else tf.add_paragraph()
+            p.text = t_line
+            p.font.size = Pt(28)
+            p.font.bold = True
+            p.font.color.rgb = WHITE
+            if t_idx > 0:
+                p.space_before = Pt(4)
 
         # Subtitle
         if subtitle:
@@ -87,10 +90,10 @@ class SlideDeckBuilder:
             p2.font.color.rgb = RGBColor(148, 163, 184) # slate-400
             p2.space_before = Pt(8)
 
-        # Metadata Cards (e.g. 3 cards for 3 members or instructor)
+        # Member Cards: Ch? nu tn thnh vin, khng b? vai tr v khng c phn cng chi ti?t
         card_w = Inches(3.64)
-        card_h = Inches(2.6)
-        card_y = Inches(4.1)
+        card_h = Inches(1.6)
+        card_y = Inches(4.7)
 
         for i, item in enumerate(metadata_items):
             cx = Inches(0.8) + i * Inches(3.9)
@@ -104,33 +107,35 @@ class SlideDeckBuilder:
             ctf.word_wrap = True
             ctf.margin_left = Inches(0.2)
             ctf.margin_right = Inches(0.2)
-            ctf.margin_top = Inches(0.2)
+            ctf.margin_top = Inches(0.25)
+
+            name = item if isinstance(item, str) else item.get("name", "")
 
             cp0 = ctf.paragraphs[0]
-            cp0.text = item.get("badge", "").upper()
-            cp0.font.size = Pt(10)
+            cp0.text = "THÀNH VIÊN THỰC HIỆN"
+            cp0.font.size = Pt(9.5)
             cp0.font.bold = True
             cp0.font.color.rgb = TEAL
+            cp0.alignment = PP_ALIGN.CENTER
 
             cp1 = ctf.add_paragraph()
-            cp1.text = item.get("name", "")
-            cp1.font.size = Pt(15)
+            cp1.text = name
+            cp1.font.size = Pt(17)
             cp1.font.bold = True
             cp1.font.color.rgb = WHITE
-            cp1.space_before = Pt(4)
-
-            for desc in item.get("desc", []):
-                cp_d = ctf.add_paragraph()
-                cp_d.text = "• " + desc
-                cp_d.font.size = Pt(11)
-                cp_d.font.color.rgb = RGBColor(203, 213, 225)
-                cp_d.space_before = Pt(4)
+            cp1.alignment = PP_ALIGN.CENTER
+            cp1.space_before = Pt(6)
 
         # Notes
         slide.notes_slide.notes_text_frame.text = notes_text
         return slide
 
     def add_content_slide(self, category, title, presenter, time_str, notes_text):
+        """
+        Content slide:
+        Khng hi?n th? tn ngu?i trnh by trn slide theo yu c?u c?a ngu?i dng.
+        Ch? hi?n th? th?i gian/th?i lu?ng ? gc trn ph?i.
+        """
         slide = self.prs.slides.add_slide(self.blank_layout)
         self.slide_count += 1
 
@@ -161,7 +166,7 @@ class SlideDeckBuilder:
         p.alignment = PP_ALIGN.CENTER
 
         # Slide Title
-        tx_title = slide.shapes.add_textbox(Inches(0.8), Inches(0.48), Inches(8.5), Inches(0.6))
+        tx_title = slide.shapes.add_textbox(Inches(0.8), Inches(0.48), Inches(8.8), Inches(0.6))
         tf = tx_title.text_frame
         p = tf.paragraphs[0]
         p.text = title
@@ -169,20 +174,16 @@ class SlideDeckBuilder:
         p.font.bold = True
         p.font.color.rgb = TEXT_DARK
 
-        # Presenter Badge (Right top)
-        tx_pres = slide.shapes.add_textbox(Inches(9.2), Inches(0.28), Inches(3.3), Inches(0.7))
-        tf = tx_pres.text_frame
-        p = tf.paragraphs[0]
-        p.text = presenter
-        p.font.size = Pt(12)
-        p.font.bold = True
-        p.font.color.rgb = PRIMARY_BLUE
-        p.alignment = PP_ALIGN.RIGHT
-        p2 = tf.add_paragraph()
-        p2.text = time_str
-        p2.font.size = Pt(10)
-        p2.font.color.rgb = TEXT_MUTED
-        p2.alignment = PP_ALIGN.RIGHT
+        # Top Right: Time duration ONLY (No presenter name on slide!)
+        if time_str:
+            tx_time = slide.shapes.add_textbox(Inches(9.2), Inches(0.32), Inches(3.3), Inches(0.55))
+            tf = tx_time.text_frame
+            p = tf.paragraphs[0]
+            p.text = time_str
+            p.font.size = Pt(11)
+            p.font.bold = True
+            p.font.color.rgb = PRIMARY_BLUE
+            p.alignment = PP_ALIGN.RIGHT
 
         # Footer
         tx_foot = slide.shapes.add_textbox(Inches(0.8), Inches(7.05), Inches(11.733), Inches(0.35))
@@ -212,10 +213,16 @@ class SlideDeckBuilder:
         if title:
             p = tf.paragraphs[0]
             p.text = title
-            p.font.size = Pt(14)
+            p.font.size = Pt(13)
             p.font.bold = True
             p.font.color.rgb = title_color
         return shape, tf
+
+    def add_image(self, slide, image_path, left, top, width, height):
+        if not os.path.exists(image_path):
+            print(f"Warning: image path does not exist: {image_path}")
+            return None
+        return slide.shapes.add_picture(str(image_path), left, top, width, height)
 
     def add_table(self, slide, left, top, width, height, headers, rows, col_widths=None):
         num_rows = len(rows) + 1

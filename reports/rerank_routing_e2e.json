@@ -1,0 +1,169 @@
+{
+  "n_per_set": 200,
+  "pool": 5,
+  "dense_model": "intfloat/multilingual-e5-small",
+  "A_in_kb": {
+    "bm25_ratio_0.4": {
+      "F1": 0.5796,
+      "answer_in_passage": 0.705
+    },
+    "wiki_dense_top1": {
+      "F1": 0.2136,
+      "answer_in_passage": 0.165
+    },
+    "pooled_cos_k1": {
+      "F1": 0.3243,
+      "answer_in_passage": 0.345
+    },
+    "pooled_cos_k3": {
+      "F1": 0.3355,
+      "answer_in_passage": 0.36
+    },
+    "pooled_cos_k5": {
+      "F1": 0.3405,
+      "answer_in_passage": 0.365
+    },
+    "pooled_cos_k1_kbmargin": {
+      "F1": 0.4554,
+      "answer_in_passage": 0.52
+    },
+    "pooled_cos_k3_kbmargin": {
+      "F1": 0.4481,
+      "answer_in_passage": 0.51
+    },
+    "ratio_0.4_then_wiki_dense": {
+      "F1": 0.5794,
+      "answer_in_passage": 0.705
+    },
+    "ratio_0.3_then_wiki_dense": {
+      "F1": 0.5246,
+      "answer_in_passage": 0.595
+    },
+    "ratio_0.2_then_wiki_dense": {
+      "F1": 0.2986,
+      "answer_in_passage": 0.295
+    },
+    "ratio_0.4_then_wiki_bestcos": {
+      "F1": 0.5794,
+      "answer_in_passage": 0.705
+    },
+    "ratio_0.3_then_wiki_bestcos": {
+      "F1": 0.5246,
+      "answer_in_passage": 0.595
+    },
+    "ratio_0.2_then_wiki_bestcos": {
+      "F1": 0.2986,
+      "answer_in_passage": 0.295
+    },
+    "rerank_kb1_wd1": {
+      "F1": 0.5506,
+      "answer_in_passage": 0.65
+    },
+    "rerank_pool3": {
+      "F1": 0.5506,
+      "answer_in_passage": 0.665
+    },
+    "rerank_pool3_kbmargin0.1": {
+      "F1": 0.6039,
+      "answer_in_passage": 0.745
+    },
+    "rerank_pool3_kbmargin0.25": {
+      "F1": 0.607,
+      "answer_in_passage": 0.755
+    },
+    "rerank_pool3_kbmargin0.5": {
+      "F1": 0.6167,
+      "answer_in_passage": 0.77
+    },
+    "rerank_pool3_kbmargin0.75": {
+      "F1": 0.6129,
+      "answer_in_passage": 0.765
+    },
+    "rerank_pool3_kbmargin1.0": {
+      "F1": 0.6054,
+      "answer_in_passage": 0.755
+    }
+  },
+  "B_open": {
+    "bm25_ratio_0.4": {
+      "F1": 0.1542,
+      "answer_in_passage": 0.095
+    },
+    "wiki_dense_top1": {
+      "F1": 0.2015,
+      "answer_in_passage": 0.175
+    },
+    "pooled_cos_k1": {
+      "F1": 0.2073,
+      "answer_in_passage": 0.18
+    },
+    "pooled_cos_k3": {
+      "F1": 0.2067,
+      "answer_in_passage": 0.18
+    },
+    "pooled_cos_k5": {
+      "F1": 0.2084,
+      "answer_in_passage": 0.18
+    },
+    "pooled_cos_k1_kbmargin": {
+      "F1": 0.1919,
+      "answer_in_passage": 0.16
+    },
+    "pooled_cos_k3_kbmargin": {
+      "F1": 0.1883,
+      "answer_in_passage": 0.15
+    },
+    "ratio_0.4_then_wiki_dense": {
+      "F1": 0.1686,
+      "answer_in_passage": 0.11
+    },
+    "ratio_0.3_then_wiki_dense": {
+      "F1": 0.2083,
+      "answer_in_passage": 0.16
+    },
+    "ratio_0.2_then_wiki_dense": {
+      "F1": 0.206,
+      "answer_in_passage": 0.18
+    },
+    "ratio_0.4_then_wiki_bestcos": {
+      "F1": 0.1686,
+      "answer_in_passage": 0.11
+    },
+    "ratio_0.3_then_wiki_bestcos": {
+      "F1": 0.2083,
+      "answer_in_passage": 0.16
+    },
+    "ratio_0.2_then_wiki_bestcos": {
+      "F1": 0.206,
+      "answer_in_passage": 0.18
+    },
+    "rerank_kb1_wd1": {
+      "F1": 0.2331,
+      "answer_in_passage": 0.195
+    },
+    "rerank_pool3": {
+      "F1": 0.2738,
+      "answer_in_passage": 0.25
+    },
+    "rerank_pool3_kbmargin0.1": {
+      "F1": 0.2427,
+      "answer_in_passage": 0.185
+    },
+    "rerank_pool3_kbmargin0.25": {
+      "F1": 0.2433,
+      "answer_in_passage": 0.18
+    },
+    "rerank_pool3_kbmargin0.5": {
+      "F1": 0.2384,
+      "answer_in_passage": 0.165
+    },
+    "rerank_pool3_kbmargin0.75": {
+      "F1": 0.218,
+      "answer_in_passage": 0.15
+    },
+    "rerank_pool3_kbmargin1.0": {
+      "F1": 0.1577,
+      "answer_in_passage": 0.08
+    }
+  }
+}

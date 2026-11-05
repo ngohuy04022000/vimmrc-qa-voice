@@ -8,11 +8,25 @@ services:
     ports:
       - "${PORT:-8090}:8000"
     environment:
-      - WHISPER_MODEL=small
       - WHISPER_DEVICE=cpu
-      - TTS_ENGINE=edge
-      - TTS_VOICE=vi-VN-HoaiMyNeural
-      - QA_INDEX=/app/data/vimmrc_index.json
+      - TTS_ENGINE=matcha
+      - MRC_CHECKPOINT=/app/mrc-model_Huy/checkpoints/vit5-combined-cont
+      - TRANSFORMERS_NO_TF=1
+      # torch defaults to one thread per core; on a shared CPU that oversubscribes
+      # and ViT5 answers took 25-300 s instead of ~4 s (measured 20 vs 4 threads)
+      - OMP_NUM_THREADS=${OMP_NUM_THREADS:-4}
+      - QA_INDEX=/app/data/kb_index.json
+      - KB_WIKI=/app/data/kb_wiki_full
+      - KB_WIKI_RATIO=0.4
+      # ngưỡng tầng hội thoại (dialogue-manager_Huy): dưới mức này trả lời "chưa tìm thấy" thay vì đoán
+      - DIALOGUE_MIN_SUPPORT=${DIALOGUE_MIN_SUPPORT:-0.34}
+      # cross-encoder over both tiers: better answers, but ~4-5 s extra per question on CPU; empty = off
+      - KB_RERANKER=${KB_RERANKER-BAAI/bge-reranker-v2-m3}
+      # LLM Ollama trên máy chủ kiểm tra đoạn/đáp án (dialogue-manager_Huy/llm_assist.py); không chạy thì tự bỏ qua
+      - OLLAMA_BASE=${OLLAMA_BASE:-http://host.docker.internal:11434}
+      - LLM_ASSIST=${LLM_ASSIST:-1}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./data:/app/data:ro
       - ./text-to-speech_Duy/outputs:/app/text-to-speech_Duy/outputs

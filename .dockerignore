@@ -10,3 +10,19 @@ web-interface_Luong/node_modules/
 web-interface_Luong/.angular/
 text-to-speech_Duy/outputs/
 text-to-speech_Duy/Matcha-TTS/
+text-to-speech_Duy/checkpoints/*.zip
+mrc-model_Huy/checkpoints/*/checkpoint-*/
+mrc-model_Huy/checkpoints/vit5-combined/
+data/
+!data/vimmrc_index.json
+# không cần trong image runtime (nặng, chỉ phục vụ báo cáo/trình bày)
+docs/
+reports/
+notebooks/
+*.pptx
+*.docx
+*.zip
+build_*.py
+slide_builder.py
+model.bin
+**/.ipynb_checkpoints/

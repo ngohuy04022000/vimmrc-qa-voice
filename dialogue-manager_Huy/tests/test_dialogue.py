@@ -167,6 +167,14 @@ class DialogueTests(unittest.TestCase):
             spoken = normalize_vietnamese_text(self.ask(q)["answer"])
             self.assertFalse(re.search(r"\d|[²³°%]", spoken), spoken)
 
+    def test_multiple_choice_artifact_not_spoken(self):
+        class MCQReader:
+            def answer_question(self, q, p): return "Cả A, B, C đều đúng."
+        dm = DialogueManager(Retriever(SEED), MCQReader(), seed=0)
+        r = dm.respond("Thủ đô của Nhật Bản là gì?", "m")
+        self.assertNotIn("Cả A", r["answer"])
+        self.assertIn("Tokyo", r["answer"])
+
     def test_empty_input_rejected(self):
         with self.assertRaises(ValueError):
             self.ask("   ")

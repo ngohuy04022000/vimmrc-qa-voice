@@ -562,6 +562,8 @@ class DialogueManager:
             raw = summarize(text)
         else:
             raw = self.reader.answer_question(question, text) or ""
+            # ViT5 học từ đáp án trắc nghiệm ViMMRC nên đôi khi sinh "Cả A, B, C đều đúng"
+            raw = re.sub(r"^\s*(?:Chi\s+)?Cả\s+[A-D](?:\s*(?:,|và)\s*[A-D])*\s+đều\s+(?:đúng|sai)\.?\s*", "", raw)
             if not raw.strip():
                 raw = self.fallback_reader.answer_question(question, text)
             elif qtype in {"time", "quantity", "person", "location"} and len(raw.split()) > 12:

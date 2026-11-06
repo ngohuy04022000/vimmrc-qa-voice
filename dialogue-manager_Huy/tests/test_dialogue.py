@@ -64,6 +64,13 @@ class ComposerTests(unittest.TestCase):
         self.assertEqual(fill_template("Fansipan nằm ở đâu?", "dãy Hoàng Liên Sơn"), "Fansipan nằm ở dãy Hoàng Liên Sơn.")
         self.assertEqual(fill_template("Trường sát nhập sau sự kiện nào?", "Sau khi bán khuôn viên ở Bronx"),
                          "Trường sát nhập sau khi bán khuôn viên ở Bronx.")
+        self.assertEqual(fill_template("Trần Hưng Đạo đánh tan quân xâm lược nào?", "Quân xâm lược Mông Nguyên"),
+                         "Trần Hưng Đạo đánh tan quân xâm lược Mông Nguyên.")
+
+    def test_restore_case_keeps_common_words_lowercase(self):
+        p = "Lê Lợi là anh hùng dân tộc, lãnh đạo khởi nghĩa Lam Sơn. Thời Vua Hùng, nước ta tên là Văn Lang."
+        out = compose_answer("anh hùng lê lợi lãnh đạo khởi nghĩa nào?", "Lam Sơn", p)
+        self.assertEqual(out, "Anh hùng Lê Lợi lãnh đạo khởi nghĩa Lam Sơn.")  # tên riêng khôi phục, 'hùng' thì không
 
     def test_reader_picks_typed_span(self):
         p = "Nguyễn Du sinh năm 1765 và mất năm 1820, là đại thi hào. Truyện Kiều gồm 3.254 câu thơ."

@@ -504,17 +504,22 @@ def fill_template(question: str, answer: str) -> str | None:
             if not before and not re.match(r"(?:là|chính là)\b", after.casefold()) \
                     and not a_low.startswith(noun.casefold()) and len(a.split()) <= 6:
                 filler = f"{a} là {noun.casefold()}"  # "Quốc gia nào ..." -> "Lào là quốc gia ..."
+            elif before and " " not in noun and noun.casefold() not in a_low.split()[:4]:
+                # một chữ trước 'nào' thường là nửa sau từ ghép: "khởi nghĩa nào" + "Lam Sơn" -> "khởi nghĩa Lam Sơn"
+                filler = f"{noun} {a}"
         elif kind == "who":
             filler = a if m.group(1) == "ai" else f"là {a}"
         else:  # what
             filler = a if m.group(1) in {"gì", "cái gì", "điều gì"} else f"là {a}"
         if a_low in before.casefold() and len(a_low) > 3:
             return None  # câu trả lời lặp lại chủ ngữ: không ghép được
-        tail = before.rsplit(" ", 1)
-        if before and filler.split()[0].casefold() == tail[-1].casefold():
-            # "... sau sự kiện nào" + "Sau khi bán ..." -> "... sau khi bán ...", không "sau Sau khi"
-            before = tail[0] if len(tail) > 1 else ""
-            filler = tail[-1] + filler[len(tail[-1]):]
+        # "... sau sự kiện nào" + "Sau khi bán ..." -> "... sau khi bán ...", không "sau Sau khi";
+        # "... quân xâm lược nào" + "Quân xâm lược Mông Nguyên" -> một lần "quân xâm lược"
+        bw, fw = before.split(), filler.split()
+        for n in range(min(4, len(bw), len(fw)), 0, -1):
+            if [w.casefold() for w in bw[-n:]] == [w.casefold() for w in fw[:n]]:
+                before, filler = " ".join(bw[:-n]), " ".join(bw[-n:] + fw[n:])
+                break
         sentence = " ".join(part for part in (before, filler, after) if part)
         sentence = re.sub(r"\b(đã|là|được|có|của|ở|vào|năm|ngày|đầu tiên|nhất)(\s+\1\b)+", r"\1", sentence, flags=re.I)
         sentence = re.sub(r"\b(đầu tiên|nhất)\b(.*)\s\1$", r"\1\2", sentence)
@@ -564,6 +569,8 @@ def restore_case(text: str, passage: str) -> str:
     names = {}
     for m in re.finditer(_CAP_SPAN, passage):
         span = m.group(0)
+        if len(span.split()) == 1 and re.search(rf"(?<!\w){re.escape(span.casefold())}(?!\w)", passage):
+            continue  # 'Hùng' của 'Vua Hùng' nhưng đoạn cũng có 'anh hùng': không phải tên riêng
         if m.start() > 0 and passage[m.start() - 2:m.start()].strip() not in {".", "!", "?"} or len(span.split()) > 1:
             names.setdefault(span.casefold(), span)
     for low, proper in sorted(names.items(), key=lambda kv: -len(kv[0])):
@@ -574,7 +581,10 @@ def restore_case(text: str, passage: str) -> str:
 
 def compose_answer(question: str, answer: str, passage: str, qtype: str | None = None) -> str:
     """Câu trả lời hoàn chỉnh, tự nhiên khi đọc to."""
-    return _cap(restore_case(_compose(question, answer, passage, qtype), passage))
+    out = _compose(question, answer, passage, qtype)
+    # chỉ khôi phục chữ hoa khi câu hỏi gõ/nhận dạng toàn chữ thường; câu đã viết hoa đúng thì giữ nguyên
+    lowercase_q = not any(c.isupper() for c in question[1:])
+    return _cap(restore_case(out, passage) if lowercase_q else out)
 
 
 def _compose(question: str, answer: str, passage: str, qtype: str | None = None) -> str:

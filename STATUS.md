@@ -60,7 +60,11 @@ B 16,0 (đang dùng)**; chọn theo độ tự tin ViT5 (margin 0) → A 44,7 / 
 `reports/dense_routing_e2e.json`, 200 câu/bộ, CPU): ngưỡng BM25 0,4 chọn tầng, đoạn wiki lấy từ dense → A 57,9 / B 16,9
 (BM25 thuần: 58,0 / 15,4).
 **Reranker** (`KB_RERANKER=BAAI/bge-reranker-v2-m3`, `reports/rerank_routing_e2e.json`): chấm chung top-3 của KB BM25, wiki
-BM25 và wiki dense, cộng +0,25 cho đoạn KB → **A 60,7 / B 24,3 — đang dùng** (+0,5: 61,7 / 23,8; không cộng: 55,1 / 27,4).
+BM25 và wiki dense, cộng +0,25 cho đoạn KB → A 60,7 / B 24,3 (+0,5: 61,7 / 23,8; không cộng: 55,1 / 27,4).
+**Đang dùng: cộng +3,0 trong không gian logit** (`reports/rerank_logit_routing_e2e.json`, chạy lại cùng 400 câu):
+A 60,8 / B 26,7, so với +0,25 xác suất chạy lại cùng lượt là 60,2 / 24,3 (logit +1,5: 59,2 / 27,9; +2: 60,0 / 26,9).
+Lý do: sigmoid bão hoà gần 1,0 nên +0,25 để đoạn KB 0,86 thắng đoạn wiki đúng 1,00 ("Hành tinh nào gần Mặt Trời nhất" → "Sao Hải Vương").
+Cổng `raw > -2.0` thêm ở b7eec2f không có tác dụng vì `predict()` trả xác suất 0..1, đã bỏ. Pool 5/8 ứng viên: gold@1 71/72 so với 69 (100 câu test) nhưng chậm thêm 65–85%, giữ pool 3.
 Mức cộng chọn trên chính 400 câu đo nên hơi lạc quan. Giá: reranker ~4,5 s/câu trên CPU. Xếp hạng chung bằng cosine cho cả hai tầng: B 20,7 nhưng A tụt còn 32–45, không dùng.
 Độ trễ Docker CPU (`OMP_NUM_THREADS=4`): STT ~3 s, truy xuất + reranker ~6 s, ViT5 ~1,4 s, Matcha ~1,3 s → tổng khoảng 12 s/câu. Tắt reranker (`KB_RERANKER=`): truy xuất ~0,1–1,7 s (tổng ~6 s), độ chính xác thấp hơn.
 

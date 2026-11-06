@@ -128,5 +128,24 @@ class RetrieverTests(unittest.TestCase):
         self.assertEqual(queries[0]["relevant_ids"], ["train:0000"])
 
 
+class RerankTests(unittest.TestCase):
+    def test_tier1_bonus_does_not_beat_saturated_wiki_score(self):
+        from kb_retriever import TieredRetriever
+
+        class Fixed:
+            def __init__(self, hits): self.hits, self.passages = hits, hits
+            def search(self, q, k): return self.hits[:k]
+
+        class CE:
+            def predict(self, pairs, batch_size=16):
+                return [0.9999 if "Thủy" in p else 0.86 if "Hải" in p else 0.3 for _, p in pairs]
+
+        kb = Fixed([{"id": "kb:1", "passage": "Sao Hải Vương xa Mặt Trời nhất.", "score": 9.0},
+                    {"id": "kb:2", "passage": "Sao Hỏa màu đỏ.", "score": 5.0}])
+        wiki = Fixed([{"id": "w:1", "passage": "Sao Thủy gần Mặt Trời nhất.", "score": 3.0}])
+        hits = TieredRetriever(kb, wiki, reranker=CE()).search("Hành tinh nào gần Mặt Trời nhất?", 3)
+        self.assertEqual([h["id"] for h in hits], ["w:1", "kb:1", "kb:2"])
+
+
 if __name__ == "__main__":
     unittest.main()

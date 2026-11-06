@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import random
 import sys
 from pathlib import Path
@@ -20,6 +21,7 @@ from retrieval_client import Retriever  # noqa: E402
 
 POOL = 5
 MARGINS = (0.1, 0.25, 0.5, 0.75, 1.0)
+LOGIT_MARGINS = (0.5, 1.0, 1.5, 2.0, 3.0)  # bonus before the sigmoid: saturated wiki scores stay ahead
 
 
 def main():
@@ -58,7 +60,8 @@ def main():
     rules = ["bm25_ratio_0.4", "wiki_dense_top1"] + [f"pooled_cos_k{k}" for k in (1, 3, 5)] \
         + [f"pooled_cos_k{k}_kbmargin" for k in (1, 3)] \
         + [f"ratio_{r}_then_wiki_dense" for r in (0.4, 0.3, 0.2)] + [f"ratio_{r}_then_wiki_bestcos" for r in (0.4, 0.3, 0.2)] \
-        + (["rerank_kb1_wd1", "rerank_pool3"] + [f"rerank_pool3_kbmargin{m}" for m in MARGINS] if args.reranker else [])
+        + (["rerank_kb1_wd1", "rerank_pool3"] + [f"rerank_pool3_kbmargin{m}" for m in MARGINS]
+           + [f"rerank_pool3_logit{m}" for m in LOGIT_MARGINS] if args.reranker else [])
     report = {}
     for name, rows, tier1 in (("A_in_kb", set_a, kb), ("B_open", set_b, kb_b)):
         f1 = {r: 0.0 for r in rules}
@@ -103,6 +106,8 @@ def main():
                 picks["rerank_pool3"] = max(cand, key=lambda h: h["ce"], default=None)
                 for m in MARGINS:
                     picks[f"rerank_pool3_kbmargin{m}"] = max(cand, key=lambda h: h["ce"] + (m if h["src"] == "kb" else 0), default=None)
+                for m in LOGIT_MARGINS:
+                    picks[f"rerank_pool3_logit{m}"] = max(cand, key=lambda h: math.log(max(h["ce"], 1e-9) / max(1 - h["ce"], 1e-9)) + (m if h["src"] == "kb" else 0), default=None)
             for rule, h in picks.items():
                 if not h:
                     continue

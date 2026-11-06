@@ -6,6 +6,7 @@ boost: indexing bigrams for 340k Wikipedia passages does not fit in laptop RAM).
 from __future__ import annotations
 
 import json
+import math
 import unicodedata
 from pathlib import Path
 
@@ -108,10 +109,11 @@ class TieredRetriever:
     """
 
     def __init__(self, primary, secondary, ratio: float = 0.4, secondary_dense=None,
-                 reranker=None, kb_bonus: float = 0.25, pool: int = 3):
+                 reranker=None, kb_bonus: float = 3.0, pool: int = 3):
         self.primary, self.secondary, self.ratio = primary, secondary, ratio
         # With a cross-encoder: rerank top-3 of tier-1 BM25, wiki BM25 and wiki dense together,
-        # tier-1 gets +kb_bonus. F1 in-KB 57.9 -> 60.7, open-domain 16.9 -> 24.3 (reports/rerank_routing_e2e.json)
+        # tier-1 gets +kb_bonus in logit space. Vs +0.25 on probabilities: F1 in-KB 60.2 -> 60.8,
+        # open-domain 24.3 -> 26.7 (reports/rerank_logit_routing_e2e.json); pool 5 adds +2 gold@1 at +65% latency.
         self.reranker, self.kb_bonus, self.pool = reranker, kb_bonus, pool
         # BM25 ratio picks the tier; the e5 index (if built) picks the wiki passage:
         # same tier-1 F1, open-domain F1 15.4 -> 16.9 (reports/dense_routing_e2e.json)
@@ -137,12 +139,10 @@ class TieredRetriever:
         kb_ids = {h["id"] for h in kb}
         raw_scores = self.reranker.predict([(question, h["passage"]) for h in cands], batch_size=16)
         for h, s in zip(cands, raw_scores):
-            raw = float(s)
-            # Dynamic gated bonus: only apply kb_bonus if the candidate has plausible semantic relevance
-            # (raw cross-encoder score > -2.0). This prevents low-confidence KB false positives
-            # from overriding high-relevance Wikipedia passages on open-domain questions.
-            bonus = self.kb_bonus if (h["id"] in kb_ids and raw > -2.0) else 0.0
-            h["score"] = raw + bonus
+            # predict() returns sigmoid probabilities that saturate near 1.0, so a bonus added there let a
+            # 0.86 tier-1 passage beat a 1.00 wiki one; add it in logit space instead.
+            p = min(max(float(s), 1e-9), 1 - 1e-9)
+            h["score"] = math.log(p / (1 - p)) + (self.kb_bonus if h["id"] in kb_ids else 0.0)
         return sorted(cands, key=lambda h: -h["score"])[:top_k]
 
     def retrieve(self, question: str) -> str:

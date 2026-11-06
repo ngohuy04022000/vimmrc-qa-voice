@@ -65,6 +65,8 @@ BM25 và wiki dense, cộng +0,25 cho đoạn KB → A 60,7 / B 24,3 (+0,5: 61,7
 A 60,8 / B 26,7, so với +0,25 xác suất chạy lại cùng lượt là 60,2 / 24,3 (logit +1,5: 59,2 / 27,9; +2: 60,0 / 26,9).
 Lý do: sigmoid bão hoà gần 1,0 nên +0,25 để đoạn KB 0,86 thắng đoạn wiki đúng 1,00 ("Hành tinh nào gần Mặt Trời nhất" → "Sao Hải Vương").
 Cổng `raw > -2.0` thêm ở b7eec2f không có tác dụng vì `predict()` trả xác suất 0..1, đã bỏ. Pool 5/8 ứng viên: gold@1 71/72 so với 69 (100 câu test) nhưng chậm thêm 65–85%, giữ pool 3.
+Đầu cuối 220 câu (không LLM, có reranker): logit +3,0 F1 0,4441 so với 0,4472 (ngang mức nhiễu; câu khó 33,0 → 36,9, test 34,2 → 33,1, từ chối nhầm 8 → 7);
+thêm sửa ghép câu (bỏ viết hoa nhầm từ thường, khử lặp nhiều chữ) → **F1 0,4452**, số câu trả lời lặp chữ/viết hoa sai giảm từ ~42 xuống 17 (`reports/llm_assist_off_rerank_logit_composer.json`).
 Mức cộng chọn trên chính 400 câu đo nên hơi lạc quan. Giá: reranker ~4,5 s/câu trên CPU. Xếp hạng chung bằng cosine cho cả hai tầng: B 20,7 nhưng A tụt còn 32–45, không dùng.
 Độ trễ Docker CPU (`OMP_NUM_THREADS=4`): STT ~3 s, truy xuất + reranker ~6 s, ViT5 ~1,4 s, Matcha ~1,3 s → tổng khoảng 12 s/câu. Tắt reranker (`KB_RERANKER=`): truy xuất ~0,1–1,7 s (tổng ~6 s), độ chính xác thấp hơn.
 

@@ -233,7 +233,10 @@ def split_multi_question(question: str) -> list[str]:
     parts = [clean_utterance(p) for p in parts if p.strip()]
     if len(parts) <= 1:
         return [clean_utterance(text)]
-    subject = main_entity(parts[0])
+    # "Ai chỉ huy ... quân Thanh và ông lên ngôi ở đâu": 'ông' là người trong câu trả lời, không phải
+    # 'Thanh'; để nguyên đại từ, ngữ cảnh phiên sẽ thay bằng người vừa trả lời
+    asks_who = re.match(r"^(?:ai\b|người nào\b|vị \w+ nào\b)", parts[0], flags=re.IGNORECASE)
+    subject = None if asks_who else main_entity(parts[0])
     out = [parts[0]]
     for p in parts[1:4]:
         if subject:

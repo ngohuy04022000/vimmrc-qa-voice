@@ -106,6 +106,8 @@ class DecompositionTests(unittest.TestCase):
         self.assertEqual(parts, ["Fansipan cao bao nhiêu", "Fansipan nằm ở tỉnh nào"])
         self.assertEqual(split_multi_question("Sông Nin dài bao nhiêu? Nó đổ ra biển nào?")[1], "Sông Nin đổ ra biển nào")
         self.assertEqual(len(split_multi_question("Hà Nội và Huế ở đâu?")), 1)  # 'và' nối chủ ngữ, không tách
+        # vế đầu hỏi 'ai': 'ông' là người được trả lời, không phải 'quân Thanh'
+        self.assertEqual(split_multi_question("Ai đại phá quân Thanh và ông lên ngôi ở đâu?")[1], "ông lên ngôi ở đâu")
 
     def test_yesno_claims(self):
         self.assertEqual(yesno_claims("Có phải Tokyo là thủ đô của Hàn Quốc không?"), ["Tokyo là thủ đô của Hàn Quốc"])
@@ -128,6 +130,9 @@ class DialogueTests(unittest.TestCase):
         self.assertIn("Edison", self.ask("Ai phát minh ra bóng đèn sợi đốt?")["answer"])
         r = self.ask("Ông ấy sinh năm nào?")
         self.assertIn("Edison", r["resolved_question"])
+        self.assertIn("1847", r["answer"])
+        r = self.ask("Ai phát minh ra bóng đèn sợi đốt và ông ấy sinh năm nào?", "multi")
+        self.assertIn("Edison", r["answer"])
         self.assertIn("1847", r["answer"])
 
     def test_sessions_are_isolated(self):

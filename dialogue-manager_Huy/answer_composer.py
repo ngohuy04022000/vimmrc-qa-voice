@@ -482,12 +482,14 @@ def fill_template(question: str, answer: str) -> str | None:
                     re.match(r"(?:khoảng|gần|hơn|trên|dưới|chừng|xấp xỉ)\b", a_low):
                 before = before.rsplit(" ", 1)[0] if " " in before else ""
             nxt = after.split()
-            if nxt:
+            a_cmp = f" {a_low.replace('%', ' phần trăm')} "  # "8%" đọc là "8 phần trăm"
+            n = next((n for n in range(min(4, len(nxt)), 1, -1)
+                      if f" {' '.join(nxt[:n]).casefold()} " in a_cmp), 0)
+            if n:  # "bao nhiêu triệu mét khối" + "38,5 triệu mét khối": bỏ cả cụm đơn vị lặp
+                after = " ".join(nxt[n:])
+            elif nxt:
                 head = nxt[0].casefold()
-                two = " ".join(nxt[:2]).casefold()
-                if two in a_low:
-                    after = " ".join(nxt[2:])
-                elif head in a_low.split() or (head in _UNIT_WORDS and re.search(r"\d\s*[^\d\s.,]", a)):
+                if head in a_low.split() or (head in _UNIT_WORDS and re.search(r"\d\s*[^\d\s.,]", a)):
                     after = " ".join(nxt[1:])
         elif kind == "loc":
             filler = a

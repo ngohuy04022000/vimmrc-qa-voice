@@ -66,6 +66,10 @@ class ComposerTests(unittest.TestCase):
                          "Trường sát nhập sau khi bán khuôn viên ở Bronx.")
         self.assertEqual(fill_template("Trần Hưng Đạo đánh tan quân xâm lược nào?", "Quân xâm lược Mông Nguyên"),
                          "Trần Hưng Đạo đánh tan quân xâm lược Mông Nguyên.")
+        self.assertEqual(fill_template("Tỷ lệ thất nghiệp thấp nhất ở bao nhiêu phần trăm?", "dưới 8%"),
+                         "Tỷ lệ thất nghiệp thấp nhất ở dưới 8%.")
+        self.assertEqual(fill_template("Hang có thể tích bao nhiêu triệu mét khối?", "38,5 triệu mét khối"),
+                         "Hang có thể tích 38,5 triệu mét khối.")
 
     def test_restore_case_keeps_common_words_lowercase(self):
         p = "Lê Lợi là anh hùng dân tộc, lãnh đạo khởi nghĩa Lam Sơn. Thời Vua Hùng, nước ta tên là Văn Lang."
@@ -171,6 +175,19 @@ class DialogueTests(unittest.TestCase):
         for q in ("Sa mạc Sahara rộng bao nhiêu?", "Công thức hóa học của nước là gì?", "Fansipan cao bao nhiêu?"):
             spoken = normalize_vietnamese_text(self.ask(q)["answer"])
             self.assertFalse(re.search(r"\d|[²³°%]", spoken), spoken)
+
+    def test_unit_mismatch_is_not_spoken(self):
+        from dialogue import unit_fits
+        self.assertFalse(unit_fits("Trái Đất quay quanh trục mất bao lâu?", "365,26 lần"))
+        self.assertTrue(unit_fits("Trái Đất quay quanh trục mất bao lâu?", "khoảng 24 giờ"))
+        self.assertFalse(unit_fits("Giá vé cáp treo là bao nhiêu?", "khoảng 20 phút"))
+        self.assertTrue(unit_fits("Giá vé cáp treo là bao nhiêu?", "750.000 đồng"))
+        self.assertTrue(unit_fits("Fansipan cao bao nhiêu?", "3.143 m"))
+
+    def test_multi_question_names_the_unanswered_part(self):
+        r = self.ask("Fansipan cao bao nhiêu và Bitcoin được tạo ra năm nào?")
+        self.assertIn("3.143", r["answer"])
+        self.assertIn("Còn ý Bitcoin được tạo ra năm nào", r["answer"])
 
     def test_multiple_choice_artifact_not_spoken(self):
         class MCQReader:

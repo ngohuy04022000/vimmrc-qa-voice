@@ -214,6 +214,36 @@ def strip_wh(question: str) -> str:
 
 # --- Tách câu hỏi phức tạp -----------------------------------------------------------
 
+_DURATION_Q = re.compile(r"\b(?:bao lâu|mất bao nhiêu thời gian|trong bao nhiêu (?:năm|ngày|giờ|phút))\b")
+_DURATION_A = re.compile(r"\b(?:giây|phút|giờ|tiếng|ngày|đêm|tuần|tháng|năm|thế kỷ|thập kỷ|thiên niên kỷ|"
+                         r"mùa|kỷ|ms|s|h)\b|\d\s*(?:s|h|ms)\b")
+_PRICE_Q = re.compile(r"\b(?:giá|chi phí|bao nhiêu tiền|tốn bao nhiêu|lương|học phí)\b")
+_PRICE_A = re.compile(r"\b(?:đồng|vnđ|vnd|usd|đô|đô la|euro|yên|nhân dân tệ|bảng|won|nghìn|ngàn|triệu|tỷ|"
+                      r"miễn phí)\b|[$€£¥₫]")
+
+
+def unit_fits(question: str, answer: str | None) -> bool:
+    """Câu hỏi thời lượng/giá tiền mà câu trả lời không có đơn vị tương ứng thì coi là lệch loại."""
+    if not answer or not answer.strip():
+        return False
+    q, a = question.casefold(), answer.casefold()
+    if _DURATION_Q.search(q) and not _DURATION_A.search(a):
+        return False
+    if _PRICE_Q.search(q) and not _PRICE_A.search(a):
+        return False
+    return True
+
+
+_FUNCTION_HEADS = {"ai", "khi", "bao", "tại", "vì", "có", "ở", "năm", "ngày", "làm", "như", "thế", "cái",
+                   "điều", "những", "các", "nó", "ông", "bà", "họ", "người", "giá", "số"}
+
+
+def _lower_head(text: str) -> str:
+    """Hạ chữ đầu khi ghép vào giữa câu, trừ tên riêng ('Bitcoin', 'Hà Nội')."""
+    head = text.split(" ", 1)[0].casefold()
+    return text[:1].lower() + text[1:] if head in _FUNCTION_HEADS else text
+
+
 def split_multi_question(question: str) -> list[str]:
     """'Hà Nội là thủ đô nước nào và có bao nhiêu quận?' -> 2 câu hỏi đơn có đủ chủ ngữ."""
     text = nfc(question).strip()
@@ -445,7 +475,10 @@ class DialogueManager:
             known = [r for r in results if r["kind"] != "unknown"]
             if not known:
                 return dict(results[0], resolved_question=resolved)
-            answer = " ".join(r["answer"] for r in results)
+            # vế không trả lời được: nói rõ vế nào thay vì lời xin lỗi chung như thể từ chối cả câu
+            answer = " ".join(r["answer"] if r["kind"] != "unknown" else
+                              f"Còn ý {_lower_head(p)} thì mình chưa tìm thấy thông tin đủ tin cậy."
+                              for p, r in zip(parts, results))
             return {"answer": answer, "kind": "multi", "resolved_question": resolved, "parts": results,
                     "passage": known[0].get("passage"), "raw_answer": known[0].get("raw_answer", ""),
                     "topic_question": parts[0], "rewritten": rewritten}
@@ -572,6 +605,12 @@ class DialogueManager:
             elif qtype in {"time", "quantity", "person", "location"} and len(raw.split()) > 12:
                 # reader trả cả câu dài: cố trích cụm đúng loại để câu trả lời gọn khi đọc
                 raw = extract_span(question, raw, qtype) or raw
+            if qtype == "quantity" and not unit_fits(question, raw):
+                # "bao lâu" -> "365,26 lần", "giá vé" -> "20 phút": thử bộ đọc theo loại, vẫn lệch thì không đoán
+                alt = self.fallback_reader.answer_question(question, text)
+                if not unit_fits(question, alt):
+                    return dict(base, answer=UNKNOWN_ANSWER, kind="unknown", passage=None, support=round(sup, 3), llm=llm)
+                raw = alt
         if self.assist and self.assist_verify and not passage and qtype != "summary" and self.assist.available():
             ok = self.assist.verify(question, text, raw)
             llm["verify"] = ok

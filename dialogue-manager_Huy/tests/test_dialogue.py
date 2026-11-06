@@ -62,6 +62,8 @@ class ComposerTests(unittest.TestCase):
         self.assertEqual(fill_template("Ai là người phát minh ra bóng đèn?", "Thomas Edison"),
                          "Thomas Edison là người phát minh ra bóng đèn.")
         self.assertEqual(fill_template("Fansipan nằm ở đâu?", "dãy Hoàng Liên Sơn"), "Fansipan nằm ở dãy Hoàng Liên Sơn.")
+        self.assertEqual(fill_template("Trường sát nhập sau sự kiện nào?", "Sau khi bán khuôn viên ở Bronx"),
+                         "Trường sát nhập sau khi bán khuôn viên ở Bronx.")
 
     def test_reader_picks_typed_span(self):
         p = "Nguyễn Du sinh năm 1765 và mất năm 1820, là đại thi hào. Truyện Kiều gồm 3.254 câu thơ."

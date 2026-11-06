@@ -83,6 +83,20 @@ def test_unreachable_ollama_returns_none(monkeypatch):
     assert assist.supports("q", "p") is None and assist.fix_transcript("chuyện kiều") == "chuyện kiều"
 
 
+def test_generation_timeout_backs_off(monkeypatch):
+    calls = []
+
+    def slow(*a, **k):
+        calls.append(1)
+        raise llm_assist.requests.Timeout("slow")
+
+    assist = LLMAssist()
+    monkeypatch.setattr(assist, "available", lambda: assist._down_until <= llm_assist.time.time())
+    monkeypatch.setattr(llm_assist.requests, "post", slow)
+    assert assist.supports("q", "p") is None and assist.supports("q", "p") is None
+    assert len(calls) == 1 and assist._down_until - llm_assist.time.time() > 200
+
+
 def test_disabled_assist_never_calls_network(monkeypatch):
     monkeypatch.setattr(llm_assist.requests, "get", lambda *a, **k: 1 / 0)
     assert LLMAssist(enabled=False).available() is False

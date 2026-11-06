@@ -109,7 +109,9 @@ class LLMAssist:
             self.calls += 1
             return resp.json()["response"].strip()
         except (requests.RequestException, KeyError, ValueError):
-            self._down_until = time.time() + 30
+            # Ollama answers /api/tags but generation timed out (seen: 0.15 tok/s under GPU contention);
+            # retrying every 30 s would stall a user request by `timeout` seconds each time.
+            self._down_until = time.time() + 300
             self._ok_until = 0.0
             return None
 

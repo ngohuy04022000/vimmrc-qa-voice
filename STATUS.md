@@ -211,3 +211,16 @@ Ollama không chạy / thiếu model: mọi bước tự bỏ qua, hệ thống 
 | **Cổng + kiểm chứng (đang dùng)** | **0,4361** | 26 | 23 | 2,34 |
 
 Giới hạn: tăng F1 nhỏ (+0,008) vì F1 token đo chung cả câu bị từ chối nhầm; lợi ích chính là hết bịa với câu ngoài kho (7/30 → 23/30). Chậm hơn ~1,9 giây/câu. Bộ 30 câu ngoài kho do mình viết, chưa phải benchmark chuẩn.
+
+**Bảng trên đo không có reranker** (biến `KB_RERANKER` trống khi chạy cục bộ), còn Docker bật reranker. Đo lại cấu hình
+"Không LLM" (06/11/2026, `reports/llm_assist_off_{norerank,rerank}.json`):
+
+| Cấu hình | F1 chung | Từ chối nhầm (/220) | Từ chối đúng (/30) | Giây/câu |
+|---|---|---|---|---|
+| Không LLM, không reranker | 0,4281 | 13 | 7 | 0,82 |
+| **Không LLM, có reranker** | **0,4472** | **8** | 5 | 8,59 (CPU, máy đang chạy việc khác) |
+
+Trên 100 câu test, reranker đưa đoạn gốc vào top-1 69 lần (không reranker: 58), top-3 72 lần (67). 15/19 câu bị từ chối
+nhầm ở bảng trên là do đoạn gốc không nằm trong top-3, không phải do cổng LLM. Chưa đo được "reranker + LLM": Ollama
+trên máy lúc đo chạy 0,15 token/giây (log `draft-dflash`), mọi lần gọi đều quá hạn 25 giây. `llm_assist.py` giờ nghỉ 5 phút
+(trước: 30 giây) sau một lần quá hạn, để không lần nào cũng bắt người dùng chờ 25 giây.

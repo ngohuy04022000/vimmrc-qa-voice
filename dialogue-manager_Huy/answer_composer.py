@@ -510,6 +510,11 @@ def fill_template(question: str, answer: str) -> str | None:
             filler = a if m.group(1) in {"gì", "cái gì", "điều gì"} else f"là {a}"
         if a_low in before.casefold() and len(a_low) > 3:
             return None  # câu trả lời lặp lại chủ ngữ: không ghép được
+        tail = before.rsplit(" ", 1)
+        if before and filler.split()[0].casefold() == tail[-1].casefold():
+            # "... sau sự kiện nào" + "Sau khi bán ..." -> "... sau khi bán ...", không "sau Sau khi"
+            before = tail[0] if len(tail) > 1 else ""
+            filler = tail[-1] + filler[len(tail[-1]):]
         sentence = " ".join(part for part in (before, filler, after) if part)
         sentence = re.sub(r"\b(đã|là|được|có|của|ở|vào|năm|ngày|đầu tiên|nhất)(\s+\1\b)+", r"\1", sentence, flags=re.I)
         sentence = re.sub(r"\b(đầu tiên|nhất)\b(.*)\s\1$", r"\1\2", sentence)

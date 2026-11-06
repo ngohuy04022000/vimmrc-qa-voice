@@ -182,6 +182,11 @@ def normalize_vietnamese_text(text: str) -> str:
     s = re.sub(num_re + r"\s*%", r"\1 phần trăm", s)
     s = re.sub(num_re + r"\s*(?:USD|\$)", r"\1 đô la", s)
     s = re.sub(num_re + r"\s*(?:\bVND\b|\bđồng\b|\bđ\b|₫)", r"\1 đồng", s)
+    s = re.sub(r"\bkm/s\b", "ki-lô-mét trên giây", s)
+    s = re.sub(r"(?<=\d)\s*m/s\b", " mét trên giây", s)
+    s = re.sub(r"\bvà/hoặc\b", "và hoặc", s)
+    # "GDP/người", "lượt/năm": dấu gạch chéo giữa hai từ đọc là "trên"
+    s = re.sub(r"(?<=\w)/(?=(?:người|năm|tháng|ngày|giờ|tuần|lượt|ha|km)\b)", " trên ", s)
     s = re.sub(num_re + r"\s*km/h\b", r"\1 ki-lô-mét trên giờ", s)
     s = re.sub(num_re + r"\s*km2\b", r"\1 ki-lô-mét vuông", s)
     s = re.sub(num_re + r"\s*km²", r"\1 ki-lô-mét vuông", s)

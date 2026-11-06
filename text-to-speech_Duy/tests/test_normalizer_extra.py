@@ -32,3 +32,10 @@ def test_no_digits_or_unit_symbols_left():
     for text in ("Sa mạc Sahara rộng khoảng 9 triệu km², ban ngày hơn 50 °C.",
                  "Mặt Trăng cách Trái Đất khoảng 384.400 km.", "Trục nghiêng 23,5 độ, 71% là nước."):
         assert not re.search(r"\d|[²³°%]", normalize(text)), normalize(text)
+
+
+def test_slash_read_as_per():
+    assert normalize("300.000 km/s") == "ba trăm nghìn ki-lô-mét trên giây"
+    assert normalize("GDP/người") == "GDP trên người"
+    assert normalize("và/hoặc") == "và hoặc"
+    assert normalize("ngày 2/9/1945") == "ngày hai tháng chín năm một nghìn chín trăm bốn mươi lăm"

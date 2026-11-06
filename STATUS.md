@@ -67,6 +67,9 @@ Lý do: sigmoid bão hoà gần 1,0 nên +0,25 để đoạn KB 0,86 thắng đo
 Cổng `raw > -2.0` thêm ở b7eec2f không có tác dụng vì `predict()` trả xác suất 0..1, đã bỏ. Pool 5/8 ứng viên: gold@1 71/72 so với 69 (100 câu test) nhưng chậm thêm 65–85%, giữ pool 3.
 Đầu cuối 220 câu (không LLM, có reranker): logit +3,0 F1 0,4441 so với 0,4472 (ngang mức nhiễu; câu khó 33,0 → 36,9, test 34,2 → 33,1, từ chối nhầm 8 → 7);
 thêm sửa ghép câu (bỏ viết hoa nhầm từ thường, khử lặp nhiều chữ) → **F1 0,4452**, số câu trả lời lặp chữ/viết hoa sai giảm từ ~42 xuống 17 (`reports/llm_assist_off_rerank_logit_composer.json`).
+Thêm lọc "Cả A, B, C đều đúng", khử lặp đơn vị/"% trăm", từ chối câu "bao lâu"/"giá" không có đơn vị khớp
+(`reports/llm_assist_off_v3.json`): F1 0,4424, từ chối đúng 4 → 6/30, từ chối nhầm 7 → 8/220. F1 giảm chủ yếu vì "365,26 lần"
+(sai, nhưng trùng chữ với gold được 0,58) nay bị từ chối — đổi điểm F1 lấy việc không đọc to câu sai.
 Mức cộng chọn trên chính 400 câu đo nên hơi lạc quan. Giá: reranker ~4,5 s/câu trên CPU. Xếp hạng chung bằng cosine cho cả hai tầng: B 20,7 nhưng A tụt còn 32–45, không dùng.
 Độ trễ Docker CPU (`OMP_NUM_THREADS=4`): STT ~3 s, truy xuất + reranker ~6 s, ViT5 ~1,4 s, Matcha ~1,3 s → tổng khoảng 12 s/câu. Tắt reranker (`KB_RERANKER=`): truy xuất ~0,1–1,7 s (tổng ~6 s), độ chính xác thấp hơn.
 

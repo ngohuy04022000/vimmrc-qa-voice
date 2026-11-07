@@ -1,0 +1,37 @@
+{
+ "what": "Docker CPU (4 threads), 12 questions x 2 rounds per configuration (first request of each configuration excluded, n=23), median seconds. STT (~3 s) is the earlier measurement, unchanged and not re-measured here. Machine was shared with a training job, so absolute values are inflated; compare configurations only.",
+ "script": "scripts/measure_latency.py via a docker compose override per configuration",
+ "configs": {
+  "old_vit5_fp32": {
+   "label": "ViT5 + FP32 reranker, no gate",
+   "reader_reported": "trained_vit5",
+   "n": 23,
+   "ask_median_s": 8.31,
+   "ask_mean_s": 8.61,
+   "tts_median_s": 1.02,
+   "tts_mean_s": 1.08,
+   "total_with_stt_3s_median": 12.3
+  },
+  "new_default_span_int8_gate": {
+   "label": "span reader + INT8 reranker + gate (default)",
+   "reader_reported": "span_reader",
+   "n": 23,
+   "ask_median_s": 6.46,
+   "ask_mean_s": 6.19,
+   "tts_median_s": 1.16,
+   "tts_mean_s": 1.7,
+   "total_with_stt_3s_median": 10.6
+  },
+  "reranker_off": {
+   "label": "reranker off (span reader)",
+   "reader_reported": "span_reader",
+   "n": 23,
+   "ask_median_s": 1.07,
+   "ask_mean_s": 1.45,
+   "tts_median_s": 1.06,
+   "tts_mean_s": 1.23,
+   "total_with_stt_3s_median": 5.1
+  }
+ },
+ "caveat": "llm_assist was reported available in every run (Ollama on the host); its calls are inside the ask time and add noise when the host GPU is busy."
+}

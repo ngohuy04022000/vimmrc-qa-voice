@@ -1,0 +1,17 @@
+{
+  "what": "bge-reranker-v2-m3 variants timed on the same 100 ViMMRC/ViQuAD test questions, run in rotating order within one process so that all variants see the same machine load (a training job was running on the machine, so absolute seconds are inflated; only the ratios are meaningful). Seconds include first-stage retrieval (BM25 + dense).",
+  "script": "ad-hoc (rotating-order timing of r.search with the CrossEncoder swapped per question; INT8 = torch.quantization.quantize_dynamic(ce.model, {nn.Linear}, qint8, inplace=True))",
+  "n_questions": 100,
+  "gold_passage_in_top1_top3_and_seconds_per_question": {
+    "fp32-512": {"gold@1": 70, "gold@3": 71, "s_per_q": 11.43},
+    "fp32-256": {"gold@1": 69, "gold@3": 70, "s_per_q": 8.92},
+    "int8-512": {"gold@1": 70, "gold@3": 71, "s_per_q": 5.44},
+    "int8-256": {"gold@1": 68, "gold@3": 70, "s_per_q": 4.44}
+  },
+  "decision": "INT8 with 512 tokens: identical gold counts to FP32, 2.10x faster. A 256-token limit costs 1-2 questions.",
+  "caveats": [
+    "100 questions: a difference of 1-2 questions is within noise.",
+    "A copy of the quantized model (not in place) breaks CrossEncoder.predict (BatchEncoding indexing error); quantize in place.",
+    "INT8 shifts reranker logits slightly, so the refusal threshold must be re-validated end to end (reports/llm_assist_off_int8_gate1.json)."
+  ]
+}

@@ -1,0 +1,165 @@
+{
+ "summary": {
+  "health": {
+   "status": "ok",
+   "retrieval": "custom_index",
+   "retrieval_passages": 5879,
+   "reader": "trained_vit5",
+   "dialogue": true,
+   "llm_assist": true,
+   "tts_engine": "matcha",
+   "frontend_served": true
+  },
+  "n": 23,
+  "ask_median_s": 8.31,
+  "ask_mean_s": 8.61,
+  "tts_median_s": 1.02,
+  "tts_mean_s": 1.08
+ },
+ "rows": [
+  {
+   "q": "Thủ đô của Nhật Bản là gì?",
+   "kind": "qa",
+   "ask_s": 35.36,
+   "tts_s": 1.94
+  },
+  {
+   "q": "Ai phát minh ra bóng đèn sợi đốt?",
+   "kind": "qa",
+   "ask_s": 9.36,
+   "tts_s": 1.02
+  },
+  {
+   "q": "Vì sao bầu trời có màu xanh?",
+   "kind": "qa",
+   "ask_s": 6.22,
+   "tts_s": 1.41
+  },
+  {
+   "q": "Fansipan cao bao nhiêu mét?",
+   "kind": "qa",
+   "ask_s": 10.7,
+   "tts_s": 1.25
+  },
+  {
+   "q": "Hành tinh nào gần Mặt Trời nhất?",
+   "kind": "qa",
+   "ask_s": 5.04,
+   "tts_s": 0.89
+  },
+  {
+   "q": "Truyện Kiều do ai sáng tác?",
+   "kind": "qa",
+   "ask_s": 11.01,
+   "tts_s": 0.81
+  },
+  {
+   "q": "Sông nào dài nhất Việt Nam?",
+   "kind": "qa",
+   "ask_s": 8.31,
+   "tts_s": 0.53
+  },
+  {
+   "q": "Trận Bạch Đằng năm 938 do ai chỉ huy?",
+   "kind": "qa",
+   "ask_s": 10.27,
+   "tts_s": 1.63
+  },
+  {
+   "q": "Công thức hóa học của nước là gì?",
+   "kind": "qa",
+   "ask_s": 7.42,
+   "tts_s": 0.95
+  },
+  {
+   "q": "Quang Trung đại phá quân Thanh vào năm nào?",
+   "kind": "qa",
+   "ask_s": 10.74,
+   "tts_s": 1.61
+  },
+  {
+   "q": "Vịnh Hạ Long nằm ở tỉnh nào?",
+   "kind": "qa",
+   "ask_s": 7.48,
+   "tts_s": 0.84
+  },
+  {
+   "q": "Whisper là mô hình của công ty nào?",
+   "kind": "qa",
+   "ask_s": 10.59,
+   "tts_s": 1.04
+  },
+  {
+   "q": "Thủ đô của Nhật Bản là gì?",
+   "kind": "qa",
+   "ask_s": 5.12,
+   "tts_s": 0.86
+  },
+  {
+   "q": "Ai phát minh ra bóng đèn sợi đốt?",
+   "kind": "qa",
+   "ask_s": 7.89,
+   "tts_s": 1.07
+  },
+  {
+   "q": "Vì sao bầu trời có màu xanh?",
+   "kind": "qa",
+   "ask_s": 5.95,
+   "tts_s": 1.35
+  },
+  {
+   "q": "Fansipan cao bao nhiêu mét?",
+   "kind": "qa",
+   "ask_s": 10.58,
+   "tts_s": 1.17
+  },
+  {
+   "q": "Hành tinh nào gần Mặt Trời nhất?",
+   "kind": "qa",
+   "ask_s": 4.96,
+   "tts_s": 0.86
+  },
+  {
+   "q": "Truyện Kiều do ai sáng tác?",
+   "kind": "qa",
+   "ask_s": 10.84,
+   "tts_s": 0.78
+  },
+  {
+   "q": "Sông nào dài nhất Việt Nam?",
+   "kind": "qa",
+   "ask_s": 8.19,
+   "tts_s": 0.49
+  },
+  {
+   "q": "Trận Bạch Đằng năm 938 do ai chỉ huy?",
+   "kind": "qa",
+   "ask_s": 10.17,
+   "tts_s": 1.53
+  },
+  {
+   "q": "Công thức hóa học của nước là gì?",
+   "kind": "qa",
+   "ask_s": 7.26,
+   "tts_s": 0.99
+  },
+  {
+   "q": "Quang Trung đại phá quân Thanh vào năm nào?",
+   "kind": "qa",
+   "ask_s": 10.84,
+   "tts_s": 1.57
+  },
+  {
+   "q": "Vịnh Hạ Long nằm ở tỉnh nào?",
+   "kind": "qa",
+   "ask_s": 7.69,
+   "tts_s": 0.97
+  },
+  {
+   "q": "Whisper là mô hình của công ty nào?",
+   "kind": "qa",
+   "ask_s": 11.45,
+   "tts_s": 1.14
+  }
+ ]
+}

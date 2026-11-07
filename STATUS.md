@@ -83,8 +83,21 @@ thì từ chối. Đầu cuối: từ chối đúng 5 → 16/30, từ chối nh�
 0,0015) vì cổng dùng điểm của đoạn `_pick` chọn, không phải hạng nhất. 5/9 câu bị từ chối thêm vốn đã trả lời sai. Ngưỡng chọn trên chính
 250 câu đo; một số câu nhãn "không trả lời được" thực ra có đáp án trong Wikipedia (tháp Eiffel, mặt trăng Sao Hỏa, phiên bản Python).
 14 câu ngoài kho vẫn bị trả lời (vd. "Ả vô địch World Cup 2030") vì điểm > 1.
+**Tín hiệu của chính bộ đọc** (`reports/reader_signal_analysis.json`, `scripts/collect_reader_signals.py` + `tune_reader_signals.py`): điểm span
+và cờ "không có đáp án" phân biệt được câu có đáp án / ngoài kho (AUROC 0,83 / 0,73, điểm reranker 0,875) nhưng lưới 192 tổ hợp không có
+tổ hợp nào hơn riêng ngưỡng reranker trong ngân sách F1 0,01; chọn đoạn theo điểm bộ đọc làm F1 span thô tụt 0,499 → 0,468. Kết quả âm, giữ cổng reranker.
+**Reranker INT8** (`KB_RERANKER_INT8=1`, mặc định; `reports/reranker_speed.json`): 100 câu test đo xoay vòng, đoạn đúng top-1/top-3 giữ nguyên
+70/71 so với FP32, nhanh 2,1× (5,44 vs 11,43 s/câu gồm truy xuất bước đầu); giới hạn 256 token thêm mất 1–2 câu nên không dùng. Đầu cuối 220+30 câu thì
+INT8 mất 0,009 F1 (0,4512 → 0,4421), từ chối nhầm 17 → 22/220, từ chối đúng giữ 16/30 (`llm_assist_off_int8_gate1.json`); ngưỡng 0,5 không bù lại
+(0,4431, 19/220, 15/30; `llm_assist_off_int8_gate05.json`). Chênh 0,009 nằm trong nhiễu mẫu nhưng nhất quán; giữ INT8 vì độ trễ, FP32 chỉ cần `KB_RERANKER_INT8=0`.
+**Bộ đọc trên đoạn đúng, theo nguồn** (2.716 câu test, `reports/reader_gold_*.json`): ViT5 giai đoạn 2 EM 40,68 / F1 66,56 (ViQuAD 2.327 câu: 45,90 / 72,95;
+ViMMRC 389 câu: 9,51 / 28,31); vi-mrc-large EM 73,93 / F1 81,26 (ViQuAD 84,83 / 90,82; ViMMRC 8,74 / 24,07). Ưu thế của bộ đọc span dồn vào câu ViQuAD
+(đáp án là cụm trích sẵn); ở ViMMRC nó kém ViT5. EM 40,68 của lần chạy này lệch 0,37 so với 41,05 ghi trước đó (F1 66,56 vs 66,55); nguyên nhân chưa xác định (khác quy trình đo: client suy luận so với vòng đánh giá của train.py).
 Mức cộng chọn trên chính 400 câu đo nên hơi lạc quan. Giá: reranker ~4,5 s/câu trên CPU. Xếp hạng chung bằng cosine cho cả hai tầng: B 20,7 nhưng A tụt còn 32–45, không dùng.
-Độ trễ Docker CPU (`OMP_NUM_THREADS=4`): STT ~3 s, truy xuất + reranker ~6 s, ViT5 ~1,4 s, Matcha ~1,3 s → tổng khoảng 12 s/câu. Tắt reranker (`KB_RERANKER=`): truy xuất ~0,1–1,7 s (tổng ~6 s), độ chính xác thấp hơn.
+Độ trễ Docker CPU (`OMP_NUM_THREADS=4`), đo lại 2026-11-08 (`reports/latency_docker.json`, `scripts/measure_latency.py`, trung vị 23 lần, máy đang chạy việc huấn luyện nên
+số tuyệt đối bị thổi phồng, chỉ so sánh giữa các cấu hình): hỏi–đáp (truy xuất + xếp hạng lại + đọc + soạn câu) / TTS — cấu hình cũ ViT5 + reranker FP32 không cổng 8,31 / 1,02 s
+→ tổng ≈ 12,3 s; **mặc định hiện tại (span + INT8 + cổng) 6,46 / 1,16 s → ≈ 10,6 s** (−14%); tắt reranker (`KB_RERANKER=`) 1,07 / 1,06 s → ≈ 5,1 s, độ chính xác thấp hơn.
+Tổng cộng thêm STT ≈ 3 s (số đo cũ, chặng này không đổi, chưa đo lại). Số đo có gồm các lời gọi trợ lý LLM Ollama của host khi nó sẵn sàng (nhiễu khi GPU bận).
 
 Đã thử, không áp dụng: đọc top-3 lấy điểm cao nhất (kém hơn),
 `question_chunks` lúc suy luận (không tăng). STT: Whisper-small-vi-50h (`eval_stt.py`, WER 8,1% trên 100 câu dev đọc bằng gTTS).

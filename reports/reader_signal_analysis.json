@@ -1,0 +1,10 @@
+{
+  "what": "Can the reader's own confidence replace or improve the reranker-score refusal gate and the passage choice? Offline grid over scripts/tune_reader_signals.py on reports/reader_signals.json (220 answerable + 30 out-of-base questions; top-3 reranked passages, span + score + 'null wins' flag from the span reader for each).",
+  "auroc_answerable_vs_out_of_base": {"rerank_score_top1": 0.875, "reader_span_score_top1": 0.827, "reader_no_answer_flag_top1": 0.725},
+  "no_answer_flag_rate_top1": {"answerable": "33/220", "out_of_base": "18/30"},
+  "raw_span_f1_220_answerable_by_passage_choice": {"top1 (current)": 0.4990, "highest reader score": 0.4684, "rerank + 0.25*logit(reader)": 0.4957, "rerank + 0.5*logit(reader)": 0.4871, "rerank + 1.0*logit(reader)": 0.4767, "rerank + 2.0*logit(reader)": 0.4764},
+  "grid": "192 combinations (passage choice x rerank threshold {none,0,1,2} x reader-score threshold {0..0.5} x use no-answer flag), constraint F1 >= baseline - 0.01",
+  "result": "Only the rerank-score threshold appears among the configurations that stay within the F1 budget (t1=1: 13/30 refused for -0.008 raw F1; t1=0: 10/30). No combination with a reader-score threshold or the no-answer flag does better. Half-split check: chosen on even questions, evaluated on odd ones, 5/14 strict out-of-base refused with 7/110 false refusals.",
+  "conclusion": "Reader confidence is informative but weaker than, and redundant with, the reranker score; keep the reranker-score gate (tau_r = 1.0).",
+  "caveat": "Raw span F1 here is not the spoken-sentence F1 of the end-to-end table; the 30 out-of-base questions include four that Wikipedia can answer, so 'strict' counts use 26."
+}

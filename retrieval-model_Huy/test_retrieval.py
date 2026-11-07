@@ -129,6 +129,20 @@ class RetrieverTests(unittest.TestCase):
 
 
 class RerankTests(unittest.TestCase):
+    def test_quantize_reranker_swaps_linear_layers_in_place(self):
+        import torch
+        from kb_retriever import quantize_reranker
+
+        class Fake:
+            model = torch.nn.Sequential(torch.nn.Linear(8, 8), torch.nn.ReLU(), torch.nn.Linear(8, 1))
+
+        fake, before = Fake(), None
+        before = fake.model(torch.ones(2, 8)).detach()
+        self.assertTrue(quantize_reranker(fake))
+        self.assertIn("quantized", type(fake.model[0]).__module__)
+        self.assertTrue(torch.allclose(fake.model(torch.ones(2, 8)), before, atol=0.1))
+        self.assertFalse(quantize_reranker(object()))  # no .model: falls back instead of raising
+
     def test_tier1_bonus_does_not_beat_saturated_wiki_score(self):
         from kb_retriever import TieredRetriever
 

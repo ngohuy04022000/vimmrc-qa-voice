@@ -25,6 +25,8 @@ services:
       - DIALOGUE_MIN_RERANK=${DIALOGUE_MIN_RERANK-1.0}
       # cross-encoder over both tiers: better answers, but ~4-5 s extra per question on CPU; empty = off
       - KB_RERANKER=${KB_RERANKER-BAAI/bge-reranker-v2-m3}
+      # INT8 dynamic quantization of the reranker: same gold passages as FP32 at ~2x speed (reports/reranker_speed.json); 0 = FP32
+      - KB_RERANKER_INT8=${KB_RERANKER_INT8:-1}
       # LLM Ollama trên máy chủ kiểm tra đoạn/đáp án (dialogue-manager_Huy/llm_assist.py); không chạy thì tự bỏ qua
       - OLLAMA_BASE=${OLLAMA_BASE:-http://host.docker.internal:11434}
       - LLM_ASSIST=${LLM_ASSIST:-1}

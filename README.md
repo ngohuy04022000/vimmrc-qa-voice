@@ -1,4 +1,4 @@
-# ViMMRC Voice Q&A
+﻿# ViMMRC Voice Q&A
 
 Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC 2.0](https://huggingface.co/datasets/uitnlp/vimmrc2.0), mở rộng thêm khả năng **giao tiếp bằng giọng nói**: Speech-to-Text (STT) đầu vào và Text-to-Speech (TTS) đầu ra.
 
@@ -6,7 +6,7 @@ Dự án Hỏi–Đáp (Q&A) tiếng Việt dựa trên bộ dữ liệu [ViMMRC
 
 ## Chạy hệ thống tích hợp
 
-Backend FastAPI phục vụ STT (Whisper), retrieval lai BM25 + dense + reranker bge-reranker-v2-m3 (kho hai tầng: 5.879 đoạn ViMMRC + ViQuAD + thẻ tri thức và 1,48 triệu đoạn Wikipedia tiếng Việt), MRC (ViT5 sinh câu trả lời tự do), và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
+Backend FastAPI phục vụ STT (Whisper), retrieval lai BM25 + dense + reranker bge-reranker-v2-m3 (kho hai tầng: 5.879 đoạn ViMMRC + ViQuAD + thẻ tri thức và 1,48 triệu đoạn Wikipedia tiếng Việt), MRC (mặc định bộ đọc trích span `vi-mrc-large`, ViT5 sinh câu trả lời tự do là phương án thay thế), cổng từ chối theo điểm reranker (`DIALOGUE_MIN_RERANK`) và TTS (Matcha-TTS, VITS, Edge-TTS, gTTS) qua cổng `8000`.
 
 Từ thư mục gốc:
 
@@ -59,7 +59,7 @@ Mở trình duyệt tại `http://localhost:4200`.
 python -m pytest -v
 ```
 
-Hiện có **125 bài kiểm thử tự động** (đo bằng `pytest -q`, Python 3.11) phủ STT, Retrieval, Context Selection, MRC (ViT5), TTS (normalizer, VITS, Matcha, Edge, gTTS), tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), Intent Router, bộ câu hỏi ngoài dataset, Web UI và FastAPI end-to-end (`/api/ask`).
+Hiện có **138 bài kiểm thử tự động, đạt cả 138** (chạy `pytest -q` ngày 2026-11-08, Python 3.11) phủ STT, Retrieval, Context Selection, MRC (ViT5), TTS (normalizer, VITS, Matcha, Edge, gTTS), tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), Intent Router, bộ câu hỏi ngoài dataset, Web UI và FastAPI end-to-end (`/api/ask`).
 
 ### Môi trường cục bộ (không dùng Docker)
 
@@ -158,7 +158,7 @@ python -X utf8 dialogue-manager_Huy/chat_cli.py --debug
 |--------------------|---------------------------------------------|--------------------------------------------|
 | STT                | Audio → Text                               | Whisper, FPT.AI STT, Google STT           |
 | Retrieval          | Chọn đoạn văn liên quan (nếu nhiều passage) | BM25 + dense (multilingual-e5-small) + reranker bge-reranker-v2-m3 |
-| MRC Model          | Trả lời câu hỏi dựa trên passage           | ViT5-base fine-tune trên ViMMRC 2.0 + UIT-ViQuAD2.0 |
+| MRC Model          | Trả lời câu hỏi dựa trên passage           | `vi-mrc-large` (trích span, mặc định) · ViT5-base fine-tune trên ViMMRC 2.0 + UIT-ViQuAD2.0 (thay thế) |
 | TTS                | Text → Audio                                | FPT.AI TTS, Google TTS, Coqui TTS, VAIS   |
 | Giao diện          | Ghi âm & phát audio                         | Web app (mic + speaker)                   |
 
@@ -172,7 +172,8 @@ python -X utf8 dialogue-manager_Huy/chat_cli.py --debug
 - [x] Triển khai hệ thống TTS đa engine tiếng Việt (Matcha-TTS, VITS MMS, Edge-TTS, gTTS) có tự động fallback và chuẩn hóa văn bản.
 - [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và pipeline đầu-cuối CLI.
 - [x] Ghép toàn diện STT, Retrieval, MRC, TTS và giao diện web Angular vào API Server FastAPI thống nhất.
-- [x] Tự động hóa bộ kiểm thử tích hợp (125 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
+- [x] Tự động hóa bộ kiểm thử tích hợp (138 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
+- [x] Đối sánh 8 bộ đọc trên cùng đoạn văn (`scripts/eval_readers.py`) và chuyển bộ đọc mặc định sang `vi-mrc-large`; cộng điểm KB trên logit, cổng từ chối, reranker INT8.
 
 ## 7. Phân công
 

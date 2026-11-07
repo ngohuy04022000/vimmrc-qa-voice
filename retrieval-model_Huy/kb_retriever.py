@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import unicodedata
 from pathlib import Path
 
@@ -215,8 +216,26 @@ def load_any(path: str | Path, wiki_dir: str | Path | None = None, ratio: float 
         if reranker:
             from sentence_transformers import CrossEncoder
             ce = CrossEncoder(reranker, max_length=512, device="cpu")
+            if os.getenv("KB_RERANKER_INT8", "1") != "0":
+                quantize_reranker(ce)
         return TieredRetriever(primary, wiki, ratio, dense, ce)
     return primary
+
+
+def quantize_reranker(ce) -> bool:
+    """Dynamic INT8 on the cross-encoder's Linear layers, in place (a copy breaks CrossEncoder.predict).
+
+    On 100 test questions it kept the gold passage in the same 55/56 top-1/top-3 as FP32 at 2.15x the speed
+    (5.31 s vs 11.43 s per question); a 256-token limit on top lost 2 more (reports/reranker_speed.json).
+    """
+    try:
+        import torch
+        torch.quantization.quantize_dynamic(ce.model, {torch.nn.Linear}, dtype=torch.qint8, inplace=True)
+        return True
+    except Exception as e:  # keep FP32 rather than failing to start
+        import warnings
+        warnings.warn(f"reranker INT8 quantization failed, keeping FP32: {e}")
+        return False
 
 
 if __name__ == "__main__":

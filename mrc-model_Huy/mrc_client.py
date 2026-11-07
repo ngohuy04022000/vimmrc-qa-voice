@@ -68,6 +68,39 @@ class MRCClient:
         return [self.tokenizer.decode(seq, skip_special_tokens=True).strip() for seq in tokens]
 
 
+class SpanReaderClient:
+    """Extractive reader (XLM-R/RoBERTa QA head, e.g. nguyenvulebinh/vi-mrc-large): returns a span of the passage.
+
+    On the 220-question reader bench it beat the ViT5 checkpoints (composed F1 0.468 vs 0.446; 0.510 vs 0.368 on
+    'why' questions) at ~0.6 s/question on CPU (reports/reader_bench.json).
+    """
+
+    def __init__(self, model_path: str | Path, *, max_answer_len: int = 48, **_ignored):
+        from transformers import pipeline
+
+        path = Path(model_path)
+        if not (path / "config.json").exists():
+            raise FileNotFoundError(f"No span-reader checkpoint at {path}")
+        self.max_answer_len = max_answer_len
+        self.qa = pipeline("question-answering", model=str(path), tokenizer=str(path), device=-1)
+
+    def answer_question(self, question: str, passage: str) -> str:
+        if not passage.strip():
+            return ""
+        out = self.qa(question=question, context=passage, max_seq_len=512, doc_stride=128,
+                      max_answer_len=self.max_answer_len)
+        return (out.get("answer") or "").strip() if out else ""
+
+
+def load_reader(model_path: str | Path, **kwargs):
+    """SpanReaderClient for *ForQuestionAnswering checkpoints, MRCClient (seq2seq ViT5) otherwise."""
+    config = Path(model_path) / "config.json"
+    archs = json.loads(config.read_text(encoding="utf-8")).get("architectures", []) if config.exists() else []
+    if any("QuestionAnswering" in a for a in archs):
+        return SpanReaderClient(model_path)
+    return MRCClient(model_path, **kwargs)
+
+
 class LexicalBaselineClient:
     """Offline smoke demo only: return the passage sentence matching question words."""
 

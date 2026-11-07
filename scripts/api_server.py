@@ -42,7 +42,7 @@ for folder in (
 
 from retrieval_client import Retriever
 from kb_retriever import load_any
-from mrc_client import LexicalBaselineClient, MRCClient
+from mrc_client import LexicalBaselineClient, MRCClient, load_reader
 from intent_router import ConversationalIntentRouter, polish_answer, rerank_hits
 from dialogue import DialogueManager
 from llm_assist import LLMAssist
@@ -172,7 +172,7 @@ def get_qa_services() -> tuple[Retriever, object]:
             if checkpoint and checkpoint.lower() in ("lexical", "baseline", "none"):
                 _reader = LexicalBaselineClient()
             elif checkpoint and Path(checkpoint).exists():
-                _reader = MRCClient(checkpoint, context_strategy=os.getenv("MRC_CONTEXT_STRATEGY", "question_chunks"))
+                _reader = load_reader(checkpoint, context_strategy=os.getenv("MRC_CONTEXT_STRATEGY", "question_chunks"))
             else:
                 default_ckpt = find_default_checkpoint()
                 if default_ckpt:
@@ -209,13 +209,14 @@ def health() -> dict:
     else:
         index_source = "demo_corpus"
 
-    is_vit5 = reader.__class__.__name__ == "MRCClient"
+    trained_reader = reader.__class__.__name__ in ("MRCClient", "SpanReaderClient")
     dist_browser = ROOT / "web-interface_Luong" / "dist" / "web-interface" / "browser"
     return {
         "status": "ok",
         "retrieval": index_source,
         "retrieval_passages": len(retriever.passages),
-        "reader": "trained_vit5" if is_vit5 else "lexical_baseline",
+        "reader": ("span_reader" if reader.__class__.__name__ == "SpanReaderClient" else "trained_vit5")
+        if trained_reader else "lexical_baseline",
         "dialogue": True,
         "llm_assist": _assist.available(),
         "tts_engine": os.getenv("TTS_ENGINE", "matcha"),

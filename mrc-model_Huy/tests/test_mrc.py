@@ -51,6 +51,19 @@ def test_baseline_is_available_without_model():
         MRCClient(ROOT / "missing-checkpoint")
 
 
+def test_load_reader_picks_client_by_architecture(tmp_path, monkeypatch):
+    import mrc_client
+
+    seen = {}
+    monkeypatch.setattr(mrc_client, "SpanReaderClient", lambda p: seen.setdefault("span", p))
+    monkeypatch.setattr(mrc_client, "MRCClient", lambda p, **kw: seen.setdefault("seq2seq", p))
+    for name, arch in (("qa", "XLMRobertaForQuestionAnswering"), ("t5", "T5ForConditionalGeneration")):
+        (tmp_path / name).mkdir()
+        (tmp_path / name / "config.json").write_text(json.dumps({"architectures": [arch]}), encoding="utf-8")
+        mrc_client.load_reader(tmp_path / name)
+    assert seen == {"span": tmp_path / "qa", "seq2seq": tmp_path / "t5"}
+
+
 def test_flatten_articles_accepts_free_form_answer_texts():
     """UIT-ViQuAD2.0-shaped article: no options/answers, has answer_texts per question."""
     article = {

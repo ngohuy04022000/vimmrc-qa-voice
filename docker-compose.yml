@@ -10,7 +10,8 @@ services:
     environment:
       - WHISPER_DEVICE=cpu
       - TTS_ENGINE=matcha
-      - MRC_CHECKPOINT=/app/mrc-model_Huy/checkpoints/vit5-combined-cont
+      # span reader nguyenvulebinh/vi-mrc-large (reports/reader_bench.json); ViT5: .../checkpoints/vit5-combined-cont
+      - MRC_CHECKPOINT=${MRC_CHECKPOINT:-/app/mrc-model_Huy/checkpoints/vi-mrc-large}
       - TRANSFORMERS_NO_TF=1
       # torch defaults to one thread per core; on a shared CPU that oversubscribes
       # and ViT5 answers took 25-300 s instead of ~4 s (measured 20 vs 4 threads)

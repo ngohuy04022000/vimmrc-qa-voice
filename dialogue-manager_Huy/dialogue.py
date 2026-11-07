@@ -396,7 +396,12 @@ REALTIME = re.compile(r"\b(?:hôm nay|ngày mai|tối nay|sáng nay|hiện nay|h
 class DialogueManager:
     def __init__(self, retriever, reader=None, *, top_k: int = 3, min_support: float = 0.34,
                  max_sessions: int = 1000, session_ttl: float = 6 * 3600, seed: int | None = None,
-                 assist=None, assist_gate: bool = True, assist_verify: bool = True):
+                 assist=None, assist_gate: bool = True, assist_verify: bool = True,
+                 min_rerank: float | None = None):
+        # Điểm cross-encoder (logit, đã gồm +bonus tầng 1) của đoạn được chọn thấp hơn mức này thì từ chối.
+        # Chỉ đặt khi retriever có reranker; điểm BM25/cosine không so được. Giá trị 1.0: từ chối thêm 9/30 câu
+        # ngoài kho (đang bị trả lời vô nghĩa) với giá F1 -0,0015 (reports/rerank_confidence_gate.json).
+        self.min_rerank = min_rerank
         self.assist = assist  # LLMAssist hoặc None; None/không sẵn sàng = chạy như trước
         self.assist_gate = assist_gate
         self.assist_verify = assist_verify
@@ -576,6 +581,9 @@ class DialogueManager:
         hit, sup = self._pick(question, hits, qtype)
         base = {"resolved_question": question, "qtype": qtype}
         if hit is None or (sup < self.min_support and len(set(content_terms(question))) >= 2 and not passage):
+            return dict(base, answer=UNKNOWN_ANSWER, kind="unknown", passage=None, support=round(sup, 3))
+        if (self.min_rerank is not None and not passage and not hit.get("carried_over")
+                and (hit.get("score") if hit.get("score") is not None else self.min_rerank) < self.min_rerank):
             return dict(base, answer=UNKNOWN_ANSWER, kind="unknown", passage=None, support=round(sup, 3))
         q_ents = {t for span in entity_spans(question) for t in words(_strip_classifier(span))}
         if q_ents and not passage:

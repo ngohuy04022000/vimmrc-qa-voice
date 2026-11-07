@@ -1,0 +1,25 @@
+{
+  "what": "DialogueManager.min_rerank: refuse when the reranker logit of the chosen passage (incl. +3.0 tier-1 bonus) is below the threshold",
+  "threshold_chosen": 1.0,
+  "tuned_on": "the same 220 answerable + 30 unanswerable questions it is measured on (optimistic)",
+  "top1_score_quantiles_p10_median_p90": {
+    "answerable_gold_in_passage_n70": [4.53, 7.79, "p75=8.79"],
+    "answerable_other_n150": [2.37, 8.19, "p75=9.52"],
+    "unanswerable_n30": [-3.47, 1.47, "p75=4.29"]
+  },
+  "offline_simulation_vs_reports/llm_assist_off_vimrc2.json": {
+    "no_gate": {"f1_all": 0.4577, "answerable_refused": 8, "unanswerable_refused": 5},
+    "t=0": {"f1_all": 0.4567, "answerable_refused": 11, "unanswerable_refused": 11},
+    "t=1": {"f1_all": 0.4562, "answerable_refused": 14, "unanswerable_refused": 14},
+    "t=2": {"f1_all": 0.4546, "answerable_refused": 18, "unanswerable_refused": 17},
+    "t=3": {"f1_all": 0.4473, "answerable_refused": 23, "unanswerable_refused": 18}
+  },
+  "end_to_end_measured": {
+    "no_gate": {"f1_all": 0.4583, "false_refusal": "8/220", "correct_refusal": "5/30", "report": "llm_assist_off_vimrc2.json"},
+    "t=1.0": {"f1_all": 0.4512, "false_refusal": "17/220", "correct_refusal": "16/30", "report": "llm_assist_off_gate1.json"}
+  },
+  "caveats": [
+    "Several 'unanswerable' labels are answerable from Wikipedia (Eiffel height, Mars moons, Python version, sulfuric acid), so correct_refusal understates the quality of those answers.",
+    "Simulation used top-1 scores; the gate uses the passage chosen by _pick, hence the larger measured F1 drop (0.0071 vs 0.0015)."
+  ]
+}

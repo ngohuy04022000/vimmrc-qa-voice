@@ -189,6 +189,18 @@ class DialogueTests(unittest.TestCase):
         self.assertIn("3.143", r["answer"])
         self.assertIn("Còn ý Bitcoin được tạo ra năm nào", r["answer"])
 
+    def test_low_rerank_score_refuses_instead_of_guessing(self):
+        class Scored:
+            """Retriever giả có điểm reranker: Seed + score cố định."""
+            def __init__(self, score): self.inner, self.score = Retriever(SEED), score
+            passages = property(lambda self: self.inner.passages)
+            def search(self, q, top_k=5): return [dict(h, score=self.score) for h in self.inner.search(q, top_k)]
+
+        q = "Thủ đô của Nhật Bản là gì?"
+        self.assertEqual(DialogueManager(Scored(0.5), min_rerank=1.0, seed=0).respond(q, "r")["kind"], "unknown")
+        self.assertEqual(DialogueManager(Scored(4.0), min_rerank=1.0, seed=0).respond(q, "r")["kind"], "qa")
+        self.assertEqual(DialogueManager(Scored(0.5), seed=0).respond(q, "r")["kind"], "qa")  # tắt = như cũ
+
     def test_multiple_choice_artifact_not_spoken(self):
         class MCQReader:
             def answer_question(self, q, p): return "Cả A, B, C đều đúng."

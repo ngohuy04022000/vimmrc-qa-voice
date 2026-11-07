@@ -98,6 +98,7 @@ def main() -> None:
     ap.add_argument("--sample", type=int, default=100)
     ap.add_argument("--configs", default="off,gate,verify,both")
     ap.add_argument("--out", default=str(ROOT / "reports" / "llm_assist_ab.json"))
+    ap.add_argument("--min-rerank", type=float, default=None, help="cổng điểm reranker (DialogueManager.min_rerank)")
     args = ap.parse_args()
 
     retriever, reader = get_qa_services()
@@ -110,7 +111,7 @@ def main() -> None:
             "verify": dict(assist=assist, assist_gate=False), "both": dict(assist=assist)}
     results = []
     for name in args.configs.split(","):
-        res = run(name, DialogueManager(retriever, reader, **cfgs[name]), ans, UNANSWERABLE)
+        res = run(name, DialogueManager(retriever, reader, min_rerank=args.min_rerank, **cfgs[name]), ans, UNANSWERABLE)
         results.append(res)
         print({k: v for k, v in res.items() if k not in ("answerable", "unanswerable")}, flush=True)
     Path(args.out).write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")

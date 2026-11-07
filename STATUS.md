@@ -77,6 +77,11 @@ Riêng 70 câu mà đoạn có đáp án: vi-mrc-large 0,900 so với 0,681 củ
 **Đang dùng vi-mrc-large** (0,6 s/câu CPU, trích span nên đôi khi ngắn). Đầu cuối 220 câu: F1 0,4583 (ViT5 0,4424), từ chối nhầm 8/220,
 từ chối đúng 5/30 (`reports/llm_assist_off_vimrc.json`). Chênh lệch ~0,02 trên 220 câu chưa chắc có ý nghĩa thống kê, và mô hình
 được huấn luyện trên ViQuAD mà kho tier-1 chứa đoạn ViQuAD nên chưa loại trừ được rò rỉ đoạn văn.
+**Cổng điểm reranker** (`DIALOGUE_MIN_RERANK=1.0`, `reports/rerank_confidence_gate.json`): đoạn được chọn có điểm cross-encoder < 1,0
+thì từ chối. Đầu cuối: từ chối đúng 5 → 16/30, từ chối nhầm 8 → 17/220, F1 0,4583 → 0,4512. Cái giá F1 lớn hơn giả lập (0,0071 so với
+0,0015) vì cổng dùng điểm của đoạn `_pick` chọn, không phải hạng nhất. 5/9 câu bị từ chối thêm vốn đã trả lời sai. Ngưỡng chọn trên chính
+250 câu đo; một số câu nhãn "không trả lời được" thực ra có đáp án trong Wikipedia (tháp Eiffel, mặt trăng Sao Hỏa, phiên bản Python).
+14 câu ngoài kho vẫn bị trả lời (vd. "Ả vô địch World Cup 2030") vì điểm > 1.
 Mức cộng chọn trên chính 400 câu đo nên hơi lạc quan. Giá: reranker ~4,5 s/câu trên CPU. Xếp hạng chung bằng cosine cho cả hai tầng: B 20,7 nhưng A tụt còn 32–45, không dùng.
 Độ trễ Docker CPU (`OMP_NUM_THREADS=4`): STT ~3 s, truy xuất + reranker ~6 s, ViT5 ~1,4 s, Matcha ~1,3 s → tổng khoảng 12 s/câu. Tắt reranker (`KB_RERANKER=`): truy xuất ~0,1–1,7 s (tổng ~6 s), độ chính xác thấp hơn.
 

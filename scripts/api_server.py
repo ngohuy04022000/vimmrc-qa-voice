@@ -192,8 +192,11 @@ def get_dialogue() -> DialogueManager:
         retriever, reader = get_qa_services()
         with _service_lock:
             if _dialogue is None:
+                min_rerank = os.getenv("DIALOGUE_MIN_RERANK", "1.0")
                 _dialogue = DialogueManager(retriever, reader, assist=_assist,
-                                            min_support=float(os.getenv("DIALOGUE_MIN_SUPPORT", "0.34")))
+                                            min_support=float(os.getenv("DIALOGUE_MIN_SUPPORT", "0.34")),
+                                            min_rerank=float(min_rerank) if min_rerank and getattr(
+                                                retriever, "reranker", None) else None)
     return _dialogue
 
 

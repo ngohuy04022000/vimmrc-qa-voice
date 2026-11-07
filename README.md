@@ -21,7 +21,7 @@ python -m uvicorn scripts.api_server:app --host 127.0.0.1 --port 8000
   ("còn Hàn Quốc thì sao?", "ông ấy sinh năm nào?"), câu so sánh, câu ghép nhiều vế, câu đúng/sai, tại sao/như thế nào,
   tóm tắt đoạn văn dán vào; trả lời thành câu trọn vẹn cho TTS và nói "chưa tìm thấy" thay vì đoán. Chi tiết và kết quả
   đánh giá trên hơn 200 câu hỏi/hội thoại ngoài dataset: [dialogue-manager_Huy/README.md](dialogue-manager_Huy/README.md).
-- Hệ thống tự động nhận diện kho bài đọc ViMMRC tại `data/vimmrc_index.json` (hoặc biến `QA_INDEX`); chưa có thì dùng kho mẫu 75 đoạn.
+- Kho tri thức mặc định là `data/kb_index.json` (tầng 1, 5.879 đoạn) cùng `data/kb_wiki_full` (tầng 2, Wikipedia); biến `QA_INDEX` ghi đè bằng một chỉ mục khác. Thiếu cả hai thì dùng kho mẫu 75 đoạn. `data/vimmrc_index.json` (chỉ 552 bài ViMMRC) chỉ còn là phương án dự phòng và các script đánh giá cũ; tệp này không nằm trong repo, dựng lại bằng `retrieval-model_Huy/build_kb.py`.
 - Mô hình đọc hiểu nạp qua biến môi trường `MRC_CHECKPOINT` (Docker mặc định dùng `mrc-model_Huy/checkpoints/vi-mrc-large`, mô hình trích span `nguyenvulebinh/vi-mrc-large`; ViT5 `vit5-combined-cont` vẫn dùng được bằng cách đặt biến này); không đặt thì dùng bộ trích câu khớp nhất làm dự phòng. Mô hình này có giấy phép CC-BY-NC-4.0 (chỉ phi thương mại); ViT5 là lựa chọn thay thế nếu cần dùng thương mại. Checkpoint không nằm trong git: tải bằng `hf download nguyenvulebinh/vi-mrc-large --local-dir mrc-model_Huy/checkpoints/vi-mrc-large` (cần `config.json`, `model.safetensors`, tokenizer).
 - Phân hệ TTS tự động chuẩn hóa văn bản tiếng Việt (số, ngày tháng), hỗ trợ đa engine (`matcha`, `vits`, `edge`, `gtts`) với cơ chế tự động chuyển dự phòng thông minh (fallback).
 - Giao diện web Angular đã được build sẵn tại `web-interface_Luong/dist/` và được phục vụ trực tiếp tại `http://127.0.0.1:8000/`.
@@ -80,8 +80,8 @@ Web (`web-interface_Luong`): bấm micro rồi nói; hệ thống tự dừng th
 ## Chạy CLI Pipeline đầu-cuối
 
 ```powershell
-# Hỏi đáp tự do với ViT5 đã fine-tune + tổng hợp giọng nói
-python -X utf8 scripts/qa_pipeline.py --index data/vimmrc_index.json --model mrc-model_Huy/checkpoints/vit5-combined-cont --question "Thủ đô của Việt Nam là gì?" --tts
+# Hỏi đáp tự do (bộ đọc ViT5 qua --model; API/Docker mặc định dùng vi-mrc-large) + tổng hợp giọng nói
+python -X utf8 scripts/qa_pipeline.py --index data/kb_index.json --model mrc-model_Huy/checkpoints/vit5-combined-cont --question "Thủ đô của Việt Nam là gì?" --tts
 
 # Chạy demo offline
 python -X utf8 scripts/qa_pipeline.py --demo --question "Cà phê trồng ở đâu?"
@@ -165,7 +165,7 @@ python -X utf8 dialogue-manager_Huy/chat_cli.py --debug
 ## 6. Tiến độ
 
 - [x] Tải và kiểm tra schema dữ liệu ViMMRC 2.0 (5.273 câu) và gộp với UIT-ViQuAD2.0 (21.891 câu) thành 27.164 câu, chia theo bài đọc: train 21.733 / dev 2.715 / test 2.716.
-- [x] Chuẩn bị Retrieval BM25, lập chỉ mục toàn bộ bài đọc (`data/vimmrc_index.json`).
+- [x] Chuẩn bị Retrieval BM25, lập chỉ mục tầng 1 (`data/kb_index.json`, 5.879 đoạn).
 - [x] Chuẩn bị mã fine-tune ViT5 và API MRC độc lập.
 - [x] Fine-tune ViT5 sinh câu trả lời tự do (test: EM 41,05%, token F1 66,55% (bộ gộp, test 2.716 câu)).
 - [x] Tích hợp STT tiếng Việt (Whisper-small fine-tune LoRA 50h VietSpeech → CTranslate2 int8, WER 13,77% / CER 6,67% trên 1.802 mẫu test; bộ đệm lazy-load).
@@ -182,5 +182,5 @@ python -X utf8 dialogue-manager_Huy/chat_cli.py --debug
 | Huỳnh Công Lương | Speech-to-Text (STT) | `speech-to-text_Luong/` |
 | Trương Hoàng Duy | Text-to-Speech (TTS) | `text-to-speech_Duy/` |
 | Ngô Trí Huy | Retrieval model (+ tích hợp backend, kho tri thức) | `retrieval-model_Huy/` |
-| Ngô Trí Huy | MRC model (ViT5 fine-tune trên ViMMRC 2.0 + UIT-ViQuAD2.0) | `mrc-model_Huy/` |
+| Ngô Trí Huy | MRC model (ViT5 fine-tune trên ViMMRC 2.0 + UIT-ViQuAD2.0; đối sánh và chọn bộ đọc) | `mrc-model_Huy/` |
 | Huỳnh Công Lương | Giao diện web (mic + speaker) và Docker | `web-interface_Luong/` |

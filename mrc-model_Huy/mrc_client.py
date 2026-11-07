@@ -89,7 +89,8 @@ class SpanReaderClient:
             return ""
         out = self.qa(question=question, context=passage, max_seq_len=512, doc_stride=128,
                       max_answer_len=self.max_answer_len)
-        return (out.get("answer") or "").strip() if out else ""
+        # spans often keep the clause punctuation ("cuối năm 1945,"), which then leaks into the spoken sentence
+        return (out.get("answer") or "").strip(" \t\n,;:-–—") if out else ""
 
 
 def load_reader(model_path: str | Path, **kwargs):

@@ -64,6 +64,16 @@ def test_load_reader_picks_client_by_architecture(tmp_path, monkeypatch):
     assert seen == {"span": tmp_path / "qa", "seq2seq": tmp_path / "t5"}
 
 
+def test_span_reader_strips_clause_punctuation():
+    from mrc_client import SpanReaderClient
+
+    client = SpanReaderClient.__new__(SpanReaderClient)  # skip loading the 2 GB model
+    client.max_answer_len = 48
+    client.qa = lambda **kw: {"answer": " cuối năm 1945, "}
+    assert client.answer_question("Khi nào?", "Chính phủ được thành lập cuối năm 1945, sau đó.") == "cuối năm 1945"
+    assert client.answer_question("Khi nào?", "  ") == ""
+
+
 def test_flatten_articles_accepts_free_form_answer_texts():
     """UIT-ViQuAD2.0-shaped article: no options/answers, has answer_texts per question."""
     article = {

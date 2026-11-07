@@ -18,11 +18,8 @@
 | `Nhom09_BaocaoCK_ML.docx` | Thư mục gốc | 1,3 MB | Báo cáo khoa học cuối kỳ hoàn chỉnh của Huỳnh Công Lương về Phân hệ STT (Whisper-small LoRA 20h & 50h, CTranslate2, VAD, 15 bảng số liệu đối sánh). |
 | `Duy_1_TT15-20p_Bao_Cao_Matcha_TTS.docx` | Thư mục gốc | 2,3 MB | Báo cáo khoa học chuyên sâu của Trương Hoàng Duy về Phân hệ TTS (Matcha-TTS, OT-CFM, MAS Numba JIT, HiFi-GAN, MCD, F0 RMSE, RTF). |
 | `Tai_Lieu_Thuyet_Trinh_GDocs.docx` | Tệp Google Docs gốc | 237 KB | Tài liệu Google Docs "Tài liệu thuyết trình" (ID `15qQz8BvQH8GLv0RpLbBkqRMSDTad9_9zh7jxrPvprsE`). |
-| `ViMMRC_Presentation_5min_gdrive.pptx` | Thư mục gốc | 55 KB | File slide PowerPoint 5 phút bản gốc của nhóm trên Drive (6 slide). |
-| `ViMMRC_Presentation_30min_gdrive.pptx` | Thư mục gốc | 128 KB | File slide PowerPoint 30 phút bản gốc của nhóm trên Drive (24 slide, chưa cân chỉnh thời lượng, ~4.500 từ). |
-| `ViMMRC_KichBan_5phut_gdrive.docx` | Thư mục gốc | 43 KB | File Word kịch bản 5 phút bản lưu trên Drive. |
-| `Huy_model_card.md` | Thư mục `Huy_MRC/` | 899 B | Model card thử nghiệm ban đầu của Huy về 4-choice TF-IDF ranker. |
-| `Huy_report.json` | Thư mục `Huy_MRC/` | 742 B | Báo cáo JSON ban đầu của Huy về phân hệ MRC cũ. |
+
+> Đã dọn 2026-11-08: bỏ 3 bản slide/kịch bản "_gdrive" cũ (đã có bản cập nhật trong `docs/`) và 2 tệp `Huy_*` của bộ xếp hạng trắc nghiệm đã gỡ; bản gốc vẫn còn trên Drive và trong lịch sử git.
 
 ---
 

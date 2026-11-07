@@ -10,7 +10,7 @@ Trong hệ thống hỏi đáp đọc hiểu văn bản bằng giọng nói (**V
 flowchart LR
     A[Giọng nói người dùng] --> B[Nhận dạng giọng nói<br/>STT - Whisper LoRA]
     B --> C[Truy vấn ngữ cảnh<br/>Retrieval - BM25]
-    C --> D[Đọc hiểu văn bản<br/>MRC - ViT5 / ChoiceRanker]
+    C --> D[Đọc hiểu văn bản<br/>MRC - span reader (vi-mrc-large)]
     D --> E[Tổng hợp tiếng nói<br/>TTS - Matcha-TTS & HiFi-GAN]
     E --> F[Âm thanh đầu ra<br/>Giao diện người dùng Web UI]
 ```

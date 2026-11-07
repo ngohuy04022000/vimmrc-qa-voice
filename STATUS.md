@@ -259,3 +259,6 @@ Trên 100 câu test, reranker đưa đoạn gốc vào top-1 69 lần (không re
 nhầm ở bảng trên là do đoạn gốc không nằm trong top-3, không phải do cổng LLM. Chưa đo được "reranker + LLM": Ollama
 trên máy lúc đo chạy 0,15 token/giây (log `draft-dflash`), mọi lần gọi đều quá hạn 25 giây. `llm_assist.py` giờ nghỉ 5 phút
 (trước: 30 giây) sau một lần quá hạn, để không lần nào cũng bắt người dùng chờ 25 giây.
+
+## 2026-11-08 — Dọn bản cũ lần hai
+Gỡ bộ slide/kịch bản 5 và 30 phút (`docs/*.pptx|docx|md`) cùng `build_*.py` và `slide_builder.py`: chúng còn mô tả ViT5/ChoiceRanker và số đo cũ. Bản trình bày hiện hành là `ViMMRC_Voice_QA_Slides*.pptx` ở thư mục mẹ (VI + EN, 51 slide); bản cũ vẫn lấy lại được từ lịch sử git. Số test trên slide sửa 137 → 138.

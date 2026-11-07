@@ -1,7 +1,7 @@
-"""End-to-end QA accuracy on the deployed corpus: retrieval -> (rerank) -> ViT5 reader.
+"""End-to-end QA accuracy on the deployed corpus: retrieval -> (rerank) -> reader.
 
 Rows = ViMMRC questions from the combined dev/test split whose passage is in the production
-index, so the reader never saw them in training and retrieval runs over all 552 passages.
+index, so the reader never saw them in training and retrieval runs over the whole production index (5,879 passages).
 """
 from __future__ import annotations
 

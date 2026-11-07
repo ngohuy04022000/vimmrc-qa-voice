@@ -5,7 +5,7 @@ list[{id, passage, score}], nên QAPipeline dùng được cả hai không cần
 Không kế thừa Retriever vì cách tính điểm hoàn toàn khác (cosine similarity thay
 BM25); giữ 2 lớp độc lập để BM25 vẫn chạy không cần Ollama.
 
-Chạy embed cho 552 passage của corpus hiện tại mất vài giây; lưu lại bằng save()
+Embed toàn bộ tầng 1 (5.879 đoạn) mất vài phút trên CPU; lưu lại bằng save()
 để không phải embed lại mỗi lần load.
 """
 from __future__ import annotations

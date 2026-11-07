@@ -262,3 +262,4 @@ trên máy lúc đo chạy 0,15 token/giây (log `draft-dflash`), mọi lần g�
 
 ## 2026-11-08 — Dọn bản cũ lần hai
 Gỡ bộ slide/kịch bản 5 và 30 phút (`docs/*.pptx|docx|md`) cùng `build_*.py` và `slide_builder.py`: chúng còn mô tả ViT5/ChoiceRanker và số đo cũ. Bản trình bày hiện hành là `ViMMRC_Voice_QA_Slides*.pptx` ở thư mục mẹ (VI + EN, 51 slide); bản cũ vẫn lấy lại được từ lịch sử git. Số test trên slide sửa 137 → 138.
+Đã gỡ thêm `docs/gdrive_downloads/` (bản nháp Drive cũ còn ChoiceRanker, 552 đoạn, 1,8 s) và `docs/screenshots/` (7 biểu đồ cũ với số 5.869 đoạn, Edge-TTS CER 1,0%… không còn khớp `reports/`); không tệp nào tham chiếu tới chúng. Số liệu hiện hành nằm ở `reports/` và trong bài báo.

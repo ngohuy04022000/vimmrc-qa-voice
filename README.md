@@ -59,7 +59,7 @@ Mở trình duyệt tại `http://localhost:4200`.
 python -m pytest -v
 ```
 
-Hiện có **138 bài kiểm thử tự động, đạt cả 138** (chạy `pytest -q` ngày 2026-11-08, Python 3.11) phủ STT, Retrieval, Context Selection, MRC (ViT5), TTS (normalizer, VITS, Matcha, Edge, gTTS), tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), Intent Router, bộ câu hỏi ngoài dataset, Web UI và FastAPI end-to-end (`/api/ask`).
+Hiện có **144 bài kiểm thử tự động, đạt cả 144** (chạy `pytest -q` ngày 2026-11-08, Python 3.11) phủ STT, Retrieval, Context Selection, MRC (ViT5), TTS (normalizer, VITS, Matcha, Edge, gTTS), tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), Intent Router, bộ câu hỏi ngoài dataset, Web UI và FastAPI end-to-end (`/api/ask`).
 
 ### Môi trường cục bộ (không dùng Docker)
 
@@ -172,7 +172,7 @@ python -X utf8 dialogue-manager_Huy/chat_cli.py --debug
 - [x] Triển khai hệ thống TTS đa engine tiếng Việt (Matcha-TTS, VITS MMS, Edge-TTS, gTTS) có tự động fallback và chuẩn hóa văn bản.
 - [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và pipeline đầu-cuối CLI.
 - [x] Ghép toàn diện STT, Retrieval, MRC, TTS và giao diện web Angular vào API Server FastAPI thống nhất.
-- [x] Tự động hóa bộ kiểm thử tích hợp (138 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
+- [x] Tự động hóa bộ kiểm thử tích hợp (144 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
 - [x] Đối sánh 8 bộ đọc trên cùng đoạn văn (`scripts/eval_readers.py`) và chuyển bộ đọc mặc định sang `vi-mrc-large`; cộng điểm KB trên logit, cổng từ chối, reranker INT8.
 
 ## 7. Phân công

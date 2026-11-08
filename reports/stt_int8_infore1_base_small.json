@@ -1,0 +1,48 @@
+{
+ "what": "Bản triển khai CT2 INT8 (beam 5, VAD) trên InfoRe1 chỉ số >=14.800 (ngoài miền, đọc tin tức, một người đọc)",
+ "dataset": "doof-ferb/infore1_25hours",
+ "model": "small",
+ "device": "cpu",
+ "compute_type": "int8",
+ "n": 135,
+ "empty_outputs": 0,
+ "wer_percent": 27.51,
+ "cer_percent": 9.71,
+ "audio_hours": 0.227,
+ "rtf": 0.223,
+ "seconds_per_utterance": 1.35,
+ "examples": [
+  {
+   "ref": "còn hơn nhiều người nhưng chỉ một lần rồi mãi mãi quay lưng",
+   "hyp": "Còn hơn nhiều người, nhưng chỉ một lần rồi mãi mãi quay lưng."
+  },
+  {
+   "ref": "gặp kiểm lâm nhóm người buôn bán động vật hoang dã chạy tán loạn",
+   "hyp": "Gọc kiểm lâm nhóm người quân bán đậu vật hăng giã, chạy, tán loạn."
+  },
+  {
+   "ref": "công an tỉnh hưng yên đã thông báo truy tìm tung tích nạn nhân trên các phương tiện thông tin đại chúng",
+   "hyp": "Công an tỉnh Hương Yên đã thông báo truy tìm tung tích nạn nhân trên các phương tiện thông tin lại chúng."
+  },
+  {
+   "ref": "điều quan trọng là bạn cần chủ động tiên phong trong mọi tình huống",
+   "hyp": "Điều quan trọng là bạn cần chủ động tiên phong cho mọi tình huống."
+  },
+  {
+   "ref": "dựa vào hình dáng ban đầu của mí mắt mà có các cách phun xăm sao cho phù hợp mang lại vẻ",
+   "hyp": "dựa vào hình dáng vấn đầu của mình mất mà có các cách phun xâm sao cho phù hợp mang lại về."
+  },
+  {
+   "ref": "cuộc sống ngày càng tấp nập và hối hả khiến cho nhiều người cảm thấy mệt mỏi",
+   "hyp": "cuộc sống ngay càng tấm nập và hối hạ khiến cho nhiều người cảm thấy mết mỏi."
+  },
+  {
+   "ref": "nhận được rất nhiều sự yêu mến và ủng hộ của khán giả ca khúc có mặt khắp các bảng xếp hạng",
+   "hyp": "nhận được rất nhiều sự yêu mến và ủng hộ của khán già các khúc có mặt khắp các bằng xếp hạ."
+  },
+  {
+   "ref": "tàu cá vỏ thép ngư dân bình định hỏng máy thả trôi trên biển",
+   "hyp": "Tào cá vỏ thép, ngư dân bình định, hỏng máy thả cho trên biển."
+  }
+ ]
+}

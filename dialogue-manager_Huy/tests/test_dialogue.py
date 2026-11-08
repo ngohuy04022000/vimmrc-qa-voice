@@ -230,6 +230,29 @@ class DetailTests(unittest.TestCase):
         u = DialogueManager(Retriever(SEED), seed=0, detail=True).respond("Giá vàng hôm nay là bao nhiêu?")
         self.assertNotIn("Thông tin lấy từ", u["answer"])
 
+    def test_clip_keeps_clause_with_answer(self):
+        from dialogue import clip_around
+        long = ("Mở đầu câu rất dài với nhiều ý phụ không liên quan gì đến câu hỏi cả, " * 4
+                + "Hà Nội là thủ đô của Việt Nam, nằm bên sông Hồng.")
+        out = clip_around(long, "Hà Nội")
+        self.assertIn("Hà Nội là thủ đô", out)
+        self.assertLessEqual(len(out.split()), 42)
+        self.assertEqual(clip_around("Câu ngắn.", "x"), "Câu ngắn.")
+
+    def test_wiki_title_is_not_used_as_evidence(self):
+        from dialogue import add_detail
+        passage = "Hà Nội. Hà Nội là thủ đô của nước Cộng hòa Xã hội Chủ nghĩa Việt Nam, nằm bên sông Hồng."
+        out, src = add_detail("Thủ đô của Việt Nam là thành phố nào?", "Hà Nội.", "Hà Nội", passage, "wiki:1")
+        self.assertIn("sông Hồng", out)
+        self.assertEqual(src["title"], "Hà Nội")
+
+    def test_cjk_parenthetical_removed_from_evidence(self):
+        from dialogue import add_detail
+        passage = "Nguyễn Hiền. Nguyễn Hiền (chữ Hán: 阮賢, 1234 - 1256) là trạng nguyên trẻ nhất trong lịch sử khoa cử Việt Nam."
+        out, _ = add_detail("Ai là trạng nguyên trẻ nhất?", "Nguyễn Hiền.", "Nguyễn Hiền", passage, "wiki:2")
+        self.assertNotIn("阮", out)
+        self.assertIn("trạng nguyên trẻ nhất", out)
+
     def test_source_labels(self):
         from dialogue import source_info
         self.assertEqual(source_info("wiki:1", "Edward I của Anh. Năm 1254...")["label"], "Wikipedia, bài Edward I của Anh")

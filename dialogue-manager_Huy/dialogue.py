@@ -410,11 +410,38 @@ def source_info(hit_id: str | None, text: str) -> dict:
     return {"tier": "other", "title": title, "label": "kho tri thức của hệ thống"}
 
 
+def clip_around(sentence: str, answer: str, max_words: int = 40) -> str:
+    """Câu bằng chứng quá dài thì giữ các mệnh đề (tách ở dấu , ;) quanh câu trả lời, tối đa ~max_words từ."""
+    if len(sentence.split()) <= max_words:
+        return sentence
+    clauses = [c.strip() for c in re.split(r"(?<=[,;])\s+", sentence) if c.strip()]
+    a = (answer or "").strip().rstrip(".").casefold()
+    hit = next((i for i, c in enumerate(clauses) if a and a in c.casefold()), 0)
+    lo = hi = hit
+    total = len(clauses[hit].split())
+    while True:
+        grew = False
+        for j in (hi + 1, lo - 1):
+            if 0 <= j < len(clauses) and total + len(clauses[j].split()) <= max_words:
+                lo, hi, total, grew = min(lo, j), max(hi, j), total + len(clauses[j].split()), True
+        if not grew:
+            break
+    return " ".join(clauses[lo:hi + 1]).rstrip(",;")
+
+
 def add_detail(question: str, answer: str, raw: str, passage: str, hit_id: str | None) -> tuple[str, dict]:
     """Câu trả lời đầy đủ hơn: thêm câu bằng chứng trong đoạn văn rồi câu nêu nguồn."""
     src = source_info(hit_id, passage)
     have = set(words(answer))
-    for sent in evidence_sentences(question, passage, raw, limit=1):
+    body = passage
+    if src["title"] and passage.startswith(src["title"] + ". "):
+        body = passage[len(src["title"]) + 2:]  # đoạn Wikipedia mở đầu bằng tên bài: không dùng tên bài làm câu bằng chứng
+    for sent in evidence_sentences(question, body, raw, limit=1):
+        if len(sent.split()) < 5:
+            continue
+        # ngoặc chứa chữ Hán/Nhật/Hàn (chú thích tên) không đọc được thành tiếng Việt
+        sent = re.sub(r"\s*\([^)]*[぀-ヿ㐀-鿿가-힯][^)]*\)", "", sent)
+        sent = clip_around(sent, raw)
         toks = words(sent)
         if toks and len(toks) <= 55 and sum(t in have for t in toks) / len(toks) < 0.8:
             answer = f"{_end(answer)} {_end(sent)}"

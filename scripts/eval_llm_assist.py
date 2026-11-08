@@ -70,7 +70,11 @@ def run(name: str, manager: DialogueManager, ans: list[dict], unans: list[str]) 
     for it in ans:
         r = manager.respond(it["q"], None)
         f1 = max(compute_token_f1(r["answer"], ref) for ref in it["refs"])
-        rows.append({"src": it["src"], "q": it["q"], "kind": r["kind"], "f1": round(f1, 4), "answer": r["answer"][:160]})
+        # recall: phần token của đáp án chuẩn có mặt trong câu trả lời; không phạt câu dài như token F1
+        ans_toks = set(r["answer"].casefold().split())
+        rec = max((sum(t in ans_toks for t in ref.casefold().split()) / max(1, len(ref.split()))) for ref in it["refs"])
+        rows.append({"src": it["src"], "q": it["q"], "kind": r["kind"], "f1": round(f1, 4), "recall": round(rec, 4),
+                     "n_words": len(r["answer"].split()), "answer": r["answer"][:160]})
         per_src.setdefault(it["src"], []).append(f1)
     t_ans = time.time() - t0
     false_refuse = sum(r["kind"] == "unknown" for r in rows)
@@ -86,6 +90,8 @@ def run(name: str, manager: DialogueManager, ans: list[dict], unans: list[str]) 
         "f1_all": mean([r["f1"] for r in rows]),
         "f1_by_src": {k: mean(v) for k, v in per_src.items()},
         "f1_when_answered": mean(answered_f1),
+        "recall_all": mean([r["recall"] for r in rows]),
+        "mean_words": mean([r["n_words"] for r in rows if r["kind"] != "unknown"]),
         "false_refusal": f"{false_refuse}/{len(rows)}",
         "correct_refusal": f"{refused_ok}/{len(unans)}",
         "seconds_per_answerable": round(t_ans / len(ans), 2),
@@ -98,6 +104,7 @@ def main() -> None:
     ap.add_argument("--sample", type=int, default=100)
     ap.add_argument("--configs", default="off,gate,verify,both")
     ap.add_argument("--out", default=str(ROOT / "reports" / "llm_assist_ab.json"))
+    ap.add_argument("--detail", action="store_true", help="chế độ câu dài kèm nguồn (DialogueManager.detail)")
     ap.add_argument("--min-rerank", type=float, default=None, help="cổng điểm reranker (DialogueManager.min_rerank)")
     args = ap.parse_args()
 
@@ -111,7 +118,7 @@ def main() -> None:
             "verify": dict(assist=assist, assist_gate=False), "both": dict(assist=assist)}
     results = []
     for name in args.configs.split(","):
-        res = run(name, DialogueManager(retriever, reader, min_rerank=args.min_rerank, **cfgs[name]), ans, UNANSWERABLE)
+        res = run(name, DialogueManager(retriever, reader, min_rerank=args.min_rerank, detail=args.detail, **cfgs[name]), ans, UNANSWERABLE)
         results.append(res)
         print({k: v for k, v in res.items() if k not in ("answerable", "unanswerable")}, flush=True)
     Path(args.out).write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")

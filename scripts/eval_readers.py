@@ -62,12 +62,13 @@ class ChatLLM:
         import torch
         from transformers import AutoModelForCausalLM, AutoTokenizer
         self.tok = AutoTokenizer.from_pretrained(name)
-        self.model = AutoModelForCausalLM.from_pretrained(name, torch_dtype=torch.bfloat16).eval()
+        self.device = os.getenv("READER_DEVICE", "cpu")  # cuda chỉ để đo độ chính xác; thời gian/câu khi đó không so được
+        self.model = AutoModelForCausalLM.from_pretrained(name, torch_dtype=torch.bfloat16).eval().to(self.device)
         self.torch = torch
 
     def answer_question(self, q: str, p: str) -> str:
         msgs = [{"role": "user", "content": LLM_PROMPT.format(p=p[:2400], q=q)}]
-        ids = self.tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt")
+        ids = self.tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt").to(self.device)
         with self.torch.no_grad():
             out = self.model.generate(ids, max_new_tokens=48, do_sample=False)
         return self.tok.decode(out[0, ids.shape[1]:], skip_special_tokens=True).strip().split("\n")[0]

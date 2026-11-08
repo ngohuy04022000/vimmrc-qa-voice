@@ -14230,5 +14230,1785 @@
     "f1_composed": 0.0
    }
   ]
+ },
+ "Qwen/Qwen2.5-3B-Instruct": {
+  "summary": {
+   "f1_raw": 0.3585,
+   "f1_composed": 0.4014,
+   "f1_raw_gold_in_passage": 0.6107,
+   "f1_composed_gold_in_passage": 0.3418,
+   "by_src_composed": {
+    "ood": 0.5833,
+    "hard": 0.3722,
+    "test": 0.257
+   },
+   "n": 220,
+   "n_gold_in_passage": 70,
+   "seconds_per_q_cpu": 6.08,
+   "load_s": 35.9
+  },
+  "items": [
+   {
+    "src": "ood",
+    "q": "Quang Trung đại phá quân Thanh vào năm nào?",
+    "gold_in_passage": false,
+    "raw": "1789",
+    "f1_raw": 0.1053,
+    "f1_composed": 0.6154
+   },
+   {
+    "src": "ood",
+    "q": "Ai là người chỉ huy chiến thắng Bạch Đằng năm 938 chấm dứt nghìn năm Bắc thuộc?",
+    "gold_in_passage": false,
+    "raw": "Ngô Quyền",
+    "f1_raw": 0.2,
+    "f1_composed": 0.6111
+   },
+   {
+    "src": "ood",
+    "q": "Hưng Đạo Đại Vương Trần Quốc Tuấn ba lần lãnh đạo nhân dân đánh tan quân xâm lược nào?",
+    "gold_in_passage": false,
+    "raw": "Mông Nguyên",
+    "f1_raw": 0.1739,
+    "f1_composed": 0.6341
+   },
+   {
+    "src": "ood",
+    "q": "Hai Bà Trưng phất cờ khởi nghĩa chống lại ách đô hộ của phong kiến phương Bắc vào năm nào?",
+    "gold_in_passage": false,
+    "raw": "40 sau Công Nguyên",
+    "f1_raw": 0.5333,
+    "f1_composed": 0.6061
+   },
+   {
+    "src": "ood",
+    "q": "Ai là tác giả của bản Tuyên ngôn Độc lập đầu tiên của nước ta mang tên Nam quốc sơn hà?",
+    "gold_in_passage": false,
+    "raw": "Mặc dù 1 số nguồn cho rằng Lý Thường Kiệt là người viết ra",
+    "f1_raw": 0.1622,
+    "f1_composed": 0.1622
+   },
+   {
+    "src": "ood",
+    "q": "Vị vua nào có công dẹp loạn 12 sứ quân và lập ra nhà nước Đại Cồ Việt?",
+    "gold_in_passage": false,
+    "raw": "Đinh Bộ Lĩnh",
+    "f1_raw": 0.2857,
+    "f1_composed": 0.5641
+   },
+   {
+    "src": "ood",
+    "q": "Chủ tịch Hồ Chí Minh đọc bản Tuyên ngôn Độc lập khai sinh nước Việt Nam Dân chủ Cộng hòa vào ngày tháng năm nào?",
+    "gold_in_passage": false,
+    "raw": "2 tháng 9 năm 1945",
+    "f1_raw": 0.3333,
+    "f1_composed": 0.6296
+   },
+   {
+    "src": "ood",
+    "q": "Chiến dịch Điện Biên Phủ toàn thắng vào ngày tháng năm nào?",
+    "gold_in_passage": false,
+    "raw": "7 tháng 5 năm 1954",
+    "f1_raw": 0.5263,
+    "f1_composed": 0.8667
+   },
+   {
+    "src": "ood",
+    "q": "Người anh hùng áo vải lãnh đạo cuộc khởi nghĩa Lam Sơn giành lại độc lập là ai?",
+    "gold_in_passage": false,
+    "raw": "Lê Lợi",
+    "f1_raw": 0.2105,
+    "f1_composed": 0.6111
+   },
+   {
+    "src": "ood",
+    "q": "Kinh đô đầu tiên của nhà nước Văn Lang thời các vua Hùng nằm ở đâu?",
+    "gold_in_passage": false,
+    "raw": "Phong Châu",
+    "f1_raw": 0.2105,
+    "f1_composed": 0.5294
+   },
+   {
+    "src": "ood",
+    "q": "Vua Lý Thái Tổ ban Chiếu dời đô từ Hoa Lư về Thăng Long vào năm nào?",
+    "gold_in_passage": false,
+    "raw": "1010",
+    "f1_raw": 0.1333,
+    "f1_composed": 0.8667
+   },
+   {
+    "src": "ood",
+    "q": "Chiến dịch Hồ Chí Minh lịch sử giải phóng hoàn toàn miền Nam thống nhất đất nước toàn thắng vào ngày nào?",
+    "gold_in_passage": false,
+    "raw": "30 tháng 4 năm 1975",
+    "f1_raw": 0.5,
+    "f1_composed": 0.6
+   },
+   {
+    "src": "ood",
+    "q": "Đại tướng đầu tiên và Tổng tư lệnh Quân đội Nhân dân Việt Nam là ai?",
+    "gold_in_passage": false,
+    "raw": "Võ Nguyên Giáp",
+    "f1_raw": 0.3,
+    "f1_composed": 0.3
+   },
+   {
+    "src": "ood",
+    "q": "Ai là người anh hùng thiếu niên bóp nát quả cam vì không được dự bàn việc nước đánh giặc Nguyên Mông?",
+    "gold_in_passage": false,
+    "raw": "Trần Quốc Toản",
+    "f1_raw": 0.4615,
+    "f1_composed": 0.5294
+   },
+   {
+    "src": "ood",
+    "q": "Ai là tác giả của bản thiên cổ hùng văn Bình Ngô đại cáo?",
+    "gold_in_passage": false,
+    "raw": "Nguyễn Trãi",
+    "f1_raw": 0.2222,
+    "f1_composed": 0.7097
+   },
+   {
+    "src": "ood",
+    "q": "Trận Như Nguyệt năm 1077 diễn ra trên dòng sông nào ngày nay?",
+    "gold_in_passage": false,
+    "raw": "Sông Như Nguyệt/Cầu",
+    "f1_raw": 0.5,
+    "f1_composed": 0.2121
+   },
+   {
+    "src": "ood",
+    "q": "Thành Cổ Loa được xây dựng dưới triều đại của vị vua nào?",
+    "gold_in_passage": false,
+    "raw": "An Dương Vương",
+    "f1_raw": 0.3,
+    "f1_composed": 0.8
+   },
+   {
+    "src": "ood",
+    "q": "Bác Hồ ra đi tìm đường cứu nước từ bến cảng nào vào ngày 5 tháng 6 năm 1911?",
+    "gold_in_passage": false,
+    "raw": "Bến cảng Nhà Rồng",
+    "f1_raw": 0.4211,
+    "f1_composed": 0.6286
+   },
+   {
+    "src": "ood",
+    "q": "Vị trạng nguyên trẻ tuổi nhất trong lịch sử khoa bảng Việt Nam là ai?",
+    "gold_in_passage": false,
+    "raw": "Nguyễn Hiền",
+    "f1_raw": 0.1905,
+    "f1_composed": 0.5143
+   },
+   {
+    "src": "ood",
+    "q": "Phong trào Cần Vương chống thực dân Pháp do vị vua yêu nước nào ban chiếu phát động?",
+    "gold_in_passage": false,
+    "raw": "Vua Hàm Nghi",
+    "f1_raw": 0.3333,
+    "f1_composed": 0.6857
+   },
+   {
+    "src": "ood",
+    "q": "Thủ đô của nước Cộng hòa Xã hội Chủ nghĩa Việt Nam là thành phố nào?",
+    "gold_in_passage": false,
+    "raw": "Hà Nội",
+    "f1_raw": 0.3333,
+    "f1_composed": 0.3333
+   },
+   {
+    "src": "ood",
+    "q": "Đỉnh núi cao nhất Việt Nam và được mệnh danh là nóc nhà Đông Dương là đỉnh núi nào?",
+    "gold_in_passage": false,
+    "raw": "Fansipan",
+    "f1_raw": 0.1176,
+    "f1_composed": 0.1714
+   },
+   {
+    "src": "ood",
+    "q": "Hang động tự nhiên lớn nhất thế giới nằm ở tỉnh nào của Việt Nam?",
+    "gold_in_passage": false,
+    "raw": "Quảng Bình",
+    "f1_raw": 0.25,
+    "f1_composed": 0.2667
+   },
+   {
+    "src": "ood",
+    "q": "Đảo nào có diện tích lớn nhất của Việt Nam?",
+    "gold_in_passage": false,
+    "raw": "Đảo Phú Quốc",
+    "f1_raw": 0.3529,
+    "f1_composed": 0.56
+   },
+   {
+    "src": "ood",
+    "q": "Vịnh Hạ Long được UNESCO công nhận là di sản thiên nhiên thế giới thuộc tỉnh nào?",
+    "gold_in_passage": false,
+    "raw": "Quảng Ninh",
+    "f1_raw": 0.3636,
+    "f1_composed": 0.5185
+   },
+   {
+    "src": "ood",
+    "q": "Cột cờ Lũng Cú điểm cực Bắc của Tổ quốc thuộc huyện nào của tỉnh Hà Giang?",
+    "gold_in_passage": false,
+    "raw": "Huyện Đồng Văn",
+    "f1_raw": 0.4,
+    "f1_composed": 0.6667
+   },
+   {
+    "src": "ood",
+    "q": "Điểm cực Nam trên đất liền của Việt Nam thuộc địa phận tỉnh nào?",
+    "gold_in_passage": false,
+    "raw": "Mũi Cà Mau",
+    "f1_raw": 0.375,
+    "f1_composed": 0.7586
+   },
+   {
+    "src": "ood",
+    "q": "Dòng sông nào dài nhất chảy hoàn toàn bên trong lãnh thổ Việt Nam?",
+    "gold_in_passage": false,
+    "raw": "Sông Đồng Nai",
+    "f1_raw": 0.3158,
+    "f1_composed": 0.7273
+   },
+   {
+    "src": "ood",
+    "q": "Đồng bằng sông Cửu Long còn được gọi bằng tên quen thuộc nào?",
+    "gold_in_passage": false,
+    "raw": "Đồng bằng Nam Bộ",
+    "f1_raw": 0.3636,
+    "f1_composed": 0.5882
+   },
+   {
+    "src": "ood",
+    "q": "Hồ nước ngọt tự nhiên lớn nhất Việt Nam là hồ nào?",
+    "gold_in_passage": false,
+    "raw": "Hồ Ba Bể",
+    "f1_raw": 0.3,
+    "f1_composed": 0.3
+   },
+   {
+    "src": "ood",
+    "q": "Quần đảo Hoàng Sa và Trường Sa thuộc chủ quyền thiêng liêng của quốc gia nào?",
+    "gold_in_passage": false,
+    "raw": "Việt Nam",
+    "f1_raw": 0.1739,
+    "f1_composed": 0.1739
+   },
+   {
+    "src": "ood",
+    "q": "Thác nước tự nhiên lớn nhất Đông Nam Á nằm giữa biên giới Việt Nam và Trung Quốc tên là gì?",
+    "gold_in_passage": false,
+    "raw": "Thác Bản Giốc",
+    "f1_raw": 0.5,
+    "f1_composed": 0.25
+   },
+   {
+    "src": "ood",
+    "q": "Thành phố Đà Lạt thành phố ngàn hoa nằm trên cao nguyên nào?",
+    "gold_in_passage": false,
+    "raw": "Lâm Viên",
+    "f1_raw": 0.2667,
+    "f1_composed": 0.7407
+   },
+   {
+    "src": "ood",
+    "q": "Cố đô Huế với dòng sông Hương thơ mộng thuộc tỉnh nào?",
+    "gold_in_passage": false,
+    "raw": "Thừa Thiên Huế",
+    "f1_raw": 0.4,
+    "f1_composed": 0.5385
+   },
+   {
+    "src": "ood",
+    "q": "Việt Nam có đường bờ biển dài khoảng bao nhiêu kilomet?",
+    "gold_in_passage": true,
+    "raw": "3.260",
+    "f1_raw": 0.1905,
+    "f1_composed": 0.7333
+   },
+   {
+    "src": "ood",
+    "q": "Tỉnh nào ở Việt Nam có diện tích tự nhiên rộng nhất cả nước?",
+    "gold_in_passage": false,
+    "raw": "Nghệ An",
+    "f1_raw": 0.2667,
+    "f1_composed": 0.8276
+   },
+   {
+    "src": "ood",
+    "q": "Tỉnh nào có diện tích đất tự nhiên nhỏ nhất nước ta?",
+    "gold_in_passage": false,
+    "raw": "Bắc Ninh",
+    "f1_raw": 0.2667,
+    "f1_composed": 0.8148
+   },
+   {
+    "src": "ood",
+    "q": "Đèo Hải Vân là ranh giới tự nhiên giữa hai địa phương nào?",
+    "gold_in_passage": false,
+    "raw": "Đà Nẵng và Thừa Thiên Huế",
+    "f1_raw": 0.5,
+    "f1_composed": 0.8333
+   },
+   {
+    "src": "ood",
+    "q": "Núi Bà Đen ngọn núi cao nhất miền Đông Nam Bộ thuộc tỉnh nào?",
+    "gold_in_passage": false,
+    "raw": "Tây Ninh",
+    "f1_raw": 0.2857,
+    "f1_composed": 0.5926
+   },
+   {
+    "src": "ood",
+    "q": "Sông Hồng bắt nguồn từ đâu trước khi chảy vào Việt Nam?",
+    "gold_in_passage": false,
+    "raw": "Vùng núi tỉnh Vân Nam Trung Quốc",
+    "f1_raw": 0.7368,
+    "f1_composed": 0.8
+   },
+   {
+    "src": "ood",
+    "q": "Ai là tác giả của kiệt tác Truyện Kiều trong nền văn học cổ điển Việt Nam?",
+    "gold_in_passage": false,
+    "raw": "Nguyễn Du",
+    "f1_raw": 0.2667,
+    "f1_composed": 0.5806
+   },
+   {
+    "src": "ood",
+    "q": "Truyện Kiều được viết theo thể thơ truyền thống nào của dân tộc?",
+    "gold_in_passage": false,
+    "raw": "Thơ lục bát truyền thống của dân tộc Việt Nam",
+    "f1_raw": 0.4167,
+    "f1_composed": 0.4444
+   },
+   {
+    "src": "ood",
+    "q": "Nhà văn hiện thực Nam Cao nổi tiếng với tác phẩm về nhân vật nông dân nghèo nào nuôi chó vàng?",
+    "gold_in_passage": false,
+    "raw": "Lão Hạc",
+    "f1_raw": 0.2,
+    "f1_composed": 0.45
+   },
+   {
+    "src": "ood",
+    "q": "Sự tích Bánh chưng bánh giầy gắn liền với nhân vật hoàng tử nào thời vua Hùng thứ sáu?",
+    "gold_in_passage": false,
+    "raw": "Hoàng tử Lang Liêu",
+    "f1_raw": 0.6154,
+    "f1_composed": 0.6207
+   },
+   {
+    "src": "ood",
+    "q": "Nhạc cụ truyền thống độc đáo của Việt Nam chỉ có duy nhất một dây phát ra âm thanh tên là gì?",
+    "gold_in_passage": false,
+    "raw": "Đàn bầu",
+    "f1_raw": 0.3077,
+    "f1_composed": 0.2353
+   },
+   {
+    "src": "ood",
+    "q": "Lễ hội Đền Hùng tưởng nhớ các vị vua lập nước được tổ chức vào ngày tháng âm lịch nào?",
+    "gold_in_passage": false,
+    "raw": "mùng 10 tháng 3",
+    "f1_raw": 0.3636,
+    "f1_composed": 0.6341
+   },
+   {
+    "src": "ood",
+    "q": "Dòng tranh dân gian truyền thống in khắc gỗ trên giấy điệp nổi tiếng của làng nào ở Bắc Ninh?",
+    "gold_in_passage": false,
+    "raw": "Đông Hồ",
+    "f1_raw": 0.2353,
+    "f1_composed": 0.4444
+   },
+   {
+    "src": "ood",
+    "q": "Tác phẩm Dế Mèn phiêu lưu ký là kiệt tác văn học thiếu nhi của nhà văn nào?",
+    "gold_in_passage": false,
+    "raw": "Tô Hoài",
+    "f1_raw": 0.2353,
+    "f1_composed": 0.75
+   },
+   {
+    "src": "ood",
+    "q": "Áo dài truyền thống của người phụ nữ Việt Nam thường được may bằng chất liệu vải gì đặc trưng?",
+    "gold_in_passage": false,
+    "raw": "Vải thẫm",
+    "f1_raw": 0.0,
+    "f1_composed": 0.5714
+   },
+   {
+    "src": "ood",
+    "q": "Tết Trung thu của người Việt Nam diễn ra vào ngày tháng âm lịch nào trong năm?",
+    "gold_in_passage": false,
+    "raw": "Ngày rằm tháng tám",
+    "f1_raw": 0.3478,
+    "f1_composed": 0.7143
+   },
+   {
+    "src": "ood",
+    "q": "Dân ca Quan họ là nét di sản văn hóa phi vật thể tiêu biểu của vùng quê nào?",
+    "gold_in_passage": false,
+    "raw": "Vùng Kinh Bắc",
+    "f1_raw": 0.2609,
+    "f1_composed": 0.5854
+   },
+   {
+    "src": "ood",
+    "q": "Nhà thơ nào được mệnh danh là Bà chúa thơ Nôm trong nền thơ ca Việt Nam?",
+    "gold_in_passage": false,
+    "raw": "Hồ Xuân Hương",
+    "f1_raw": 0.375,
+    "f1_composed": 0.5455
+   },
+   {
+    "src": "ood",
+    "q": "Nghệ thuật Múa rối nước là loại hình nghệ thuật sân khấu dân gian bắt nguồn từ nền văn minh nào?",
+    "gold_in_passage": false,
+    "raw": "Nền văn minh lúa nước vùng đồng bằng Bắc Bộ",
+    "f1_raw": 0.7143,
+    "f1_composed": 0.6667
+   },
+   {
+    "src": "ood",
+    "q": "Tác giả của bài thơ Tây Tiến hào hùng về người lính vệ quốc là ai?",
+    "gold_in_passage": false,
+    "raw": "Nhà thơ Quang Dũng",
+    "f1_raw": 0.5,
+    "f1_composed": 0.7097
+   },
+   {
+    "src": "ood",
+    "q": "Không gian văn hóa Cồng chiêng Tây Nguyên đã được UNESCO công nhận là gì?",
+    "gold_in_passage": false,
+    "raw": "Kiệt tác truyền khẩu và phi vật thể nhân loại",
+    "f1_raw": 0.5882,
+    "f1_composed": 0.7917
+   },
+   {
+    "src": "ood",
+    "q": "Nước tinh khiết đóng băng ở bao nhiêu độ C trong điều kiện tiêu chuẩn?",
+    "gold_in_passage": false,
+    "raw": "0",
+    "f1_raw": 0.2,
+    "f1_composed": 0.7826
+   },
+   {
+    "src": "ood",
+    "q": "Nước sôi ở bao nhiêu độ C ở điều kiện áp suất khí quyển tiêu chuẩn 1 atm?",
+    "gold_in_passage": false,
+    "raw": "100",
+    "f1_raw": 0.1667,
+    "f1_composed": 0.7143
+   },
+   {
+    "src": "ood",
+    "q": "Hành tinh nào nằm ở vị trí gần Mặt Trời nhất trong Hệ Mặt Trời?",
+    "gold_in_passage": false,
+    "raw": "Sao Thủy",
+    "f1_raw": 0.2667,
+    "f1_composed": 0.7333
+   },
+   {
+    "src": "ood",
+    "q": "Hành tinh lớn nhất trong Hệ Mặt Trời của chúng ta là hành tinh nào?",
+    "gold_in_passage": false,
+    "raw": "Sao Mộc",
+    "f1_raw": 0.2222,
+    "f1_composed": 0.6667
+   },
+   {
+    "src": "ood",
+    "q": "Vận tốc của ánh sáng truyền trong chân không xấp xỉ khoảng bao nhiêu kilomet trên giây?",
+    "gold_in_passage": false,
+    "raw": "300.000",
+    "f1_raw": 0.25,
+    "f1_composed": 0.8387
+   },
+   {
+    "src": "ood",
+    "q": "Khí nào chiếm hàm lượng phần trăm thể tích lớn nhất trong bầu khí quyển Trái Đất?",
+    "gold_in_passage": false,
+    "raw": "Khí Nitơ",
+    "f1_raw": 0.25,
+    "f1_composed": 0.7097
+   },
+   {
+    "src": "ood",
+    "q": "Công thức hóa học của nước gồm những nguyên tố nào?",
+    "gold_in_passage": false,
+    "raw": "Oxy, Hydro",
+    "f1_raw": 0.2,
+    "f1_composed": 0.4286
+   },
+   {
+    "src": "ood",
+    "q": "Bộ xương người trưởng thành bình thường có khoảng bao nhiêu chiếc xương?",
+    "gold_in_passage": false,
+    "raw": "206",
+    "f1_raw": 0.1667,
+    "f1_composed": 0.6087
+   },
+   {
+    "src": "ood",
+    "q": "Một năm dương lịch thông thường có bao nhiêu ngày?",
+    "gold_in_passage": false,
+    "raw": "365",
+    "f1_raw": 0.1333,
+    "f1_composed": 0.6957
+   },
+   {
+    "src": "ood",
+    "q": "Một ngày đêm trên Trái Đất có bao nhiêu giờ?",
+    "gold_in_passage": true,
+    "raw": "24",
+    "f1_raw": 0.1333,
+    "f1_composed": 0.7826
+   },
+   {
+    "src": "ood",
+    "q": "Kim loại nào có khả năng dẫn điện và dẫn nhiệt tốt nhất trong tự nhiên?",
+    "gold_in_passage": false,
+    "raw": "Bạc",
+    "f1_raw": 0.1429,
+    "f1_composed": 0.6897
+   },
+   {
+    "src": "ood",
+    "q": "Trái Đất quay một vòng quanh trục của nó mất khoảng thời gian bao lâu?",
+    "gold_in_passage": false,
+    "raw": "365,26 ngày",
+    "f1_raw": 0.1111,
+    "f1_composed": 0.6452
+   },
+   {
+    "src": "ood",
+    "q": "Quá trình quang hợp ở thực vật xanh tạo ra khí gì cần thiết cho sự sống của con người?",
+    "gold_in_passage": false,
+    "raw": "O2",
+    "f1_raw": 0.0,
+    "f1_composed": 0.1301
+   },
+   {
+    "src": "ood",
+    "q": "Hình tam giác có tổng số đo ba góc trong bằng bao nhiêu độ?",
+    "gold_in_passage": false,
+    "raw": "180",
+    "f1_raw": 0.125,
+    "f1_composed": 0.7857
+   },
+   {
+    "src": "ood",
+    "q": "Nhịp tim trung bình của một người trưởng thành khỏe mạnh lúc nghỉ ngơi là bao nhiêu nhịp mỗi phút?",
+    "gold_in_passage": false,
+    "raw": "60 đến 100",
+    "f1_raw": 0.3158,
+    "f1_composed": 0.5946
+   },
+   {
+    "src": "ood",
+    "q": "AI là viết tắt của thuật ngữ gì trong công nghệ thông tin?",
+    "gold_in_passage": false,
+    "raw": "Artificial Intelligence",
+    "f1_raw": 0.2222,
+    "f1_composed": 0.4
+   },
+   {
+    "src": "ood",
+    "q": "Công nghệ STT viết tắt từ cụm từ nào và có chức năng gì?",
+    "gold_in_passage": false,
+    "raw": "Speech to Text, chuyển đổi giọng nói thành văn bản",
+    "f1_raw": 0.7143,
+    "f1_composed": 0.7317
+   },
+   {
+    "src": "ood",
+    "q": "Công nghệ TTS là viết tắt của từ gì và có tác dụng như thế nào?",
+    "gold_in_passage": false,
+    "raw": "Text to Speech",
+    "f1_raw": 0.2857,
+    "f1_composed": 0.5574
+   },
+   {
+    "src": "ood",
+    "q": "Mô hình Whisper của OpenAI được nhóm sử dụng cho phân hệ nào trong dự án ViMMRC?",
+    "gold_in_passage": false,
+    "raw": "Phân hệ nhận dạng giọng nói",
+    "f1_raw": 0.5,
+    "f1_composed": 0.6842
+   },
+   {
+    "src": "ood",
+    "q": "Mô hình ViT5 được sử dụng để thực hiện nhiệm vụ gì trong hệ thống hỏi đáp?",
+    "gold_in_passage": false,
+    "raw": "đọc hiểu máy",
+    "f1_raw": 0.24,
+    "f1_composed": 0.4878
+   },
+   {
+    "src": "ood",
+    "q": "Matcha-TTS áp dụng kỹ thuật sinh âm thanh tiên tiến nào?",
+    "gold_in_passage": false,
+    "raw": "Kỹ thuật sinh âm thanh tiên tiến Optimal Transport Conditional Flow Matching",
+    "f1_raw": 0.3333,
+    "f1_composed": 0.3333
+   },
+   {
+    "src": "ood",
+    "q": "Phương pháp fine-tune LoRA là viết tắt của thuật ngữ gì?",
+    "gold_in_passage": true,
+    "raw": "Low-Rank Adaptation",
+    "f1_raw": 0.24,
+    "f1_composed": 0.5556
+   },
+   {
+    "src": "ood",
+    "q": "Định dạng âm thanh PCM 16kHz thường được dùng cho mục đích gì trong học máy tiếng nói?",
+    "gold_in_passage": false,
+    "raw": "Ống dẫn xử lý tín hiệu tối ưu",
+    "f1_raw": 0.1333,
+    "f1_composed": 0.383
+   },
+   {
+    "src": "ood",
+    "q": "Thuật toán BM25 trong phân hệ Retrieval thuộc loại thuật toán truy xuất nào?",
+    "gold_in_passage": false,
+    "raw": "Thuật toán xếp hạng tài liệu dựa trên tần suất từ vựng và độ dài văn bản",
+    "f1_raw": 0.8293,
+    "f1_composed": 0.8293
+   },
+   {
+    "src": "ood",
+    "q": "Mô hình Cross-Encoder reranker được dùng để làm gì trong chuỗi RAG?",
+    "gold_in_passage": false,
+    "raw": "đoán điểm tương quan ngữ nghĩa sâu sắc giữa câu hỏi và đoạn trích",
+    "f1_raw": 0.7222,
+    "f1_composed": 0.7222
+   },
+   {
+    "src": "ood",
+    "q": "Thư viện CTranslate2 giúp ích gì cho mô hình Whisper?",
+    "gold_in_passage": false,
+    "raw": "Tăng tốc suy luận",
+    "f1_raw": 0.3077,
+    "f1_composed": 0.5143
+   },
+   {
+    "src": "ood",
+    "q": "Kiến trúc RAG trong xử lý ngôn ngữ tự nhiên là viết tắt của từ gì?",
+    "gold_in_passage": false,
+    "raw": "Retrieval Augmented Generation",
+    "f1_raw": 0.2727,
+    "f1_composed": 0.4324
+   },
+   {
+    "src": "ood",
+    "q": "Chỉ số WER trong đánh giá mô hình nhận dạng giọng nói là viết tắt của từ gì?",
+    "gold_in_passage": false,
+    "raw": "Word Error Rate",
+    "f1_raw": 0.2727,
+    "f1_composed": 0.6667
+   },
+   {
+    "src": "ood",
+    "q": "Chỉ số Exact Match trong đánh giá mô hình hỏi đáp đo lường điều gì?",
+    "gold_in_passage": false,
+    "raw": "tiêu chí tỷ lệ phần trăm câu trả lời dự đoán trùng khớp tuyệt đối 100% với đáp án chuẩn",
+    "f1_raw": 0.8571,
+    "f1_composed": 0.8571
+   },
+   {
+    "src": "ood",
+    "q": "Docker container đem lại lợi ích gì cho việc triển khai hệ thống ViMMRC?",
+    "gold_in_passage": false,
+    "raw": "Giải quyết yêu cầu bằng cách lấy thông tin từ đoạn văn:",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "hard",
+    "q": "Ai là người chỉ huy chiến dịch đại phá 29 vạn quân Thanh vào năm 1789 và ông đã lên ngôi Hoàng đế tại đâu trước khi xuất quân?",
+    "gold_in_passage": false,
+    "raw": "Vua Quang Trung, núi Bân",
+    "f1_raw": 0.2439,
+    "f1_composed": 0.6667
+   },
+   {
+    "src": "hard",
+    "q": "Trong chiến dịch Tết Kỷ Dậu 1789, trận tập kích bất ngờ nào vào đồn Khương Thượng đã khiến tướng giặc Sầm Nghi Đống phải khiếp sợ thắt cổ tự tử?",
+    "gold_in_passage": false,
+    "raw": "Trận tập kích bất ngờ Khương Thượng Đống Đa",
+    "f1_raw": 0.4,
+    "f1_composed": 0.5067
+   },
+   {
+    "src": "hard",
+    "q": "Nghệ thuật hành quân thần tốc của vua Quang Trung từ Phú Xuân ra Thăng Long được tổ chức với chiến thuật đặc biệt nào để giữ sức cho binh sĩ?",
+    "gold_in_passage": false,
+    "raw": "Luân phiên ngày đêm",
+    "f1_raw": 0.2051,
+    "f1_composed": 0.2029
+   },
+   {
+    "src": "hard",
+    "q": "Sau khi đánh tan quân Thanh, vua Quang Trung đã ban hành chiếu chỉ gì và thành lập cơ quan nào do danh sĩ La Sơn Phu Tử Nguyễn Thiếp đứng đầu để phát triển văn hóa giáo dục?",
+    "gold_in_passage": false,
+    "raw": "Chiếu khuyến học  ",
+    "f1_raw": 0.1765,
+    "f1_composed": 0.5714
+   },
+   {
+    "src": "hard",
+    "q": "So sánh trận Bạch Đằng năm 938 của Ngô Quyền và trận Bạch Đằng năm 1288 của Trần Hưng Đạo, hai vị anh hùng dân tộc này đã đánh bại kẻ thù xâm lược nào?",
+    "gold_in_passage": false,
+    "raw": "Thanh",
+    "f1_raw": 0.0,
+    "f1_composed": 0.3562
+   },
+   {
+    "src": "hard",
+    "q": "Vị vua nào đã ban Chiếu dời đô từ Hoa Lư về Thăng Long vào năm 1010 và tên kinh đô mới có ý nghĩa hình tượng là gì?",
+    "gold_in_passage": false,
+    "raw": "Lý Thái Tổ, Thăng Long có ý nghĩa hình tượng là con rồng bay lên",
+    "f1_raw": 0.5116,
+    "f1_composed": 0.5116
+   },
+   {
+    "src": "hard",
+    "q": "Chiến thắng Điện Biên Phủ vào ngày 7 tháng 5 năm 1954 có ý nghĩa lịch sử to lớn như thế nào đối với cuộc kháng chiến chống thực dân Pháp?",
+    "gold_in_passage": false,
+    "raw": "Đánh bại ý chí duy trì chế độ thực dân tại Đông Dương của Pháp, buộc nước này phải rút khỏi Đông Dương.",
+    "f1_raw": 0.1562,
+    "f1_composed": 0.1562
+   },
+   {
+    "src": "hard",
+    "q": "Đỉnh núi Fansipan cao chính xác bao nhiêu mét, thuộc dãy núi nào và được hình thành từ kỷ địa chất nào trong lịch sử kiến tạo?",
+    "gold_in_passage": false,
+    "raw": "3143 mét",
+    "f1_raw": 0.0588,
+    "f1_composed": 0.5085
+   },
+   {
+    "src": "hard",
+    "q": "Hang Sơn Đoòng có kích thước thể tích ước tính đạt bao nhiêu triệu mét khối và bên trong hang có các cấu trúc địa chất, sinh thái đặc biệt nào?",
+    "gold_in_passage": false,
+    "raw": "38.5 triệu mét khối  ",
+    "f1_raw": 0.2174,
+    "f1_composed": 0.4722
+   },
+   {
+    "src": "hard",
+    "q": "Ai là người địa phương đầu tiên phát hiện ra hang Sơn Đoòng vào năm 1991 và đoàn thám hiểm quốc tế nào đã khảo sát công bố hang vào năm 2009?",
+    "gold_in_passage": false,
+    "raw": "Hồ Khanh  ",
+    "f1_raw": 0.1026,
+    "f1_composed": 0.6286
+   },
+   {
+    "src": "hard",
+    "q": "Phân biệt giữa sông Đồng Nai và sông Mê Kông chảy qua Việt Nam về đặc điểm chiều dài lưu vực nội địa?",
+    "gold_in_passage": false,
+    "raw": "586 km, 38.600 km²  ",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "hard",
+    "q": "Hòn đảo nào có diện tích lớn nhất Việt Nam, thuộc tỉnh nào và được mệnh danh là Đảo Ngọc?",
+    "gold_in_passage": false,
+    "raw": "Đảo Phú Quốc",
+    "f1_raw": 0.25,
+    "f1_composed": 0.7273
+   },
+   {
+    "src": "hard",
+    "q": "Tại sao đỉnh Fansipan vào mùa đông lại có hiện tượng băng giá và tuyết rơi dù Việt Nam nằm trong vành đai nhiệt đới gió mùa?",
+    "gold_in_passage": false,
+    "raw": "Do khí hậu á nhiệt đới và ôn đới núi cao.",
+    "f1_raw": 0.3077,
+    "f1_composed": 0.3077
+   },
+   {
+    "src": "hard",
+    "q": "Vịnh Hạ Long được UNESCO công nhận là di sản thiên nhiên thế giới nhờ sở hữu cảnh quan địa chất đặc trưng gì?",
+    "gold_in_passage": false,
+    "raw": "Các đỉnh nhọn núi đá vôi nhô lên trên mặt biển cùng với các đặc điểm karst (núi đá vôi) liên quan như các mái vòm và hang động.",
+    "f1_raw": 0.1875,
+    "f1_composed": 0.1875
+   },
+   {
+    "src": "hard",
+    "q": "Viết phương trình hóa học tổng quát của quá trình quang hợp ở thực vật và cho biết năng lượng ánh sáng được hấp thụ bởi sắc tố nào?",
+    "gold_in_passage": false,
+    "raw": "6CO2 + 6H2O -> C6H12O6 + 6O2",
+    "f1_raw": 0.25,
+    "f1_composed": 0.3971
+   },
+   {
+    "src": "hard",
+    "q": "Tại sao vào ban đêm trong phòng ngủ đóng kín cửa không nên để quá nhiều chậu cây xanh?",
+    "gold_in_passage": false,
+    "raw": "Cây tranh chấp dưỡng khí oxy với con người",
+    "f1_raw": 0.2553,
+    "f1_composed": 0.2553
+   },
+   {
+    "src": "hard",
+    "q": "So sánh hai bào quan lục lạp và ty thể trong tế bào thực vật về vai trò chuyển hóa năng lượng?",
+    "gold_in_passage": false,
+    "raw": "Ty thể, Lục lạp",
+    "f1_raw": 0.1818,
+    "f1_composed": 0.1818
+   },
+   {
+    "src": "hard",
+    "q": "Nước tinh khiết sôi ở 100 độ C ở áp suất tiêu chuẩn bao nhiêu và nhiệt độ sôi của nước thay đổi thế nào khi lên vùng núi cao áp suất thấp?",
+    "gold_in_passage": false,
+    "raw": "100 độ C",
+    "f1_raw": 0.15,
+    "f1_composed": 0.4118
+   },
+   {
+    "src": "hard",
+    "q": "Vận tốc ánh sáng truyền trong chân không là bao nhiêu km/s và ánh sáng từ Mặt Trời mất khoảng bao lâu để truyền tới Trái Đất?",
+    "gold_in_passage": false,
+    "raw": "299792.5",
+    "f1_raw": 0.0,
+    "f1_composed": 0.6316
+   },
+   {
+    "src": "hard",
+    "q": "Hành tinh nào gần Mặt Trời nhất và hành tinh nào có khối lượng lớn nhất trong Hệ Mặt Trời của chúng ta?",
+    "gold_in_passage": false,
+    "raw": "Mặt Trời",
+    "f1_raw": 0.129,
+    "f1_composed": 0.5185
+   },
+   {
+    "src": "hard",
+    "q": "Tổng số đo ba góc trong của một hình tam giác trong hình học phẳng Euclid luôn bằng bao nhiêu độ và bằng bao nhiêu radian?",
+    "gold_in_passage": false,
+    "raw": "180",
+    "f1_raw": 0.1053,
+    "f1_composed": 0.6512
+   },
+   {
+    "src": "hard",
+    "q": "Trong kiệt tác Truyện Kiều, Nguyễn Du đã sử dụng bút pháp ước lệ tượng trưng đối sánh vẻ đẹp và dự báo số phận của Thúy Kiều và Thúy Vân như thế nào?",
+    "gold_in_passage": false,
+    "raw": "Bức tranh ước lệ tượng trưng tinh tế",
+    "f1_raw": 0.0,
+    "f1_composed": 0.2143
+   },
+   {
+    "src": "hard",
+    "q": "Tác phẩm Truyện Kiều gồm bao nhiêu câu thơ, được viết theo thể thơ gì và bằng loại văn tự truyền thống nào của dân tộc ta?",
+    "gold_in_passage": false,
+    "raw": "3254 câu thơ, thể thơ lục bát, chữ Nôm",
+    "f1_raw": 0.4667,
+    "f1_composed": 0.566
+   },
+   {
+    "src": "hard",
+    "q": "Trong truyện ngắn Lão Hạc của Nam Cao, tại sao lão Hạc lại quyết định bán con chó Vàng và sau đó ăn bả chó tự tử?",
+    "gold_in_passage": false,
+    "raw": "Gia cảnh nghèo khó, ốm nặng, cần giữ mảnh vườn cho con, dằn vặt vì bán \"cậu Vàng\", sống khép kín, lủi thủi một mình.",
+    "f1_raw": 0.2857,
+    "f1_composed": 0.2857
+   },
+   {
+    "src": "hard",
+    "q": "Dòng văn học hiện thực phê phán 1930 - 1945 của Nam Cao và Ngô Tất Tố có điểm chung sâu sắc nào về giá trị nhân đạo?",
+    "gold_in_passage": false,
+    "raw": "Tấm lòng nhân đạo cao cả và niềm tin bất diệt vào bản chất lương thiện của con người",
+    "f1_raw": 0.4839,
+    "f1_composed": 0.4839
+   },
+   {
+    "src": "hard",
+    "q": "Ai là tác giả của áng thiên cổ hùng văn Bình Ngô đại cáo và tác phẩm được công bố sau thắng lợi của cuộc khởi nghĩa nào?",
+    "gold_in_passage": false,
+    "raw": "Nguyễn Trãi",
+    "f1_raw": 0.1143,
+    "f1_composed": 0.339
+   },
+   {
+    "src": "hard",
+    "q": "Tại sao bài thơ Nam quốc sơn hà tương truyền do Lý Thường Kiệt đọc năm 1077 được coi là bản Tuyên ngôn Độc lập đầu tiên của nước ta?",
+    "gold_in_passage": false,
+    "raw": "Được coi là bản Tuyên ngôn Độc lập đầu tiên của nước ta vì khẳng định chủ quyền của nhà cầm quyền Đại Việt trên các vùng đất của mình.",
+    "f1_raw": 0.2687,
+    "f1_composed": 0.2687
+   },
+   {
+    "src": "hard",
+    "q": "Nguyễn Du đã sáng tạo cải biến tác phẩm Kim Vân Kiều truyện của Thanh Tâm Tài Nhân thành kiệt tác Truyện Kiều ở những phương diện nghệ thuật cốt lõi nào?",
+    "gold_in_passage": false,
+    "raw": "Sáng tạo nghệ thuật vượt bậc",
+    "f1_raw": 0.0784,
+    "f1_composed": 0.2857
+   },
+   {
+    "src": "hard",
+    "q": "Mô hình nhận dạng giọng nói Whisper-small trong hệ thống ViMMRC được tối ưu hóa bằng những kỹ thuật gì để chạy nhanh gấp 4 lần trên CPU?",
+    "gold_in_passage": false,
+    "raw": "LoRA (Low-Rank Adaptation) và lượng tử hóa INT8 (INT8 quantization)",
+    "f1_raw": 0.3111,
+    "f1_composed": 0.3562
+   },
+   {
+    "src": "hard",
+    "q": "So sánh vai trò và cơ chế truy xuất giữa tầng tri thức 1 (KB) và tầng tri thức 2 (Wikipedia) trong hệ thống RAG 2 tầng?",
+    "gold_in_passage": false,
+    "raw": "So sánh:",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "hard",
+    "q": "Mô hình đọc hiểu ViT5-base có bao nhiêu tham số, được huấn luyện trên bao nhiêu câu hỏi và đạt độ chính xác kiểm thử bao nhiêu?",
+    "gold_in_passage": false,
+    "raw": "220 triệu, 27.164 câu hỏi, 41.05% Exact Match, 66.55% token F1",
+    "f1_raw": 0.56,
+    "f1_composed": 0.6579
+   },
+   {
+    "src": "hard",
+    "q": "Công nghệ tổng hợp tiếng nói Matcha-TTS sử dụng kiến trúc âm học gì và kết hợp với bộ giải mã nào để tạo sóng âm tần số 22.050 Hz?",
+    "gold_in_passage": false,
+    "raw": "Kỹ thuật sinh âm thanh tiên tiến Optimal Transport Conditional Flow Matching  ",
+    "f1_raw": 0.3404,
+    "f1_composed": 0.3404
+   },
+   {
+    "src": "hard",
+    "q": "Tại sao việc áp dụng chiến lược ngữ cảnh question_chunks lại giúp ViT5 sinh ra câu trả lời chính xác hơn trên các bài đọc văn bản dài?",
+    "gold_in_passage": false,
+    "raw": "Việc áp dụng chiến lược ngữ cảnh question_chunks giúp ViT5 sinh ra câu trả lời chính xác hơn trên các bài đọc văn bản dài vì nó cải thiện khả năng đọc hiểu và sinh câu trả lời tự nhiên từ ngữ cảnh cụ",
+    "f1_raw": 0.2143,
+    "f1_composed": 0.2143
+   },
+   {
+    "src": "hard",
+    "q": "Phân tích sự khác biệt về độ trễ xử lý trên CPU 4 luồng khi hệ thống bật và tắt mô hình Cross-Encoder reranker?",
+    "gold_in_passage": false,
+    "raw": "Không có thông tin trong đoạn văn để trả lời câu hỏi này.",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "hard",
+    "q": "Kỹ thuật Contextual Query Reformulation trong phân hệ đối thoại giúp giải quyết thách thức cốt lõi nào trong hội thoại dài nhiều lượt?",
+    "gold_in_passage": false,
+    "raw": "Không tìm thấy thông tin về kỹ thuật Contextual Query Reformulation trong đoạn văn đề cập.",
+    "f1_raw": 0.1639,
+    "f1_composed": 0.1639
+   },
+   {
+    "src": "test",
+    "q": "Mục đích của cuộc điện tín ngày 29/5/1945 của Mỹ là gì?",
+    "gold_in_passage": true,
+    "raw": "Kiểm soát dư luận",
+    "f1_raw": 0.1212,
+    "f1_composed": 0.1519
+   },
+   {
+    "src": "test",
+    "q": "Dòng nào dưới đây nêu đúng những đức tính tốt đẹp của người đồng mình?",
+    "gold_in_passage": false,
+    "raw": "\"Người đồng mình thô sơ da thịt, chẳng mấy ai nhỏ bé đâu con\"",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Cộng đồng người Việt ở đâu xếp sau Toronto Canada về mặt số lượng con người?",
+    "gold_in_passage": true,
+    "raw": "Toronto",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Khối Trường Đại học sát nhập với Trường Quảng trường Washington sau sự kiện nào?",
+    "gold_in_passage": true,
+    "raw": "Sau khi bán khuôn viên ở Bronx",
+    "f1_raw": 1.0,
+    "f1_composed": 0.56
+   },
+   {
+    "src": "test",
+    "q": "Tại sao tác giả cho rằng những mùi thơm đó là những mùi thơm mộc mạc chân chất?",
+    "gold_in_passage": false,
+    "raw": "Đất quê",
+    "f1_raw": 0.2353,
+    "f1_composed": 0.6
+   },
+   {
+    "src": "test",
+    "q": "Chiến dịch nào được thực hiện nhằm muốn Ireland thống nhất?",
+    "gold_in_passage": true,
+    "raw": "Chiến dịch chống lại \"sự chiếm đóng của Anh tại sáu hạt\"",
+    "f1_raw": 0.8,
+    "f1_composed": 0.8
+   },
+   {
+    "src": "test",
+    "q": "Sau khi Paisley bị đuổi ra khỏi hội trường thì Giáo hoàng có hành động gì?",
+    "gold_in_passage": true,
+    "raw": "Giáo hoàng tiếp tục bài diễn thuyết của mình.",
+    "f1_raw": 0.875,
+    "f1_composed": 0.4516
+   },
+   {
+    "src": "test",
+    "q": "Màu tím trong bài \"Sắc màu em yêu\" gợi ra những hình ảnh nào?",
+    "gold_in_passage": false,
+    "raw": "Hoa cà, hoa sim, chiếc khăn của chị, nét mực chữ em",
+    "f1_raw": 0.7,
+    "f1_composed": 0.7
+   },
+   {
+    "src": "test",
+    "q": "Hiến pháp của Trung Quốc đã bị sự tẩy chay bởi Đảng Cộng Sản được ra đời vào ngày nào?",
+    "gold_in_passage": true,
+    "raw": "25 tháng 12 năm 1946",
+    "f1_raw": 0.9091,
+    "f1_composed": 0.3448
+   },
+   {
+    "src": "test",
+    "q": "Những con người đang sinh sống tại những khu vực các đô thị lớn đang gặp phải vấn đề gì?",
+    "gold_in_passage": true,
+    "raw": "Ô nhiễm, tội ác, nghèo đói",
+    "f1_raw": 0.9231,
+    "f1_composed": 0.375
+   },
+   {
+    "src": "test",
+    "q": "Ngòi bút Nguyễn Công Hoan có sở trường và nổi tiếng nhất với thể loại, khuynh hướng nào?",
+    "gold_in_passage": false,
+    "raw": "Trào phúng",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Năm 2016, GDP PPP/người là bao nhiêu?",
+    "gold_in_passage": true,
+    "raw": "16,660 USD",
+    "f1_raw": 1.0,
+    "f1_composed": 0.5
+   },
+   {
+    "src": "test",
+    "q": "Tại sao nói antimon là á kim?",
+    "gold_in_passage": true,
+    "raw": "Do tương似 với kim loại ở bề ngoài và nhiều tính chất cơ lý.",
+    "f1_raw": 0.5366,
+    "f1_composed": 0.5366
+   },
+   {
+    "src": "test",
+    "q": "Khối lượng trung bình của một đồng xu drachma trong thời đại Parthia là bao nhiêu?",
+    "gold_in_passage": true,
+    "raw": "3,5-4,2g",
+    "f1_raw": 0.3158,
+    "f1_composed": 0.1818
+   },
+   {
+    "src": "test",
+    "q": "Vì sao Quốc dân Đảng tán thành chính sách \"ba không\"?",
+    "gold_in_passage": true,
+    "raw": "Nói đến vấn đề này trong đoạn văn, câu trả lời ngắn gọn là:",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Diện tích trung bình của một tỉnh Ukraina là bao nhiêu?",
+    "gold_in_passage": true,
+    "raw": "1200km2",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Tại sao khi trả ơn Thúc Sinh nhưng Kiều lại nhắc tới Hoạn Thư?",
+    "gold_in_passage": false,
+    "raw": "Thương vì hạnh trọng vì tài",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0444
+   },
+   {
+    "src": "test",
+    "q": "Chi tiết nào trong bài thơ chứng tỏ Bác Hồ có lòng yêu thương sâu sắc đối với bộ đội, với nhân dân?",
+    "gold_in_passage": false,
+    "raw": "\"Yêu từng ngọn lúa, mỗi cành hoa",
+    "f1_raw": 0.0,
+    "f1_composed": 0.1176
+   },
+   {
+    "src": "test",
+    "q": "Chính phủ chính quyền của Việt Minh được thành lập vào thời gian nào?",
+    "gold_in_passage": false,
+    "raw": "Cuối năm 1945",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Chi tiết nào thể hiến sức mạnh của con cá kiếm?",
+    "gold_in_passage": false,
+    "raw": "Kích thước tối đa là 4,3 m (14 ft) và 536 kg (1.182 pao).",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Đặc điểm chung các nước ký Hiệp định Potsdam là gì?",
+    "gold_in_passage": true,
+    "raw": "Dầu vậy, quân đội Liên Xô vẫn đóng trên lãnh thổ nước này",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Trong thời Hy lạp hóa, các vị vua đã làm gì để bắt chước Alexandros?",
+    "gold_in_passage": true,
+    "raw": "Xưng những vương hiệu hoành tráng, thân chinh thống lĩnh những chiến binh tinh nhuệ và lập nên một đội cận vệ uy dũng",
+    "f1_raw": 0.8846,
+    "f1_composed": 0.8846
+   },
+   {
+    "src": "test",
+    "q": "Nhóm nhạc đầu tiên ông vua nhạc Pop tham gia tên gì?",
+    "gold_in_passage": false,
+    "raw": "Không có thông tin về nhóm nhạc đầu tiên Michael Jackson tham gia trong đoạn văn này.",
+    "f1_raw": 0.1,
+    "f1_composed": 0.1
+   },
+   {
+    "src": "test",
+    "q": "tỷ lệ thất nghiệp giảm xuống thấp nhất ở bao nhiêu phần trăm?",
+    "gold_in_passage": false,
+    "raw": "8",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Viện bảo tàng bức tường được khai trương vào năm nào?",
+    "gold_in_passage": true,
+    "raw": "1963",
+    "f1_raw": 1.0,
+    "f1_composed": 0.1818
+   },
+   {
+    "src": "test",
+    "q": "Tổng số nhân viên có vai trò quan trọng trong hoạt động của thư viện chiếm bao nhiêu phần trăm trên tổng số nhân viên của thư viện?",
+    "gold_in_passage": true,
+    "raw": "64%",
+    "f1_raw": 1.0,
+    "f1_composed": 0.0769
+   },
+   {
+    "src": "test",
+    "q": "Đế chế La Mã trở nên hùng mạnh và rộng lớn với vùng lãnh thổ bao gồm những nơi nào?",
+    "gold_in_passage": false,
+    "raw": "Vương quốc Đức, Vương quốc Bohemia, Vương quốc Burgundy, Vương quốc Ý và nhiều lãnh thổ, công quốc, thành phố đế quốc tự do khác.",
+    "f1_raw": 0.1639,
+    "f1_composed": 0.1639
+   },
+   {
+    "src": "test",
+    "q": "Chi tiết nào cho thấy vị bác sĩ rất bất ngờ khi nhớ lại câu chuyện trước đây?",
+    "gold_in_passage": false,
+    "raw": "Bác sĩ rất hài lòng vì vết thương của Bé đã lành hẳn.",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Trị số nào được dùng để khái quát phạm vi phân bố của loài kiến trong hệ sinh thái động vật?",
+    "gold_in_passage": true,
+    "raw": "Tất cả các lục địa trừ Nam Cực",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0667
+   },
+   {
+    "src": "test",
+    "q": "Bạn Vũ Cao Bảo đang sống ở đâu?",
+    "gold_in_passage": false,
+    "raw": "Hà Nội",
+    "f1_raw": 0.3636,
+    "f1_composed": 0.2222
+   },
+   {
+    "src": "test",
+    "q": "Các cuộc hahf quân tác chiến tại Iraq đã được Obama cho kết thúc vào thời gian nào?",
+    "gold_in_passage": true,
+    "raw": "31 tháng 8 năm 2010",
+    "f1_raw": 0.9091,
+    "f1_composed": 0.3846
+   },
+   {
+    "src": "test",
+    "q": "Những ai có ảnh hưởng mạnh mẽ trong quá trình thống nhất nước Ý?",
+    "gold_in_passage": true,
+    "raw": "Giuseppe Mazzini và Giuseppe Garibaldi",
+    "f1_raw": 0.8,
+    "f1_composed": 0.2222
+   },
+   {
+    "src": "test",
+    "q": "Từ phía người đọc, bút danh Tản Đà trước hết và chủ yếu muốn gợi liên tưởng đến điều gì trong tâm hồn, tính cách nhà thơ?",
+    "gold_in_passage": false,
+    "raw": "Núi Tản Viên và sông Đà",
+    "f1_raw": 0.0,
+    "f1_composed": 0.1081
+   },
+   {
+    "src": "test",
+    "q": "Trump đã trở thành tổng thống Mỹ với một chiến thắng như thế nào?",
+    "gold_in_passage": true,
+    "raw": "đầy bất ngờ",
+    "f1_raw": 1.0,
+    "f1_composed": 0.0857
+   },
+   {
+    "src": "test",
+    "q": "Do marcasit là dạng đa hình của pyrit nên giữ chúng giống nhau về điểm nào?",
+    "gold_in_passage": true,
+    "raw": "công thức",
+    "f1_raw": 1.0,
+    "f1_composed": 0.2105
+   },
+   {
+    "src": "test",
+    "q": "Quốc gia nào đứng đầu thế giới về xuất khẩu dầu mỏ?",
+    "gold_in_passage": true,
+    "raw": "Ả Rập Xê Út",
+    "f1_raw": 1.0,
+    "f1_composed": 1.0
+   },
+   {
+    "src": "test",
+    "q": "Người ta dùng gì để tinh chế zirconi tinh khiết từ zircon?",
+    "gold_in_passage": true,
+    "raw": "Khai khí clo",
+    "f1_raw": 0.3636,
+    "f1_composed": 0.1818
+   },
+   {
+    "src": "test",
+    "q": "Birmingham trở thành một trung tâm đô thị và thương mại khi nào?",
+    "gold_in_passage": true,
+    "raw": "1166",
+    "f1_raw": 0.6667,
+    "f1_composed": 0.1333
+   },
+   {
+    "src": "test",
+    "q": "Vì sao Cam Anh lại quyết định quay trở về Đại Hán?",
+    "gold_in_passage": true,
+    "raw": "Quyết định của Cam Anh",
+    "f1_raw": 0.0,
+    "f1_composed": 0.1053
+   },
+   {
+    "src": "test",
+    "q": "Trích đoạn Nỗi oan hại chồng nằm ở phần thứ mấy của vở chèo?",
+    "gold_in_passage": false,
+    "raw": "2",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Ai nhấn mạnh tình hữu nghị giữa quốc gia Ukraina và Nga?",
+    "gold_in_passage": true,
+    "raw": "Nikita Khrushchev",
+    "f1_raw": 0.6667,
+    "f1_composed": 0.1429
+   },
+   {
+    "src": "test",
+    "q": "Đông xưởng được lập ra nhằm mục đích gì?",
+    "gold_in_passage": true,
+    "raw": "Trấn áp chính trị lực lượng phản đối",
+    "f1_raw": 0.2581,
+    "f1_composed": 0.2051
+   },
+   {
+    "src": "test",
+    "q": "Bạch Sùng Hy lãnh đạo một làn sóng để chống lại điều gì?",
+    "gold_in_passage": true,
+    "raw": "Người ngoại quốc",
+    "f1_raw": 0.4444,
+    "f1_composed": 0.3
+   },
+   {
+    "src": "test",
+    "q": "Nội dung \"Những người khốn khổ\" nói về gì?",
+    "gold_in_passage": false,
+    "raw": "Societê Pháp trong khoảng 20 năm đầu thế kỷ 19",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Cédile có lập trường như thế nào trong vấn đề độc lập của Việt Nam?",
+    "gold_in_passage": true,
+    "raw": "Trung lập, đề xuất độc lập nhưng sau đó ủng hộ sự thống nhất Nam Kỳ.",
+    "f1_raw": 0.2,
+    "f1_composed": 0.2
+   },
+   {
+    "src": "test",
+    "q": "Trong 9 tháng đầu năm 1967, 128 thành phố ở Mỹ đã phải gánh chịu tất cả bao nhiêu vụ nổi loạn?",
+    "gold_in_passage": true,
+    "raw": "164",
+    "f1_raw": 1.0,
+    "f1_composed": 0.0909
+   },
+   {
+    "src": "test",
+    "q": "Các cán bộ sang Trung Quốc được đào tạo những gì?",
+    "gold_in_passage": true,
+    "raw": "Học bổ túc trung và sơ cấp, học đào tạo, chỉ huy bộ binh sơ cấp, học về binh chủng như pháo binh, công binh...",
+    "f1_raw": 0.5965,
+    "f1_composed": 0.5965
+   },
+   {
+    "src": "test",
+    "q": "Lập trình viên nổi tiếng nào là cựu sinh viên của Đại học Harvard?",
+    "gold_in_passage": false,
+    "raw": "Không có thông tin cụ thể về lập trình viên nổi tiếng nào là cựu sinh viên của Đại học Harvard trong đoạn văn này.",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Các dịch vụ phục vụ đờ sống nhân dân cùng các dự án xây dựng có nhu cầu phát triển khi nào?",
+    "gold_in_passage": true,
+    "raw": "Khi vùng liên bang Viễn Đông được mở rộng",
+    "f1_raw": 1.0,
+    "f1_composed": 0.4737
+   },
+   {
+    "src": "test",
+    "q": "Mục đích chính của văn bản trên là?",
+    "gold_in_passage": false,
+    "raw": "Truyền đạt các thông tin",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Tiếng Việt đã được quy định như thế nào tại điều 5 Hiến pháp 2013?",
+    "gold_in_passage": true,
+    "raw": "Tiếng Việt là ngôn ngữ chính thức",
+    "f1_raw": 0.8,
+    "f1_composed": 0.3137
+   },
+   {
+    "src": "test",
+    "q": "Trong cuộc tấn công ngày 7 tháng 12 năm 1941 của mình nhắm vào Hoa Kỳ tại Trân Châu Cảng, Nhật Bản đã gây ra những thiệt hại gì cho Hoa Kỳ?",
+    "gold_in_passage": true,
+    "raw": "16 chiến hạm, gần 3000 binh sĩ và nhân viên dân sự Mỹ",
+    "f1_raw": 0.5652,
+    "f1_composed": 0.5652
+   },
+   {
+    "src": "test",
+    "q": "Nguồn gốc của chữ Hán ngày nay là gì?",
+    "gold_in_passage": false,
+    "raw": "Tiếng Hán thượng cổ",
+    "f1_raw": 0.2,
+    "f1_composed": 0.2222
+   },
+   {
+    "src": "test",
+    "q": "Biệt đội tình báo Ả Rập Xê Út có tên là gì?",
+    "gold_in_passage": false,
+    "raw": "Đội quân Chinh phục",
+    "f1_raw": 0.0,
+    "f1_composed": 0.1
+   },
+   {
+    "src": "test",
+    "q": "Sau khi đánh thắng họ, nhà vua Alexandros đối xử với người Scythia như thế nào?",
+    "gold_in_passage": true,
+    "raw": "đối xử tốt",
+    "f1_raw": 0.4,
+    "f1_composed": 0.8571
+   },
+   {
+    "src": "test",
+    "q": "Số dân di cư của Trung Hoa vào năm 2012 là bao nhiêu?",
+    "gold_in_passage": true,
+    "raw": "262 triệu",
+    "f1_raw": 0.4444,
+    "f1_composed": 0.4
+   },
+   {
+    "src": "test",
+    "q": "Số không là khái niệm đã được ai đưa ra?",
+    "gold_in_passage": true,
+    "raw": "Lương Thế Vinh",
+    "f1_raw": 1.0,
+    "f1_composed": 0.4
+   },
+   {
+    "src": "test",
+    "q": "Các thành viên của gia đình Osmanli bị trừng phạt thế nào?",
+    "gold_in_passage": false,
+    "raw": "Bị bắt làm nô lệ, lưu đày về vùng hiểm trở, hoặc bị tuyển đi lính.",
+    "f1_raw": 0.087,
+    "f1_composed": 0.087
+   },
+   {
+    "src": "test",
+    "q": "Tâm trạng của đứa con trước đêm khai trường?",
+    "gold_in_passage": false,
+    "raw": "Vui如是去會",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Đúc đồng Ngũ Xã là làng nghề nổi tiếng tại tỉnh thành nào?",
+    "gold_in_passage": true,
+    "raw": "Hà Nội",
+    "f1_raw": 1.0,
+    "f1_composed": 0.25
+   },
+   {
+    "src": "test",
+    "q": "Những phong tục, luật lệ nào của Ả Rập Xê Út bị thế giới lên án?",
+    "gold_in_passage": false,
+    "raw": "Không có",
+    "f1_raw": 0.0,
+    "f1_composed": 0.1053
+   },
+   {
+    "src": "test",
+    "q": "Gandhi học đại học nào?",
+    "gold_in_passage": true,
+    "raw": "College Luân Đôn",
+    "f1_raw": 0.75,
+    "f1_composed": 0.8333
+   },
+   {
+    "src": "test",
+    "q": "Điều gì làm một vị vua bị suy yếu?",
+    "gold_in_passage": true,
+    "raw": "Tính khí yếu đuối",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Vào năm 2003, những ai đã không được áp dụng chính sách đình hoàn hình phạt tử hình mà Cuba đưa ra vào năm 2001?",
+    "gold_in_passage": true,
+    "raw": "Thủ phạm của một vụ không tặc có vũ trang",
+    "f1_raw": 0.8571,
+    "f1_composed": 0.4444
+   },
+   {
+    "src": "test",
+    "q": "Ả Rập Xê Út chi ra số tiền bao nhiêu để sử dụng trong mục đích quân sự?",
+    "gold_in_passage": false,
+    "raw": "110 tỉ USD",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Thái độ và hành động của Thủy Tinh như thế nào khi không lấy được Mị Nương?",
+    "gold_in_passage": false,
+    "raw": "Đẳng cấp, hung hãn, quyết tâm cướp vợ",
+    "f1_raw": 0.0,
+    "f1_composed": 0.3158
+   },
+   {
+    "src": "test",
+    "q": "Tôn giáo chủ yếu của người Ấn Độ là gì?",
+    "gold_in_passage": false,
+    "raw": "Ấndộ giáo",
+    "f1_raw": 0.2857,
+    "f1_composed": 0.375
+   },
+   {
+    "src": "test",
+    "q": "Cộng hòa Roma được dựng lên nhờ đâu?",
+    "gold_in_passage": true,
+    "raw": "Ảnh hưởng của Cách mạng Pháp",
+    "f1_raw": 0.9231,
+    "f1_composed": 0.5714
+   },
+   {
+    "src": "test",
+    "q": "Bằng chứng nào cho thấy Pháp có thế mạnh về môn thế thao Rugby?",
+    "gold_in_passage": true,
+    "raw": "Xuất phát từ một giải đấu quốc nội mạnh, đội tuyển rugby Pháp từng hơn mười lần vô địch giải Sáu quốc gia, và từng 6 lần vào đến bán kết và ba lần vào đến chung kết của giải",
+    "f1_raw": 0.6053,
+    "f1_composed": 0.6053
+   },
+   {
+    "src": "test",
+    "q": "Alexandros bị thiệt hại gì khi đánh nhau với người Aspasios?",
+    "gold_in_passage": true,
+    "raw": "Vai",
+    "f1_raw": 0.3333,
+    "f1_composed": 0.25
+   },
+   {
+    "src": "test",
+    "q": "Điều gì được cho phép thực hiện khi hoạt động nông nghiệp phát triển?",
+    "gold_in_passage": true,
+    "raw": "Tập trung dân số dày hơn",
+    "f1_raw": 1.0,
+    "f1_composed": 0.5
+   },
+   {
+    "src": "test",
+    "q": "Hình ảnh thiếu nữ xay ngô tối và hình ảnh bếp lửa hồng là những hình ảnh thể hiện vẻ đẹp tâm hồn Hồ Chí Minh trong bài vì:",
+    "gold_in_passage": false,
+    "raw": "tình yêu thiên nhiên, yêu cuộc sống, ý chí vươn lên hoàn cảnh khắc nghiệt",
+    "f1_raw": 0.1,
+    "f1_composed": 0.1
+   },
+   {
+    "src": "test",
+    "q": "Khu vực nào bị ảnh hưởng bới nền văn hóa Ngưỡng Thiều?",
+    "gold_in_passage": true,
+    "raw": "Phía Bắc Trung Quốc",
+    "f1_raw": 1.0,
+    "f1_composed": 0.4211
+   },
+   {
+    "src": "test",
+    "q": "Để viện trợ tài chính toàn diện cho nền kinh tế châu Âu và các hàng rào mậu dịch được tháo vỡ thì Mỹ đã thực hiện kế hoạch nào?",
+    "gold_in_passage": true,
+    "raw": "Kế hoạch Marshall",
+    "f1_raw": 0.5,
+    "f1_composed": 0.0645
+   },
+   {
+    "src": "test",
+    "q": "Bà Helena đã thành lập cái gì vào năm 1875?",
+    "gold_in_passage": true,
+    "raw": "Hiệp hội Thần Trí học (hoặc Thông Thiên học)",
+    "f1_raw": 0.7143,
+    "f1_composed": 0.4545
+   },
+   {
+    "src": "test",
+    "q": "Để vinh danh Kepler thì những ngôi trường nào được đặt theo tên ông?",
+    "gold_in_passage": true,
+    "raw": "Cao đẳng Kepler, Trường Ngữ pháp Johannes Kepler",
+    "f1_raw": 0.6087,
+    "f1_composed": 0.2892
+   },
+   {
+    "src": "test",
+    "q": "Sau các trận thua thì quân Pháp đã bị đồng minh Anh và Phổ đánh đuổi về tại đâu?",
+    "gold_in_passage": true,
+    "raw": "dọc theo sông Rhine",
+    "f1_raw": 0.6667,
+    "f1_composed": 0.3333
+   },
+   {
+    "src": "test",
+    "q": "Vũ khí của quân đội Pháp như thế nào?",
+    "gold_in_passage": false,
+    "raw": "Không được mô tả trong đoạn văn.",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Khu vực Đông Dương trở thành thuộc địa của nước nào vào đầu thế kỷ XIX?",
+    "gold_in_passage": true,
+    "raw": "Pháp",
+    "f1_raw": 1.0,
+    "f1_composed": 0.1176
+   },
+   {
+    "src": "test",
+    "q": "Trung tâm Kimmel là nơi tọa lạc của sân khấu biểu diễn nào?",
+    "gold_in_passage": true,
+    "raw": "Hội trường Eisner-Lubin Auditorium",
+    "f1_raw": 1.0,
+    "f1_composed": 0.4545
+   },
+   {
+    "src": "test",
+    "q": "Demetrios I phải chiến đấu với ai?",
+    "gold_in_passage": true,
+    "raw": "Pyrros",
+    "f1_raw": 1.0,
+    "f1_composed": 0.25
+   },
+   {
+    "src": "test",
+    "q": "Sau khi xem thư, mẹ của Mai đã đưa ra kết luận gì?",
+    "gold_in_passage": false,
+    "raw": "Có lẽ người gửi đã ghi nhầm số nhà.",
+    "f1_raw": 0.375,
+    "f1_composed": 0.2857
+   },
+   {
+    "src": "test",
+    "q": "Tiếng sáo được mô tả như thế nào?",
+    "gold_in_passage": true,
+    "raw": "Trầm bổng",
+    "f1_raw": 0.6667,
+    "f1_composed": 0.7273
+   },
+   {
+    "src": "test",
+    "q": "Hoàng đế Leopold thành lập vô số ủy ban vào thời gian nào?",
+    "gold_in_passage": true,
+    "raw": "1690",
+    "f1_raw": 0.4,
+    "f1_composed": 0.2667
+   },
+   {
+    "src": "test",
+    "q": "Trong hai năm 2013 và 2015 thì hai đội đánh bại Quảng Châu Hằng Đại đều trở thành gì?",
+    "gold_in_passage": true,
+    "raw": "Đại diện cho UEFA",
+    "f1_raw": 0.25,
+    "f1_composed": 0.0769
+   },
+   {
+    "src": "test",
+    "q": "Sau khi phát hiện Roosevlet lừa dối mình, Eleanor đã có quyết định gì?",
+    "gold_in_passage": true,
+    "raw": "Ly dị",
+    "f1_raw": 0.2353,
+    "f1_composed": 0.2
+   },
+   {
+    "src": "test",
+    "q": "Quá trình thực dân hóa đã được bắt đầu vào thời điểm nào?",
+    "gold_in_passage": false,
+    "raw": "1492",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Theo các nhân chứng thì top 15 của Hoa hậu Mỹ được lựa chọn bởi những ai?",
+    "gold_in_passage": true,
+    "raw": "Các đạo diễn cuộc thi",
+    "f1_raw": 1.0,
+    "f1_composed": 0.3846
+   },
+   {
+    "src": "test",
+    "q": "Ai bị đồng hóa vào xã hội cư dân Slavơ địa phương?",
+    "gold_in_passage": true,
+    "raw": "Người Varangian",
+    "f1_raw": 1.0,
+    "f1_composed": 0.2667
+   },
+   {
+    "src": "test",
+    "q": "Việc độc quyền thương mại của người Hoa thể hiện như thế nào?",
+    "gold_in_passage": true,
+    "raw": "Hơn 50% bán lẻ, 90% xuất nhập khẩu",
+    "f1_raw": 0.8,
+    "f1_composed": 0.3143
+   },
+   {
+    "src": "test",
+    "q": "Bài văn miêu tả cảnh gì?",
+    "gold_in_passage": false,
+    "raw": "Mặt trời mọc",
+    "f1_raw": 0.0,
+    "f1_composed": 0.1111
+   },
+   {
+    "src": "test",
+    "q": "Khủng hoảng tài chính châu Á vào cuối thập niên 1990 đã có những tác động như thế nào đến kinh tế Malaysia?",
+    "gold_in_passage": true,
+    "raw": "Đồng Ringgit cùng các thị trường chứng khoán và bất động sản Malaysia sụp đổ",
+    "f1_raw": 0.8485,
+    "f1_composed": 0.8485
+   },
+   {
+    "src": "test",
+    "q": "Vợ Hồ Quý Ly được ai gả cưới?",
+    "gold_in_passage": true,
+    "raw": "Công chúa Huy Ninh",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Bên cạnh những thành tựu đáng kể của mình, Edward I còn bị chỉ trích vì những điều gì?",
+    "gold_in_passage": true,
+    "raw": "Hành vi tàn bạo đối với người Scots, ban hành Sắc lệnh Trục xuất năm 1290",
+    "f1_raw": 0.5455,
+    "f1_composed": 0.5455
+   },
+   {
+    "src": "test",
+    "q": "Ngoài Bloody Ridge, trận đánh nào cũng xảy ra trong năm 1951?",
+    "gold_in_passage": true,
+    "raw": "Heartbreak Ridge",
+    "f1_raw": 1.0,
+    "f1_composed": 0.3077
+   },
+   {
+    "src": "test",
+    "q": "Vì sao trong những năm đầu lại có tình trạng nhiều người giả làm sứ giả Nhật Bản sang Trung Quốc?",
+    "gold_in_passage": true,
+    "raw": "Để nhận diện sứ giả thật giả, kiểm soát mậu dịch.",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Dòng nào nói chính xác về sự ra đời bài thơ “Tràng giang” của Huy Cận?",
+    "gold_in_passage": false,
+    "raw": "Không có",
+    "f1_raw": 0.0,
+    "f1_composed": 0.093
+   },
+   {
+    "src": "test",
+    "q": "Mỗi vị Tổng thống của Nga có thể đảm nhiệm chức vụ tối đa bao nhiêu nhiệm kỳ liên tiếp nhau?",
+    "gold_in_passage": true,
+    "raw": "2",
+    "f1_raw": 1.0,
+    "f1_composed": 0.0952
+   },
+   {
+    "src": "test",
+    "q": "Trong nhóm người Turk thì ngoài người Kazakh, Tuva, và Chantuu còn có những người nào?",
+    "gold_in_passage": true,
+    "raw": "Chantuu",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   },
+   {
+    "src": "test",
+    "q": "Chiến lược này đã đem về lợi ích gì đối với lực lượng quân đội của chúng ta?",
+    "gold_in_passage": false,
+    "raw": "Thành công chiến lược, giành thế chủ động, thắng lợi chiến lược, phát huy hiệu quả.",
+    "f1_raw": 0.0,
+    "f1_composed": 0.0
+   }
+  ],
+  "device_note": "đo trên GPU RTX 5070 (READER_DEVICE=cuda); seconds_per_q_cpu không phải thời gian CPU"
  }
 }

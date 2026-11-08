@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import random
 import sys
 from pathlib import Path
@@ -56,7 +57,7 @@ def main():
     ce = None
     if args.reranker:
         from sentence_transformers import CrossEncoder
-        ce = CrossEncoder(args.reranker, max_length=512, device="cpu")
+        ce = CrossEncoder(args.reranker, max_length=512, device=os.getenv("RERANK_DEVICE", "cpu"))
     rules = ["bm25_ratio_0.4", "wiki_dense_top1"] + [f"pooled_cos_k{k}" for k in (1, 3, 5)] \
         + [f"pooled_cos_k{k}_kbmargin" for k in (1, 3)] \
         + [f"ratio_{r}_then_wiki_dense" for r in (0.4, 0.3, 0.2)] + [f"ratio_{r}_then_wiki_bestcos" for r in (0.4, 0.3, 0.2)] \

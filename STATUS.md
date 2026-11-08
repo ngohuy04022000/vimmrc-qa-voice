@@ -266,3 +266,9 @@ Gỡ bộ slide/kịch bản 5 và 30 phút (`docs/*.pptx|docx|md`) cùng `build
 
 ## 2026-11-08 — Câu trả lời dài hơn, có nguồn trích dẫn
 `DialogueManager(detail=True)` (API/Docker bật mặc định, tắt bằng `DIALOGUE_DETAIL=0`): sau câu trả lời ngắn, thêm một câu bằng chứng trích từ đoạn văn rồi câu "Thông tin lấy từ …" (Wikipedia + tên bài, bài đọc ViMMRC, thẻ tri thức tuyển chọn, hoặc đoạn người dùng cung cấp). `/api/ask` trả thêm trường `source` (`tier`, `title`, `label`). Câu từ chối không có dòng nguồn. Các script đánh giá tạo `DialogueManager` trực tiếp nên vẫn dùng chế độ ngắn, F1 trong `reports/` không đổi; chưa đo F1 của chế độ dài (câu dài làm giảm precision của token F1). 141 test đạt.
+
+## 2026-11-08 — Đo bổ sung khi GPU rảnh
+- **Qwen2.5-3B-Instruct** làm reader (đo trên GPU, `reports/reader_bench.json`): F1 câu nói 0,401 (câu kiểm thử 0,257), thấp hơn 1,5B (0,418) và ViT5 (0,446); không đổi kết luận chọn `vi-mrc-large`.
+- **Tầng truy xuất, 500 câu mỗi nhóm** (`reports/rerank_logit_routing_e2e_n500.json`, `scripts/eval_dense.py --n 500 --reranker …`, `RERANK_DEVICE=cuda`): không thưởng 51,9/27,2; thưởng xác suất 0,25: 56,2/24,5; thưởng logit β=3: 56,6/25,8; tỉ lệ BM25: 52,9/15,9. Thứ tự giống lần 200 câu (60,8/26,7) nhưng khoảng cách nhỏ hơn: logit lấy lại khoảng một nửa điểm miền mở mà thưởng xác suất làm mất, không phải "phần lớn".
+- **Chế độ câu dài kèm nguồn** (`reports/llm_assist_off_detail.json` so với `llm_assist_off_short_recall.json`): token F1 0,4421 → 0,2964 (câu 21,6 → 50,7 từ), recall token đáp án 0,562 → 0,637, từ chối không đổi 22/220 và 16/30. Token F1 không phù hợp để đo câu dài; chưa đánh giá độ liên quan của câu thêm vào.
+- Chưa làm: fine-tune `vi-mrc-large` trên ViMMRC (không có nhãn span, chỉ có đáp án lựa chọn); đo lại INT8 của STT trên 1.802 câu (thiếu bộ âm thanh test đầy đủ trên máy này); slide chưa cập nhật các số trên (slide 27 vẫn là bản 200 câu).

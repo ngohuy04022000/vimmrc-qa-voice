@@ -393,15 +393,46 @@ REALTIME = re.compile(r"\b(?:hôm nay|ngày mai|tối nay|sáng nay|hiện nay|h
                       re.IGNORECASE)
 
 
+def source_info(hit_id: str | None, text: str) -> dict:
+    """Nhãn nguồn đọc được từ id đoạn văn: bài Wikipedia, bài đọc ViMMRC, thẻ tri thức hay đoạn người dùng đưa."""
+    hid = hit_id or ""
+    title = re.split(r"(?<=[\wÀ-ỹ])\.\s", text.strip(), maxsplit=1)[0].strip()
+    title = title if 0 < len(title.split()) <= 8 else ""
+    if hid == "user_passage":
+        return {"tier": "user", "title": "", "label": "đoạn văn bạn cung cấp"}
+    if hid.startswith(("wiki:", "viquad:")):
+        label = f"Wikipedia, bài {title}" if title else "Wikipedia"
+        return {"tier": "wikipedia", "title": title, "label": label}
+    if hid.startswith(("train:", "dev:", "test:")):
+        return {"tier": "vimmrc", "title": "", "label": "bài đọc trong bộ dữ liệu ViMMRC"}
+    if hid.startswith("kb:"):
+        return {"tier": "curated", "title": "", "label": "thẻ tri thức tuyển chọn của hệ thống"}
+    return {"tier": "other", "title": title, "label": "kho tri thức của hệ thống"}
+
+
+def add_detail(question: str, answer: str, raw: str, passage: str, hit_id: str | None) -> tuple[str, dict]:
+    """Câu trả lời đầy đủ hơn: thêm câu bằng chứng trong đoạn văn rồi câu nêu nguồn."""
+    src = source_info(hit_id, passage)
+    have = set(words(answer))
+    for sent in evidence_sentences(question, passage, raw, limit=1):
+        toks = words(sent)
+        if toks and len(toks) <= 55 and sum(t in have for t in toks) / len(toks) < 0.8:
+            answer = f"{_end(answer)} {_end(sent)}"
+    return f"{_end(answer)} Thông tin lấy từ {src['label']}.", src
+
+
 class DialogueManager:
     def __init__(self, retriever, reader=None, *, top_k: int = 3, min_support: float = 0.34,
                  max_sessions: int = 1000, session_ttl: float = 6 * 3600, seed: int | None = None,
                  assist=None, assist_gate: bool = True, assist_verify: bool = True,
-                 min_rerank: float | None = None):
+                 min_rerank: float | None = None, detail: bool = False):
         # Điểm cross-encoder (logit, đã gồm +bonus tầng 1) của đoạn được chọn thấp hơn mức này thì từ chối.
         # Chỉ đặt khi retriever có reranker; điểm BM25/cosine không so được. Giá trị 1.0: từ chối thêm 9/30 câu
         # ngoài kho (đang bị trả lời vô nghĩa) với giá F1 -0,0015 (reports/rerank_confidence_gate.json).
         self.min_rerank = min_rerank
+        # detail=True: câu trả lời dài hơn (thêm câu bằng chứng) và nêu nguồn trích dẫn; mặc định tắt để
+        # các báo cáo đánh giá F1 giữ nguyên cách tính.
+        self.detail = detail
         self.assist = assist  # LLMAssist hoặc None; None/không sẵn sàng = chạy như trước
         self.assist_gate = assist_gate
         self.assist_verify = assist_verify
@@ -485,7 +516,8 @@ class DialogueManager:
                               f"Còn ý {_lower_head(p)} thì mình chưa tìm thấy thông tin đủ tin cậy."
                               for p, r in zip(parts, results))
             return {"answer": answer, "kind": "multi", "resolved_question": resolved, "parts": results,
-                    "passage": known[0].get("passage"), "raw_answer": known[0].get("raw_answer", ""),
+                    "passage": known[0].get("passage"), "source": known[0].get("source"),
+                    "raw_answer": known[0].get("raw_answer", ""),
                     "topic_question": parts[0], "rewritten": rewritten}
         out = self._answer_single(resolved, passage, sess if rewritten else None)
         out["rewritten"] = rewritten
@@ -630,8 +662,12 @@ class DialogueManager:
         answer = compose_answer(question, raw, text, qtype)
         if not answer.strip():
             return dict(base, answer=UNKNOWN_ANSWER, kind="unknown", passage=None, support=round(sup, 3), llm=llm)
+        source = None
+        if self.detail and qtype != "summary":
+            answer, source = add_detail(question, answer, raw, text, hit.get("id"))
         return dict(base, llm=llm, answer=answer, raw_answer=raw, kind="summary" if qtype == "summary" else "qa",
-                    passage={"id": hit.get("id"), "text": text, "score": hit.get("score")}, support=round(sup, 3))
+                    passage={"id": hit.get("id"), "text": text, "score": hit.get("score")}, support=round(sup, 3),
+                    source=source or source_info(hit.get("id"), text))
 
     def _yesno(self, question: str, passage: str | None, sess: Session | None) -> dict:
         claims = yesno_claims(question)

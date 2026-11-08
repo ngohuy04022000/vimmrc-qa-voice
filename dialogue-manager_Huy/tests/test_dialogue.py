@@ -214,6 +214,31 @@ class DialogueTests(unittest.TestCase):
             self.ask("   ")
 
 
+class DetailTests(unittest.TestCase):
+    def test_detail_adds_evidence_and_source(self):
+        plain = DialogueManager(Retriever(SEED), seed=0).respond("Hồ Chí Minh sinh năm nào?")
+        full = DialogueManager(Retriever(SEED), seed=0, detail=True).respond("Hồ Chí Minh sinh năm nào?")
+        self.assertEqual(plain["kind"], "qa")
+        self.assertTrue(full["answer"].startswith(plain["answer"].rstrip(".")))
+        self.assertIn("Thông tin lấy từ", full["answer"])
+        self.assertGreater(len(full["answer"].split()), len(plain["answer"].split()))
+        self.assertIn("label", full["source"])
+
+    def test_detail_off_by_default_and_unknown_has_no_source_line(self):
+        r = DialogueManager(Retriever(SEED), seed=0).respond("Hồ Chí Minh sinh năm nào?")
+        self.assertNotIn("Thông tin lấy từ", r["answer"])
+        u = DialogueManager(Retriever(SEED), seed=0, detail=True).respond("Giá vàng hôm nay là bao nhiêu?")
+        self.assertNotIn("Thông tin lấy từ", u["answer"])
+
+    def test_source_labels(self):
+        from dialogue import source_info
+        self.assertEqual(source_info("wiki:1", "Edward I của Anh. Năm 1254...")["label"], "Wikipedia, bài Edward I của Anh")
+        self.assertEqual(source_info("viquad:7", "Hà Nội. Hà Nội là thủ đô.")["tier"], "wikipedia")
+        self.assertEqual(source_info("train:3", "...")["tier"], "vimmrc")
+        self.assertEqual(source_info("kb:x", "...")["tier"], "curated")
+        self.assertEqual(source_info("user_passage", "...")["tier"], "user")
+
+
 class EvalSetTests(unittest.TestCase):
     """Chốt chất lượng: bộ phát triển >= 95% mục đạt, bộ held-out >= 90% (offline)."""
 

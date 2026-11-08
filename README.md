@@ -184,3 +184,5 @@ python -X utf8 dialogue-manager_Huy/chat_cli.py --debug
 | Ngô Trí Huy | Retrieval model (+ tích hợp backend, kho tri thức) | `retrieval-model_Huy/` |
 | Ngô Trí Huy | MRC model (ViT5 fine-tune trên ViMMRC 2.0 + UIT-ViQuAD2.0; đối sánh và chọn bộ đọc) | `mrc-model_Huy/` |
 | Huỳnh Công Lương | Giao diện web (mic + speaker) và Docker | `web-interface_Luong/` |
+
+> Chế độ câu trả lời đầy đủ: API/Docker trả lời kèm câu bằng chứng và nguồn trích dẫn (trường `source` trong `/api/ask`); đặt `DIALOGUE_DETAIL=0` để chỉ trả lời ngắn.

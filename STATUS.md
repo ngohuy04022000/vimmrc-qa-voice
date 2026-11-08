@@ -263,3 +263,6 @@ trên máy lúc đo chạy 0,15 token/giây (log `draft-dflash`), mọi lần g�
 ## 2026-11-08 — Dọn bản cũ lần hai
 Gỡ bộ slide/kịch bản 5 và 30 phút (`docs/*.pptx|docx|md`) cùng `build_*.py` và `slide_builder.py`: chúng còn mô tả ViT5/ChoiceRanker và số đo cũ. Bản trình bày hiện hành là `ViMMRC_Voice_QA_Slides*.pptx` ở thư mục mẹ (VI + EN, 51 slide); bản cũ vẫn lấy lại được từ lịch sử git. Số test trên slide sửa 137 → 138.
 Đã gỡ thêm `docs/gdrive_downloads/` (bản nháp Drive cũ còn ChoiceRanker, 552 đoạn, 1,8 s) và `docs/screenshots/` (7 biểu đồ cũ với số 5.869 đoạn, Edge-TTS CER 1,0%… không còn khớp `reports/`); không tệp nào tham chiếu tới chúng. Số liệu hiện hành nằm ở `reports/` và trong bài báo.
+
+## 2026-11-08 — Câu trả lời dài hơn, có nguồn trích dẫn
+`DialogueManager(detail=True)` (API/Docker bật mặc định, tắt bằng `DIALOGUE_DETAIL=0`): sau câu trả lời ngắn, thêm một câu bằng chứng trích từ đoạn văn rồi câu "Thông tin lấy từ …" (Wikipedia + tên bài, bài đọc ViMMRC, thẻ tri thức tuyển chọn, hoặc đoạn người dùng cung cấp). `/api/ask` trả thêm trường `source` (`tier`, `title`, `label`). Câu từ chối không có dòng nguồn. Các script đánh giá tạo `DialogueManager` trực tiếp nên vẫn dùng chế độ ngắn, F1 trong `reports/` không đổi; chưa đo F1 của chế độ dài (câu dài làm giảm precision của token F1). 141 test đạt.

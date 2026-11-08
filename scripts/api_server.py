@@ -196,7 +196,8 @@ def get_dialogue() -> DialogueManager:
                 _dialogue = DialogueManager(retriever, reader, assist=_assist,
                                             min_support=float(os.getenv("DIALOGUE_MIN_SUPPORT", "0.34")),
                                             min_rerank=float(min_rerank) if min_rerank and getattr(
-                                                retriever, "reranker", None) else None)
+                                                retriever, "reranker", None) else None,
+                                            detail=os.getenv("DIALOGUE_DETAIL", "1") != "0")
     return _dialogue
 
 
@@ -280,6 +281,7 @@ def ask(request: AskRequest) -> dict:
         "session_id": result["session_id"],
         "resolved_question": result.get("resolved_question"),
         "passage": {"id": passage.get("id"), "text": passage.get("text"), "score": passage.get("score")} if passage else None,
+        "source": result.get("source") if passage else None,
         "parts": [{"question": p.get("resolved_question"), "answer": p.get("answer"), "kind": p.get("kind")}
                   for p in result.get("parts", [])],
     }

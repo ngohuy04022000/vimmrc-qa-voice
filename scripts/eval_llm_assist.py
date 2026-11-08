@@ -73,8 +73,14 @@ def run(name: str, manager: DialogueManager, ans: list[dict], unans: list[str]) 
         # recall: phần token của đáp án chuẩn có mặt trong câu trả lời; không phạt câu dài như token F1
         ans_toks = set(r["answer"].casefold().split())
         rec = max((sum(t in ans_toks for t in ref.casefold().split()) / max(1, len(ref.split()))) for ref in it["refs"])
+        ptxt = ((r.get("passage") or {}).get("text") or "").casefold()
+        raw = (r.get("raw_answer") or "").casefold().strip(" .")
+        p_toks = set(ptxt.split())
+        gold_in_p = max((sum(t in p_toks for t in ref.casefold().split()) / max(1, len(ref.split()))) for ref in it["refs"]) if ptxt else 0.0
         rows.append({"src": it["src"], "q": it["q"], "kind": r["kind"], "f1": round(f1, 4), "recall": round(rec, 4),
-                     "n_words": len(r["answer"].split()), "answer": r["answer"][:160]})
+                     "n_words": len(r["answer"].split()), "raw_in_cited_passage": bool(raw and raw in ptxt),
+                     "gold_recall_in_cited_passage": round(gold_in_p, 4), "source": (r.get("source") or {}).get("label"),
+                     "answer": r["answer"][:160], "full_answer": r["answer"], "raw_answer": r.get("raw_answer", "")})
         per_src.setdefault(it["src"], []).append(f1)
     t_ans = time.time() - t0
     false_refuse = sum(r["kind"] == "unknown" for r in rows)
@@ -91,6 +97,8 @@ def run(name: str, manager: DialogueManager, ans: list[dict], unans: list[str]) 
         "f1_by_src": {k: mean(v) for k, v in per_src.items()},
         "f1_when_answered": mean(answered_f1),
         "recall_all": mean([r["recall"] for r in rows]),
+        "raw_in_cited_passage": mean([float(r["raw_in_cited_passage"]) for r in rows if r["kind"] in ("qa",)]),
+        "gold_recall_in_cited_passage": mean([r["gold_recall_in_cited_passage"] for r in rows if r["kind"] in ("qa",)]),
         "mean_words": mean([r["n_words"] for r in rows if r["kind"] != "unknown"]),
         "false_refusal": f"{false_refuse}/{len(rows)}",
         "correct_refusal": f"{refused_ok}/{len(unans)}",

@@ -1,0 +1,2151 @@
+[
+ {
+  "name": "off",
+  "f1_all": 0.2945,
+  "f1_by_src": {
+   "ood": 0.4505,
+   "hard": 0.2321,
+   "test": 0.1837
+  },
+  "f1_when_answered": 0.3263,
+  "recall_all": 0.6505,
+  "mean_words": 52.3737,
+  "false_refusal": "22/220",
+  "correct_refusal": "16/30",
+  "seconds_per_answerable": 2.53,
+  "answerable": [
+   {
+    "src": "ood",
+    "q": "Quang Trung đại phá quân Thanh vào năm nào?",
+    "kind": "qa",
+    "f1": 0.3896,
+    "recall": 0.8333,
+    "n_words": 59,
+    "answer": "Quang Trung đại phá quân Thanh năm mùa xuân năm Kỷ Dậu 1789. Vào mùa xuân năm Kỷ Dậu 1789, vua Quang Trung đã chỉ huy chiến dịch đại phá 29 vạn quân Mãn Thanh x"
+   },
+   {
+    "src": "ood",
+    "q": "Ai là người chỉ huy chiến thắng Bạch Đằng năm 938 chấm dứt nghìn năm Bắc thuộc?",
+    "kind": "qa",
+    "f1": 0.4444,
+    "recall": 0.8333,
+    "n_words": 54,
+    "answer": "Ngô Quyền là người chỉ huy chiến thắng Bạch Đằng năm 938 chấm dứt nghìn năm Bắc thuộc. Ngô Quyền là vị anh hùng dân tộc chỉ huy chiến thắng Bạch Đằng năm 938 ch"
+   },
+   {
+    "src": "ood",
+    "q": "Hưng Đạo Đại Vương Trần Quốc Tuấn ba lần lãnh đạo nhân dân đánh tan quân xâm lược nào?",
+    "kind": "qa",
+    "f1": 0.4906,
+    "recall": 0.7143,
+    "n_words": 32,
+    "answer": "Hưng Đạo Đại Vương Trần Quốc Tuấn ba lần lãnh đạo nhân dân đánh tan quân xâm lược Mông Nguyên. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Hai Bà Trưng phất cờ khởi nghĩa chống lại ách đô hộ của phong kiến phương Bắc vào năm nào?",
+    "kind": "qa",
+    "f1": 0.4444,
+    "recall": 0.9091,
+    "n_words": 34,
+    "answer": "Hai Bà Trưng phất cờ khởi nghĩa chống lại ách đô hộ của phong kiến phương Bắc năm 40 sau Công Nguyên. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Ai là tác giả của bản Tuyên ngôn Độc lập đầu tiên của nước ta mang tên Nam quốc sơn hà?",
+    "kind": "qa",
+    "f1": 0.4286,
+    "recall": 0.8261,
+    "n_words": 61,
+    "answer": "Lý Thường Kiệt là tác giả của bản Tuyên ngôn Độc lập đầu tiên của nước ta mang tên Nam quốc sơn hà. Bản Tuyên ngôn Độc lập đầu tiên Nam quốc sơn hà tương truyền"
+   },
+   {
+    "src": "ood",
+    "q": "Vị vua nào có công dẹp loạn 12 sứ quân và lập ra nhà nước Đại Cồ Việt?",
+    "kind": "qa",
+    "f1": 0.4906,
+    "recall": 0.7222,
+    "n_words": 35,
+    "answer": "Đinh Bộ Lĩnh tức vua Đinh Tiên Hoàng có công dẹp loạn 12 sứ quân và lập ra nhà nước Đại Cồ Việt. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Chủ tịch Hồ Chí Minh đọc bản Tuyên ngôn Độc lập khai sinh nước Việt Nam Dân chủ Cộng hòa vào ngày tháng năm nào?",
+    "kind": "qa",
+    "f1": 0.5397,
+    "recall": 0.68,
+    "n_words": 38,
+    "answer": "Chủ tịch Hồ Chí Minh đọc bản Tuyên ngôn Độc lập khai sinh nước Việt Nam Dân chủ Cộng hòa vào ngày tháng vào ngày 2 tháng 9 năm 1945. Thông tin lấy từ Wikipedia,"
+   },
+   {
+    "src": "ood",
+    "q": "Chiến dịch Điện Biên Phủ toàn thắng vào ngày tháng năm nào?",
+    "kind": "qa",
+    "f1": 0.3171,
+    "recall": 1.0,
+    "n_words": 68,
+    "answer": "Chiến dịch Điện Biên Phủ toàn thắng vào ngày tháng vào ngày 7 tháng 5 năm 1954. lực lượng Quân đội Nhân dân Việt Nam do Đại tướng Võ Nguyên Giáp chỉ huy đã buộc"
+   },
+   {
+    "src": "ood",
+    "q": "Người anh hùng áo vải lãnh đạo cuộc khởi nghĩa Lam Sơn giành lại độc lập là ai?",
+    "kind": "qa",
+    "f1": 0.4583,
+    "recall": 0.6471,
+    "n_words": 31,
+    "answer": "Người anh hùng áo vải lãnh đạo cuộc khởi nghĩa Lam Sơn giành lại độc lập là Lê Lợi. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Kinh đô đầu tiên của nhà nước Văn Lang thời các vua Hùng nằm ở đâu?",
+    "kind": "qa",
+    "f1": 0.5769,
+    "recall": 0.8824,
+    "n_words": 35,
+    "answer": "Kinh đô đầu tiên của nhà nước Văn Lang thời các vua Hùng nằm ở Phong Châu thuộc tỉnh Phú Thọ ngày nay. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Vua Lý Thái Tổ ban Chiếu dời đô từ Hoa Lư về Thăng Long vào năm nào?",
+    "kind": "qa",
+    "f1": 0.619,
+    "recall": 0.9286,
+    "n_words": 28,
+    "answer": "Vua Lý Thái Tổ ban Chiếu dời đô từ Hoa Lư về Thăng Long năm 1010. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Chiến dịch Hồ Chí Minh lịch sử giải phóng hoàn toàn miền Nam thống nhất đất nước toàn thắng vào ngày nào?",
+    "kind": "qa",
+    "f1": 0.4906,
+    "recall": 0.9333,
+    "n_words": 38,
+    "answer": "Chiến dịch Hồ Chí Minh lịch sử giải phóng hoàn toàn miền Nam thống nhất đất nước toàn thắng vào ngày 30 tháng 4 năm 1975. Thông tin lấy từ thẻ tri thức tuyển ch"
+   },
+   {
+    "src": "ood",
+    "q": "Đại tướng đầu tiên và Tổng tư lệnh Quân đội Nhân dân Việt Nam là ai?",
+    "kind": "qa",
+    "f1": 0.375,
+    "recall": 0.8824,
+    "n_words": 63,
+    "answer": "Đại tướng đầu tiên và Tổng tư lệnh Quân đội Nhân dân Việt Nam là Võ Nguyên Giáp. Võ Nguyên Giáp. Ông là Đại tướng đầu tiên, Tổng Tư lệnh tối cao của Quân đội Nh"
+   },
+   {
+    "src": "ood",
+    "q": "Ai là người anh hùng thiếu niên bóp nát quả cam vì không được dự bàn việc nước đánh giặc Nguyên Mông?",
+    "kind": "qa",
+    "f1": 0.3913,
+    "recall": 0.8,
+    "n_words": 36,
+    "answer": "Trần Quốc Toản là người anh hùng thiếu niên bóp nát quả cam vì không được dự bàn việc nước đánh giặc Nguyên Mông. Thông tin lấy từ thẻ tri thức tuyển chọn của h"
+   },
+   {
+    "src": "ood",
+    "q": "Ai là tác giả của bản thiên cổ hùng văn Bình Ngô đại cáo?",
+    "kind": "qa",
+    "f1": 0.5,
+    "recall": 1.0,
+    "n_words": 48,
+    "answer": "Nguyễn Trãi là tác giả của bản thiên cổ hùng văn Bình Ngô đại cáo. Danh nhân văn hóa thế giới Nguyễn Trãi là tác giả của bản thiên cổ hùng văn Bình Ngô đại cáo."
+   },
+   {
+    "src": "ood",
+    "q": "Trận Như Nguyệt năm 1077 diễn ra trên dòng sông nào ngày nay?",
+    "kind": "qa",
+    "f1": 0.3548,
+    "recall": 1.0,
+    "n_words": 50,
+    "answer": "Bản Tuyên ngôn Độc lập đầu tiên Nam quốc sơn hà tương truyền do danh tướng Lý Thường Kiệt đọc bên sông Như Nguyệt năm 1077. Sông Như Nguyệt chính là một đoạn củ"
+   },
+   {
+    "src": "ood",
+    "q": "Thành Cổ Loa được xây dựng dưới triều đại của vị vua nào?",
+    "kind": "qa",
+    "f1": 0.2812,
+    "recall": 0.5294,
+    "n_words": 47,
+    "answer": "Thành Cổ Loa được xây dựng dưới triều đại của Lý Phật Tử. Người cháu của Lý Bí là Lý Phật Tử tới đóng đô ở Cổ Loa, nhưng nền độc lập này chỉ kéo dài tới năm 602"
+   },
+   {
+    "src": "ood",
+    "q": "Bác Hồ ra đi tìm đường cứu nước từ bến cảng nào vào ngày 5 tháng 6 năm 1911?",
+    "kind": "qa",
+    "f1": 0.56,
+    "recall": 0.8667,
+    "n_words": 35,
+    "answer": "Bác Hồ ra đi tìm đường cứu nước từ bến cảng Nhà Rồng tại Sài Gòn vào ngày 5 tháng 6 năm 1911. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Vị trạng nguyên trẻ tuổi nhất trong lịch sử khoa bảng Việt Nam là ai?",
+    "kind": "qa",
+    "f1": 0.4167,
+    "recall": 0.5789,
+    "n_words": 29,
+    "answer": "Nguyễn Hiền. Nguyễn Hiền là trạng nguyên trẻ nhất trong lịch sử khoa cử Việt Nam, khi mới mười ba tuổi. Thông tin lấy từ Wikipedia, bài Nguyễn Hiền."
+   },
+   {
+    "src": "ood",
+    "q": "Phong trào Cần Vương chống thực dân Pháp do vị vua yêu nước nào ban chiếu phát động?",
+    "kind": "qa",
+    "f1": 0.5455,
+    "recall": 0.7333,
+    "n_words": 29,
+    "answer": "Phong trào Cần Vương chống thực dân Pháp do vị vua yêu nước Hàm Nghi ban chiếu phát động. Thông tin lấy từ Wikipedia, bài Phong trào Cần Vương."
+   },
+   {
+    "src": "ood",
+    "q": "Thủ đô của nước Cộng hòa Xã hội Chủ nghĩa Việt Nam là thành phố nào?",
+    "kind": "qa",
+    "f1": 0.3137,
+    "recall": 0.8,
+    "n_words": 41,
+    "answer": "Hà Nội. Hà Nội là thủ đô của nước Cộng hòa xã hội chủ nghĩa Việt Nam và cũng là kinh đô của hầu hết các vương triều phong kiến Việt trước đây. Thông tin lấy từ "
+   },
+   {
+    "src": "ood",
+    "q": "Đỉnh núi cao nhất Việt Nam và được mệnh danh là nóc nhà Đông Dương là đỉnh núi nào?",
+    "kind": "qa",
+    "f1": 0.2022,
+    "recall": 0.4667,
+    "n_words": 72,
+    "answer": "Đỉnh núi cao nhất Việt Nam và được mệnh danh là nóc nhà Đông Dương là đỉnh núi Đỉnh Fansipan (Phan Xi Păng). Đỉnh Fansipan (Phan Xi Păng) là đỉnh núi cao nhất V"
+   },
+   {
+    "src": "ood",
+    "q": "Hang động tự nhiên lớn nhất thế giới nằm ở tỉnh nào của Việt Nam?",
+    "kind": "qa",
+    "f1": 0.3934,
+    "recall": 0.7857,
+    "n_words": 48,
+    "answer": "Hang động tự nhiên lớn nhất thế giới nằm ở tỉnh Quảng Bình của Việt Nam. tọa lạc tại Vườn quốc gia Phong Nha - Kẻ Bàng thuộc huyện Bố Trạch, tỉnh Quảng Bình, Vi"
+   },
+   {
+    "src": "ood",
+    "q": "Đảo nào có diện tích lớn nhất của Việt Nam?",
+    "kind": "qa",
+    "f1": 0.4815,
+    "recall": 1.0,
+    "n_words": 40,
+    "answer": "Đảo Phú Quốc có diện tích lớn nhất của Việt Nam. Đảo Phú Quốc thuộc tỉnh Kiên Giang là hòn đảo có diện tích lớn nhất Việt Nam. Thông tin lấy từ thẻ tri thức tuy"
+   },
+   {
+    "src": "ood",
+    "q": "Vịnh Hạ Long được UNESCO công nhận là di sản thiên nhiên thế giới thuộc tỉnh nào?",
+    "kind": "qa",
+    "f1": 0.359,
+    "recall": 0.7778,
+    "n_words": 30,
+    "answer": "Vịnh Hạ Long được UNESCO công nhận là di sản thiên nhiên thế giới thuộc tỉnh Quảng Ninh. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Cột cờ Lũng Cú điểm cực Bắc của Tổ quốc thuộc huyện nào của tỉnh Hà Giang?",
+    "kind": "qa",
+    "f1": 0.4444,
+    "recall": 0.8333,
+    "n_words": 33,
+    "answer": "Cột cờ Lũng Cú điểm cực Bắc của Tổ quốc thuộc huyện Đồng Văn tỉnh Hà Giang của tỉnh Hà Giang. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Điểm cực Nam trên đất liền của Việt Nam thuộc địa phận tỉnh nào?",
+    "kind": "qa",
+    "f1": 0.5,
+    "recall": 0.8462,
+    "n_words": 27,
+    "answer": "Điểm cực Nam trên đất liền của Việt Nam thuộc địa phận tỉnh Cà Mau. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Dòng sông nào dài nhất chảy hoàn toàn bên trong lãnh thổ Việt Nam?",
+    "kind": "qa",
+    "f1": 0.5333,
+    "recall": 0.8125,
+    "n_words": 29,
+    "answer": "Sông Đồng Nai là dòng sông dài nhất chảy hoàn toàn bên trong lãnh thổ Việt Nam. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Đồng bằng sông Cửu Long còn được gọi bằng tên quen thuộc nào?",
+    "kind": "qa",
+    "f1": 0.5098,
+    "recall": 0.9444,
+    "n_words": 33,
+    "answer": "Đồng bằng sông Cửu Long còn được gọi bằng tên quen thuộc Đồng bằng Nam Bộ hoặc miền Tây Nam Bộ. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Hồ nước ngọt tự nhiên lớn nhất Việt Nam là hồ nào?",
+    "kind": "qa",
+    "f1": 0.4286,
+    "recall": 0.5294,
+    "n_words": 25,
+    "answer": "Hồ Ba Bể. Hồ Ba Bể là một hồ nước ngọt ở Bắc Kạn, Việt Nam. Thông tin lấy từ Wikipedia, bài Hồ Ba Bể."
+   },
+   {
+    "src": "ood",
+    "q": "Quần đảo Hoàng Sa và Trường Sa thuộc chủ quyền thiêng liêng của quốc gia nào?",
+    "kind": "qa",
+    "f1": 0.4889,
+    "recall": 0.5714,
+    "n_words": 24,
+    "answer": "Quần đảo Hoàng Sa và Trường Sa thuộc chủ quyền thiêng liêng của Trung Quốc. Thông tin lấy từ Wikipedia, bài Phạm Văn Đồng."
+   },
+   {
+    "src": "ood",
+    "q": "Thác nước tự nhiên lớn nhất Đông Nam Á nằm giữa biên giới Việt Nam và Trung Quốc tên là gì?",
+    "kind": "qa",
+    "f1": 0.2,
+    "recall": 0.3333,
+    "n_words": 31,
+    "answer": "Thác nước tự nhiên lớn nhất Đông Nam Á nằm giữa biên giới Việt Nam và Trung Quốc tên là Thác Bản Giốc. Thông tin lấy từ Wikipedia, bài Đàm Thủy."
+   },
+   {
+    "src": "ood",
+    "q": "Thành phố Đà Lạt thành phố ngàn hoa nằm trên cao nguyên nào?",
+    "kind": "qa",
+    "f1": 0.5714,
+    "recall": 1.0,
+    "n_words": 29,
+    "answer": "Thành phố Đà Lạt thành phố ngàn hoa nằm trên cao nguyên Lâm Viên tỉnh Lâm Đồng. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Cố đô Huế với dòng sông Hương thơ mộng thuộc tỉnh nào?",
+    "kind": "qa",
+    "f1": 0.3684,
+    "recall": 0.6667,
+    "n_words": 26,
+    "answer": "Cố đô Huế với dòng sông Hương thơ mộng thuộc tỉnh Thừa Thiên Huế. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Việt Nam có đường bờ biển dài khoảng bao nhiêu kilomet?",
+    "kind": "qa",
+    "f1": 0.5902,
+    "recall": 1.0,
+    "n_words": 40,
+    "answer": "Việt Nam có đường bờ biển dài khoảng 3.260 kilomet. Việt Nam có đường bờ biển dài khoảng 3.260 kilomet trải dài từ Móng Cái đến Hà Tiên. Thông tin lấy từ thẻ tr"
+   },
+   {
+    "src": "ood",
+    "q": "Tỉnh nào ở Việt Nam có diện tích tự nhiên rộng nhất cả nước?",
+    "kind": "qa",
+    "f1": 0.5854,
+    "recall": 0.8462,
+    "n_words": 28,
+    "answer": "Nghệ An là tỉnh ở Việt Nam có diện tích tự nhiên rộng nhất cả nước. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Tỉnh nào có diện tích đất tự nhiên nhỏ nhất nước ta?",
+    "kind": "qa",
+    "f1": 0.5641,
+    "recall": 0.8462,
+    "n_words": 26,
+    "answer": "Bắc Ninh là tỉnh có diện tích đất tự nhiên nhỏ nhất nước ta. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Đèo Hải Vân là ranh giới tự nhiên giữa hai địa phương nào?",
+    "kind": "qa",
+    "f1": 0.3117,
+    "recall": 0.6111,
+    "n_words": 59,
+    "answer": "Đèo Hải Vân là ranh giới tự nhiên giữa hai địa phương Thuận Hóa và Quảng Nam. và trở thành ranh giới tự nhiên của hai xứ Thuận Hóa và Quảng Nam, như sách Phủ Bi"
+   },
+   {
+    "src": "ood",
+    "q": "Núi Bà Đen ngọn núi cao nhất miền Đông Nam Bộ thuộc tỉnh nào?",
+    "kind": "qa",
+    "f1": 0.4103,
+    "recall": 0.6667,
+    "n_words": 27,
+    "answer": "Núi Bà Đen ngọn núi cao nhất miền Đông Nam Bộ thuộc tỉnh Tây Ninh. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Sông Hồng bắt nguồn từ đâu trước khi chảy vào Việt Nam?",
+    "kind": "qa",
+    "f1": 0.5714,
+    "recall": 0.9167,
+    "n_words": 30,
+    "answer": "Sông Hồng bắt nguồn từ vùng núi tỉnh Vân Nam Trung Quốc trước khi chảy vào Việt Nam. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Ai là tác giả của kiệt tác Truyện Kiều trong nền văn học cổ điển Việt Nam?",
+    "kind": "qa",
+    "f1": 0.3077,
+    "recall": 0.9231,
+    "n_words": 66,
+    "answer": "Đại thi hào Nguyễn Du là tác giả của kiệt tác Truyện Kiều trong nền văn học cổ điển Việt Nam. nghĩa là Tiếng kêu mới về nỗi đứt ruột) là tác phẩm đỉnh cao của n"
+   },
+   {
+    "src": "ood",
+    "q": "Truyện Kiều được viết theo thể thơ truyền thống nào của dân tộc?",
+    "kind": "qa",
+    "f1": 0.3939,
+    "recall": 1.0,
+    "n_words": 51,
+    "answer": "Truyện Kiều được viết theo thể thơ truyền thống lục bát của dân tộc. Tác phẩm được viết bằng chữ Nôm theo thể thơ lục bát truyền thống của dân tộc Việt Nam gồm "
+   },
+   {
+    "src": "ood",
+    "q": "Nhà văn hiện thực Nam Cao nổi tiếng với tác phẩm về nhân vật nông dân nghèo nào nuôi chó vàng?",
+    "kind": "qa",
+    "f1": 0.275,
+    "recall": 0.7222,
+    "n_words": 62,
+    "answer": "Nhà văn hiện thực Nam Cao nổi tiếng với tác phẩm về nhân vật nông dân nghèo Lão Hạc nuôi chó vàng. Nhà văn hiện thực Nam Cao nổi tiếng với tác phẩm Lão Hạc viết"
+   },
+   {
+    "src": "ood",
+    "q": "Sự tích Bánh chưng bánh giầy gắn liền với nhân vật hoàng tử nào thời vua Hùng thứ sáu?",
+    "kind": "qa",
+    "f1": 0.439,
+    "recall": 0.8889,
+    "n_words": 32,
+    "answer": "Sự tích Bánh chưng bánh giầy gắn liền với nhân vật hoàng tử Lang Liêu thời vua Hùng thứ sáu. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Nhạc cụ truyền thống độc đáo của Việt Nam chỉ có duy nhất một dây phát ra âm thanh tên là gì?",
+    "kind": "qa",
+    "f1": 0.1739,
+    "recall": 0.3636,
+    "n_words": 35,
+    "answer": "Nhạc cụ truyền thống độc đáo của Việt Nam chỉ có duy nhất một dây phát ra âm thanh tên là đàn bầu. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Lễ hội Đền Hùng tưởng nhớ các vị vua lập nước được tổ chức vào ngày tháng âm lịch nào?",
+    "kind": "qa",
+    "f1": 0.5172,
+    "recall": 0.8889,
+    "n_words": 40,
+    "answer": "Lễ hội Đền Hùng tưởng nhớ các vị vua lập nước được tổ chức vào ngày tháng âm lịch ngày mùng 10 tháng 3 âm lịch hàng năm. Thông tin lấy từ thẻ tri thức tuyển chọ"
+   },
+   {
+    "src": "ood",
+    "q": "Dòng tranh dân gian truyền thống in khắc gỗ trên giấy điệp nổi tiếng của làng nào ở Bắc Ninh?",
+    "kind": "qa",
+    "f1": 0.3529,
+    "recall": 0.8,
+    "n_words": 36,
+    "answer": "Dòng tranh dân gian truyền thống in khắc gỗ trên giấy điệp nổi tiếng của làng Đông Hồ tỉnh Bắc Ninh ở Bắc Ninh. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ "
+   },
+   {
+    "src": "ood",
+    "q": "Tác phẩm Dế Mèn phiêu lưu ký là kiệt tác văn học thiếu nhi của nhà văn nào?",
+    "kind": "qa",
+    "f1": 0.5455,
+    "recall": 0.8,
+    "n_words": 29,
+    "answer": "Tác phẩm Dế Mèn phiêu lưu ký là kiệt tác văn học thiếu nhi của Tô Hoài. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Áo dài truyền thống của người phụ nữ Việt Nam thường được may bằng chất liệu vải gì đặc trưng?",
+    "kind": "qa",
+    "f1": 0.5882,
+    "recall": 0.9333,
+    "n_words": 36,
+    "answer": "Áo dài truyền thống của người phụ nữ Việt Nam thường được may bằng chất liệu vải lụa tơ tằm mềm mại đặc trưng. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ t"
+   },
+   {
+    "src": "ood",
+    "q": "Tết Trung thu của người Việt Nam diễn ra vào ngày tháng âm lịch nào trong năm?",
+    "kind": "qa",
+    "f1": 0.4478,
+    "recall": 1.0,
+    "n_words": 48,
+    "answer": "Ngày rằm tháng tám âm lịch tức ngày 15 tháng 8 âm lịch. Tết Trung thu của người Việt Nam diễn ra vào ngày rằm tháng tám âm lịch tức ngày 15 tháng 8 âm lịch. Thô"
+   },
+   {
+    "src": "ood",
+    "q": "Dân ca Quan họ là nét di sản văn hóa phi vật thể tiêu biểu của vùng quê nào?",
+    "kind": "qa",
+    "f1": 0.5424,
+    "recall": 0.9,
+    "n_words": 39,
+    "answer": "Dân ca Quan họ là nét di sản văn hóa phi vật thể tiêu biểu của vùng quê vùng Kinh Bắc gồm Bắc Ninh và Bắc Giang. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ"
+   },
+   {
+    "src": "ood",
+    "q": "Nhà thơ nào được mệnh danh là Bà chúa thơ Nôm trong nền thơ ca Việt Nam?",
+    "kind": "qa",
+    "f1": 0.4681,
+    "recall": 0.7692,
+    "n_words": 34,
+    "answer": "Nữ sĩ Hồ Xuân Hương là nhà thơ được mệnh danh là Bà chúa thơ Nôm trong nền thơ ca Việt Nam. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Nghệ thuật Múa rối nước là loại hình nghệ thuật sân khấu dân gian bắt nguồn từ nền văn minh nào?",
+    "kind": "qa",
+    "f1": 0.5263,
+    "recall": 0.8333,
+    "n_words": 39,
+    "answer": "Nghệ thuật Múa rối nước là loại hình nghệ thuật sân khấu dân gian bắt nguồn từ nền văn minh lúa nước vùng đồng bằng Bắc Bộ. Thông tin lấy từ thẻ tri thức tuyển "
+   },
+   {
+    "src": "ood",
+    "q": "Tác giả của bài thơ Tây Tiến hào hùng về người lính vệ quốc là ai?",
+    "kind": "qa",
+    "f1": 0.5116,
+    "recall": 0.8333,
+    "n_words": 31,
+    "answer": "Tác giả của bài thơ Tây Tiến hào hùng về người lính vệ quốc là Nhà thơ Quang Dũng. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Không gian văn hóa Cồng chiêng Tây Nguyên đã được UNESCO công nhận là gì?",
+    "kind": "qa",
+    "f1": 0.413,
+    "recall": 0.875,
+    "n_words": 68,
+    "answer": "Không gian văn hóa Cồng chiêng Tây Nguyên đã được UNESCO công nhận là Kiệt tác truyền khẩu và phi vật thể nhân loại. Không gian văn hóa cồng chiêng Tây Nguyên đ"
+   },
+   {
+    "src": "ood",
+    "q": "Nước tinh khiết đóng băng ở bao nhiêu độ C trong điều kiện tiêu chuẩn?",
+    "kind": "qa",
+    "f1": 0.5143,
+    "recall": 0.8889,
+    "n_words": 26,
+    "answer": "Nước tinh khiết đóng băng ở 0 độ C trong điều kiện tiêu chuẩn. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Nước sôi ở bao nhiêu độ C ở điều kiện áp suất khí quyển tiêu chuẩn 1 atm?",
+    "kind": "qa",
+    "f1": 0.5,
+    "recall": 1.0,
+    "n_words": 29,
+    "answer": "Nước sôi ở 100 độ C ở điều kiện áp suất khí quyển tiêu chuẩn 1 atm. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Hành tinh nào nằm ở vị trí gần Mặt Trời nhất trong Hệ Mặt Trời?",
+    "kind": "qa",
+    "f1": 0.2716,
+    "recall": 0.8462,
+    "n_words": 68,
+    "answer": "Sao Thủy, Sao Kim, Trái Đất, Sao Hỏa nằm ở vị trí gần Mặt Trời nhất trong Hệ Mặt Trời. Hệ Mặt Trời có tám hành tinh, xếp theo thứ tự khoảng cách từ gần nhất cho"
+   },
+   {
+    "src": "ood",
+    "q": "Hành tinh lớn nhất trong Hệ Mặt Trời của chúng ta là hành tinh nào?",
+    "kind": "qa",
+    "f1": 0.4651,
+    "recall": 0.5625,
+    "n_words": 27,
+    "answer": "Hành tinh lớn nhất trong Hệ Mặt Trời của chúng ta là Sao Mộc (Jupiter). Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Vận tốc của ánh sáng truyền trong chân không xấp xỉ khoảng bao nhiêu kilomet trên giây?",
+    "kind": "qa",
+    "f1": 0.6047,
+    "recall": 0.9231,
+    "n_words": 28,
+    "answer": "Vận tốc của ánh sáng truyền trong chân không xấp xỉ khoảng 300.000 kilomet trên giây. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Khí nào chiếm hàm lượng phần trăm thể tích lớn nhất trong bầu khí quyển Trái Đất?",
+    "kind": "qa",
+    "f1": 0.5116,
+    "recall": 0.8571,
+    "n_words": 29,
+    "answer": "Khí Nitơ chiếm hàm lượng phần trăm thể tích lớn nhất trong bầu khí quyển Trái Đất. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Công thức hóa học của nước gồm những nguyên tố nào?",
+    "kind": "qa",
+    "f1": 0.3934,
+    "recall": 0.7778,
+    "n_words": 43,
+    "answer": "Hai nguyên tử hydro liên kết với một nguyên tử oxy. Ví dụ, nước bao gồm hai nguyên tử hydro liên kết với một nguyên tử oxy: công thức hóa học là H 2 O. Thông ti"
+   },
+   {
+    "src": "ood",
+    "q": "Bộ xương người trưởng thành bình thường có khoảng bao nhiêu chiếc xương?",
+    "kind": "qa",
+    "f1": 0.4571,
+    "recall": 0.6364,
+    "n_words": 24,
+    "answer": "Bộ xương người trưởng thành bình thường có khoảng 206 chiếc xương. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Một năm dương lịch thông thường có bao nhiêu ngày?",
+    "kind": "qa",
+    "f1": 0.4571,
+    "recall": 0.7143,
+    "n_words": 21,
+    "answer": "Một năm dương lịch thông thường có 365 ngày. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Một ngày đêm trên Trái Đất có bao nhiêu giờ?",
+    "kind": "qa",
+    "f1": 0.5714,
+    "recall": 1.0,
+    "n_words": 34,
+    "answer": "Một ngày đêm trên Trái Đất có 24 giờ. Một ngày đêm trên Trái Đất có 24 giờ tương đương 1.440 phút. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Kim loại nào có khả năng dẫn điện và dẫn nhiệt tốt nhất trong tự nhiên?",
+    "kind": "qa",
+    "f1": 0.4878,
+    "recall": 0.7692,
+    "n_words": 28,
+    "answer": "Kim loại Bạc có khả năng dẫn điện và dẫn nhiệt tốt nhất trong tự nhiên. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Trái Đất quay một vòng quanh trục của nó mất khoảng thời gian bao lâu?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "ood",
+    "q": "Quá trình quang hợp ở thực vật xanh tạo ra khí gì cần thiết cho sự sống của con người?",
+    "kind": "qa",
+    "f1": 0.5106,
+    "recall": 0.9231,
+    "n_words": 34,
+    "answer": "Quá trình quang hợp ở thực vật xanh hấp thụ khí Cacbonic và giải phóng khí Oxy cần thiết cho sự sống. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Hình tam giác có tổng số đo ba góc trong bằng bao nhiêu độ?",
+    "kind": "qa",
+    "f1": 0.6,
+    "recall": 0.8667,
+    "n_words": 25,
+    "answer": "Hình tam giác có tổng số đo ba góc trong bằng 180 độ. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Nhịp tim trung bình của một người trưởng thành khỏe mạnh lúc nghỉ ngơi là bao nhiêu nhịp mỗi phút?",
+    "kind": "qa",
+    "f1": 0.4898,
+    "recall": 0.8125,
+    "n_words": 33,
+    "answer": "Nhịp tim trung bình của một người trưởng thành khỏe mạnh lúc nghỉ ngơi là 60 đến 100 nhịp mỗi phút. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "AI là viết tắt của thuật ngữ gì trong công nghệ thông tin?",
+    "kind": "qa",
+    "f1": 0.459,
+    "recall": 0.8125,
+    "n_words": 45,
+    "answer": "Artificial Intelligence là viết tắt của thuật ngữ gì trong công nghệ thông tin. AI là viết tắt của thuật ngữ Artificial Intelligence trong tiếng Anh, có nghĩa l"
+   },
+   {
+    "src": "ood",
+    "q": "Công nghệ STT viết tắt từ cụm từ nào và có chức năng gì?",
+    "kind": "multi",
+    "f1": 0.425,
+    "recall": 0.9444,
+    "n_words": 62,
+    "answer": "Công nghệ STT viết tắt từ cụm từ Speech to Text. Công nghệ STT là viết tắt của cụm từ Speech to Text, có chức năng chuyển đổi giọng nói thành văn bản. Thông tin"
+   },
+   {
+    "src": "ood",
+    "q": "Công nghệ TTS là viết tắt của từ gì và có tác dụng như thế nào?",
+    "kind": "multi",
+    "f1": 0.3579,
+    "recall": 0.9444,
+    "n_words": 77,
+    "answer": "Công nghệ TTS là viết tắt của từ Text to Speech. Công nghệ TTS là viết tắt của Text to Speech, có tác dụng tổng hợp giọng nói đọc từ văn bản. Thông tin lấy từ t"
+   },
+   {
+    "src": "ood",
+    "q": "Mô hình Whisper của OpenAI được nhóm sử dụng cho phân hệ nào trong dự án ViMMRC?",
+    "kind": "qa",
+    "f1": 0.36,
+    "recall": 0.9444,
+    "n_words": 80,
+    "answer": "Mô hình Whisper của OpenAI được nhóm sử dụng cho phân hệ Nhận dạng giọng nói trong dự án ViMMRC. Phân hệ Nhận dạng giọng nói (STT - Speech to Text): Ứng dụng mô"
+   },
+   {
+    "src": "ood",
+    "q": "Mô hình ViT5 được sử dụng để thực hiện nhiệm vụ gì trong hệ thống hỏi đáp?",
+    "kind": "qa",
+    "f1": 0.56,
+    "recall": 0.9091,
+    "n_words": 53,
+    "answer": "Đọc hiểu máy và sinh câu trả lời tự nhiên từ tài liệu ngữ cảnh. Mô hình ViT5 được sử dụng để thực hiện nhiệm vụ đọc hiểu máy và sinh câu trả lời tự nhiên từ tài"
+   },
+   {
+    "src": "ood",
+    "q": "Matcha-TTS áp dụng kỹ thuật sinh âm thanh tiên tiến nào?",
+    "kind": "qa",
+    "f1": 0.4638,
+    "recall": 0.875,
+    "n_words": 48,
+    "answer": "Matcha-TTS áp dụng kỹ thuật sinh âm thanh tiên tiến Optimal Transport Conditional Flow Matching. Matcha-TTS áp dụng kỹ thuật sinh âm thanh tiên tiến Optimal Tra"
+   },
+   {
+    "src": "ood",
+    "q": "Phương pháp fine-tune LoRA là viết tắt của thuật ngữ gì?",
+    "kind": "qa",
+    "f1": 0.5946,
+    "recall": 1.0,
+    "n_words": 48,
+    "answer": "Phương pháp fine-tune LoRA là viết tắt của thuật ngữ Low-Rank Adaptation. Phương pháp fine-tune LoRA là viết tắt của Low-Rank Adaptation, kỹ thuật tinh chỉnh th"
+   },
+   {
+    "src": "ood",
+    "q": "Định dạng âm thanh PCM 16kHz thường được dùng cho mục đích gì trong học máy tiếng nói?",
+    "kind": "qa",
+    "f1": 0.3243,
+    "recall": 0.5909,
+    "n_words": 52,
+    "answer": "Tối ưu hóa xử lý tín hiệu trong nhận dạng giọng nói tự động. Định dạng âm thanh PCM 16kHz thường được dùng cho mục đích tối ưu hóa xử lý tín hiệu trong nhận dạn"
+   },
+   {
+    "src": "ood",
+    "q": "Thuật toán BM25 trong phân hệ Retrieval thuộc loại thuật toán truy xuất nào?",
+    "kind": "qa",
+    "f1": 0.5316,
+    "recall": 0.7917,
+    "n_words": 55,
+    "answer": "Thuật toán xếp hạng tài liệu dựa trên tần suất từ vựng và độ dài văn bản. Thuật toán BM25 trong phân hệ Retrieval thuộc loại thuật toán xếp hạng tài liệu dựa tr"
+   },
+   {
+    "src": "ood",
+    "q": "Mô hình Cross-Encoder reranker được dùng để làm gì trong chuỗi RAG?",
+    "kind": "qa",
+    "f1": 0.4384,
+    "recall": 0.6818,
+    "n_words": 50,
+    "answer": "Được dùng để chấm điểm tương quan ngữ nghĩa sâu sắc giữa câu hỏi và đoạn trích. Mô hình Cross-Encoder reranker được dùng để chấm điểm tương quan ngữ nghĩa sâu s"
+   },
+   {
+    "src": "ood",
+    "q": "Thư viện CTranslate2 giúp ích gì cho mô hình Whisper?",
+    "kind": "qa",
+    "f1": 0.7273,
+    "recall": 0.9545,
+    "n_words": 33,
+    "answer": "Giúp tăng tốc suy luận và lượng tử hóa mô hình INT8, giảm độ trễ và tiêu thụ bộ nhớ RAM. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống."
+   },
+   {
+    "src": "ood",
+    "q": "Kiến trúc RAG trong xử lý ngôn ngữ tự nhiên là viết tắt của từ gì?",
+    "kind": "qa",
+    "f1": 0.4935,
+    "recall": 1.0,
+    "n_words": 58,
+    "answer": "Kiến trúc RAG trong xử lý ngôn ngữ tự nhiên là viết tắt của từ Retrieval Augmented Generation. Kiến trúc RAG trong xử lý ngôn ngữ tự nhiên là viết tắt của Retri"
+   },
+   {
+    "src": "ood",
+    "q": "Chỉ số WER trong đánh giá mô hình nhận dạng giọng nói là viết tắt của từ gì?",
+    "kind": "qa",
+    "f1": 0.6316,
+    "recall": 0.8421,
+    "n_words": 38,
+    "answer": "Chỉ số WER trong đánh giá mô hình nhận dạng giọng nói là viết tắt của từ Word Error Rate tức tỷ lệ từ sai sót. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ t"
+   },
+   {
+    "src": "ood",
+    "q": "Chỉ số Exact Match trong đánh giá mô hình hỏi đáp đo lường điều gì?",
+    "kind": "qa",
+    "f1": 0.5301,
+    "recall": 1.0,
+    "n_words": 61,
+    "answer": "Tỷ lệ phần trăm câu trả lời dự đoán trùng khớp tuyệt đối 100% với đáp án chuẩn. Chỉ số Exact Match trong đánh giá mô hình hỏi đáp đo lường tỷ lệ phần trăm câu t"
+   },
+   {
+    "src": "ood",
+    "q": "Docker container đem lại lợi ích gì cho việc triển khai hệ thống ViMMRC?",
+    "kind": "qa",
+    "f1": 0.1165,
+    "recall": 0.2,
+    "n_words": 77,
+    "answer": "Giảm 4 lần dung lượng bộ nhớ, tăng tốc độ xử lý nhanh hơn 4 lần trên CPU và đạt tỷ lệ lỗi từ WER 8.1% cùng bộ lọc phát hiện hoạt động giọng nói VAD. Trọng số sa"
+   },
+   {
+    "src": "hard",
+    "q": "Ai là người chỉ huy chiến dịch đại phá 29 vạn quân Thanh vào năm 1789 và ông đã lên ngôi Hoàng đế tại đâu trước khi xuất quân?",
+    "kind": "multi",
+    "f1": 0.2273,
+    "recall": 0.5278,
+    "n_words": 139,
+    "answer": "Đô đốc Đặng Tiến Đông là người chỉ huy chiến dịch đại phá 29 vạn quân Thanh vào năm 1789. Trận then chốt Khương Thượng Đống Đa: Đạo quân tập kích bất ngờ do Đô "
+   },
+   {
+    "src": "hard",
+    "q": "Trong chiến dịch Tết Kỷ Dậu 1789, trận tập kích bất ngờ nào vào đồn Khương Thượng đã khiến tướng giặc Sầm Nghi Đống phải khiếp sợ thắt cổ tự tử?",
+    "kind": "qa",
+    "f1": 0.4032,
+    "recall": 0.7778,
+    "n_words": 88,
+    "answer": "Trong chiến dịch Tết Kỷ Dậu 1789, trận tập kích bất ngờ dùng rồng lửa tấn công dữ dội vào đồn Khương Thượng đã khiến tướng giặc Sầm Nghi Đống phải khiếp sợ thắt"
+   },
+   {
+    "src": "hard",
+    "q": "Nghệ thuật hành quân thần tốc của vua Quang Trung từ Phú Xuân ra Thăng Long được tổ chức với chiến thuật đặc biệt nào để giữ sức cho binh sĩ?",
+    "kind": "unknown",
+    "f1": 0.0385,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "hard",
+    "q": "Sau khi đánh tan quân Thanh, vua Quang Trung đã ban hành chiếu chỉ gì và thành lập cơ quan nào do danh sĩ La Sơn Phu Tử Nguyễn Thiếp đứng đầu để phát triển văn hóa giáo dục?",
+    "kind": "multi",
+    "f1": 0.2113,
+    "recall": 0.4839,
+    "n_words": 111,
+    "answer": "Ba quân ăn Tết Nguyên Đán sớm và tuyên bố hẹn mùng 7 Tết Kỷ Dậu sẽ vào thành Thăng Long mở tiệc khải hoàn mừng chiến thắng. Tại đây, vua Quang Trung tổ chức cho"
+   },
+   {
+    "src": "hard",
+    "q": "So sánh trận Bạch Đằng năm 938 của Ngô Quyền và trận Bạch Đằng năm 1288 của Trần Hưng Đạo, hai vị anh hùng dân tộc này đã đánh bại kẻ thù xâm lược nào?",
+    "kind": "compare",
+    "f1": 0.2222,
+    "recall": 0.7632,
+    "n_words": 169,
+    "answer": "Ngô Quyền có trận Bạch Đằng năm 938 lớn hơn trận Bạch Đằng năm 1288 của Trần Hưng Đạo, hai vị anh hùng dân tộc này đã đánh bại kẻ thù xâm lược nào. Trận Bạch Đằ"
+   },
+   {
+    "src": "hard",
+    "q": "Vị vua nào đã ban Chiếu dời đô từ Hoa Lư về Thăng Long vào năm 1010 và tên kinh đô mới có ý nghĩa hình tượng là gì?",
+    "kind": "multi",
+    "f1": 0.322,
+    "recall": 0.6429,
+    "n_words": 90,
+    "answer": "Vua Lý Thái Tổ là vị vua đã ban Chiếu dời đô từ Hoa Lư về Thăng Long vào năm 1010. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống. Tên Kinh Đô mới có ý n"
+   },
+   {
+    "src": "hard",
+    "q": "Chiến thắng Điện Biên Phủ vào ngày 7 tháng 5 năm 1954 có ý nghĩa lịch sử to lớn như thế nào đối với cuộc kháng chiến chống thực dân Pháp?",
+    "kind": "qa",
+    "f1": 0.1525,
+    "recall": 0.1463,
+    "n_words": 77,
+    "answer": "Lần đầu tiên quân đội của một quốc gia thuộc địa châu Á đánh thắng bằng quân sự một quân đội của một cường quốc châu Âu. Trên phương diện quốc tế trận này có mộ"
+   },
+   {
+    "src": "hard",
+    "q": "Đỉnh núi Fansipan cao chính xác bao nhiêu mét, thuộc dãy núi nào và được hình thành từ kỷ địa chất nào trong lịch sử kiến tạo?",
+    "kind": "multi",
+    "f1": 0.228,
+    "recall": 0.6562,
+    "n_words": 158,
+    "answer": "Đỉnh núi Fansipan cao chính xác 3.143 mét. Lào, Campuchia) với độ cao đo đạc chính xác 3.143 mét so với mực nước biển, được mệnh danh là Nóc nhà Đông Dương (Roo"
+   },
+   {
+    "src": "hard",
+    "q": "Hang Sơn Đoòng có kích thước thể tích ước tính đạt bao nhiêu triệu mét khối và bên trong hang có các cấu trúc địa chất, sinh thái đặc biệt nào?",
+    "kind": "multi",
+    "f1": 0.2911,
+    "recall": 0.55,
+    "n_words": 115,
+    "answer": "Hang Sơn Đoòng có kích thước thể tích ước tính đạt 38.5 triệu mét khối và bên trong hang có các cấu trúc địa chất. thể tích ước tính đạt 38.5 triệu mét khối (đủ"
+   },
+   {
+    "src": "hard",
+    "q": "Ai là người địa phương đầu tiên phát hiện ra hang Sơn Đoòng vào năm 1991 và đoàn thám hiểm quốc tế nào đã khảo sát công bố hang vào năm 2009?",
+    "kind": "multi",
+    "f1": 0.2857,
+    "recall": 0.6486,
+    "n_words": 127,
+    "answer": "Hồ Khanh là người địa phương đầu tiên phát hiện ra hang Sơn Đoòng vào năm 1991. Hang được một người dân địa phương tên là Hồ Khanh tình cờ phát hiện lần đầu tiê"
+   },
+   {
+    "src": "hard",
+    "q": "Phân biệt giữa sông Đồng Nai và sông Mê Kông chảy qua Việt Nam về đặc điểm chiều dài lưu vực nội địa?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "hard",
+    "q": "Hòn đảo nào có diện tích lớn nhất Việt Nam, thuộc tỉnh nào và được mệnh danh là Đảo Ngọc?",
+    "kind": "multi",
+    "f1": 0.3077,
+    "recall": 0.9524,
+    "n_words": 96,
+    "answer": "Đảo Phú Quốc là hòn đảo có diện tích lớn nhất Việt Nam. Đảo Phú Quốc thuộc tỉnh Kiên Giang là hòn đảo có diện tích lớn nhất Việt Nam. Thông tin lấy từ thẻ tri t"
+   },
+   {
+    "src": "hard",
+    "q": "Tại sao đỉnh Fansipan vào mùa đông lại có hiện tượng băng giá và tuyết rơi dù Việt Nam nằm trong vành đai nhiệt đới gió mùa?",
+    "kind": "qa",
+    "f1": 0.22,
+    "recall": 0.35,
+    "n_words": 59,
+    "answer": "Nhiệt độ thường giảm sâu xuống dưới 0 độ C. Khí hậu trên đỉnh Fansipan mang tính chất á nhiệt đới và ôn đới núi cao, mùa đông nhiệt độ thường giảm sâu xuống dướ"
+   },
+   {
+    "src": "hard",
+    "q": "Vịnh Hạ Long được UNESCO công nhận là di sản thiên nhiên thế giới nhờ sở hữu cảnh quan địa chất đặc trưng gì?",
+    "kind": "qa",
+    "f1": 0.1935,
+    "recall": 0.2857,
+    "n_words": 90,
+    "answer": "Đảo đá vôi có thảm thực vật che phủ và các đỉnh nhọn núi đá vôi nhô lên trên mặt biển. bởi nơi đây chứa đựng các khu vực có vẻ đẹp thiên nhiên bao gồm các đảo đ"
+   },
+   {
+    "src": "hard",
+    "q": "Viết phương trình hóa học tổng quát của quá trình quang hợp ở thực vật và cho biết năng lượng ánh sáng được hấp thụ bởi sắc tố nào?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "hard",
+    "q": "Tại sao vào ban đêm trong phòng ngủ đóng kín cửa không nên để quá nhiều chậu cây xanh?",
+    "kind": "qa",
+    "f1": 0.2222,
+    "recall": 0.2895,
+    "n_words": 61,
+    "answer": "Tránh hiện tượng cây tranh chấp dưỡng khí oxy với con người vào ban đêm. Do đó, trong không gian phòng ngủ đóng kín cửa không nên đặt quá nhiều chậu cây xanh để"
+   },
+   {
+    "src": "hard",
+    "q": "So sánh hai bào quan lục lạp và ty thể trong tế bào thực vật về vai trò chuyển hóa năng lượng?",
+    "kind": "compare",
+    "f1": 0.1913,
+    "recall": 0.275,
+    "n_words": 75,
+    "answer": "Về hai bào quan lục lạp: Lục lạp là một trong nhiều loại bào quan khác nhau trong tế bào thực vật. Ty thể là bào quan cũng có nguồn gốc tương tự lục lạp, chỉ kh"
+   },
+   {
+    "src": "hard",
+    "q": "Nước tinh khiết sôi ở 100 độ C ở áp suất tiêu chuẩn bao nhiêu và nhiệt độ sôi của nước thay đổi thế nào khi lên vùng núi cao áp suất thấp?",
+    "kind": "multi",
+    "f1": 0.375,
+    "recall": 0.7568,
+    "n_words": 75,
+    "answer": "Nước tinh khiết sôi ở 100 độ C ở áp suất tiêu chuẩn 1 atm. Nước sôi ở 100 độ C ở điều kiện áp suất khí quyển tiêu chuẩn 1 atm. Thông tin lấy từ thẻ tri thức tuy"
+   },
+   {
+    "src": "hard",
+    "q": "Vận tốc ánh sáng truyền trong chân không là bao nhiêu km/s và ánh sáng từ Mặt Trời mất khoảng bao lâu để truyền tới Trái Đất?",
+    "kind": "multi",
+    "f1": 0.5161,
+    "recall": 0.8519,
+    "n_words": 60,
+    "answer": "Vận tốc ánh sáng truyền trong chân không là khoảng 300.000 kilomet trên giây km/s. Thông tin lấy từ thẻ tri thức tuyển chọn của hệ thống. Ánh sáng từ Mặt Trời m"
+   },
+   {
+    "src": "hard",
+    "q": "Hành tinh nào gần Mặt Trời nhất và hành tinh nào có khối lượng lớn nhất trong Hệ Mặt Trời của chúng ta?",
+    "kind": "multi",
+    "f1": 0.2523,
+    "recall": 0.6897,
+    "n_words": 80,
+    "answer": "Sao Thủy là hành tinh gần Mặt Trời nhất. Sao Thủy (cách Mặt Trời khoảng 0,4 AU) là hành tinh gần Mặt Trời nhất và là hành tinh nhỏ nhất trong Hệ Mặt Trời (0,055"
+   },
+   {
+    "src": "hard",
+    "q": "Tổng số đo ba góc trong của một hình tam giác trong hình học phẳng Euclid luôn bằng bao nhiêu độ và bằng bao nhiêu radian?",
+    "kind": "multi",
+    "f1": 0.4516,
+    "recall": 0.6111,
+    "n_words": 44,
+    "answer": "Tổng số đo ba góc trong của một hình tam giác trong hình học phẳng Euclid luôn bằng 180°. Thông tin lấy từ Wikipedia, bài Tam giác. Còn ý Euclid bằng bao nhiêu "
+   },
+   {
+    "src": "hard",
+    "q": "Trong kiệt tác Truyện Kiều, Nguyễn Du đã sử dụng bút pháp ước lệ tượng trưng đối sánh vẻ đẹp và dự báo số phận của Thúy Kiều và Thúy Vân như thế nào?",
+    "kind": "qa",
+    "f1": 0.2529,
+    "recall": 0.2326,
+    "n_words": 45,
+    "answer": "Thúy Kiều mang vẻ đẹp sắc sảo mặn mà 'Làn thu thủy nét xuân sơn / Hoa ghen thua thắm liễu hờn kém xanh' mang vẻ đẹp vượt trên chuẩn mực tự nhiên. Thông tin lấy "
+   },
+   {
+    "src": "hard",
+    "q": "Tác phẩm Truyện Kiều gồm bao nhiêu câu thơ, được viết theo thể thơ gì và bằng loại văn tự truyền thống nào của dân tộc ta?",
+    "kind": "multi",
+    "f1": 0.2346,
+    "recall": 0.95,
+    "n_words": 137,
+    "answer": "Tác phẩm Truyện Kiều gồm 3.254 câu thơ. Tác phẩm được viết bằng chữ Nôm theo thể thơ lục bát truyền thống của dân tộc Việt Nam gồm tổng cộng 3.254 câu thơ. Thôn"
+   },
+   {
+    "src": "hard",
+    "q": "Trong truyện ngắn Lão Hạc của Nam Cao, tại sao lão Hạc lại quyết định bán con chó Vàng và sau đó ăn bả chó tự tử?",
+    "kind": "qa",
+    "f1": 0.2432,
+    "recall": 0.1842,
+    "n_words": 36,
+    "answer": "Bây giờ thì tôi hiểu tại sao lão không muốn bán con chó vàng của lão. Lão chỉ còn một mình nó để làm khuây. Thông tin lấy từ bài đọc trong bộ dữ liệu ViMMRC."
+   },
+   {
+    "src": "hard",
+    "q": "Dòng văn học hiện thực phê phán 1930 - 1945 của Nam Cao và Ngô Tất Tố có điểm chung sâu sắc nào về giá trị nhân đạo?",
+    "kind": "qa",
+    "f1": 0.3495,
+    "recall": 0.4419,
+    "n_words": 60,
+    "answer": "Tấm lòng nhân đạo cao cả và niềm tin bất diệt vào bản chất lương thiện của con người. Tắt đèn của nhà văn Ngô Tất Tố, thể hiện tấm lòng nhân đạo cao cả và niềm "
+   },
+   {
+    "src": "hard",
+    "q": "Ai là tác giả của áng thiên cổ hùng văn Bình Ngô đại cáo và tác phẩm được công bố sau thắng lợi của cuộc khởi nghĩa nào?",
+    "kind": "multi",
+    "f1": 0.3585,
+    "recall": 0.4848,
+    "n_words": 73,
+    "answer": "Nguyễn Trãi là tác giả của áng thiên cổ hùng văn Bình Ngô đại cáo. Danh nhân văn hóa thế giới Nguyễn Trãi là tác giả của bản thiên cổ hùng văn Bình Ngô đại cáo."
+   },
+   {
+    "src": "hard",
+    "q": "Tại sao bài thơ Nam quốc sơn hà tương truyền do Lý Thường Kiệt đọc năm 1077 được coi là bản Tuyên ngôn Độc lập đầu tiên của nước ta?",
+    "kind": "qa",
+    "f1": 0.2174,
+    "recall": 0.2703,
+    "n_words": 55,
+    "answer": "Khẳng định chủ quyền của nhà cầm quyền Đại Việt trên các vùng đất của mình. được coi là bản Tuyên ngôn độc lập đầu tiên của Việt Nam, khẳng định chủ quyền của n"
+   },
+   {
+    "src": "hard",
+    "q": "Nguyễn Du đã sáng tạo cải biến tác phẩm Kim Vân Kiều truyện của Thanh Tâm Tài Nhân thành kiệt tác Truyện Kiều ở những phương diện nghệ thuật cốt lõi nào?",
+    "kind": "qa",
+    "f1": 0.1505,
+    "recall": 0.1136,
+    "n_words": 48,
+    "answer": "Kiệt tác thơ ca đậm đà bản sắc tâm hồn dân tộc Việt Nam. Trung Quốc), nhưng đã tái sinh thành một kiệt tác thơ ca đậm đà bản sắc tâm hồn dân tộc Việt Nam. Thông"
+   },
+   {
+    "src": "hard",
+    "q": "Mô hình nhận dạng giọng nói Whisper-small trong hệ thống ViMMRC được tối ưu hóa bằng những kỹ thuật gì để chạy nhanh gấp 4 lần trên CPU?",
+    "kind": "qa",
+    "f1": 0.2857,
+    "recall": 0.4375,
+    "n_words": 89,
+    "answer": "Bằng phương pháp thích ứng tham số cục bộ LoRA (Low-Rank Adaptation) trên hơn 50 giờ dữ liệu âm thanh giọng đọc tiếng Việt (VIVOS, VLSP và ViMMRC Audio). Phân h"
+   },
+   {
+    "src": "hard",
+    "q": "So sánh vai trò và cơ chế truy xuất giữa tầng tri thức 1 (KB) và tầng tri thức 2 (Wikipedia) trong hệ thống RAG 2 tầng?",
+    "kind": "compare",
+    "f1": 0.2636,
+    "recall": 0.35,
+    "n_words": 77,
+    "answer": "Mình chưa đủ số liệu để so sánh chắc chắn. Vai trò và cơ chế truy xuất của tầng tri thức 2 (Wikipedia) trong hệ thống RAG 2 tầng là 1.48 triệu đoạn văn. Tầng tr"
+   },
+   {
+    "src": "hard",
+    "q": "Mô hình đọc hiểu ViT5-base có bao nhiêu tham số, được huấn luyện trên bao nhiêu câu hỏi và đạt độ chính xác kiểm thử bao nhiêu?",
+    "kind": "multi",
+    "f1": 0.3235,
+    "recall": 0.9,
+    "n_words": 155,
+    "answer": "Mô hình đọc hiểu ViT5-base có 220 triệu tham số) số. Phân hệ Đọc hiểu văn bản (MRC - Machine Reading Comprehension): Mô hình sinh tự do ViT5-base (Vietnamese T5"
+   },
+   {
+    "src": "hard",
+    "q": "Công nghệ tổng hợp tiếng nói Matcha-TTS sử dụng kiến trúc âm học gì và kết hợp với bộ giải mã nào để tạo sóng âm tần số 22.050 Hz?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "hard",
+    "q": "Tại sao việc áp dụng chiến lược ngữ cảnh question_chunks lại giúp ViT5 sinh ra câu trả lời chính xác hơn trên các bài đọc văn bản dài?",
+    "kind": "qa",
+    "f1": 0.2022,
+    "recall": 0.25,
+    "n_words": 49,
+    "answer": "Giúp câu trả lời chuẩn ngữ pháp và dấu câu. áp dụng chiến lược trích chọn ngữ cảnh question_chunks cho văn bản dài và bộ lọc polish_answer giúp câu trả lời chuẩ"
+   },
+   {
+    "src": "hard",
+    "q": "Phân tích sự khác biệt về độ trễ xử lý trên CPU 4 luồng khi hệ thống bật và tắt mô hình Cross-Encoder reranker?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "hard",
+    "q": "Kỹ thuật Contextual Query Reformulation trong phân hệ đối thoại giúp giải quyết thách thức cốt lõi nào trong hội thoại dài nhiều lượt?",
+    "kind": "unknown",
+    "f1": 0.129,
+    "recall": 0.0667,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Mục đích của cuộc điện tín ngày 29/5/1945 của Mỹ là gì?",
+    "kind": "qa",
+    "f1": 0.1121,
+    "recall": 0.1452,
+    "n_words": 41,
+    "answer": "Mục đích của cuộc điện tín ngày 29/5/1945 của Mỹ là Quốc. Trong điện tín do Bộ Ngoại giao Mỹ ngày 29/5/1945 gửi đại sứ Mỹ tại Trung Quốc Patrick J. Thông tin lấ"
+   },
+   {
+    "src": "test",
+    "q": "Dòng nào dưới đây nêu đúng những đức tính tốt đẹp của người đồng mình?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Cộng đồng người Việt ở đâu xếp sau Toronto Canada về mặt số lượng con người?",
+    "kind": "qa",
+    "f1": 0.0408,
+    "recall": 0.0,
+    "n_words": 47,
+    "answer": "Cộng đồng người Việt ở thứ nhì xếp sau Toronto Canada về mặt số lượng con người. Thống kê dân số năm 2001 tính được 25.605 cư dân gốc Việt đông thứ nhì sau cộng"
+   },
+   {
+    "src": "test",
+    "q": "Khối Trường Đại học sát nhập với Trường Quảng trường Washington sau sự kiện nào?",
+    "kind": "qa",
+    "f1": 0.4,
+    "recall": 0.8571,
+    "n_words": 28,
+    "answer": "Khối Trường Đại học sát nhập với Trường Quảng trường Washington sau khi bán khuôn viên ở Bronx. Thông tin lấy từ Wikipedia, bài Đại học New York."
+   },
+   {
+    "src": "test",
+    "q": "Tại sao tác giả cho rằng những mùi thơm đó là những mùi thơm mộc mạc chân chất?",
+    "kind": "qa",
+    "f1": 0.4,
+    "recall": 0.6,
+    "n_words": 25,
+    "answer": "Đi trong làng, tôi luôn thấy những làn hương quen thuộc của đất quê. Thông tin lấy từ bài đọc trong bộ dữ liệu ViMMRC."
+   },
+   {
+    "src": "test",
+    "q": "Chiến dịch nào được thực hiện nhằm muốn Ireland thống nhất?",
+    "kind": "qa",
+    "f1": 0.2424,
+    "recall": 0.75,
+    "n_words": 58,
+    "answer": "Chiến dịch \"sự chiếm đóng của Anh tại sáu hạt\" được thực hiện nhằm muốn Ireland thống nhất. họ ủng hộ thành lập một Ireland thống nhất, và bắt đầu tiến hành một"
+   },
+   {
+    "src": "test",
+    "q": "Sau khi Paisley bị đuổi ra khỏi hội trường thì Giáo hoàng có hành động gì?",
+    "kind": "qa",
+    "f1": 0.35,
+    "recall": 0.8571,
+    "n_words": 33,
+    "answer": "Sau khi Paisley bị đuổi ra khỏi hội trường thì Giáo hoàng có hành động tiếp tục bài diễn thuyết của mình. Thông tin lấy từ Wikipedia, bài Giáo hoàng Gioan Phaol"
+   },
+   {
+    "src": "test",
+    "q": "Màu tím trong bài \"Sắc màu em yêu\" gợi ra những hình ảnh nào?",
+    "kind": "qa",
+    "f1": 0.4516,
+    "recall": 0.75,
+    "n_words": 23,
+    "answer": "Hoa cà, hoa sim,\nChiếc khăn của chị,\nNét mực chữ em. Thông tin lấy từ bài đọc trong bộ dữ liệu ViMMRC."
+   },
+   {
+    "src": "test",
+    "q": "Hiến pháp của Trung Quốc đã bị sự tẩy chay bởi Đảng Cộng Sản được ra đời vào ngày nào?",
+    "kind": "qa",
+    "f1": 0.1739,
+    "recall": 0.8333,
+    "n_words": 63,
+    "answer": "Hiến pháp của Trung Quốc đã bị sự tẩy chay bởi Đảng Cộng Sản được ra đời vào ngày 25 tháng 12 năm 1946. Ngày 25 tháng 12 năm 1946, Quốc dân đại hội lập hiến phá"
+   },
+   {
+    "src": "test",
+    "q": "Những con người đang sinh sống tại những khu vực các đô thị lớn đang gặp phải vấn đề gì?",
+    "kind": "qa",
+    "f1": 0.1944,
+    "recall": 0.8571,
+    "n_words": 65,
+    "answer": "Những con người đang sinh sống tại những khu vực các đô thị lớn đang gặp phải vấn đề ô nhiễm, tội ác và nghèo đói. Vấn đề mà những người trong những đô thị lớn "
+   },
+   {
+    "src": "test",
+    "q": "Ngòi bút Nguyễn Công Hoan có sở trường và nổi tiếng nhất với thể loại, khuynh hướng nào?",
+    "kind": "qa",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 40,
+    "answer": "Tiểu thuyết. Tuy nhiên, phải đến những năm 30 của thế kỷ XX văn học Việt Nam mới xuất hiện tiểu thuyết với đầy đủ tính chất của thể loại hiện đại. Thông tin lấy"
+   },
+   {
+    "src": "test",
+    "q": "Năm 2016, GDP PPP/người là bao nhiêu?",
+    "kind": "qa",
+    "f1": 0.1429,
+    "recall": 0.5,
+    "n_words": 33,
+    "answer": "Năm 2016, GDP PPP/người là 16,660 USD. Năm 2016, GDP PPP/người của Trung Quốc là 16,660 USD, trong khi GDP danh nghĩa/người là 8,141 USD. Thông tin lấy từ Wikip"
+   },
+   {
+    "src": "test",
+    "q": "Tại sao nói antimon là á kim?",
+    "kind": "qa",
+    "f1": 0.7869,
+    "recall": 0.963,
+    "n_words": 34,
+    "answer": "Antimon tương tự như kim loại ở bề ngoài và nhiều tính chất cơ lý, nhưng không phản ứng như các kim loại về mặt hóa học. Thông tin lấy từ Wikipedia, bài Antimon"
+   },
+   {
+    "src": "test",
+    "q": "Khối lượng trung bình của một đồng xu drachma trong thời đại Parthia là bao nhiêu?",
+    "kind": "qa",
+    "f1": 0.3939,
+    "recall": 1.0,
+    "n_words": 48,
+    "answer": "Khối lượng trung bình của một đồng xu drachma trong thời đại Parthia là hơn 3,5 g. drachm được ban hành trong suốt thời đại Parthia hiếm khi cân nặng ít hơn 3,5"
+   },
+   {
+    "src": "test",
+    "q": "Vì sao Quốc dân Đảng tán thành chính sách \"ba không\"?",
+    "kind": "qa",
+    "f1": 0.2812,
+    "recall": 0.8889,
+    "n_words": 55,
+    "answer": "Làm dịu căng thẳng với Trung Quốc đại lục. Tuy nhiên, kể từ năm 2008, nhằm làm dịu căng thẳng với Trung Quốc đại lục, Quốc dân Đảng tán thành chính sách \"ba khô"
+   },
+   {
+    "src": "test",
+    "q": "Diện tích trung bình của một tỉnh Ukraina là bao nhiêu?",
+    "kind": "qa",
+    "f1": 0.0952,
+    "recall": 0.0,
+    "n_words": 37,
+    "answer": "Diện tích trung bình của một tỉnh Ukraina là 1,200km2. Diện tích trung bình của một tỉnh Ukraina là 1,200km2; dân số trung bình của một quận là 52,000 người. Th"
+   },
+   {
+    "src": "test",
+    "q": "Tại sao khi trả ơn Thúc Sinh nhưng Kiều lại nhắc tới Hoạn Thư?",
+    "kind": "qa",
+    "f1": 0.0408,
+    "recall": 0.5,
+    "n_words": 94,
+    "answer": "Nhờ thế Kiều thoát kiếp thanh lâu nhưng chưa được bao lâu thì nàng lại mắc vạ với Hoạn Thư, vợ cả của Thúc Sinh. Kiều và Hoạn thư Khi biết chuyện, cha Thúc sinh"
+   },
+   {
+    "src": "test",
+    "q": "Chi tiết nào trong bài thơ chứng tỏ Bác Hồ có lòng yêu thương sâu sắc đối với bộ đội, với nhân dân?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Chính phủ chính quyền của Việt Minh được thành lập vào thời gian nào?",
+    "kind": "qa",
+    "f1": 0.0364,
+    "recall": 0.25,
+    "n_words": 51,
+    "answer": "Chính phủ chính quyền của Việt Minh được thành lập cuối năm 1945. Từ cuối năm 1945, sau khi Cách mạng Tháng Tám do Việt Minh lãnh đạo thành công, chính phủ Việt"
+   },
+   {
+    "src": "test",
+    "q": "Chi tiết nào thể hiến sức mạnh của con cá kiếm?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Đặc điểm chung các nước ký Hiệp định Potsdam là gì?",
+    "kind": "qa",
+    "f1": 0.2078,
+    "recall": 1.0,
+    "n_words": 68,
+    "answer": "Đặc điểm chung các nước ký Hiệp định Potsdam là chiến thắng trong Chiến tranh thế giới thứ hai. Dầu vậy, quân đội Liên Xô vẫn đóng trên lãnh thổ nước này theo H"
+   },
+   {
+    "src": "test",
+    "q": "Trong thời Hy lạp hóa, các vị vua đã làm gì để bắt chước Alexandros?",
+    "kind": "qa",
+    "f1": 0.5243,
+    "recall": 1.0,
+    "n_words": 75,
+    "answer": "Các vị vua đều xưng những vương hiệu hoành tráng, thân chinh thống lĩnh những chiến binh tinh nhuệ và lập nên một đội cận vệ uy dũng. Trong thời đại Hy Lạp hóa,"
+   },
+   {
+    "src": "test",
+    "q": "Nhóm nhạc đầu tiên ông vua nhạc Pop tham gia tên gì?",
+    "kind": "qa",
+    "f1": 0.0714,
+    "recall": 0.3333,
+    "n_words": 25,
+    "answer": "Michael Jackson. Với những thành công nối tiếp, Jackson được gọi ví von là \"Vua nhạc pop\". Thông tin lấy từ Wikipedia, bài Michael Jackson."
+   },
+   {
+    "src": "test",
+    "q": "tỷ lệ thất nghiệp giảm xuống thấp nhất ở bao nhiêu phần trăm?",
+    "kind": "qa",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 59,
+    "answer": "Tỷ lệ thất nghiệp giảm xuống thấp nhất ở 8%. Tới năm 2013, mặc dù tỷ lệ thất nghiệp đã giảm xuống mức dưới 8%, tỷ lệ thất nghiệp dài hạn và suy giảm thu nhập hộ"
+   },
+   {
+    "src": "test",
+    "q": "Viện bảo tàng bức tường được khai trương vào năm nào?",
+    "kind": "qa",
+    "f1": 0.0328,
+    "recall": 1.0,
+    "n_words": 60,
+    "answer": "Viện bảo tàng Bức tường được khai trương năm 1963. Viện bảo tàng Bức tường ở Checkppoint Charlie ngay tại biên giới nội địa Đức ngày trước được nhà sử học Raine"
+   },
+   {
+    "src": "test",
+    "q": "Tổng số nhân viên có vai trò quan trọng trong hoạt động của thư viện chiếm bao nhiêu phần trăm trên tổng số nhân viên của thư viện?",
+    "kind": "qa",
+    "f1": 0.0282,
+    "recall": 1.0,
+    "n_words": 70,
+    "answer": "Tổng số nhân viên có vai trò quan trọng trong hoạt động của thư viện chiếm 64% trên tổng số nhân viên của thư viện. Đóng vai trò nòng cốt trong hoạt động của th"
+   },
+   {
+    "src": "test",
+    "q": "Đế chế La Mã trở nên hùng mạnh và rộng lớn với vùng lãnh thổ bao gồm những nơi nào?",
+    "kind": "qa",
+    "f1": 0.2885,
+    "recall": 0.4167,
+    "n_words": 68,
+    "answer": "Đế chế La Mã trở nên hùng mạnh và rộng lớn với vùng lãnh thổ bao gồm những toàn bộ Italy, Nam Châu Âu, Trung Đông, Ai Cập. Lịch sử La Mã bắt đầu từ 1 ngôi làng "
+   },
+   {
+    "src": "test",
+    "q": "Chi tiết nào cho thấy vị bác sĩ rất bất ngờ khi nhớ lại câu chuyện trước đây?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Trị số nào được dùng để khái quát phạm vi phân bố của loài kiến trong hệ sinh thái động vật?",
+    "kind": "qa",
+    "f1": 0.0833,
+    "recall": 1.0,
+    "n_words": 46,
+    "answer": "Trị số sinh khối được dùng để khái quát phạm vi phân bố của loài kiến trong hệ sinh thái động vật. Sự thống trị sinh thái của chúng có thể đo đạc thông qua sinh"
+   },
+   {
+    "src": "test",
+    "q": "Bạn Vũ Cao Bảo đang sống ở đâu?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Các cuộc hahf quân tác chiến tại Iraq đã được Obama cho kết thúc vào thời gian nào?",
+    "kind": "qa",
+    "f1": 0.1622,
+    "recall": 1.0,
+    "n_words": 67,
+    "answer": "Các cuộc hahf quân tác chiến tại Iraq đã được Obama cho kết thúc vào ngày 31 tháng 8 năm 2010. Sau đó ông chính thức kết thúc các cuộc hành quân tác chiến tại I"
+   },
+   {
+    "src": "test",
+    "q": "Những ai có ảnh hưởng mạnh mẽ trong quá trình thống nhất nước Ý?",
+    "kind": "qa",
+    "f1": 0.186,
+    "recall": 1.0,
+    "n_words": 38,
+    "answer": "Hai trong số các nhân vật có ảnh hưởng nhất của quá trình thống nhất nước Ý là Giuseppe Mazzini và Giuseppe Garibaldi chiến đấu cho nước cộng hoà đoản mệnh. Thô"
+   },
+   {
+    "src": "test",
+    "q": "Từ phía người đọc, bút danh Tản Đà trước hết và chủ yếu muốn gợi liên tưởng đến điều gì trong tâm hồn, tính cách nhà thơ?",
+    "kind": "qa",
+    "f1": 0.1311,
+    "recall": 0.1667,
+    "n_words": 55,
+    "answer": "Từ phía người đọc, bút danh Tản Đà trước hết và chủ yếu muốn gợi liên tưởng đến quê hương ông trong tâm hồn, tính cách nhà thơ. Bút danh Tản Đà của ông là tên g"
+   },
+   {
+    "src": "test",
+    "q": "Trump đã trở thành tổng thống Mỹ với một chiến thắng như thế nào?",
+    "kind": "qa",
+    "f1": 0.0769,
+    "recall": 1.0,
+    "n_words": 75,
+    "answer": "Ngày 9 tháng 11 năm 2016, trong cuộc bầu cử tổng thống Hoa Kỳ 2016, Donald Trump đã giành chiến thắng đầy bất ngờ trước ứng cử viên Hillary Clinton của Đảng Dân"
+   },
+   {
+    "src": "test",
+    "q": "Do marcasit là dạng đa hình của pyrit nên giữ chúng giống nhau về điểm nào?",
+    "kind": "qa",
+    "f1": 0.0645,
+    "recall": 1.0,
+    "n_words": 60,
+    "answer": "Do marcasit là dạng đa hình của pyrit nên giữ chúng giống nhau về điểm công thức. Marcasit là dạng đa hình của pyrit, nghĩa là nó có cùng một công thức như pyri"
+   },
+   {
+    "src": "test",
+    "q": "Quốc gia nào đứng đầu thế giới về xuất khẩu dầu mỏ?",
+    "kind": "qa",
+    "f1": 0.1429,
+    "recall": 1.0,
+    "n_words": 52,
+    "answer": "Ả Rập Xê Út. Ả Rập Xê Út từ đó trở thành quốc gia sản xuất và xuất khẩu dầu lớn nhất thế giới, có trữ lượng dầu mỏ lớn thứ nhì và trữ lượng khí đốt lớn thứ sáu "
+   },
+   {
+    "src": "test",
+    "q": "Người ta dùng gì để tinh chế zirconi tinh khiết từ zircon?",
+    "kind": "qa",
+    "f1": 0.2286,
+    "recall": 1.0,
+    "n_words": 62,
+    "answer": "Người ta dùng bằng khí clo hay các tác nhân khác để tinh chế zirconi tinh khiết từ zircon. Zircon đã tinh lọc sau đó được tinh chế thành zirconi tinh khiết bằng"
+   },
+   {
+    "src": "test",
+    "q": "Birmingham trở thành một trung tâm đô thị và thương mại khi nào?",
+    "kind": "qa",
+    "f1": 0.0635,
+    "recall": 0.5,
+    "n_words": 61,
+    "answer": "Birmingham trở thành một trung tâm đô thị và thương mại vào năm 1166. Quá trình Birmingham phát triển thành một trung tâm đô thị và thương mại quan trọng bắt đầ"
+   },
+   {
+    "src": "test",
+    "q": "Vì sao Cam Anh lại quyết định quay trở về Đại Hán?",
+    "kind": "qa",
+    "f1": 0.8116,
+    "recall": 0.9333,
+    "n_words": 39,
+    "answer": "Quan lại Parthia thuyết phục ông ta rằng một chuyến du ngoạn đầy hiểm họa trên biển quanh bán đảo Ả Rập là con đường duy nhất đến La Mã. Thông tin lấy từ Wikipe"
+   },
+   {
+    "src": "test",
+    "q": "Trích đoạn Nỗi oan hại chồng nằm ở phần thứ mấy của vở chèo?",
+    "kind": "qa",
+    "f1": 0.0976,
+    "recall": 0.6667,
+    "n_words": 38,
+    "answer": "Trích đoạn Nỗi oan hại chồng nằm ở phần thứ ba của vở chèo. Tóm tắt nội dung Vở chèo(*) có thể chia làm ba phần: 1. Thông tin lấy từ bài đọc trong bộ dữ liệu Vi"
+   },
+   {
+    "src": "test",
+    "q": "Ai nhấn mạnh tình hữu nghị giữa quốc gia Ukraina và Nga?",
+    "kind": "qa",
+    "f1": 0.0513,
+    "recall": 1.0,
+    "n_words": 38,
+    "answer": "Khrushchev nhấn mạnh tình hữu nghị giữa quốc gia Ukraina và Nga. Sau cái chết của Stalin năm 1953, Nikita Khrushchev trở thành lãnh đạo mới của Liên bang Xô viế"
+   },
+   {
+    "src": "test",
+    "q": "Đông xưởng được lập ra nhằm mục đích gì?",
+    "kind": "qa",
+    "f1": 0.4941,
+    "recall": 0.9565,
+    "n_words": 62,
+    "answer": "Giám thị quan viên chính phủ, nhân sĩ kiệt xuất trong xã hội, các học giả và các lực lượng chính trị khác. Chức trách chủ yếu của đông xưởng là giám thị quan vi"
+   },
+   {
+    "src": "test",
+    "q": "Bạch Sùng Hy lãnh đạo một làn sóng để chống lại điều gì?",
+    "kind": "qa",
+    "f1": 0.169,
+    "recall": 0.8333,
+    "n_words": 65,
+    "answer": "Bạch Sùng Hy lãnh đạo một làn sóng để chống lại chống ngoại quốc tại Quảng Tây. Bạch Sùng Hy lãnh đạo một làn sóng chống ngoại quốc tại Quảng Tây, tấn công ngườ"
+   },
+   {
+    "src": "test",
+    "q": "Nội dung \"Những người khốn khổ\" nói về gì?",
+    "kind": "qa",
+    "f1": 0.0536,
+    "recall": 0.1333,
+    "n_words": 94,
+    "answer": "Những người khốn khổ (nhạc kịch). Nếu tính cả các vở chính kịch thì Những người khốn khổ là vở kịch được công diễn liên tục lâu đời thứ hai ở chuỗi nhà hát West"
+   },
+   {
+    "src": "test",
+    "q": "Cédile có lập trường như thế nào trong vấn đề độc lập của Việt Nam?",
+    "kind": "qa",
+    "f1": 0.7241,
+    "recall": 0.9583,
+    "n_words": 34,
+    "answer": "Có cảm tình với nguyện vọng độc lập của người Việt nhưng ông chủ trương trao trả độc lập từng bước cho Việt Nam. Thông tin lấy từ Wikipedia, bài Chiến tranh Đôn"
+   },
+   {
+    "src": "test",
+    "q": "Trong 9 tháng đầu năm 1967, 128 thành phố ở Mỹ đã phải gánh chịu tất cả bao nhiêu vụ nổi loạn?",
+    "kind": "qa",
+    "f1": 0.0392,
+    "recall": 1.0,
+    "n_words": 50,
+    "answer": "Trong 9 tháng đầu năm 1967, 128 thành phố ở Mỹ đã phải gánh chịu tất cả 164 vụ nổi loạn. Trong thời gian 9 tháng đầu của năm 1967, 128 thành phố Mỹ chịu đựng 16"
+   },
+   {
+    "src": "test",
+    "q": "Các cán bộ sang Trung Quốc được đào tạo những gì?",
+    "kind": "qa",
+    "f1": 0.4035,
+    "recall": 1.0,
+    "n_words": 78,
+    "answer": "650 cán bộ học bổ túc trung và sơ cấp, 1.200 học đào tạo, chỉ huy bộ binh sơ cấp, còn lại học về binh chủng như pháo binh, công binh... Tính đến tháng 6-1950, s"
+   },
+   {
+    "src": "test",
+    "q": "Lập trình viên nổi tiếng nào là cựu sinh viên của Đại học Harvard?",
+    "kind": "qa",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 43,
+    "answer": "Lập trình viên nổi tiếng Wyman Ford là cựu sinh viên của Đại học Harvard. Cựu nhân viên CIA Wyman Ford trong Tyrannosaur và Blasphemy của Douglas Preston cũng l"
+   },
+   {
+    "src": "test",
+    "q": "Các dịch vụ phục vụ đờ sống nhân dân cùng các dự án xây dựng có nhu cầu phát triển khi nào?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Mục đích chính của văn bản trên là?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Tiếng Việt đã được quy định như thế nào tại điều 5 Hiến pháp 2013?",
+    "kind": "qa",
+    "f1": 0.3077,
+    "recall": 1.0,
+    "n_words": 44,
+    "answer": "Tiếng Việt, còn gọi tiếng Việt Nam hay Việt ngữ, là ngôn ngữ của người Việt (người Kinh) và là ngôn ngữ chính thức tại Việt Nam, được quy định tại điều 5 Hiến p"
+   },
+   {
+    "src": "test",
+    "q": "Trong cuộc tấn công ngày 7 tháng 12 năm 1941 của mình nhắm vào Hoa Kỳ tại Trân Châu Cảng, Nhật Bản đã gây ra những thiệt hại gì cho Hoa Kỳ?",
+    "kind": "qa",
+    "f1": 0.6458,
+    "recall": 0.9697,
+    "n_words": 63,
+    "answer": "Phá hủy hoặc làm hư hại 16 chiến hạm trong đó phần lớn là các thiết giáp hạm của hạm đội, giết chết gần 3000 binh sĩ và nhân viên dân sự Mỹ. Ngày 7 tháng 12 năm"
+   },
+   {
+    "src": "test",
+    "q": "Nguồn gốc của chữ Hán ngày nay là gì?",
+    "kind": "qa",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 50,
+    "answer": "Trung Quốc từ thời xa xưa dựa trên việc quan sát đồ vật xung quanh và vẽ thành dạng chữ tượng hình, chữ mang ý nghĩa. Việc sử dụng chữ Hán ở các nước Trung Quốc"
+   },
+   {
+    "src": "test",
+    "q": "Biệt đội tình báo Ả Rập Xê Út có tên là gì?",
+    "kind": "qa",
+    "f1": 0.0556,
+    "recall": 0.0,
+    "n_words": 65,
+    "answer": "Biệt đội tình báo Ả Rập Xê Út có tên là Đội quân Chinh phục. Ả Rập Xê Út từng công khai ủng hộ Đội quân Chinh phục, một nhóm thuộc lực lượng chống chính phủ tro"
+   },
+   {
+    "src": "test",
+    "q": "Sau khi đánh thắng họ, nhà vua Alexandros đối xử với người Scythia như thế nào?",
+    "kind": "qa",
+    "f1": 0.4898,
+    "recall": 0.9167,
+    "n_words": 37,
+    "answer": "Trao trả tù binh và đối xử tốt với dân tộc này. Sau đó, nhà vua trao trả tù binh và đối xử tốt với dân tộc này. Thông tin lấy từ Wikipedia, bài Alexandros Đại đ"
+   },
+   {
+    "src": "test",
+    "q": "Số dân di cư của Trung Hoa vào năm 2012 là bao nhiêu?",
+    "kind": "qa",
+    "f1": 0.3043,
+    "recall": 1.0,
+    "n_words": 39,
+    "answer": "Số dân di cư của Trung Hoa vào năm 2012 là trên 262 triệu công nhân di cư. Năm 2012, có trên 262 triệu công nhân di cư tại Trung Quốc. Thông tin lấy từ Wikipedi"
+   },
+   {
+    "src": "test",
+    "q": "Số không là khái niệm đã được ai đưa ra?",
+    "kind": "qa",
+    "f1": 0.1017,
+    "recall": 1.0,
+    "n_words": 56,
+    "answer": "Số không là khái niệm đã được Lương Thế Vinh đưa ra. Số học và Hình học đã được giảng dạy rộng rãi ở Việt Nam từ thế kỷ 15, sử dụng theo cuốn Đại thành toán phá"
+   },
+   {
+    "src": "test",
+    "q": "Các thành viên của gia đình Osmanli bị trừng phạt thế nào?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Tâm trạng của đứa con trước đêm khai trường?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Đúc đồng Ngũ Xã là làng nghề nổi tiếng tại tỉnh thành nào?",
+    "kind": "qa",
+    "f1": 0.0635,
+    "recall": 0.5,
+    "n_words": 61,
+    "answer": "Đúc đồng Ngũ Xã là làng nghề nổi tiếng tại tỉnh thành Hà Nội. nghề đúc đồng truyền thống bị thu hẹp thay vào đó là khu phố mới với nhiều dịch vụ ẩm thực nổi tiế"
+   },
+   {
+    "src": "test",
+    "q": "Những phong tục, luật lệ nào của Ả Rập Xê Út bị thế giới lên án?",
+    "kind": "qa",
+    "f1": 0.0615,
+    "recall": 0.0714,
+    "n_words": 51,
+    "answer": "Không hệ thống hóa Sharia và không có hệ thống án lệ pháp lý. Ả Rập Xê Út là quốc gia Hồi giáo hiện đại duy nhất không hệ thống hóa Sharia và không có hệ thống "
+   },
+   {
+    "src": "test",
+    "q": "Gandhi học đại học nào?",
+    "kind": "qa",
+    "f1": 0.2632,
+    "recall": 1.0,
+    "n_words": 33,
+    "answer": "Đại học College Luân Đôn. Vào tuổi 19, Gandhi vào Đại học College Luân Đôn (một trường thuộc Đại học Luân Đôn) học ngành luật. Thông tin lấy từ Wikipedia, bài M"
+   },
+   {
+    "src": "test",
+    "q": "Điều gì làm một vị vua bị suy yếu?",
+    "kind": "qa",
+    "f1": 0.338,
+    "recall": 0.9231,
+    "n_words": 58,
+    "answer": "Phụ nữ đầy sinh lực nồng nàn và thái giám đầy mưu đồ. Điều dễ nhận thấy là cuộc đời trong cấm thành, chung quanh là phụ nữ đầy sinh lực nồng nàn và thái giám đầ"
+   },
+   {
+    "src": "test",
+    "q": "Vào năm 2003, những ai đã không được áp dụng chính sách đình hoàn hình phạt tử hình mà Cuba đưa ra vào năm 2001?",
+    "kind": "qa",
+    "f1": 0.2703,
+    "recall": 1.0,
+    "n_words": 63,
+    "answer": "Vào năm 2003, những thủ phạm của một vụ không tặc có vũ trang đã không được áp dụng chính sách đình hoàn hình phạt tử hình mà Cuba đưa ra vào năm 2001. nhưng nó"
+   },
+   {
+    "src": "test",
+    "q": "Ả Rập Xê Út chi ra số tiền bao nhiêu để sử dụng trong mục đích quân sự?",
+    "kind": "qa",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 60,
+    "answer": "Ả Rập Xê Út chi ra số tiền 67 tỷ USD để sử dụng trong mục đích quân sự. Năm 2013, chi tiêu quân sự của Ả Rập Xê Út tăng lên 67 tỷ USD, vượt qua Anh, Pháp và Nhậ"
+   },
+   {
+    "src": "test",
+    "q": "Thái độ và hành động của Thủy Tinh như thế nào khi không lấy được Mị Nương?",
+    "kind": "qa",
+    "f1": 0.2449,
+    "recall": 0.6,
+    "n_words": 39,
+    "answer": "Đùng đùng nổi giận, đem quân đuổi theo đòi cướp lấy Mị Nương. Thủy Tinh đến sau, không lấy được vợ, đùng đùng nổi giận, đem quân đuổi theo đòi cướp lấy Mị Nương"
+   },
+   {
+    "src": "test",
+    "q": "Tôn giáo chủ yếu của người Ấn Độ là gì?",
+    "kind": "qa",
+    "f1": 0.1714,
+    "recall": 0.75,
+    "n_words": 30,
+    "answer": "Tôn giáo chủ yếu của người Ấn Độ là Ấn Độ giáo. Người Ấn có truyền thống gia nhập Ấn Độ giáo. Thông tin lấy từ Wikipedia, bài Kuala Lumpur."
+   },
+   {
+    "src": "test",
+    "q": "Cộng hòa Roma được dựng lên nhờ đâu?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Bằng chứng nào cho thấy Pháp có thế mạnh về môn thế thao Rugby?",
+    "kind": "qa",
+    "f1": 0.4902,
+    "recall": 0.9722,
+    "n_words": 66,
+    "answer": "Đội tuyển rugby Pháp từng hơn mười lần vô địch giải Sáu quốc gia, và từng 6 lần vào đến bán kết và ba lần vào đến chung kết của giải vô địch rugby thế giới. Xuấ"
+   },
+   {
+    "src": "test",
+    "q": "Alexandros bị thiệt hại gì khi đánh nhau với người Aspasios?",
+    "kind": "qa",
+    "f1": 0.1818,
+    "recall": 1.0,
+    "n_words": 50,
+    "answer": "Alexandros bị thiệt hại bị trọng thương nơi vai khi đánh nhau với người Aspasios. Một trận đánh khốc liệt với người Aspasios và chính Alexandros bị trọng thương"
+   },
+   {
+    "src": "test",
+    "q": "Điều gì được cho phép thực hiện khi hoạt động nông nghiệp phát triển?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Hình ảnh thiếu nữ xay ngô tối và hình ảnh bếp lửa hồng là những hình ảnh thể hiện vẻ đẹp tâm hồn Hồ Chí Minh trong bài vì:",
+    "kind": "qa",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 23,
+    "answer": "Xóm núi xay ngô,\nNgô xay vừa xong, lò than đã đỏ. Thông tin lấy từ bài đọc trong bộ dữ liệu ViMMRC."
+   },
+   {
+    "src": "test",
+    "q": "Khu vực nào bị ảnh hưởng bới nền văn hóa Ngưỡng Thiều?",
+    "kind": "qa",
+    "f1": 0.1311,
+    "recall": 1.0,
+    "n_words": 56,
+    "answer": "Khu vực phía Bắc Trung Quốc bị ảnh hưởng bới nền văn hóa Ngưỡng Thiều. Văn hóa Bành Đầu Sơn được thay thế bởi văn hóa Ngưỡng Thiều (Yangshao culture) (5000-3000"
+   },
+   {
+    "src": "test",
+    "q": "Để viện trợ tài chính toàn diện cho nền kinh tế châu Âu và các hàng rào mậu dịch được tháo vỡ thì Mỹ đã thực hiện kế hoạch nào?",
+    "kind": "qa",
+    "f1": 0.0286,
+    "recall": 1.0,
+    "n_words": 69,
+    "answer": "Để viện trợ tài chính toàn diện cho nền kinh tế châu Âu và các hàng rào mậu dịch được tháo vỡ thì Mỹ đã thực hiện kế hoạch Marshall. Năm 1948, Hoa Kỳ thay thế c"
+   },
+   {
+    "src": "test",
+    "q": "Bà Helena đã thành lập cái gì vào năm 1875?",
+    "kind": "qa",
+    "f1": 0.1471,
+    "recall": 1.0,
+    "n_words": 63,
+    "answer": "Bà Helena đã thành lập hiệp hội Thần Trí học (hoặc Thông Thiên học) vào năm 1875. Một số người ăn chay ông đã gặp là thành viên của hiệp hội Thần Trí học (hoặc "
+   },
+   {
+    "src": "test",
+    "q": "Để vinh danh Kepler thì những ngôi trường nào được đặt theo tên ông?",
+    "kind": "qa",
+    "f1": 0.375,
+    "recall": 0.9333,
+    "n_words": 49,
+    "answer": "Cao đẳng Kepler (Seattle), Trường Ngữ pháp Johannes Kepler (Praha), Đại học Johannes Kepler Linz,... Tên ông cũng được đặt cho một số trường học như Cao đẳng Ke"
+   },
+   {
+    "src": "test",
+    "q": "Sau các trận thua thì quân Pháp đã bị đồng minh Anh và Phổ đánh đuổi về tại đâu?",
+    "kind": "qa",
+    "f1": 0.2462,
+    "recall": 0.875,
+    "n_words": 57,
+    "answer": "Sau các trận thua thì quân Pháp đã bị đồng minh Anh và Phổ đánh đuổi về tại các lãnh thổ Đức dọc theo sông Rhine. Sau đó, Anh và Phổ nắm được thượng phong, đẩy "
+   },
+   {
+    "src": "test",
+    "q": "Vũ khí của quân đội Pháp như thế nào?",
+    "kind": "qa",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 47,
+    "answer": "Gracey, chỉ huy quân đội Anh không được lệnh cung cấp vũ khí cho người Pháp. Tuy nhiên quân đội Nhật tỏ ra không muốn cộng tác với người Anh trong việc tước vũ "
+   },
+   {
+    "src": "test",
+    "q": "Khu vực Đông Dương trở thành thuộc địa của nước nào vào đầu thế kỷ XIX?",
+    "kind": "qa",
+    "f1": 0.0312,
+    "recall": 1.0,
+    "n_words": 63,
+    "answer": "Khu vực Đông Dương trở thành thuộc địa của nước Pháp vào đầu thế kỷ XIX. lực lượng viễn chinh của Đệ Nhị Đế chế Pháp cùng sự hỗ trợ của thực dân Tây Ban Nha nổ "
+   },
+   {
+    "src": "test",
+    "q": "Trung tâm Kimmel là nơi tọa lạc của sân khấu biểu diễn nào?",
+    "kind": "qa",
+    "f1": 0.1923,
+    "recall": 1.0,
+    "n_words": 45,
+    "answer": "Trung tâm Kimmel là nơi tọa lạc của sân khấu biểu diễn Hội trường Eisner-Lubin Auditorium. ngay phía nam Quảng trường Washington Nam, và Hội trường Eisner-Lubin"
+   },
+   {
+    "src": "test",
+    "q": "Demetrios I phải chiến đấu với ai?",
+    "kind": "qa",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 44,
+    "answer": "Demetrios I phải chiến đấu với Soter. Chiến công Demetrios được người Babylon đặt cho tên hiệu Soter vì có công giải thoát họ khỏi sự tàn bạo của tổng trấn xứ M"
+   },
+   {
+    "src": "test",
+    "q": "Sau khi xem thư, mẹ của Mai đã đưa ra kết luận gì?",
+    "kind": "qa",
+    "f1": 0.137,
+    "recall": 0.5714,
+    "n_words": 67,
+    "answer": "Có lẽ người gửi đã ghi nhầm số nhà. Con đừng bóc thư, để trả lại bưu điện. À, hay là con đi hỏi bác Nga xem bác có biết ai là Tường không, chuyển giúp cho họ. M"
+   },
+   {
+    "src": "test",
+    "q": "Tiếng sáo được mô tả như thế nào?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Hoàng đế Leopold thành lập vô số ủy ban vào thời gian nào?",
+    "kind": "qa",
+    "f1": 0.1404,
+    "recall": 0.75,
+    "n_words": 53,
+    "answer": "Hoàng đế Leopold thành lập vô số ủy ban vào thập kỉ 1690. Vào thập kỉ 1690, ông đã thành lập vô số ủy ban, tất cả đều kình chống nhau một cách im lìm nhưng dữ d"
+   },
+   {
+    "src": "test",
+    "q": "Trong hai năm 2013 và 2015 thì hai đội đánh bại Quảng Châu Hằng Đại đều trở thành gì?",
+    "kind": "qa",
+    "f1": 0.129,
+    "recall": 1.0,
+    "n_words": 56,
+    "answer": "Trong hai năm 2013 và 2015 thì hai đội đánh bại Quảng Châu Hằng Đại đều trở thành ĐKVĐ UEFA Champions League. đều để thua với tỷ số 0-3 ở bán kết trước các đội "
+   },
+   {
+    "src": "test",
+    "q": "Sau khi phát hiện Roosevlet lừa dối mình, Eleanor đã có quyết định gì?",
+    "kind": "qa",
+    "f1": 0.7895,
+    "recall": 0.9333,
+    "n_words": 23,
+    "answer": "Eleanor đến gặp chồng với những bức thư trên tay và yêu cầu ly dị. Thông tin lấy từ Wikipedia, bài Franklin D."
+   },
+   {
+    "src": "test",
+    "q": "Quá trình thực dân hóa đã được bắt đầu vào thời điểm nào?",
+    "kind": "qa",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 44,
+    "answer": "Ngay sau chuyến đi đầu tiên của Cristoforo Colombo vào năm 1492. Quá trình thực dân hóa của người châu Âu đã bắt đầu ngay sau chuyến đi đầu tiên của Cristoforo "
+   },
+   {
+    "src": "test",
+    "q": "Theo các nhân chứng thì top 15 của Hoa hậu Mỹ được lựa chọn bởi những ai?",
+    "kind": "qa",
+    "f1": 0.1408,
+    "recall": 0.8,
+    "n_words": 67,
+    "answer": "Theo các nhân chứng thì top 15 của Hoa hậu Mỹ được lựa chọn bởi những các đạo diễn cuộc thi. lời khai từ Tổ chức Hoa hậu Hoàn vũ và Ernst & Young tiết lộ rằng t"
+   },
+   {
+    "src": "test",
+    "q": "Ai bị đồng hóa vào xã hội cư dân Slavơ địa phương?",
+    "kind": "qa",
+    "f1": 0.1,
+    "recall": 1.0,
+    "n_words": 38,
+    "answer": "Người Varangian bị đồng hóa vào xã hội cư dân Slavơ địa phương. Theo Biên niên sử Đầu tiên, giới thượng lưu Nga ban đầu gồm những người Varangian từ Scandinavia"
+   },
+   {
+    "src": "test",
+    "q": "Việc độc quyền thương mại của người Hoa thể hiện như thế nào?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Bài văn miêu tả cảnh gì?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Khủng hoảng tài chính châu Á vào cuối thập niên 1990 đã có những tác động như thế nào đến kinh tế Malaysia?",
+    "kind": "qa",
+    "f1": 0.4595,
+    "recall": 0.9444,
+    "n_words": 56,
+    "answer": "Suýt khiến cho đồng Ringgit cùng các thị trường chứng khoán và bất động sản Malaysia sụp đổ. Tuy nhiên, vào cuối thập niên 1990, Khủng hoảng tài chính châu Á su"
+   },
+   {
+    "src": "test",
+    "q": "Vợ Hồ Quý Ly được ai gả cưới?",
+    "kind": "qa",
+    "f1": 0.1579,
+    "recall": 1.0,
+    "n_words": 35,
+    "answer": "Vợ Hồ Quý Ly được vua Nghệ Tông gả cưới. Do là anh em bên ngoại nên Hồ Quý Ly được vua Nghệ Tông tín nhiệm. Thông tin lấy từ Wikipedia, bài Hồ Quý Ly."
+   },
+   {
+    "src": "test",
+    "q": "Bên cạnh những thành tựu đáng kể của mình, Edward I còn bị chỉ trích vì những điều gì?",
+    "kind": "qa",
+    "f1": 0.7955,
+    "recall": 0.9744,
+    "n_words": 49,
+    "answer": "Ông cũng bị chỉ trích bởi những hành động khác, chẳng hạn những hành vi tàn bạo đối với người Scots, và ban hành Sắc lệnh Trục xuất năm 1290, đuổi cổ người Do T"
+   },
+   {
+    "src": "test",
+    "q": "Ngoài Bloody Ridge, trận đánh nào cũng xảy ra trong năm 1951?",
+    "kind": "qa",
+    "f1": 0.0769,
+    "recall": 1.0,
+    "n_words": 50,
+    "answer": "Ngoài Bloody Ridge, Heartbreak Ridge cũng xảy ra trong năm 1951. Các cuộc đụng độ quân sự chính yếu trong giai đoạn này là những hành động quanh lòng chảo phía "
+   },
+   {
+    "src": "test",
+    "q": "Vì sao trong những năm đầu lại có tình trạng nhiều người giả làm sứ giả Nhật Bản sang Trung Quốc?",
+    "kind": "qa",
+    "f1": 0.75,
+    "recall": 0.9375,
+    "n_words": 24,
+    "answer": "Nhật Bản đang trong trạng thái cát cứ, không có chính quyền trung ương thống nhất. Thông tin lấy từ Wikipedia, bài Nhà Minh."
+   },
+   {
+    "src": "test",
+    "q": "Dòng nào nói chính xác về sự ra đời bài thơ “Tràng giang” của Huy Cận?",
+    "kind": "unknown",
+    "f1": 0.0,
+    "recall": 0.0,
+    "n_words": 17,
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "src": "test",
+    "q": "Mỗi vị Tổng thống của Nga có thể đảm nhiệm chức vụ tối đa bao nhiêu nhiệm kỳ liên tiếp nhau?",
+    "kind": "qa",
+    "f1": 0.0339,
+    "recall": 1.0,
+    "n_words": 58,
+    "answer": "Mỗi vị Tổng thống của Nga có thể đảm nhiệm chức vụ tối đa 2 nhiệm kỳ liên tiếp nhau. Do giới hạn nhiệm kỳ Tổng thống Nga (không quá 2 nhiệm kỳ liên tục), Putin "
+   },
+   {
+    "src": "test",
+    "q": "Trong nhóm người Turk thì ngoài người Kazakh, Tuva, và Chantuu còn có những người nào?",
+    "kind": "qa",
+    "f1": 0.1967,
+    "recall": 0.8571,
+    "n_words": 54,
+    "answer": "Trong nhóm người Turk thì ngoài người Kazakh, Tuva, và Chantuu còn có những người Tungus, Trung Quốc, và người Nga. Người Turk (Kazakh, Tuva, và Chantuu (Uzbek)"
+   },
+   {
+    "src": "test",
+    "q": "Chiến lược này đã đem về lợi ích gì đối với lực lượng quân đội của chúng ta?",
+    "kind": "qa",
+    "f1": 0.0392,
+    "recall": 0.0909,
+    "n_words": 40,
+    "answer": "Phương pháp này đã đi suốt lịch sử lớn mạnh của Quân đội Nhân dân Việt Nam, và vẫn phát huy hiệu quả trong kháng chiến chống Mỹ sau đó. Thông tin lấy từ Wikiped"
+   }
+  ],
+  "unanswerable": [
+   {
+    "q": "Giá vàng hôm nay là bao nhiêu?",
+    "kind": "qa",
+    "answer": "Giá vàng hôm nay là khoảng US$640 một ounce. Giá vàng hiện nay khoảng US$640 một ounce tức là khoảng 20.000 đôla Mỹ một "
+   },
+   {
+    "q": "Thời tiết Hà Nội ngày mai thế nào?",
+    "kind": "qa",
+    "answer": "Thời tiết có sự khác biệt rõ ràng giữa mùa nóng và mùa lạnh. Trong khoảng cuối tháng 9 đến tháng 11, Hà Nội có những ngà"
+   },
+   {
+    "q": "Tỷ số trận bóng đá tối qua là bao nhiêu?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Cách nấu món phở bò ngon nhất là gì?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Giá cổ phiếu Vinamilk hiện nay là bao nhiêu?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Iphone 17 có những tính năng gì?",
+    "kind": "qa",
+    "answer": "Cho phép sử dụng an toàn thông tin người dùng đã lưu từ Danh bạ để điền vào tài liệu PDF hoặc tài liệu được quét. Thông "
+   },
+   {
+    "q": "Hôm nay là thứ mấy trong tuần?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Ai là người giàu nhất hành tinh năm nay?",
+    "kind": "qa",
+    "answer": "Năm là người giàu nhất hành tinh năm nay. Kỷ lục 2,208 tỷ phú trong bảng xếp hạng và tổng tài sản là 9,1 nghìn tỷ USD, t"
+   },
+   {
+    "q": "Lịch chiếu phim rạp CGV tối nay thế nào?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Làm sao để sửa lỗi màn hình xanh trên Windows?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Bitcoin đang giao dịch ở mức giá nào?",
+    "kind": "qa",
+    "answer": "1 đô la Mỹ tương đương 1.309,03 Bitcoin (hoặc 1 Bitcoin = 0,00076 USD). Ngày 5 tháng 10 năm 2009, lần đầu tiên giá trị c"
+   },
+   {
+    "q": "Kết quả xổ số miền Bắc hôm nay là gì?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Mật khẩu wifi nhà tôi là gì?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Tôi nên mua laptop hãng nào?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Chiều cao của tháp Eiffel là bao nhiêu mét?",
+    "kind": "qa",
+    "answer": "Chiều cao của tháp Eiffel là 330 mét. Chiều cao nguyên bản của công trình là 300 mét nếu theo đúng thiết kế, nhưng cột ă"
+   },
+   {
+    "q": "Ai vô địch World Cup 2030?",
+    "kind": "qa",
+    "answer": "Ả vô địch World Cup 2030. Giải vô địch bóng đá thế giới 2030 (tên chính thức là 2030 FIFA World Cup) sẽ là giải vô địch "
+   },
+   {
+    "q": "Công thức hóa học của axit sunfuric là gì?",
+    "kind": "qa",
+    "answer": "Công thức hóa học của axit sunfuric là H3NSO3. Axit sulfamic, các tên khác: axit amidosulfonic, axit amidosulfuric, axit"
+   },
+   {
+    "q": "Sao Hỏa có bao nhiêu mặt trăng?",
+    "kind": "qa",
+    "answer": "Sao Hỏa có Hai mặt trăng. Hai mặt trăng của Sao Hỏa, Phobos và Deimos, nhỏ hơn nhiều so với Mặt Trăng của Trái Đất, giúp"
+   },
+   {
+    "q": "Giá xăng RON 95 hôm nay là bao nhiêu?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Tên con chó của thủ tướng là gì?",
+    "kind": "qa",
+    "answer": "Tên con chó của thủ tướng là Koni. Thông tin lấy từ Wikipedia."
+   },
+   {
+    "q": "Giải Nobel Hòa bình năm ngoái trao cho ai?",
+    "kind": "qa",
+    "answer": "Giải Nobel Hòa bình năm ngoái trao cho Frédéric Passy và Henry Dunant. Giải Nobel Hòa bình được trao lần đầu tiên vào nă"
+   },
+   {
+    "q": "Chạy thử mã Python này giúp tôi: print('hi')",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Dịch câu Hello world sang tiếng Pháp.",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Bạn thích màu gì nhất?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Địa chỉ nhà hàng ngon gần đây là ở đâu?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Điểm chuẩn đại học Bách khoa năm nay là bao nhiêu?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Số điện thoại của công an quận 1 là gì?",
+    "kind": "unknown",
+    "answer": "Xin lỗi, mình chưa tìm thấy thông tin đủ tin cậy để trả lời câu hỏi này."
+   },
+   {
+    "q": "Tỷ giá đô la so với đồng hôm nay?",
+    "kind": "qa",
+    "answer": "22.300 đồng. Tuy nhiên đến ngày 19/02/2011 tỷ giá USD ở thị trường chợ đen là 22.300 đồng. Thông tin lấy từ Wikipedia."
+   },
+   {
+    "q": "Ca sĩ nào hát bài Hãy trao cho anh?",
+    "kind": "qa",
+    "answer": "Ca sĩ Sơn Tùng M-TP hát bài Hãy trao cho. \"Hãy trao cho anh\" (tiếng Anh: \"Give It to Me\") là một bài hát của nam ca sĩ k"
+   },
+   {
+    "q": "Phiên bản Python mới nhất hiện nay là gì?",
+    "kind": "qa",
+    "answer": "Phiên bản Python mới nhất hiện nay là Python 3.12. Python 3.12 là bản phát hành ổn định mới nhất. Thông tin lấy từ Wikip"
+   }
+  ]
+ }
+]

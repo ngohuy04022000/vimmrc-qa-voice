@@ -4,10 +4,13 @@ from __future__ import annotations
 
 import re
 import json
+import logging
 from pathlib import Path
 
 from mrc_data import build_input, normalize_text
 from context_selection import encode_input
+
+logger = logging.getLogger(__name__)
 
 
 class MRCClient:
@@ -33,7 +36,8 @@ class MRCClient:
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         try:
             self.tokenizer = AutoTokenizer.from_pretrained(str(path), local_files_only=True)
-        except Exception:
+        except Exception as exc:
+            logger.warning("AutoTokenizer lỗi ở %s (%s), dùng PreTrainedTokenizerFast", path, exc)
             from transformers import PreTrainedTokenizerFast
             self.tokenizer = PreTrainedTokenizerFast(
                 tokenizer_file=str(path / "tokenizer.json"),

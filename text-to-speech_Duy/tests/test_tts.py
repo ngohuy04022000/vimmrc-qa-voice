@@ -132,6 +132,9 @@ def test_vits_engine():
 
 
 def test_matcha_engine():
+    import pytest
+    if not os.path.exists(os.path.join(_root_dir, "checkpoints", "matcha_vi.pt")):  # checkpoint không nằm trong git
+        pytest.skip("matcha_vi.pt not available")
     print("=" * 60)
     print("5. KIỂM THỬ MÔ HÌNH MATCHA-TTS FLOW MATCHING TỰ HUẤN LUYỆN")
     print("=" * 60)

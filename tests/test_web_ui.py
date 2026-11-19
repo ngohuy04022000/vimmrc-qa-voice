@@ -12,11 +12,16 @@ if str(ROOT / "scripts") not in sys.path:
 from api_server import app
 
 
+_DIST = ROOT / "web-interface_Luong" / "dist" / "web-interface" / "browser"
+_NEEDS_DIST = unittest.skipUnless((_DIST / "index.html").exists(), "Angular build (web-interface_Luong/dist) not present")
+
+
 class WebUIIntegrationTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = TestClient(app)
 
+    @_NEEDS_DIST
     def test_frontend_index_serving(self):
         response = self.client.get("/")
         self.assertEqual(response.status_code, 200)
@@ -58,6 +63,7 @@ class WebUIIntegrationTests(unittest.TestCase):
         self.assertIn("/api/tts", paths)
         self.assertIn("/api/stt", paths)
 
+    @_NEEDS_DIST
     def test_health_reports_frontend_served(self):
         response = self.client.get("/api/health")
         self.assertEqual(response.status_code, 200)

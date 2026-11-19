@@ -11,6 +11,7 @@ import logging
 import os
 import sys
 import tempfile
+import threading
 import time
 from typing import Dict, Optional, Tuple
 
@@ -38,13 +39,16 @@ logger = logging.getLogger(__name__)
 
 # Engine đã khởi tạo, dùng lại giữa các lần gọi để không phải nạp lại mô hình (vài giây mỗi lần)
 _ENGINE_CACHE: Dict[Tuple[str, Optional[str]], BaseTTSEngine] = {}
+_ENGINE_LOCK = threading.Lock()  # chỉ bảo vệ khâu tạo engine, không giữ khi synthesize
 
 
 def _get_engine(engine: str, checkpoint_path: Optional[str] = None) -> BaseTTSEngine:
     """Lấy engine từ bộ nhớ đệm, khởi tạo ở lần gọi đầu tiên."""
     key = (engine.strip().lower(), checkpoint_path)
     if key not in _ENGINE_CACHE:
-        _ENGINE_CACHE[key] = get_tts_engine(engine, checkpoint_path=checkpoint_path)
+        with _ENGINE_LOCK:
+            if key not in _ENGINE_CACHE:
+                _ENGINE_CACHE[key] = get_tts_engine(engine, checkpoint_path=checkpoint_path)
     return _ENGINE_CACHE[key]
 
 

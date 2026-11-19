@@ -13,6 +13,7 @@ Run from the repository root with ``uvicorn scripts.api_server:app --port 8000``
 """
 from __future__ import annotations
 
+import logging
 import os
 import sys
 import tempfile
@@ -50,6 +51,7 @@ from llm_assist import LLMAssist
 from synthesize import synthesize as tts_synthesize
 import stt_server
 
+logger = logging.getLogger(__name__)
 app = stt_server.app
 # LLM_ASSIST=0 tắt; bật mà Ollama không chạy thì tự bỏ qua, hệ thống chạy như cũ
 _assist = LLMAssist(enabled=os.getenv("LLM_ASSIST", "1") != "0")
@@ -63,6 +65,40 @@ _dialogue: DialogueManager | None = None
 
 # Kho kiến thức mẫu (~75 đoạn) dùng khi chưa có data/: đủ để demo hội thoại ngoài hộp.
 SEED_KB = ROOT / "dialogue-manager_Huy" / "eval" / "seed_kb.json"
+
+
+# Đúng các tên mà text-to-speech_Duy/src/tts_engine.py get_tts_engine chấp nhận (sau strip().lower())
+TTS_ENGINE_NAMES = frozenset({
+    "matcha", "matcha-tts", "flowmatching", "vits", "mms", "local", "mms-tts",
+    "edge", "edge-tts", "edgetts", "gtts", "google",
+})
+
+
+def _env_float(name: str, default: float) -> float:
+    """Đọc float từ env; giá trị sai thì cảnh báo và dùng mặc định thay vì làm vỡ server."""
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        logger.warning("Env %s=%r không phải số, dùng mặc định %s", name, raw, default)
+        return default
+
+
+def _env_int(name: str) -> int | None:
+    """Số nguyên dương từ env; không đặt, sai hoặc <=0 thì trả None (tính năng tắt)."""
+    raw = os.getenv(name)
+    if raw is None or not raw.strip():
+        return None
+    try:
+        value = int(raw)
+    except ValueError:
+        value = 0
+    if value <= 0:
+        logger.warning("Env %s=%r không phải số nguyên dương, tắt tính năng", name, raw)
+        return None
+    return value
 
 
 class RetrieveRequest(BaseModel):
@@ -112,8 +148,15 @@ class ResetRequest(BaseModel):
 class TTSRequest(BaseModel):
     text: str = Field(min_length=1, max_length=5000)
     engine: str | None = None
-    voice: str | None = None
-    rate: str = "+0%"
+    voice: str | None = Field(default=None, max_length=50, pattern=r"^[A-Za-z0-9_-]+$")
+    rate: str = Field(default="+0%", pattern=r"^[+-]\d{1,3}%$")
+
+    @field_validator("engine")
+    @classmethod
+    def engine_must_be_supported(cls, value: str | None) -> str | None:
+        if value is not None and value.strip().lower() not in TTS_ENGINE_NAMES:
+            raise ValueError(f"unsupported engine: {value!r}")
+        return value
 
     @field_validator("text")
     @classmethod
@@ -154,7 +197,7 @@ def get_qa_services() -> tuple[Retriever, object]:
             wiki_dir = os.getenv("KB_WIKI") or (
                 str(ROOT / "data" / "kb_wiki_full") if (ROOT / "data" / "kb_wiki_full").is_dir() else None
             )
-            ratio = float(os.getenv("KB_WIKI_RATIO", "0.4"))
+            ratio = _env_float("KB_WIKI_RATIO", 0.4)
             reranker = os.getenv("KB_RERANKER") or None
 
             if index_path and Path(index_path).exists():
@@ -179,6 +222,7 @@ def get_qa_services() -> tuple[Retriever, object]:
                     try:
                         _reader = MRCClient(default_ckpt, context_strategy=os.getenv("MRC_CONTEXT_STRATEGY", "question_chunks"))
                     except Exception:
+                        logger.exception("Không nạp được MRC checkpoint %s, fallback sang LexicalBaselineClient", default_ckpt)
                         _reader = LexicalBaselineClient()
                 else:
                     _reader = LexicalBaselineClient()
@@ -194,8 +238,8 @@ def get_dialogue() -> DialogueManager:
             if _dialogue is None:
                 min_rerank = os.getenv("DIALOGUE_MIN_RERANK", "1.0")
                 _dialogue = DialogueManager(retriever, reader, assist=_assist,
-                                            min_support=float(os.getenv("DIALOGUE_MIN_SUPPORT", "0.34")),
-                                            min_rerank=float(min_rerank) if min_rerank and getattr(
+                                            min_support=_env_float("DIALOGUE_MIN_SUPPORT", 0.34),
+                                            min_rerank=_env_float("DIALOGUE_MIN_RERANK", 1.0) if min_rerank and getattr(
                                                 retriever, "reranker", None) else None,
                                             detail=os.getenv("DIALOGUE_DETAIL", "1") != "0")
     return _dialogue
@@ -311,6 +355,7 @@ def synthesize_endpoint(request: TTSRequest) -> FileResponse:
         )
     except Exception as exc:
         Path(target_path).unlink(missing_ok=True)
+        Path(target_path).with_suffix(".mp3").unlink(missing_ok=True)  # file fallback gTTS
         raise HTTPException(status_code=502, detail=f"TTS synthesis failed: {exc}") from exc
 
     is_wav = str(actual_path).lower().endswith(".wav")
@@ -324,6 +369,64 @@ def synthesize_endpoint(request: TTSRequest) -> FileResponse:
         background=BackgroundTask(Path(actual_path).unlink, missing_ok=True),
     )
 
+
+_RATE_LIMITED_PATHS = frozenset({"/api/ask", "/api/tts", "/api/stt", "/api/retrieve", "/api/answer"})
+
+
+def _apply_security(target) -> None:
+    """Bảo mật tuỳ chọn, mặc định tắt; đọc env lúc gọi (lúc import).
+
+    - CORS_ORIGINS="https://a.com,https://b.com": bật CORSMiddleware cho các origin đó.
+    - RATE_LIMIT_PER_MIN=<số nguyên >0>: giới hạn POST /api/{ask,tts,stt,retrieve,answer} theo
+      request.client.host (không tin X-Forwarded-For), cửa sổ trượt 60s; vượt -> 429 + Retry-After.
+    - API_KEY=<chuỗi>: mọi route /api/ trừ GET /api/health cần header X-API-Key khớp, sai/thiếu -> 401.
+      Giao diện web đi kèm KHÔNG gửi khoá, nên chỉ bật API_KEY khi gọi API trực tiếp hoặc khi đặt
+      sau reverse proxy chèn header.
+    """
+    import secrets
+    from collections import deque
+
+    from fastapi.responses import JSONResponse
+
+    api_key = os.getenv("API_KEY") or None
+    limit = _env_int("RATE_LIMIT_PER_MIN")
+    origins = [o.strip() for o in os.getenv("CORS_ORIGINS", "").split(",") if o.strip()]
+
+    # shortcut: bộ nhớ trong một tiến trình, không chia sẻ giữa nhiều worker; dùng reverse proxy khi scale
+    hits: dict[str, deque] = {}
+    hits_lock = Lock()
+
+    if api_key or limit:
+        @target.middleware("http")
+        async def _guard(request, call_next):
+            path = request.url.path
+            if api_key and path.startswith("/api/") and request.method != "OPTIONS" \
+                    and not (request.method == "GET" and path == "/api/health"):
+                if not secrets.compare_digest(request.headers.get("x-api-key", "").encode(), api_key.encode()):
+                    return JSONResponse({"detail": "invalid api key"}, status_code=401)
+            if limit and request.method == "POST" and path in _RATE_LIMITED_PATHS:
+                now = time.monotonic()
+                client_id = request.client.host if request.client else "unknown"
+                with hits_lock:
+                    for k in [k for k, q in hits.items() if not q or q[-1] <= now - 60]:
+                        del hits[k]  # dọn client đã hết hạn để dict không phình vô hạn
+                    q = hits.setdefault(client_id, deque())
+                    while q and q[0] <= now - 60:
+                        q.popleft()
+                    if len(q) >= limit:
+                        retry = max(1, int(q[0] + 60 - now) + 1)
+                        return JSONResponse({"detail": "rate limit exceeded"}, status_code=429,
+                                            headers={"Retry-After": str(retry)})
+                    q.append(now)
+            return await call_next(request)
+
+    if origins:  # thêm sau cùng = ngoài cùng, để preflight OPTIONS không bị chặn bởi API_KEY
+        from fastapi.middleware.cors import CORSMiddleware
+        target.add_middleware(CORSMiddleware, allow_origins=origins, allow_methods=["GET", "POST"],
+                              allow_headers=["Content-Type", "X-API-Key"])
+
+
+_apply_security(app)
 
 # Mount static Angular web client if built
 dist_browser = ROOT / "web-interface_Luong" / "dist" / "web-interface" / "browser"

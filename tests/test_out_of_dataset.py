@@ -58,7 +58,8 @@ class OutOfDatasetSuiteTests(unittest.TestCase):
                 elif isinstance(rec.get("question"), str):
                     vimmrc_questions.add(rec["question"].strip().lower())
 
-        self.assertGreater(len(vimmrc_questions), 0, "ViMMRC dataset questions should be loaded")
+        if not vimmrc_questions:  # data/ không nằm trong git: máy sạch/CI không có bộ ViMMRC
+            self.skipTest("ViMMRC split files not available (data/ is not committed)")
 
         leaked = []
         for item in self.items:

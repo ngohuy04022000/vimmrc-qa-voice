@@ -1,0 +1,40 @@
+name: ci
+on:
+  push:
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      # shortcut: chưa cache pip/HF; thêm khi CI chậm
+      - name: Install (torch CPU trước để tránh wheel CUDA nặng)
+        run: |
+          python -m pip install --upgrade pip
+          pip install --extra-index-url https://download.pytorch.org/whl/cpu torch
+          pip install -r requirements-api.txt pytest
+      # Chưa kiểm chứng trên CI: test cần data/checkpoint có tự skip hay fail khi thiếu (chỉ test_mrc và
+      # test_silence_detector có skip rõ ràng). Nếu fail do thiếu data, thu hẹp danh sách test ở đây.
+      - run: pytest -q
+
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      # package.json không có script test; test JS (tests/web/*.mjs) được tests/test_silence_detector.py
+      # biên dịch bằng tsc của web-interface_Luong rồi chạy bằng node, nên cần npm ci + pytest.
+      # shortcut: chưa cache pip/HF; thêm khi CI chậm
+      - run: npm ci --ignore-scripts
+        working-directory: web-interface_Luong
+      - run: pip install pytest
+      - run: pytest -q tests/test_silence_detector.py

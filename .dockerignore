@@ -26,3 +26,13 @@ build_*.py
 slide_builder.py
 model.bin
 **/.ipynb_checkpoints/
+
+# bí mật (model/checkpoint KHÔNG loại: COPY . . cần chúng, compose không mount)
+.env
+.env.*
+**/.env
+*.pem
+*.key
+
+# video demo của nhóm (1,2 GB), không đưa vào image
+Video demo/

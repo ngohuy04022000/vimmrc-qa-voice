@@ -2,14 +2,14 @@
 # Cài đặt: pip install -r requirements.txt && python scripts/setup_matcha.py
 
 # Lõi tính toán & âm thanh
-torch>=2.0.0
+torch>=2.2
 numpy>=1.24.0
 scipy>=1.10.0
 soundfile>=0.12.0
 librosa>=0.10.0
 
 # Engine VITS baseline (facebook/mms-tts-vie) và ASR PhoWhisper trong scripts đánh giá
-transformers>=4.40.0
+transformers>=4.40.0,<4.58
 
 # Engine đám mây / dự phòng
 edge-tts>=7.0.0

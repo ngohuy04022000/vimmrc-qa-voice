@@ -6,7 +6,7 @@ services:
     container_name: vimmrc-qa-voice
     restart: unless-stopped
     ports:
-      - "${PORT:-8090}:8000"
+      - "127.0.0.1:${PORT:-8090}:8000"
     environment:
       - WHISPER_DEVICE=cpu
       - TTS_ENGINE=matcha
@@ -31,9 +31,12 @@ services:
       # LLM Ollama trên máy chủ kiểm tra đoạn/đáp án (dialogue-manager_Huy/llm_assist.py); không chạy thì tự bỏ qua
       - OLLAMA_BASE=${OLLAMA_BASE:-http://host.docker.internal:11434}
       - LLM_ASSIST=${LLM_ASSIST:-1}
+      # tuỳ chọn, mặc định tắt (thêm vào đây nếu cần): API_KEY=<chuỗi> (header X-API-Key, web UI không gửi khoá),
+      # CORS_ORIGINS=https://a.com,https://b.com (phân tách dấu phẩy), RATE_LIMIT_PER_MIN=<số nguyên >0>
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
+      # container chạy uid 10001: thư mục outputs trên host Linux cần chown 10001 (Docker Desktop Windows không cần)
       - ./data:/app/data:ro
       - ./text-to-speech_Duy/outputs:/app/text-to-speech_Duy/outputs
     healthcheck:

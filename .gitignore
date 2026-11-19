@@ -42,3 +42,12 @@ node_modules/
 dist/
 .angular/
 
+
+# bổ sung
+*.npy
+.env.*
+.coverage
+htmlcov/
+
+# video demo của nhóm (hàng trăm MB, không đưa vào git hay image Docker)
+Video demo/

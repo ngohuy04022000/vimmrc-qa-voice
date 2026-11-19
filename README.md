@@ -59,7 +59,7 @@ Mở trình duyệt tại `http://localhost:4200`.
 python -m pytest -v
 ```
 
-Hiện có **144 bài kiểm thử tự động, đạt cả 144** (chạy `pytest -q` ngày 2026-11-08, Python 3.11) phủ STT, Retrieval, Context Selection, MRC (ViT5), TTS (normalizer, VITS, Matcha, Edge, gTTS), tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), Intent Router, bộ câu hỏi ngoài dataset, Web UI và FastAPI end-to-end (`/api/ask`).
+Hiện có **166 bài kiểm thử tự động, đạt cả 166** (chạy `pytest -q` ngày 2026-11-10, Python 3.11) phủ STT, Retrieval, Context Selection, MRC (ViT5), TTS (normalizer, VITS, Matcha, Edge, gTTS), tầng hội thoại (`dialogue-manager_Huy/tests`, gồm chốt chất lượng trên bộ đánh giá), Intent Router, bộ câu hỏi ngoài dataset, Web UI và FastAPI end-to-end (`/api/ask`).
 
 ### Môi trường cục bộ (không dùng Docker)
 
@@ -76,6 +76,15 @@ $env:TRANSFORMERS_NO_TF = "1"; .venv\Scripts\python.exe -m pytest -q
 Chưa có `Matcha-TTS/` thì `synthesize()` im lặng chuyển sang gTTS (file `.mp3`, cần mạng); test `test_matcha_engine` và `test_vits_engine` kiểm tra đuôi `.wav` để phát hiện trường hợp này.
 
 Web (`web-interface_Luong`): bấm micro rồi nói; hệ thống tự dừng thu âm sau khoảng 1,3 giây im lặng và tự gửi câu hỏi (bấm lại nút micro để dừng ngay). Không nghe thấy gì trong 8 giây thì huỷ và báo lỗi. Cần dựng lại web (`npm run build`) sau khi sửa mã.
+
+## Bảo mật tuỳ chọn, giấy phép, tái lập số liệu
+
+- Mặc định API **không xác thực** (dùng trên máy cá nhân/mạng tin cậy). Biến môi trường tuỳ chọn, mặc định tắt: `API_KEY` (header `X-API-Key`,
+  trừ `GET /api/health`; giao diện web đi kèm không gửi khoá), `CORS_ORIGINS` (danh sách origin, phân tách dấu phẩy), `RATE_LIMIT_PER_MIN`
+  (giới hạn POST `/api/{ask,tts,stt,retrieve,answer}` theo địa chỉ client, bộ nhớ trong một tiến trình).
+- Giấy phép: mã dự án MIT (`LICENSE`); thành phần bên thứ ba và hạn chế ở `NOTICE.md`. Bộ đọc mặc định `vi-mrc-large` là CC-BY-NC-4.0,
+  nên **bản triển khai mặc định chỉ dùng phi thương mại**.
+- Tái lập số liệu: `docs/reproduce.md` (lệnh sinh từng file trong `reports/`, mức độ tái lập, giới hạn đã biết); hiện trạng và số chốt: `STATUS.md`.
 
 ## Chạy CLI Pipeline đầu-cuối
 
@@ -172,7 +181,7 @@ python -X utf8 dialogue-manager_Huy/chat_cli.py --debug
 - [x] Triển khai hệ thống TTS đa engine tiếng Việt (Matcha-TTS, VITS MMS, Edge-TTS, gTTS) có tự động fallback và chuẩn hóa văn bản.
 - [x] Thiết kế hợp đồng văn bản cho Retrieval → MRC và pipeline đầu-cuối CLI.
 - [x] Ghép toàn diện STT, Retrieval, MRC, TTS và giao diện web Angular vào API Server FastAPI thống nhất.
-- [x] Tự động hóa bộ kiểm thử tích hợp (144 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
+- [x] Tự động hóa bộ kiểm thử tích hợp (166 test cases kiểm thử tự động toàn diện, gồm tầng hội thoại).
 - [x] Đối sánh 8 bộ đọc trên cùng đoạn văn (`scripts/eval_readers.py`) và chuyển bộ đọc mặc định sang `vi-mrc-large`; cộng điểm KB trên logit, cổng từ chối, reranker INT8.
 
 ## 7. Phân công

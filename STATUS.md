@@ -43,6 +43,11 @@ code đổi khác bảng dưới, sửa bảng — đừng để lệch.
 
 ## Đánh giá toàn chuỗi (retrieval → ViT5), `scripts/eval_e2e.py`
 
+> **Định nghĩa F1 (từ 2026-11-10):** thước đo chính là token F1 *multiset*, giữ dấu tiếng Việt, lấy max theo đáp án tham chiếu
+> (`scripts/metrics.py`). Các số F1 *đầu cuối* và *so sánh bộ đọc* ghi ở mục này và bên dưới (0,4512, 0,4421, 0,4583, 0,468, 0,446 …) là
+> bản cũ (tập hợp, bỏ dấu) và vẫn đúng với định nghĩa đó. Đã đo lại toàn bộ bằng F1 chuẩn: xem mục "2026-11-10" ở cuối file
+> (số mới cao hơn khoảng 0,01–0,02, thứ hạng không đổi).
+
 Dev 2.570 câu (404 ViMMRC + 2.166 ViQuAD có đoạn văn trong KB), báo cáo `reports/e2e_dev_kb_*.json`:
 
 | Reader | Toàn chuỗi EM / F1 | ViMMRC F1 | ViQuAD F1 | Đoạn đúng F1 |
@@ -75,7 +80,7 @@ CPU): F1 câu đọc ra — vi-mrc-large 0,468; xlmr-large-viquad 0,469; vit5-co
 vit5-vimmrc-ft 0,444; xlm-roberta-large-squad2 0,430; mdeberta-v3-base-squad2 0,418; Qwen2.5-1.5B 0,418 (Qwen2.5-3B chưa đo, dừng giữa chừng).
 Riêng 70 câu mà đoạn có đáp án: vi-mrc-large 0,900 so với 0,681 của ViT5; câu "tại sao" 0,510 so với 0,368.
 **Đang dùng vi-mrc-large** (0,6 s/câu CPU, trích span nên đôi khi ngắn). Đầu cuối 220 câu: F1 0,4583 (ViT5 0,4424), từ chối nhầm 8/220,
-từ chối đúng 5/30 (`reports/llm_assist_off_vimrc.json`). Chênh lệch ~0,02 trên 220 câu chưa chắc có ý nghĩa thống kê.
+từ chối đúng 5/30 (`reports/llm_assist_off_vimrc.json`). Chênh lệch ~0,02 trên 220 câu: bootstrap ghép cặp (2026-11-10) cho đầu cuối +0,018 (CI 95% −0,005…0,042) chưa có ý nghĩa; ở mức bộ đọc +0,026 (0,002…0,053) ở ngưỡng biên, trên 70 câu mà đoạn có đáp án +0,080 (0,009…0,151).
 Thẻ mô hình (đã đọc 2026-11-08): huấn luyện trên SQuAD 2.0, mailong25, VLSP MRC 2021, MLQA — **không** có UIT-ViQuAD (bản ghi trước đây
 ở dòng này nói ngược lại là phỏng đoán sai). Vẫn chưa loại trừ trùng đoạn Wikipedia với MLQA/mailong25. **Giấy phép CC-BY-NC-4.0: chỉ dùng phi thương mại.**
 **Cổng điểm reranker** (`DIALOGUE_MIN_RERANK=1.0`, `reports/rerank_confidence_gate.json`): đoạn được chọn có điểm cross-encoder < 1,0
@@ -89,7 +94,7 @@ tổ hợp nào hơn riêng ngưỡng reranker trong ngân sách F1 0,01; chọn
 **Reranker INT8** (`KB_RERANKER_INT8=1`, mặc định; `reports/reranker_speed.json`): 100 câu test đo xoay vòng, đoạn đúng top-1/top-3 giữ nguyên
 70/71 so với FP32, nhanh 2,1× (5,44 vs 11,43 s/câu gồm truy xuất bước đầu); giới hạn 256 token thêm mất 1–2 câu nên không dùng. Đầu cuối 220+30 câu thì
 INT8 mất 0,009 F1 (0,4512 → 0,4421), từ chối nhầm 17 → 22/220, từ chối đúng giữ 16/30 (`llm_assist_off_int8_gate1.json`); ngưỡng 0,5 không bù lại
-(0,4431, 19/220, 15/30; `llm_assist_off_int8_gate05.json`). Chênh 0,009 nằm trong nhiễu mẫu nhưng nhất quán; giữ INT8 vì độ trễ, FP32 chỉ cần `KB_RERANKER_INT8=0`.
+(0,4431, 19/220, 15/30; `llm_assist_off_int8_gate05.json`). Bootstrap ghép cặp (2026-11-10, số đo lại đáp án đầy đủ): INT8 − FP32 = −0,010 F1 (CI 95% −0,022…−0,001) và +5 từ chối nhầm: nhỏ nhưng **có ý nghĩa thống kê**, không phải nhiễu mẫu; giữ INT8 vì nhanh 2,1×, FP32 chỉ cần `KB_RERANKER_INT8=0`.
 **Bộ đọc trên đoạn đúng, theo nguồn** (2.716 câu test, `reports/reader_gold_*.json`): ViT5 giai đoạn 2 EM 40,68 / F1 66,56 (ViQuAD 2.327 câu: 45,90 / 72,95;
 ViMMRC 389 câu: 9,51 / 28,31); vi-mrc-large EM 73,93 / F1 81,26 (ViQuAD 84,83 / 90,82; ViMMRC 8,74 / 24,07). Ưu thế của bộ đọc span dồn vào câu ViQuAD
 (đáp án là cụm trích sẵn); ở ViMMRC nó kém ViT5. EM 40,68 của lần chạy này lệch 0,37 so với 41,05 ghi trước đó (F1 66,56 vs 66,55); nguyên nhân chưa xác định (khác quy trình đo: client suy luận so với vòng đánh giá của train.py).
@@ -143,9 +148,9 @@ dài có trong dữ liệu này, bất kể model tốt đến đâu).
 
 ## Nợ kỹ thuật & Cải tiến đã hoàn thành
 
-- **Kiểm thử tự động toàn diện**: Đã bổ sung bộ kiểm thử riêng cho STT (`speech-to-text_Luong/tests/test_stt.py` với 10 tests), Web UI (`tests/test_web_ui.py` với 5 tests), Intent Router (`tests/test_intent_router.py` với 8 tests), Out-of-Dataset Suite (`tests/test_out_of_dataset.py` với 5 tests), và tầng hội thoại (`dialogue-manager_Huy/tests`, 24 tests). Tổng bộ test suite hiện có **115 automated tests** (100% passed).
+- **Kiểm thử tự động toàn diện**: Đã bổ sung bộ kiểm thử riêng cho STT (`speech-to-text_Luong/tests/test_stt.py` với 10 tests), và các bộ test của Web UI, Intent Router, Out-of-Dataset Suite (nằm trong `tests/`), tầng hội thoại (`dialogue-manager_Huy/tests`), MRC, retrieval và TTS. Tổng bộ test suite hiện có **144 automated tests** (tests/ 34, dialogue 45, mrc 20, retrieval 17, STT 10, TTS 18; 100% passed).
 - **Hợp nhất tầng hội thoại**: chỉ còn một engine `dialogue-manager_Huy/dialogue.py` (`DialogueManager`) cho cả web UI, API và eval: xã giao, câu nối tiếp theo `session_id`, so sánh, câu ghép, đúng/sai, tóm tắt đoạn dán vào. Bản `scripts/dialogue_manager.py` cũ đã gỡ.
-- **Bổ sung 5 thẻ tri thức chuyên sâu (Deep Knowledge Cards)**: Tích hợp 5 thẻ bài đọc kiến thức chuyên sâu vào `data/kb_index.json` (tăng tổng số đoạn văn từ 5.874 lên 5.879), cung cấp đầy đủ luận cứ cho các câu hỏi lịch sử, công nghệ Voice AI, địa danh kỳ quan, cơ chế sinh học và danh tác văn học.
+- **Bổ sung 5 thẻ tri thức chuyên sâu (Deep Knowledge Cards)**: Tích hợp 5 thẻ bài đọc kiến thức chuyên sâu vào `data/kb_index.json` (tổng số đoạn văn hiện là 5.879 = 552 ViMMRC + 5.317 ViQuAD + 10 thẻ tri thức; 5 thẻ chuyên sâu này được thêm sau 5 thẻ có sẵn, nên mốc 5.874 là số trước khi thêm), cung cấp đầy đủ luận cứ cho các câu hỏi lịch sử, công nghệ Voice AI, địa danh kỳ quan, cơ chế sinh học và danh tác văn học.
 - **Điều hướng hội thoại & Chuẩn hóa câu trả lời (Intent Router & Answer Polish)**: Tích hợp `scripts/intent_router.py` tự động nhận diện các ý định hội thoại (chào hỏi, danh tính trợ lý, tính năng, cảm ơn, tạm biệt, hỏi thăm) với độ trễ 0,1 ms. Bộ lọc `polish_answer()` loại bỏ ngoặc kép thừa, chuẩn hóa dấu câu và viết hoa đầu câu, đảm bảo 100% câu trả lời hoàn chỉnh, tự nhiên cho giọng đọc TTS.
 - **Reranking cụm từ N-gram liên tục**: Bổ sung cơ chế `rerank_hits()` tính điểm khớp 2-gram, 3-gram và 4-gram liên tục giữa câu hỏi và đoạn văn để ưu tiên đoạn trích mang đúng thực thể ngay cả khi BM25 đơn từ bị phân tán.
 
@@ -218,9 +223,9 @@ Rà lại các con số trong slide/kịch bản so với `reports/` và mã ngu
 |---|---|---|
 | "Recall@1 BM25 tinh chỉnh: 44,1% → 77,48% (dev)" | 44,1% là cấu hình **kém nhất** (k1 0,9, b 0,4) trong 16 cấu hình thử trên **800 câu train** (`retrieval-model_Huy/reports/lexical_benchmark.json`); 77,48% là cấu hình chọn trên **dev**. Cùng tập dev: BM25 cũ 71,45% → 77,48%; cùng tập train 800 câu: 53,25% → 64,13% | Trộn hai tập đo, không phải số cũ |
 | "BM25 hai tầng: R@1 71,1% / R@5 85,9% (test), 70,7% / 85,1% (dev)" | **Nhãn đúng, giữ nguyên.** `scripts/eval_e2e.py` chạy với `--wiki` (tỷ lệ 0,5): R@1 theo nguồn trong `e2e_dev_kb_*.json` (ViMMRC 51,98%, ViQuAD 74,24%) trùng khít mục `kb+wiki_full(ratio 0.5)` của `kb_retrieval_dev.json`, không phải mục chỉ-KB (52,48% / 74,52%). Đối chiếu: BM25 chỉ trên kho chọn lọc 5.879 đoạn cho dev 71,1% / 85,6%, test 71,6% / 86,8% (cao hơn dưới 1 điểm, vì tầng Wikipedia đôi khi chen vào) | Không sai |
-| "54 bài kiểm thử (53 passed, 1 skipped)" | Hiện thu thập và chạy **124** test, tất cả đạt (`pytest -q`, `.venv` của dự án; gồm 2 test hồi quy mới: import `scripts.api_server` từ thư mục gốc, và logic tự dừng ghi âm của web); số 54 là số cũ, không còn khớp với bộ test hiện tại. Chạy lại trên máy thiếu `bm25s`, `edge_tts`, `gtts`, `matcha`: 102 đạt, 11 lỗi `ModuleNotFoundError` (không phải lỗi logic) | Số cũ |
+| "54 bài kiểm thử (53 passed, 1 skipped)" | Hiện thu thập và chạy **124** test, tất cả đạt (`pytest -q`, `.venv` của dự án; gồm 2 test hồi quy mới: import `scripts.api_server` từ thư mục gốc, và logic tự dừng ghi âm của web); số 54 là số cũ, không còn khớp với bộ test hiện tại; 124 cũng là số cũ, hiện 144. Chạy lại trên máy thiếu `bm25s`, `edge_tts`, `gtts`, `matcha`: 102 đạt, 11 lỗi `ModuleNotFoundError` (không phải lỗi logic) | Số cũ |
 | "5.869 đoạn" kho chọn lọc | `data/kb_index.json` hiện có **5.879** đoạn: 552 ViMMRC + 5.317 ViQuAD + 10 thẻ tri thức | Số cũ |
-| "Giảm 62,6% WER tương đối" | (36,76 − 13,77) / 36,76 = 62,54% → **62,5%** | Làm tròn sai |
+| "Giảm 62,6% WER tương đối" | (36,76493 − 13,76509) / 36,76493 = **62,56%** (bài báo ghi đúng 62,56%; làm tròn một chữ số là 62,6%). Mốc trung gian: WER 15,20% (Whisper-small LoRA 16 giờ, `speech-to-text_Luong/training/results_20h.json`) | Đã đối chiếu, bài báo đúng |
 
 Số "F1 câu hỏi mở 15,4 → 24,3" đúng: cả hai đo trên cùng 200 câu (`reports/dense_routing_e2e.json`, `rerank_routing_e2e.json`). Không so với 52,9/16,0 (500 câu, `routing_e2e.json`) vì khác tập mẫu.
 
@@ -261,7 +266,7 @@ trên máy lúc đo chạy 0,15 token/giây (log `draft-dflash`), mọi lần g�
 (trước: 30 giây) sau một lần quá hạn, để không lần nào cũng bắt người dùng chờ 25 giây.
 
 ## 2026-11-08 — Dọn bản cũ lần hai
-Gỡ bộ slide/kịch bản 5 và 30 phút (`docs/*.pptx|docx|md`) cùng `build_*.py` và `slide_builder.py`: chúng còn mô tả ViT5/ChoiceRanker và số đo cũ. Bản trình bày hiện hành là `ViMMRC_Voice_QA_Slides*.pptx` ở thư mục mẹ (VI + EN, 51 slide); bản cũ vẫn lấy lại được từ lịch sử git. Số test trên slide sửa 137 → 138.
+Gỡ bộ slide/kịch bản 5 và 30 phút (`docs/*.pptx|docx|md`) cùng `build_*.py` và `slide_builder.py`: chúng còn mô tả ViT5/ChoiceRanker và số đo cũ. Bản trình bày hiện hành là `ViMMRC_Voice_QA_Slides*.pptx` ở thư mục mẹ (VI + EN, 52 slide); bản cũ vẫn lấy lại được từ lịch sử git. Số test trên slide sửa 137 → 138 (số cũ, hiện 144).
 Đã gỡ thêm `docs/gdrive_downloads/` (bản nháp Drive cũ còn ChoiceRanker, 552 đoạn, 1,8 s) và `docs/screenshots/` (7 biểu đồ cũ với số 5.869 đoạn, Edge-TTS CER 1,0%… không còn khớp `reports/`); không tệp nào tham chiếu tới chúng. Số liệu hiện hành nằm ở `reports/` và trong bài báo.
 
 ## 2026-11-08 — Câu trả lời dài hơn, có nguồn trích dẫn
@@ -270,9 +275,78 @@ Gỡ bộ slide/kịch bản 5 và 30 phút (`docs/*.pptx|docx|md`) cùng `build
 ## 2026-11-08 — Đo bổ sung khi GPU rảnh
 - **Qwen2.5-3B-Instruct** làm reader (đo trên GPU, `reports/reader_bench.json`): F1 câu nói 0,401 (câu kiểm thử 0,257), thấp hơn 1,5B (0,418) và ViT5 (0,446); không đổi kết luận chọn `vi-mrc-large`.
 - **Tầng truy xuất, 500 câu mỗi nhóm** (`reports/rerank_logit_routing_e2e_n500.json`, `scripts/eval_dense.py --n 500 --reranker …`, `RERANK_DEVICE=cuda`): không thưởng 51,9/27,2; thưởng xác suất 0,25: 56,2/24,5; thưởng logit β=3: 56,6/25,8; tỉ lệ BM25: 52,9/15,9. Thứ tự giống lần 200 câu (60,8/26,7) nhưng khoảng cách nhỏ hơn: logit lấy lại khoảng một nửa điểm miền mở mà thưởng xác suất làm mất, không phải "phần lớn".
-- **Chế độ câu dài kèm nguồn** (`reports/llm_assist_off_detail.json` so với `llm_assist_off_short_recall.json`): token F1 0,4421 → 0,2945 (câu 21,6 → 52,4 từ), recall token đáp án 0,562 → 0,651 (sau khi sửa chất lượng câu bằng chứng, `llm_assist_off_detail_v2.json`), từ chối không đổi 22/220 và 16/30. Token F1 không phù hợp để đo câu dài; chưa đánh giá độ liên quan của câu thêm vào.
+- **Held-out cho β** (`reports/rerank_logit_routing_heldout_offset500.json`, `scripts/eval_dense.py --n 500 --offset 500 --reranker …`, 500 câu mỗi nhóm không dùng để chọn β): tỉ lệ BM25 53,1/14,3; không thưởng 54,4/26,8; xác suất 0,25: 58,5/22,1; logit β=3: 59,0/23,8; β=2: 58,4/25,9. Cùng thứ tự với lát cắt đầu. `scripts/measure_ood_latency.py` + `reports/ood_latency_docker.json`: 110 câu qua Docker, trung vị 6,5 s, trung bình 6,3 s (hỏi đáp, chưa gồm STT/TTS). Số tham số: Matcha 18,2M, HiFi-GAN generator 13,9M (đếm từ checkpoint), MMS-vie 36,3M (HF).
+- **Chế độ câu dài kèm nguồn** (`reports/llm_assist_off_detail_v2.json` / `_v3.json` so với `llm_assist_off_short_recall.json`; bản `llm_assist_off_detail.json` đầu tiên có f1_all 0,2964): token F1 0,4421 → 0,2945 (câu 21,6 → 52,4 từ), recall token đáp án 0,562 → 0,651 (sau khi sửa chất lượng câu bằng chứng, `llm_assist_off_detail_v2.json`), từ chối không đổi 22/220 và 16/30. Token F1 không phù hợp để đo câu dài; chưa đánh giá độ liên quan của câu thêm vào.
 - Đã giải quyết ở các mục sau: fine-tune span trên ViMMRC (không làm, có lý do), INT8 STT (đo trên InfoRe1), slide 26/27/50 đã cập nhật. Còn thiếu: slide về chế độ câu dài, bảng STT/ViT5 mới trên slide, bộ test STT 1.802 câu (cần chấp nhận điều kiện VietSpeech), điểm chấm tay.
 - **STT INT8, đo lại** (`scripts/eval_stt_int8.py`, `reports/stt_int8_infore1*.json`): VietSpeech là dataset có điều kiện truy cập mà tài khoản chưa chấp nhận (không tự chấp nhận thay người dùng), nên đo trên 135 câu InfoRe1 (chỉ số ≥14.800, ngoài miền): bản triển khai WER 16,09 % / CER 6,90 %, Whisper-small gốc cùng INT8 27,51 % / 9,71 %; RTF 0,22 trên CPU. Chưa đo được bộ test 1.802 câu; muốn đo thì chấp nhận điều kiện VietSpeech rồi chạy `eval_stt_int8.py` mặc định.
 - **Fine-tune span trên ViMMRC**: không làm vì oracle chọn câu tốt nhất chỉ đạt F1 0,283 so với văn bản phương án (527 câu dev) = mức của ViT5, và chỉ 23 % phương án đúng xuất hiện nguyên văn trong đoạn.
 - **Câu dài kèm nguồn, chất lượng**: bỏ tên bài Wikipedia khỏi câu bằng chứng, cắt câu bằng chứng quá dài theo mệnh đề quanh đáp án, bỏ chú thích chữ Hán trong ngoặc (không đọc được thành tiếng).
 - **Bám nguồn của chế độ câu dài** (`reports/llm_assist_off_detail_v3.json`): đoạn được ghi nguồn chứa trung bình 0,83 token đáp án chuẩn (ood 0,90, hard 0,68, test 0,78); `raw_in_cited_passage`=1,0 là hiển nhiên vì span lấy từ chính đoạn đó, không phải kết quả đo. Phiếu chấm tay: `scripts/make_human_eval_sheet.py` → `reports/human_eval_sheet.csv` (52 dòng, nhóm hard chỉ có 12 câu) và quy trình `docs/human_eval_protocol.md`; chưa có người chấm.
+
+- **Tài liệu tham khảo BM25 (Robertson & Zaragoza, 2009) — đã xác minh 2026-11-09:** đúng là *Found. Trends Inf. Retr.* 3(4):333–389, DOI 10.1561/1500000019. Bằng chứng: Semantic Scholar (khóa DBLP `journals/ftir/RobertsonZ09`) ghi volume 3, trang 333–389; Crossref liệt kê tập 3 số 3 là "Learning to Rank for IR" trang 225–331, nên số 4 bắt đầu ngay sau trang 331. Bản ghi Crossref của DOI này ghi sai 4(1–2):1–174, trùng y hệt bản ghi "Mining Query Logs" (174 trang), tức là metadata do nhà xuất bản đăng ký nhầm; OpenAlex và doi.org sao chép lỗi đó. Giữ nguyên trích dẫn trong bài.
+
+## 2026-11-10 — Kiểm toán toàn diện và sửa
+
+Kiểm toán độc lập (API, test/repo, số liệu so với `reports/` và bài báo, phương pháp đo) rồi sửa. Số test hiện tại: **166 đạt**
+(`pytest -q`: 144 cũ + 10 test độ bền + 7 test bảo mật tuỳ chọn + 5 test của công cụ đo).
+
+**Đã sửa**
+- Bài báo EN/VI: `\ref{tab:stt}` bị gãy (in "ef{tab:stt}"), dấu thập phân tiếng Việt, số bộ đọc, định nghĩa F1, đoạn Ethics và quyền riêng tư,
+  câu về ý nghĩa thống kê, bảng/hình đầu cuối. Bảng chín bộ đọc từng ghi Qwen-3B "Gold 0,342" (đó là F1 câu soạn, các hàng khác là F1 thô): sửa thành 0,626.
+- Hai bộ slide: số bộ đọc (kể cả biểu đồ nhúng), nhãn "đang dùng" gắn nhầm cho ViT5, chú thích hai mẫu test 2.545/2.716, số đầu cuối, ghi chú.
+- Mã: log khi bộ đọc rơi về từ vựng (`api_server.py`), bắt lỗi `float()` ở 3 biến môi trường, validator `engine/voice/rate` của `/api/tts`,
+  xoá file `.mp3` fallback, lock cho `_ENGINE_CACHE`, `eval_llm_assist.py` không còn đòi Ollama cho cấu hình `off`, `eval_e2e.py` mặc định khớp tài liệu.
+- Bảo mật tuỳ chọn, **mặc định tắt**: `API_KEY`, `CORS_ORIGINS`, `RATE_LIMIT_PER_MIN` (giao diện web đi kèm không gửi khoá nên chỉ bật `API_KEY`
+  khi gọi API trực tiếp hoặc sau reverse proxy).
+- Docker: chạy bằng người dùng không root, `.dockerignore` loại `.env`/khoá. (Chưa build lại image, xem "Còn mở".)
+- Hạ tầng: `LICENSE` (MIT), `NOTICE.md`, `.github/workflows/ci.yml`, cận phiên bản `transformers<4.58` cho TTS, `docs/reproduce.md`.
+
+**Công cụ đo mới** (lệnh ở `docs/reproduce.md`): `scripts/metrics.py` (F1 duy nhất, thay 3 bản), `bootstrap_ci.py` (CI 95%),
+`simulate_gate.py` (phát lại cổng ở nhiều ngưỡng từ lượt đo không cổng), `recompute_f1.py`, `recompute_reader_bench.py`,
+`rerun_e2e_gate.sh`, `rerun_live_gate.sh`, `rerun_vit5.sh`.
+
+**Số đo lại (F1 chuẩn, đáp án đầy đủ, bộ chính 220 + 30 câu).** Các lượt đo lại tái lập đúng các số cũ khi tính F1 kiểu cũ
+(0,4424; 0,4583; 0,4512; 0,4421; 17/220; 22/220), nên chuỗi đo xác định và số cũ không sai:
+
+| Cấu hình | F1 cũ → chuẩn | Từ chối nhầm /220 | Từ chối đúng /30 |
+|---|---|---|---|
+| ViT5 giai đoạn 2, không cổng | 0,4424 → 0,4584 | 8 | 6 |
+| Bộ đọc span, không cổng (FP32) | 0,4583 → 0,4765 | 8 | 5 |
+| Span + cổng, FP32 | 0,4512 → 0,4702 | 17 | 16 |
+| Span + cổng, INT8 (triển khai) | 0,4421 → 0,4602 | 22 | 16 |
+| Triển khai, câu dài kèm nguồn | 0,2945 → 0,3090 | 22 | 16 |
+
+Bootstrap (`reports/bootstrap_ci.json`, 10.000 lần theo câu, seed 0): span − ViT5 +0,018 (−0,005…0,042) chưa có ý nghĩa; cổng −0,006 F1
+(−0,015…−0,0005), từ chối nhầm +4,1 điểm% (1,8…6,8), từ chối đúng +36,7 điểm% (20,0…53,3); INT8 − FP32 −0,010 F1 (−0,022…−0,001),
+từ chối nhầm +2,3 điểm% (0,5…4,5). Bộ đọc trên đoạn đúng (2.716 câu): vi-mrc-large − ViT5 +0,147 F1 (0,134…0,161).
+Bộ đọc (220 câu, câu nói, chuẩn): vi-mrc-large 0,486, xlmr-large-viquad 0,488, vit5-combined 0,467, vit5-cont 0,460, vit5-vimmrc-ft 0,457,
+xlmr-squad2 0,442, mdeberta 0,429, Qwen-1,5B 0,429, Qwen-3B 0,414 (`reports/reader_bench_multiset.json`).
+
+**Held-out cho ngưỡng cổng 1,0** (`reports/e2e_gate1_int8_heldout.json`, `e2e_nogate_int8_heldout.json`; 100 câu test chưa dùng, lát cắt [100:200]
+của danh sách xáo seed 7, và 30 câu ngoài kho mới `HELDOUT_UNANSWERABLE` viết sau khi chọn ngưỡng): INT8 từ chối đúng 4 → 17/30
+(+43,3 điểm%, CI 26,7…60,0), từ chối nhầm 5 → 12/100 (+7 điểm%, CI 3…12), F1 0,3287 → 0,3266 (−0,002, không có ý nghĩa). Held-out đối với ngưỡng,
+**không** đối với β (β chọn trên mẫu 500 câu khác có thể giao với lát cắt này). Độ nhạy theo ngưỡng (phát lại, INT8, bộ chính; đúng cho câu đơn,
+câu ghép `multi` có cổng riêng từng vế nên lệch tối đa ~1 câu; `reports/gate_sim_int8_main.json`): từ chối đúng 5/14/15/16/18/21 và từ chối nhầm
+8/14/18/21/26/35 ở ngưỡng không/0/0,5/1/2/3; so 1,0 với 0,5: F1 −0,0009 (không có ý nghĩa).
+
+**Còn mở**
+- Chấm tay chế độ câu dài (`docs/human_eval_protocol.md`, cần hai người), bộ test STT 1.802 câu (cần chấp nhận điều kiện VietSpeech),
+  phản biện độc lập cho bộ 30+30 câu "không trả lời được" (do nhóm tự viết, một số câu Wikipedia trả lời được).
+- Chưa build lại Docker image sau khi đổi sang người dùng không root; chưa chạy CI trên máy sạch (có thể đỏ nếu thiếu `data/` và checkpoint:
+  khi đó thu hẹp danh sách test của job `python`).
+- Tier (`rerank_*_routing_e2e*.json`) chỉ lưu số tổng hợp, chưa có CI; muốn có phải chạy lại `eval_dense.py` kèm ghi từng câu.
+- `reports/reranker_speed.json` và `reports/rerank_confidence_gate.json` không có script gốc (ad-hoc); `simulate_gate.py` thay cho cái sau.
+- `scripts/intent_router.py` + `tests/test_intent_router.py` có thay đổi chưa commit từ phiên khác.
+
+## 2026-11-19 — Đối chiếu của thành viên nhóm (đã kiểm chứng từng điểm)
+
+Sáu điểm do thành viên đọc lại bài báo; kiểm với `reports/` và `.tex`. Kết quả: 5 điểm đúng và đã sửa ở cả bản EN và VI, 1 điểm đúng một phần.
+- **16/46 giờ so với 20/50 giờ (đúng):** 16/46 h là giờ huấn luyện, 20/50 h là tổng ngữ liệu (cộng 2 h kiểm định và 2 h kiểm thử). Bài nay gọi theo giờ huấn luyện (Bảng III "16 h train/46 h train", Hình 3, Mục II) và nêu quan hệ một lần.
+- **Cổng từ chối 0,007 so với 0,006 (đúng):** 0,4765 − 0,4702 = 0,0063. Phần Kết luận còn số cũ 0,007; đã sửa thành 0,006.
+- **INT8 −0,009 so với −0,010 (đúng):** 0,4702 − 0,4602 = 0,0100. Phần Giới thiệu còn số cũ −0,009 (của F1 kiểu cũ); đã sửa thành −0,010.
+- **Mức giảm tương đối WER/CER (đúng một phần):** số trong bài (62,56 %, CER 65,65 %, 20h→50h 9,47 %) tính từ giá trị chưa làm tròn trong `speech-to-text_Luong/training/results_{20,50}h.json` (36,764933 → 13,765088, v.v.) nên đúng; tính từ các ô làm tròn hai chữ số thì ra 62,54 / 65,67 / 9,41 %. Bài nay ghi rõ cơ sở tính.
+- **"Để lọt 14 câu trong số đó" (đúng, câu mơ hồ):** 14 là số câu trong 30 câu ngoài kho vẫn bị trả lời (30 − 16), không phải 14 trong "vài câu Wikipedia trả lời được". Đã viết lại.
+- **68,6 so với 66,55 F1 (đúng):** 68,6 F1 (EM 42,6) là `gold_passage` trên tập con 2.545 câu có đoạn trong kho (`reports/e2e_test_kb_vit5-combined-cont.json`); 66,55 là trên cả 2.716 câu. Bài nay nêu rõ tập con, và khoảng chênh 14,7 điểm (68,6 − 53,9) là trên cùng 2.545 câu.
+
+Sửa CI: 4 test phụ thuộc thứ không nằm trong git (bộ ViMMRC trong `data/`, bản build Angular, checkpoint `matcha_vi.pt`) nay tự bỏ qua khi thiếu; thử trên bản sao sạch: không còn đỏ, 4 test bị bỏ qua có ghi lý do.
+`Video demo/` (1,2 GB video của nhóm) được thêm vào `.gitignore` và `.dockerignore`: trước đó nó sẽ bị `git add .` đẩy lên và bị `COPY . .` đưa vào image.

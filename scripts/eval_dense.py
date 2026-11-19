@@ -28,6 +28,7 @@ LOGIT_MARGINS = (0.5, 1.0, 1.5, 2.0, 3.0)  # bonus before the sigmoid: saturated
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--n", type=int, default=500)
+    ap.add_argument("--offset", type=int, default=0, help="skip the first N shuffled questions (held-out slice)")
     ap.add_argument("--checkpoint", type=Path, default=ROOT / "mrc-model_Huy/checkpoints/vit5-combined-cont")
     ap.add_argument("--output", type=Path, default=ROOT / "reports/dense_routing_e2e.json")
     ap.add_argument("--reranker", help="cross-encoder (e.g. BAAI/bge-reranker-v2-m3) scoring both tiers together")
@@ -43,7 +44,7 @@ def main():
     rng = random.Random(0)
     rows_a = eval_rows("dev", kb, None)
     rng.shuffle(rows_a)
-    set_a = [(r["question"], [r["answer"]]) for r in rows_a[:args.n]]
+    set_a = [(r["question"], [r["answer"]]) for r in rows_a[args.offset:args.offset + args.n]]
     held = [a for a in load_articles(ROOT / "data/combined/test_vimmrc.json") if "answer_texts" in a]
     held_text = {a["article"].strip() for a in held}
     kb_b = Retriever([p for p in kb.passages if p["passage"].split(". ", 1)[-1].strip() not in held_text
@@ -51,7 +52,7 @@ def main():
                      query_stopwords=kb.query_stopwords, bigram_boost=kb.bigram_boost)
     set_b = [(q, ans) for a in held for q, ans in zip(a["questions"], a["answer_texts"])]
     rng.shuffle(set_b)
-    set_b = set_b[:args.n]
+    set_b = set_b[args.offset:args.offset + args.n]
 
     reader = Reader(args.checkpoint)
     ce = None

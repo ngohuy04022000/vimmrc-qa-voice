@@ -86,7 +86,7 @@ def load_reader(name: str):
 
 def stage_readers(names: list[str]) -> None:
     from answer_composer import compose_answer
-    from eval_hard_and_multiturn import compute_token_f1
+    from metrics import best_f1, token_f1_multiset, token_f1_set_noaccent
     rows = json.loads(PASSAGES.read_text(encoding="utf-8"))
     results = json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
     for name in names:
@@ -102,8 +102,10 @@ def stage_readers(names: list[str]) -> None:
                 print("ERR", name, type(e).__name__, e)
             composed = compose_answer(r["q"], raw, r["passage"]) if raw else ""
             items.append({"src": r["src"], "q": r["q"], "gold_in_passage": r["gold_in_passage"], "raw": raw,
-                          "f1_raw": round(max(compute_token_f1(raw, g) for g in r["refs"]), 4),
-                          "f1_composed": round(max(compute_token_f1(composed, g) for g in r["refs"]), 4)})
+                          "f1_raw": round(best_f1(raw, r["refs"], token_f1_multiset), 4),
+                          "f1_composed": round(best_f1(composed, r["refs"], token_f1_multiset), 4),
+                          "f1_raw_set_noaccent": round(best_f1(raw, r["refs"], token_f1_set_noaccent), 4),
+                          "f1_composed_set_noaccent": round(best_f1(composed, r["refs"], token_f1_set_noaccent), 4)})
         sec = (time.time() - t1) / len(rows)
 
         def mean(xs):

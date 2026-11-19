@@ -1,12 +1,19 @@
-"""End-to-end QA accuracy on the deployed corpus: retrieval -> (rerank) -> reader.
+"""End-to-end QA accuracy of the ViT5 (seq2seq) reader on the deployed corpus: retrieval -> (rerank) -> reader.
 
-Rows = ViMMRC questions from the combined dev/test split whose passage is in the production
-index, so the reader never saw them in training and retrieval runs over the whole production index (5,879 passages).
+Rows = ViMMRC + ViQuAD questions from the combined dev/test split whose passage is in the production
+index (data/kb_index.json, 5,879 passages), so the reader never saw them in training.
+
+This is the harness of the ViT5-era table in STATUS.md (2,570 dev / 2,545 test rows). Its defaults are that
+protocol: rerank pool 10, tier-2 ratio 0.5, bm25 pre-rank + cross-encoder on CUDA. The DEPLOYED system differs
+(span reader vi-mrc-large, pool 3, ratio 0.4, logit bonus, refusal gate): measure it with scripts/eval_llm_assist.py
+(see docs/reproduce.md). Typical call for the historical table:
+    python scripts/eval_e2e.py --split dev --wiki data/kb_wiki_full --output reports/e2e_dev_kb_vit5-combined-cont.json
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -61,7 +68,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--split", default="dev", choices=["dev", "test"])
     ap.add_argument("--checkpoint", type=Path, default=ROOT / "mrc-model_Huy/checkpoints/vit5-combined-cont")
-    ap.add_argument("--index", type=Path, default=ROOT / "data/vimmrc_index.json")
+    ap.add_argument("--index", type=Path, default=ROOT / "data/kb_index.json")
     ap.add_argument("--reranker", default="BAAI/bge-reranker-v2-m3")
     ap.add_argument("--rerank-pool", type=int, default=10)
     ap.add_argument("--no-rerank", action="store_true")
@@ -84,7 +91,7 @@ def main():
     retrievers = [("bm25", bm25, bm25_ms)]
     if not args.no_rerank:
         from sentence_transformers import CrossEncoder
-        ce = CrossEncoder(args.reranker, max_length=512, device="cuda")
+        ce = CrossEncoder(args.reranker, max_length=512, device=os.getenv("RERANK_DEVICE", "cuda"))
         t = time.perf_counter()
         reranked = []
         for r, hits in zip(rows, bm25):

@@ -1,0 +1,701 @@
+{
+ "what": "do tre /api/ask Docker CPU 4 luong, cau hinh trien khai (vi-mrc-large, reranker INT8, DIALOGUE_DETAIL theo env), 110 cau",
+ "total": 110,
+ "complete_pct": 100.0,
+ "mean_ms": 6323.1,
+ "median_ms": 6520.0,
+ "by_category": {
+  "Hội thoại giao tiếp": {
+   "n": 25,
+   "mean_ms": 2105.1,
+   "median_ms": 26.6
+  },
+  "Lịch sử Việt Nam": {
+   "n": 20,
+   "mean_ms": 7443.6,
+   "median_ms": 8003.2
+  },
+  "Địa lý Việt Nam": {
+   "n": 20,
+   "mean_ms": 8102.5,
+   "median_ms": 7014.9
+  },
+  "Văn học & Văn hóa": {
+   "n": 15,
+   "mean_ms": 6691.5,
+   "median_ms": 6579.6
+  },
+  "Khoa học & Đời sống": {
+   "n": 15,
+   "mean_ms": 5343.3,
+   "median_ms": 5115.3
+  },
+  "Công nghệ & AI": {
+   "n": 15,
+   "mean_ms": 10097.5,
+   "median_ms": 7956.5
+  }
+ },
+ "rows": [
+  {
+   "id": "OOD_CONV_001",
+   "category": "Hội thoại giao tiếp",
+   "ms": 15.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_002",
+   "category": "Hội thoại giao tiếp",
+   "ms": 5625.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_003",
+   "category": "Hội thoại giao tiếp",
+   "ms": 5837.9,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_004",
+   "category": "Hội thoại giao tiếp",
+   "ms": 30.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_005",
+   "category": "Hội thoại giao tiếp",
+   "ms": 4.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_006",
+   "category": "Hội thoại giao tiếp",
+   "ms": 29.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_007",
+   "category": "Hội thoại giao tiếp",
+   "ms": 4843.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_008",
+   "category": "Hội thoại giao tiếp",
+   "ms": 32.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_009",
+   "category": "Hội thoại giao tiếp",
+   "ms": 4.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_010",
+   "category": "Hội thoại giao tiếp",
+   "ms": 5144.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_011",
+   "category": "Hội thoại giao tiếp",
+   "ms": 4.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_012",
+   "category": "Hội thoại giao tiếp",
+   "ms": 4.9,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_013",
+   "category": "Hội thoại giao tiếp",
+   "ms": 6896.1,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_014",
+   "category": "Hội thoại giao tiếp",
+   "ms": 5.1,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_015",
+   "category": "Hội thoại giao tiếp",
+   "ms": 19.1,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_016",
+   "category": "Hội thoại giao tiếp",
+   "ms": 8631.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_017",
+   "category": "Hội thoại giao tiếp",
+   "ms": 5359.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_018",
+   "category": "Hội thoại giao tiếp",
+   "ms": 5735.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_019",
+   "category": "Hội thoại giao tiếp",
+   "ms": 19.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_020",
+   "category": "Hội thoại giao tiếp",
+   "ms": 15.4,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_021",
+   "category": "Hội thoại giao tiếp",
+   "ms": 4.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_022",
+   "category": "Hội thoại giao tiếp",
+   "ms": 26.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_023",
+   "category": "Hội thoại giao tiếp",
+   "ms": 4328.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_024",
+   "category": "Hội thoại giao tiếp",
+   "ms": 4.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_CONV_025",
+   "category": "Hội thoại giao tiếp",
+   "ms": 6.1,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_001",
+   "category": "Lịch sử Việt Nam",
+   "ms": 9286.4,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_002",
+   "category": "Lịch sử Việt Nam",
+   "ms": 7517.1,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_003",
+   "category": "Lịch sử Việt Nam",
+   "ms": 8923.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_004",
+   "category": "Lịch sử Việt Nam",
+   "ms": 8561.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_005",
+   "category": "Lịch sử Việt Nam",
+   "ms": 7698.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_006",
+   "category": "Lịch sử Việt Nam",
+   "ms": 9052.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_007",
+   "category": "Lịch sử Việt Nam",
+   "ms": 4924.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_008",
+   "category": "Lịch sử Việt Nam",
+   "ms": 4415.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_009",
+   "category": "Lịch sử Việt Nam",
+   "ms": 8592.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_010",
+   "category": "Lịch sử Việt Nam",
+   "ms": 8170.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_011",
+   "category": "Lịch sử Việt Nam",
+   "ms": 7836.5,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_012",
+   "category": "Lịch sử Việt Nam",
+   "ms": 8724.1,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_013",
+   "category": "Lịch sử Việt Nam",
+   "ms": 4152.4,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_014",
+   "category": "Lịch sử Việt Nam",
+   "ms": 9026.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_015",
+   "category": "Lịch sử Việt Nam",
+   "ms": 8649.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_016",
+   "category": "Lịch sử Việt Nam",
+   "ms": 7604.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_017",
+   "category": "Lịch sử Việt Nam",
+   "ms": 5541.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_018",
+   "category": "Lịch sử Việt Nam",
+   "ms": 8393.5,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_019",
+   "category": "Lịch sử Việt Nam",
+   "ms": 6051.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_HIST_020",
+   "category": "Lịch sử Việt Nam",
+   "ms": 5751.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_001",
+   "category": "Địa lý Việt Nam",
+   "ms": 4417.5,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_002",
+   "category": "Địa lý Việt Nam",
+   "ms": 6906.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_003",
+   "category": "Địa lý Việt Nam",
+   "ms": 8259.9,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_004",
+   "category": "Địa lý Việt Nam",
+   "ms": 6736.9,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_005",
+   "category": "Địa lý Việt Nam",
+   "ms": 6899.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_006",
+   "category": "Địa lý Việt Nam",
+   "ms": 6261.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_007",
+   "category": "Địa lý Việt Nam",
+   "ms": 6827.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_008",
+   "category": "Địa lý Việt Nam",
+   "ms": 7864.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_009",
+   "category": "Địa lý Việt Nam",
+   "ms": 7725.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_010",
+   "category": "Địa lý Việt Nam",
+   "ms": 6657.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_011",
+   "category": "Địa lý Việt Nam",
+   "ms": 4537.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_012",
+   "category": "Địa lý Việt Nam",
+   "ms": 5411.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_013",
+   "category": "Địa lý Việt Nam",
+   "ms": 7559.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_014",
+   "category": "Địa lý Việt Nam",
+   "ms": 7564.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_015",
+   "category": "Địa lý Việt Nam",
+   "ms": 32838.4,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_016",
+   "category": "Địa lý Việt Nam",
+   "ms": 7396.1,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_017",
+   "category": "Địa lý Việt Nam",
+   "ms": 7638.1,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_018",
+   "category": "Địa lý Việt Nam",
+   "ms": 5640.5,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_019",
+   "category": "Địa lý Việt Nam",
+   "ms": 7123.1,
+   "complete": true
+  },
+  {
+   "id": "OOD_GEO_020",
+   "category": "Địa lý Việt Nam",
+   "ms": 7783.9,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_001",
+   "category": "Văn học & Văn hóa",
+   "ms": 8378.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_002",
+   "category": "Văn học & Văn hóa",
+   "ms": 7701.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_003",
+   "category": "Văn học & Văn hóa",
+   "ms": 8346.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_004",
+   "category": "Văn học & Văn hóa",
+   "ms": 6346.5,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_005",
+   "category": "Văn học & Văn hóa",
+   "ms": 6951.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_006",
+   "category": "Văn học & Văn hóa",
+   "ms": 6041.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_007",
+   "category": "Văn học & Văn hóa",
+   "ms": 6460.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_008",
+   "category": "Văn học & Văn hóa",
+   "ms": 5845.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_009",
+   "category": "Văn học & Văn hóa",
+   "ms": 7062.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_010",
+   "category": "Văn học & Văn hóa",
+   "ms": 6579.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_011",
+   "category": "Văn học & Văn hóa",
+   "ms": 6427.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_012",
+   "category": "Văn học & Văn hóa",
+   "ms": 7222.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_013",
+   "category": "Văn học & Văn hóa",
+   "ms": 5268.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_014",
+   "category": "Văn học & Văn hóa",
+   "ms": 6801.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_LIT_015",
+   "category": "Văn học & Văn hóa",
+   "ms": 4938.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_001",
+   "category": "Khoa học & Đời sống",
+   "ms": 4856.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_002",
+   "category": "Khoa học & Đời sống",
+   "ms": 5184.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_003",
+   "category": "Khoa học & Đời sống",
+   "ms": 5663.1,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_004",
+   "category": "Khoa học & Đời sống",
+   "ms": 5653.9,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_005",
+   "category": "Khoa học & Đời sống",
+   "ms": 5059.6,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_006",
+   "category": "Khoa học & Đời sống",
+   "ms": 5348.5,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_007",
+   "category": "Khoa học & Đời sống",
+   "ms": 4932.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_008",
+   "category": "Khoa học & Đời sống",
+   "ms": 5115.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_009",
+   "category": "Khoa học & Đời sống",
+   "ms": 5402.4,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_010",
+   "category": "Khoa học & Đời sống",
+   "ms": 6861.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_011",
+   "category": "Khoa học & Đời sống",
+   "ms": 4999.4,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_012",
+   "category": "Khoa học & Đời sống",
+   "ms": 4156.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_013",
+   "category": "Khoa học & Đời sống",
+   "ms": 7230.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_014",
+   "category": "Khoa học & Đời sống",
+   "ms": 4949.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_SCI_015",
+   "category": "Khoa học & Đời sống",
+   "ms": 4738.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_001",
+   "category": "Công nghệ & AI",
+   "ms": 7956.5,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_002",
+   "category": "Công nghệ & AI",
+   "ms": 12558.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_003",
+   "category": "Công nghệ & AI",
+   "ms": 14861.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_004",
+   "category": "Công nghệ & AI",
+   "ms": 7741.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_005",
+   "category": "Công nghệ & AI",
+   "ms": 8186.4,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_006",
+   "category": "Công nghệ & AI",
+   "ms": 8062.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_007",
+   "category": "Công nghệ & AI",
+   "ms": 8089.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_008",
+   "category": "Công nghệ & AI",
+   "ms": 7345.0,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_009",
+   "category": "Công nghệ & AI",
+   "ms": 33480.3,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_010",
+   "category": "Công nghệ & AI",
+   "ms": 8360.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_011",
+   "category": "Công nghệ & AI",
+   "ms": 7089.2,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_012",
+   "category": "Công nghệ & AI",
+   "ms": 6919.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_013",
+   "category": "Công nghệ & AI",
+   "ms": 7381.8,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_014",
+   "category": "Công nghệ & AI",
+   "ms": 7244.7,
+   "complete": true
+  },
+  {
+   "id": "OOD_TECH_015",
+   "category": "Công nghệ & AI",
+   "ms": 6186.1,
+   "complete": true
+  }
+ ]
+}

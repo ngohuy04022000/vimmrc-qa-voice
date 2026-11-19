@@ -1,0 +1,209 @@
+{
+  "n_per_set": 500,
+  "pool": 5,
+  "dense_model": "intfloat/multilingual-e5-small",
+  "A_in_kb": {
+    "bm25_ratio_0.4": {
+      "F1": 0.5314,
+      "answer_in_passage": 0.66
+    },
+    "wiki_dense_top1": {
+      "F1": 0.213,
+      "answer_in_passage": 0.21
+    },
+    "pooled_cos_k1": {
+      "F1": 0.3472,
+      "answer_in_passage": 0.386
+    },
+    "pooled_cos_k3": {
+      "F1": 0.357,
+      "answer_in_passage": 0.398
+    },
+    "pooled_cos_k5": {
+      "F1": 0.3596,
+      "answer_in_passage": 0.4
+    },
+    "pooled_cos_k1_kbmargin": {
+      "F1": 0.4623,
+      "answer_in_passage": 0.56
+    },
+    "pooled_cos_k3_kbmargin": {
+      "F1": 0.4648,
+      "answer_in_passage": 0.57
+    },
+    "ratio_0.4_then_wiki_dense": {
+      "F1": 0.5402,
+      "answer_in_passage": 0.672
+    },
+    "ratio_0.3_then_wiki_dense": {
+      "F1": 0.4866,
+      "answer_in_passage": 0.604
+    },
+    "ratio_0.2_then_wiki_dense": {
+      "F1": 0.3194,
+      "answer_in_passage": 0.358
+    },
+    "ratio_0.4_then_wiki_bestcos": {
+      "F1": 0.5402,
+      "answer_in_passage": 0.672
+    },
+    "ratio_0.3_then_wiki_bestcos": {
+      "F1": 0.4866,
+      "answer_in_passage": 0.604
+    },
+    "ratio_0.2_then_wiki_bestcos": {
+      "F1": 0.3194,
+      "answer_in_passage": 0.358
+    },
+    "rerank_kb1_wd1": {
+      "F1": 0.5337,
+      "answer_in_passage": 0.664
+    },
+    "rerank_pool3": {
+      "F1": 0.5443,
+      "answer_in_passage": 0.678
+    },
+    "rerank_pool3_kbmargin0.1": {
+      "F1": 0.5703,
+      "answer_in_passage": 0.726
+    },
+    "rerank_pool3_kbmargin0.25": {
+      "F1": 0.5853,
+      "answer_in_passage": 0.75
+    },
+    "rerank_pool3_kbmargin0.5": {
+      "F1": 0.5908,
+      "answer_in_passage": 0.76
+    },
+    "rerank_pool3_kbmargin0.75": {
+      "F1": 0.5896,
+      "answer_in_passage": 0.764
+    },
+    "rerank_pool3_kbmargin1.0": {
+      "F1": 0.59,
+      "answer_in_passage": 0.762
+    },
+    "rerank_pool3_logit0.5": {
+      "F1": 0.56,
+      "answer_in_passage": 0.692
+    },
+    "rerank_pool3_logit1.0": {
+      "F1": 0.562,
+      "answer_in_passage": 0.708
+    },
+    "rerank_pool3_logit1.5": {
+      "F1": 0.577,
+      "answer_in_passage": 0.73
+    },
+    "rerank_pool3_logit2.0": {
+      "F1": 0.5841,
+      "answer_in_passage": 0.742
+    },
+    "rerank_pool3_logit3.0": {
+      "F1": 0.5903,
+      "answer_in_passage": 0.756
+    }
+  },
+  "B_open": {
+    "bm25_ratio_0.4": {
+      "F1": 0.1433,
+      "answer_in_passage": 0.09
+    },
+    "wiki_dense_top1": {
+      "F1": 0.2038,
+      "answer_in_passage": 0.168
+    },
+    "pooled_cos_k1": {
+      "F1": 0.2062,
+      "answer_in_passage": 0.172
+    },
+    "pooled_cos_k3": {
+      "F1": 0.2074,
+      "answer_in_passage": 0.17
+    },
+    "pooled_cos_k5": {
+      "F1": 0.2057,
+      "answer_in_passage": 0.17
+    },
+    "pooled_cos_k1_kbmargin": {
+      "F1": 0.1988,
+      "answer_in_passage": 0.162
+    },
+    "pooled_cos_k3_kbmargin": {
+      "F1": 0.1866,
+      "answer_in_passage": 0.15
+    },
+    "ratio_0.4_then_wiki_dense": {
+      "F1": 0.1557,
+      "answer_in_passage": 0.1
+    },
+    "ratio_0.3_then_wiki_dense": {
+      "F1": 0.1978,
+      "answer_in_passage": 0.154
+    },
+    "ratio_0.2_then_wiki_dense": {
+      "F1": 0.2063,
+      "answer_in_passage": 0.172
+    },
+    "ratio_0.4_then_wiki_bestcos": {
+      "F1": 0.1557,
+      "answer_in_passage": 0.1
+    },
+    "ratio_0.3_then_wiki_bestcos": {
+      "F1": 0.1978,
+      "answer_in_passage": 0.154
+    },
+    "ratio_0.2_then_wiki_bestcos": {
+      "F1": 0.2065,
+      "answer_in_passage": 0.172
+    },
+    "rerank_kb1_wd1": {
+      "F1": 0.2145,
+      "answer_in_passage": 0.184
+    },
+    "rerank_pool3": {
+      "F1": 0.268,
+      "answer_in_passage": 0.252
+    },
+    "rerank_pool3_kbmargin0.1": {
+      "F1": 0.2454,
+      "answer_in_passage": 0.234
+    },
+    "rerank_pool3_kbmargin0.25": {
+      "F1": 0.2206,
+      "answer_in_passage": 0.204
+    },
+    "rerank_pool3_kbmargin0.5": {
+      "F1": 0.1935,
+      "answer_in_passage": 0.168
+    },
+    "rerank_pool3_kbmargin0.75": {
+      "F1": 0.1811,
+      "answer_in_passage": 0.146
+    },
+    "rerank_pool3_kbmargin1.0": {
+      "F1": 0.1305,
+      "answer_in_passage": 0.068
+    },
+    "rerank_pool3_logit0.5": {
+      "F1": 0.267,
+      "answer_in_passage": 0.252
+    },
+    "rerank_pool3_logit1.0": {
+      "F1": 0.2625,
+      "answer_in_passage": 0.25
+    },
+    "rerank_pool3_logit1.5": {
+      "F1": 0.2605,
+      "answer_in_passage": 0.248
+    },
+    "rerank_pool3_logit2.0": {
+      "F1": 0.2591,
+      "answer_in_passage": 0.248
+    },
+    "rerank_pool3_logit3.0": {
+      "F1": 0.2384,
+      "answer_in_passage": 0.222
+    }
+  }
+}

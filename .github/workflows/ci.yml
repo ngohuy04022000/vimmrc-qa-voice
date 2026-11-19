@@ -16,7 +16,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install --extra-index-url https://download.pytorch.org/whl/cpu torch
-          pip install -r requirements-api.txt pytest
+          pip install -r requirements-api.txt pytest httpx httpx2  # TestClient: starlette mới đòi httpx2, cũ đòi httpx
       # Chưa kiểm chứng trên CI: test cần data/checkpoint có tự skip hay fail khi thiếu (chỉ test_mrc và
       # test_silence_detector có skip rõ ràng). Nếu fail do thiếu data, thu hẹp danh sách test ở đây.
       - run: pytest -q

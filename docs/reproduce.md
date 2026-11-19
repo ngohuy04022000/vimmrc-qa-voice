@@ -14,7 +14,7 @@ python retrieval-model_Huy\build_kb.py --wiki --wiki-full --wiki-output data\kb_
                                                         # data\kb_index.json (tầng 1) + data\kb_wiki_full (tầng 2, cần mạng:
                                                         # wikimedia/wikipedia 20231101.vi); cờ --wiki-full suy từ tên thư mục [giao thức]
 python retrieval-model_Huy\build_dense.py data\kb_wiki_full   # shard_*\embeddings.npy (multilingual-e5-small, ~1,1 GB)
-python -m pytest -q -p no:cacheprovider                 # 154 test, ~2 phút
+python -m pytest -q -p no:cacheprovider                 # 166 test trên máy dev (~2 phút); checkout sạch: 4 test cần data/dist/checkpoint tự bỏ qua
 ```
 Checkpoint: `mrc-model_Huy\checkpoints\vi-mrc-large` (bộ đọc triển khai), `vit5-combined-cont`;
 `speech-to-text_Luong\models\whisper-small-vi-50h-ct2`; `text-to-speech_Duy\checkpoints\matcha_vi.pt`.
@@ -66,3 +66,7 @@ là bản cũ của `eval_hard_and_multiturn` / `eval_out_of_dataset` (tập h�
 - Bộ 30 câu "không trả lời được" do nhóm viết; một vài câu Wikipedia trả lời được (xem STATUS.md). Không có nhãn độc lập.
 - Tập A của tier là câu có đoạn đúng trong KB (kho đóng); 459/466 bài của `test_vimmrc.json` nằm trong `kb_index.json` theo thiết kế.
 - Một số chênh lệch nhỏ không có ý nghĩa thống kê: xem `reports/bootstrap_ci.json` trước khi diễn giải.
+
+## 5. Docker và gói nén
+- `docker compose up -d --build` (cổng 127.0.0.1:8090). Image chạy bằng người dùng không root (uid 10001); `data/` gắn chỉ đọc, `outputs/` ghi được. Bảo mật tuỳ chọn (API_KEY, CORS_ORIGINS, RATE_LIMIT_PER_MIN) mặc định tắt, xem `docker-compose.yml`.
+- Gói nén `vimmrc-qa-voice.zip` (thư mục mẹ) là ảnh chụp ổ đĩa kèm `.git/`; loại `checkpoint-*/`, `Video demo/`, `.venv/`, `node_modules/`. Hướng dẫn giải nén và SHA-256 nằm ở `ViMMRC_Tai_Lap_Va_Git.md` (thư mục mẹ).
